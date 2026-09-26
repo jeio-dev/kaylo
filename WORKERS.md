@@ -2,6 +2,8 @@
 
 The files in `agents/` are portable role briefs with Claude-compatible frontmatter. Loading the Claude plugin exposes `kaylo:researcher`, `kaylo:builder`, and `kaylo:reviewer`; their default model is inherited from the guiding session. Other hosts can use the Markdown body as a task brief. This package does not install Codex agent profiles or automatically connect vendors.
 
+From a skill's directory, a brief is at `../../agents/<role>.md`; resolve that path against the directory containing `SKILL.md`, not the project being built. If only pasted instructions are available and the brief is needed, supply its location or body.
+
 | Role | Model choice | Work |
 | --- | --- | --- |
 | [Researcher](agents/researcher.md) | An available model suited to the sources and context size | Answer a bounded question with evidence |
@@ -26,12 +28,15 @@ Steps: [concrete implementation steps, when building]
 Acceptance: [what must be true]
 Verify: [working directory, exact command and expected result, or manual steps]
 Previous attempts: [failed repairs and evidence, or None]
+Existing findings: [IDs, corrections and recheck evidence relevant to this task, or None]
 Return: findings or changed files, checks and results, remaining blockers
 ```
 
 The guiding assistant maintains `PLAN.md` and checks returned claims against the available files and results. A worker does not approve scope, change model settings, or spawn more workers.
 
 If a model cannot complete the task, diagnose the failure. Narrow the task or recommend a stronger available model. Carry forward failed attempts and evidence; switching tools does not justify restarting the same unsuccessful approach. Ask the user only when the next choice requires their decision or unavailable access.
+
+After two unsuccessful repairs of the same unresolved failure, another correction requires material new evidence, an actual change to the blocking condition, or explicit user authorization. Record the reason and outcome and stop again if unresolved; changing the session, task ID, or worker alone does not permit another attempt.
 
 Select a model through the chosen host's model picker before handing over work. In Claude, `/model` sets the guiding session's model and these agents inherit it. In Codex CLI, `/model` or `--model` selects the main model; a native worker may have separate host-controlled settings. Passing a brief does not change those settings. Do not infer worker availability or model identity from a subscription name. If a cheaper worker is unavailable, continue directly when capable or provide the packet for a manual handoff.
 
