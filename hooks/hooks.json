@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "^(startup|resume)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"try { require(require('path').join(process.env.CLAUDE_PLUGIN_ROOT || process.env.PLUGIN_ROOT, 'hooks/session-start.cjs')); } catch {}\"",
+            "timeout": 2
+          }
+        ]
+      }
+    ]
+  }
+}

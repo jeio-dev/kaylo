@@ -1,0 +1,16 @@
+{
+  "name": "kaylo",
+  "version": "0.1.0",
+  "description": "Patient development guidance: define, plan, build, review, and close.",
+  "author": { "name": "Kaylo contributors" },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Kaylo",
+    "shortDescription": "Build software with patient, practical guidance",
+    "longDescription": "Five focused development skills, portable worker briefs, and simple Markdown project state.",
+    "developerName": "Kaylo contributors",
+    "category": "Productivity",
+    "capabilities": ["Write"],
+    "defaultPrompt": ["Use Kaylo to help me define a small software project."]
+  }
+}
