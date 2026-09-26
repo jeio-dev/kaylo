@@ -1,6 +1,8 @@
 # Plan
 
-Status: Draft
+Status: Current
+
+[Plan validity only: Current, or Needs revision: reason. Agreement and completion are recorded separately.]
 
 ## Goal and scope
 
@@ -17,18 +19,23 @@ Status: Draft
 ## Tasks
 
 - [ ] T1: [Observable result]
-  - Complexity: S / M / L — [reason]
-  - Depends on: None
-  - Starting points: [Relevant files or sources]
-  - Steps: [Concrete actions; split tasks that require several independent decisions]
+  - Complexity: S
   - Acceptance: [What must be true]
   - Verify: [Working directory, exact command and expected result, or manual action and observation; identify any check that must first be created]
   - Result: Not started
-  - Failed repairs: None
+
+[For tasks that need them, add starting points, dependencies, concrete steps, and a complexity reason. Use M or L for more complex work. Retain failed-repair history whenever it exists; a blocked result includes the failure and next action.]
 
 ## Review
 
-[Target and coverage; findings, corrections, and unresolved limitations.]
+[Target, coverage, and limitations. Record None when there are no findings; otherwise use stable IDs, for example:]
+
+- R1: [blocker / optional] — [open / fixed / accepted by user]
+  - Target and location: [Plan task or implementation file]
+  - Consequence: [Observable failure or unmet requirement]
+  - Correction: [Smallest useful correction]
+  - Resolution: [Evidence for fixed, or actual user decision for acceptance]
+  - Recheck: [Required for blocker fixes before closure; outcome and evidence]
 
 ## Next step
 

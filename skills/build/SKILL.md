@@ -1,21 +1,47 @@
 ---
 name: build
-description: Implement and verify an agreed Kaylo task, or fix a concrete review finding. Use with a task ID or let the plan identify the next ready task.
+description: Implement and verify an agreed Kaylo task, or fix a concrete review finding. Use with a task or finding ID, or let the plan identify the next ready task.
 ---
 
 # Build one task
 
 Work in the user's project. Complete the requested task without expanding the product.
 
-1. Read project instructions and `PLAN.md`. Find the requested task, or the first unfinished task whose dependencies are complete. Confirm the scope was agreed in the conversation or plan. If agreement is missing, explain the task and ask before implementation. Do not ask again when already authorized.
-2. Inspect the current working changes and relevant files. Preserve unrelated edits. Trace the affected flow; for a bug, inspect relevant callers and fix the cause rather than only the reported symptom. The file list is a starting point, not a prohibition on investigation.
-3. Check that the task supplies a concrete result and verification. Resolve a local implementation detail yourself. Return to `/kaylo:plan` if completing it requires a material scope change or a missing product decision.
-4. Work directly when capable unless a worker would materially help or the user requests one. For delegated work, recommend an available model suited to the task's uncertainty and consequence: S may use an economical worker; M needs a capable builder; L needs a strong model or smaller tasks. Never assume a model, subscription-backed subagent, or paid API is available. Use the host's native controls; do not silently change providers or account settings. If delegation is unavailable, work directly when capable or provide a handoff for the user's chosen tool.
-5. For delegation, provide the builder brief from this package's `agents/builder.md` (or paste it), project location, task steps, constraints, relevant files, dependencies, acceptance criteria, checks, and earlier failed repair attempts. Run one worker at a time. Tell it to return changes, verification results, and blockers. The guiding assistant owns plan updates and reviews the returned diff.
-6. Implement the smallest sufficient change following existing patterns. Reuse existing helpers, standard libraries, native capabilities, and installed dependencies when suitable. Keep code readable and retain required validation, error handling, security, and accessibility. Keep adjacent refactoring and optional features out of the task. Do not change terminal profiles, global settings, or unrelated tooling to make a local task pass.
-7. Run the specified relevant checks directly so their exit status and useful output are retained, and inspect the resulting diff. Record what actually ran and its result. If a check fails, diagnose before editing or rerunning. After two unsuccessful repair attempts for the same failure, stop, preserve the work, and report the cause or uncertainty with one recommended next action. Do not silently switch workers to reset this limit.
-8. Update the task in `PLAN.md`, including failed repair attempts and their outcomes so another session does not repeat them. Check it off only when its acceptance criteria are met and required verification passed. If a check is unavailable or needs user observation, leave the task open and state what remains. Explain any replacement check and why it establishes the same result.
+## Workflow
 
-Do not repeat passing checks unless relevant code, inputs, or requirements changed. Honor required repository checks, but do not expand the release criteria during this task. Do not commit, publish, deploy, or push unless that action is already authorized.
+1. Read project instructions and `PLAN.md`. Select the requested task or finding using the rules below; confirm its agreed scope, concrete result, acceptance criteria, and verification.
+2. Inspect working changes, relevant files, and earlier failed repairs. Apply the repair limit before corrective edits. Preserve unrelated edits. Trace the affected flow and callers to fix the cause; listed files are starting points for investigation.
+3. Resolve local implementation details yourself. Apply the scope rules below before implementing.
+4. Work directly when capable. If a worker would materially help or the user requests one, read [references/delegation.md](references/delegation.md) before delegating.
+5. Implement the smallest sufficient change using existing patterns, helpers, standard libraries, native capabilities, and installed dependencies. Retain readability, required validation, error handling, security, and accessibility.
+6. Run relevant checks directly, retaining exit status and useful output. Inspect the diff. Diagnose failures before editing or rerunning.
+7. Update the task or finding in `PLAN.md` using the completion rules below. Record checks, limitations, failed repairs, and outcomes.
 
-Finish with what changed, the check results, and one next step. Stop after the task unless the user authorized completing a larger set. Use `/kaylo:review changes` when the agreed implementation is ready for review.
+## Selection and scope
+
+- Use the supplied ID, such as `T1` or `R2`. Report an unknown ID; do not substitute other work.
+- Without an ID, choose the first unfinished task with completed dependencies. Do not automatically select optional findings.
+- A plan finding returns to `/kaylo:plan`. An implementation finding needs a bounded correction, affected criteria, and relevant verification.
+- Confirm agreement from the conversation or plan. A finding does not authorize extra scope. If agreement is missing, explain the work and ask; existing authorization counts.
+- If the selected work depends on a plan area marked `Needs revision`, return to plan. Unaffected, agreed work may proceed.
+- A material scope mismatch requires `Status: Needs revision: <reason>` and a return to plan. A missing consequential decision also returns to plan; an ordinary implementation defect does not invalidate it.
+- For older plans with `Draft` or no status, inspect scope and agreement; the label alone grants no approval and creates no blocker.
+- Exclude adjacent refactoring and optional features. Do not change terminal profiles, global settings, or unrelated tooling to make the task pass.
+
+## Repair limit
+
+- A repair attempt is a corrective change followed by verification; diagnosis alone is not an attempt.
+- After two unsuccessful repairs of the same unresolved failure, including earlier attempts, stop corrective edits. Preserve the work and report the failure, attempts, and one next action. Diagnosis may continue.
+- A further correction requires material new evidence, a changed blocking condition, or explicit user authorization. Record the reason and outcome; stop again if unresolved, without a fresh allowance of two attempts. A new session, task ID, or worker alone does not qualify.
+
+## Verification and completion
+
+- Reuse passing checks only when history establishes unchanged relevant inputs: implementation, dependencies, configuration, runtime, data, and criteria. If uncertain, rerun an affected check when feasible or leave verification unresolved.
+- Honor required repository checks without expanding release criteria. Explain replacement checks and why they establish the same result.
+- Check off a task only when acceptance is met and required verification passed. Unavailable checks or required user observations leave affected work open; record the blocker and next action in `Result` (optionally prefixed `Blocked:`).
+- The guiding assistant marks a finding `fixed` after inspecting the correction and evidence. Blocker fixes need a focused `/kaylo:review changes` recheck before closure; optional fixes need no separate review round. Preserve IDs and earlier results.
+- Commit, publish, deploy, or push only when already authorized.
+
+## Response
+
+Report changes, check results, and one next step. Stop after this task unless a larger set was authorized. Use `/kaylo:review changes` when the agreed implementation is ready.
