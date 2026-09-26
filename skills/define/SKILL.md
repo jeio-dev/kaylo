@@ -7,13 +7,29 @@ description: Turn a project idea or change request into a small objective with o
 
 Help a beginner decide what to build and why. Work in the user's project, not the directory containing this skill.
 
-1. Read project instructions and any existing `OBJECTIVE.md` and `PLAN.md`. For an existing project, inspect the README and relevant files to establish what already exists. Preserve agreed decisions and unfinished work.
+## Workflow
+
+1. Read project instructions, existing `OBJECTIVE.md` and `PLAN.md`, and relevant README/code to establish current capabilities. Preserve agreed decisions and unfinished work.
 2. Restate the requested outcome in one or two plain sentences. Separate what the user asked for from suggestions of your own.
-3. Ask only questions whose answers materially affect the user, scope, constraints, or success. Use numbered rounds of at most three questions. Include a recommended answer and its practical tradeoff. Wait for answers to blocking questions; choose and disclose reasonable implementation defaults yourself.
-4. Propose the smallest useful end-to-end experience that preserves the user's requested behavior. Explain what the user will be able to do. Put optional improvements outside the current scope; ask before removing a consequential requirement in the name of simplicity.
-5. Write `OBJECTIVE.md` with: problem and intended user, desired outcome, essential user journey, included capabilities, exclusions, constraints, observable success criteria, and any unresolved questions. Use plain Markdown; no special metadata is required.
-6. If revising an existing objective, explain which pending or completed plan tasks are affected. Mark the plan as needing revision when its scope no longer matches; preserve its history and completed results.
+3. Ask only consequential questions about the user, scope, constraints, or success: at most three numbered questions per round, each with a recommendation and tradeoff. Wait for blocking answers; choose and disclose reasonable implementation defaults yourself.
+4. Propose the smallest useful end-to-end experience preserving requested behavior. Explain what the user can do. Keep optional improvements outside scope; ask before removing a consequential requirement.
+5. Write `OBJECTIVE.md` using the contents below.
+6. On revision, identify affected pending and completed plan tasks. Apply the revision rules below.
 
-Do not choose a new framework, service, dependency, or abstraction unless that choice is needed to define the outcome. Do not implement the product during this command.
+## Objective contents
 
-Finish with a short description of the outcome, any decision still needed, and one next step: confirm or correct the objective, then use `/kaylo:plan`. Existing explicit agreement counts; do not ask the user to approve the same decision twice.
+- Problem and intended user; desired outcome and essential user journey.
+- Included capabilities, exclusions, and constraints.
+- Observable success criteria and unresolved questions.
+
+Use plain Markdown and preserve an existing equivalent format. The optional [objective template](../../templates/OBJECTIVE.md) resolves relative to this skill directory; its absence does not block the command.
+
+## Revision and scope
+
+- If plan scope no longer matches, set `Status: Needs revision: <reason>`. `/kaylo:plan` restores `Current` after revision; status means validity, not agreement or completion.
+- Preserve history and unaffected results. Reopen only work whose acceptance or required evidence is insufficient.
+- Choose frameworks, services, dependencies, or abstractions only when needed to define the outcome. Do not implement the product.
+
+## Response
+
+Summarize the outcome, any remaining decision, and one next step: confirm or correct the objective, then `/kaylo:plan`. Existing explicit agreement counts; do not request it twice.

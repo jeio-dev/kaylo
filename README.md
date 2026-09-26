@@ -2,7 +2,7 @@
 
 Build software with patient, practical guidance, using the AI tools you already have.
 
-Kaylo is an early `0.1.0` package; see [verification](VERIFICATION.md) for what has actually been checked.
+Kaylo is an early `0.2.0` package; see [verification](VERIFICATION.md) for what has actually been checked.
 
 ## Five commands
 
@@ -18,6 +18,8 @@ Start with define, then plan. A concrete small change can start with plan. Revie
 
 The assistant investigates repository facts, recommends an approach, and asks a short numbered round only for consequential decisions. Tasks include acceptance criteria and meaningful verification. Reuse passing checks unless relevant inputs changed. After two unsuccessful repairs of the same failure, preserve the work and recommend a different next action.
 
+Plans use `Current` or `Needs revision: <reason>` to describe whether task instructions match the intended work; agreement and completion are separate. Clear local S tasks can use a compact record. Review findings keep stable IDs such as `R2`: build can select a task or implementation finding, and blocker fixes receive a focused recheck before closure. Optional findings do not block the agreed outcome.
+
 Simplicity means using existing capability, configuration, standard libraries, native features, and installed dependencies where sufficient. Keep requested behavior, readability, security, and accessibility. A short diff is not proof of a correct solution.
 
 ## Use Kaylo
@@ -32,7 +34,7 @@ From your target project, load this checkout for the current session:
 claude --plugin-dir '<kaylo-checkout>'
 ```
 
-Then use `/kaylo:define`, `/kaylo:plan`, `/kaylo:build T1`, `/kaylo:review plan`, `/kaylo:review changes`, or `/kaylo:close`. These are five skills, with arguments selecting a task or review target. Replace `<kaylo-checkout>` with the path of your clone of this repository. This does not install a global plugin; omit `--plugin-dir` next time to stop loading it.
+Then use `/kaylo:define`, `/kaylo:plan`, `/kaylo:build T1`, `/kaylo:build R2`, `/kaylo:review plan`, `/kaylo:review changes`, or `/kaylo:close`. These are five skills, with arguments selecting a task, finding, or review target. Replace `<kaylo-checkout>` with the path of your clone of this repository. This does not install a global plugin; omit `--plugin-dir` next time to stop loading it.
 
 ### Codex
 
@@ -77,13 +79,13 @@ Work directly when that is sufficient; use one worker at a time when helpful. Th
 
 ## Package and scope
 
-- `skills/`: the five self-contained command instructions.
+- `skills/`: five command entrypoints with optional build/review delegation references.
 - `agents/`: three portable briefs, also discoverable as Claude agents.
 - `templates/`: optional objective and plan starting points.
 - `.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/`: native packaging and the local Codex catalog.
 - `hooks/`: the optional reminder; no workflow runtime or persistent state.
 
-No custom installer, conformance suite, automatic model router, terminal modifications, or release machinery. `0.1.0` is an early package version, not a release-readiness claim.
+No custom installer, conformance suite, automatic model router, terminal modifications, or release machinery. `0.2.0` is an early package version, not a release-readiness claim.
 
 The simplicity guidance was informed by [Ponytail](https://github.com/DietrichGebert/ponytail); Kaylo does not bundle or require it. The instructions are adapted to patient explanations and acceptance criteria rather than line-count targets.
 

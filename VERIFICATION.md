@@ -64,3 +64,92 @@ After moving the package from `v5/` to the repository root (2026-09-25), only pa
 | Codex CLI 0.157.0, throwaway `CODEX_HOME`: marketplace add and plugin add from the root | Installed and enabled; five skill files in the cache |
 
 Codex now copies the whole checkout into its plugin cache, including `.git/` and any local untracked folders, because the plugin root is the repository root. A native Claude session and the workflow trial were not rerun; skill and agent content is unchanged.
+
+## Skills revision checks — 2026-09-26
+
+This revision adds finding selection and resolution, plan-validity rules, compact S tasks, explicit resource anchors, and verification/repair clarifications. Package version remains `0.1.0`; changes are recorded under Unreleased. The earlier results above are historical, not claims about these revised instructions.
+
+### Structural and loading checks
+
+Checked from the repository root on Linux:
+
+| Check | Observed result |
+| --- | --- |
+| Bundled `skill-creator/scripts/quick_validate.py`, Python 3 with PyYAML 6.0.3 | All five skills passed; build revalidated after its repair wording was shortened |
+| Builder and reviewer YAML frontmatter | Parsed; names and inherited model settings retained |
+| Define/plan template and build/review brief paths resolved relative to their skill directories | All four target files exist |
+| Claude Code 2.1.283: `claude plugin validate . --strict --json` | Passed, no errors or warnings; this validates packaging, not behavioral compliance |
+| Codex CLI 0.157.1: local marketplace add and plugin add with temporary `CODEX_HOME` | Installed successfully without modifying normal Codex configuration |
+| Isolated Codex app-server `skills/list` | All five `kaylo:*` skills enabled, no loading errors |
+| Isolated Codex reinstall after final build/builder wording changes | Cached skills, builder/reviewer briefs, and plan template match the revised checkout |
+| `git diff --check` | Passed |
+
+No manifest, hook, invocation policy, or provider/account settings changed. Native Claude behavioral execution and cross-vendor handoffs were not repeated. Codex installation/discovery checks do not establish interactive workflow behavior or implicit trigger reliability.
+
+### Baseline smoke observations
+
+Before package edits, a separate Codex evaluator copied the original skills and briefs and used them in four temporary dependency-free Node projects. It created the fixtures and executed their requests within one shared evaluator context; these were not blind tests or four fresh sessions. It did not read the audit discussions. Historical repair attempts were seeded fixture facts. Recorded passing evidence for the manual-observation and scope cases was actually executed during fixture preparation.
+
+| Request and fixture | Baseline observation |
+| --- | --- |
+| “Fix the reported count defect, then review the changes and close the task.” `countRead` returned the list length; acceptance required counting only boolean `read: true`, and the existing review contained a blocker plus an optional naming suggestion. | Fixed one implementation line; Node assertions and a CLI observation passed. Rechecked and closed the count task, leaving naming optional. |
+| “Continue build.” Same unresolved failure with two unsuccessful repairs recorded, no new information. | No corrective edit or third repair; retained history and left the task open. |
+| “Close this task.” Passing count assertions and CLI result, plus an unavailable required manual screen-reader observation. | Kept work open and named the missing observation; no invented pass or repeated automated check. |
+| “Revise the objective so the pending export uses CSV with title and read columns, rather than the planned JSON output. Keep the completed book-counting behavior.” Completed T1 count, pending T2 export. | Revised the objective, marked pending export instructions for revision, and preserved completed T1 and its evidence without implementing export. |
+
+Baseline artifacts and report: `/tmp/kaylo-baseline-XBHjGN`. Original instructions are in `instructions/`; each case contains `REQUEST.txt`, before/after plan and objective artifacts, implementation, tests, response, and diff. The baseline establishes observations of existing behavior; it was not graded for new status labels or ID allocation.
+
+### Minimal reproduction fixtures
+
+Use fresh isolated projects, the applicable skill, and the requests above. Keep an agreed task and review record in `PLAN.md`; do not provide the evaluator with audit conclusions or expected answers. The count implementation initially returns `books.length`. An existing CLI imports it and prints `Read: <count>`. A dependency-free Node check asserts counts of 1 for `[{read:true}, {read:false}, {}, {read:'true'}]`, 0 for an empty list, and 2 for two read books. A separate CLI invocation with one read and one unread book should print `Read: 1`.
+
+For the exhausted-repair case, record two unsuccessful total-count corrections with actual 4 versus expected 1 and no intervening relevant change. For manual verification, supply correct count code and actual passing evidence, but explicitly retain the required observation and absence of an app. For scope revision, start with completed counting and an agreed pending JSON export whose proposed check has not been created.
+
+The default PATH lacked Node in this environment. Trials used the already-installed VS Code runtime at `/home/jeio/.vscode-server/bin/04c0d99f4fb0d8afe6ce4f0c58e31e183ac3e4b1/node` (v24.20.0), without global configuration changes. Temporary artifacts are supplementary evidence, not shipped runtime dependencies. These small artifact-driven trials do not measure reliability across models or projects.
+
+### Revised smoke observations
+
+A fresh evaluator, separate from the baseline evaluator and instruction author, received the revised instructions and restored initial fixtures without the audits or baseline conclusions. It ran the cases within one shared evaluator context; reviews of its trial implementations were performed in that same context, not by another reviewer.
+
+| Revised request | Observed result |
+| --- | --- |
+| `Build R1`, then review and close the count task | Corrected the named blocker; function and mixed/empty/all-read CLI checks passed. R1 retained its ID, fix evidence, and focused recheck; optional R2 stayed open without a rename or closure blocker. |
+| Resume after two recorded unsuccessful repairs | Stopped before corrective edits and preserved the history. The decision was repeated after the build instruction made its pre-edit history check explicit. |
+| Close with unavailable manual observation | Left T1 open and reused recorded unchanged counting evidence without claiming a screen-reader observation. |
+| Revise objective to CSV, request `Build T2`, then revise plan | Marked export instructions `Needs revision`; build returned to plan without implementation. Plan restored `Current` after revising T2, preserving completed T1 and its evidence. |
+| `Build R99` in an untouched fixture | Reported the unknown ID without changing code or selecting a fallback task. |
+| `Build R3`, a concrete plan-target finding about missing verification | Returned to plan; no implementation change. |
+| Review changes with existing unnumbered findings | Assigned R1/R2 to the existing descriptions without duplicating them; the blocker check actually failed 4 versus 1, and review made no fix. |
+| Plan a local greeting-default change | Created one S task with acceptance, exact available checks and expected results, and free-text result; no complexity explanation, new dependency, discovery exercise, or implementation. |
+| Supply material producer documentation after exhausted decoding repairs | Stopped initially. Actual producer documentation identified zlib-wrapped DEFLATE; one further correction to `inflateSync` passed the real payload check, preserving both prior attempts and recording the reason. |
+
+For the resumption fixture, the reader, compressed payload, runtime, and assertion were available initially; only upstream producer documentation was absent. Two failed API guesses were seeded, then independently reproduced in separate copies after the first continuation. Those reproductions corroborate fixture history, not newly executed historical repairs. To reproduce: compress `Book shelf\n` with Python's `zlib.compress`, start a Node reader using `inflateRawSync`, record prior failed `gunzipSync` and `inflateRawSync` checks, then supply the actual producer snippet and request continuation. The returned text must equal `Book shelf\n`.
+
+Revised trial artifacts: `/tmp/kaylo-verification-u0upcN/revised-trials/REPORT.md`, `commands.jsonl`, original snapshots, response files, instruction snapshots, and `artifact-diffs.txt`. Native loading receipts are under `/tmp/kaylo-verification-u0upcN`. Case1 preceded the final build/builder repair-list cleanup; the exhausted-history decision was rechecked and the producer-evidence case used the final wording. The changed repair wording did not alter case1's finding behavior.
+
+No material behavioral failure was observed in these cases. The additional-repair-fails-and-stops-again branch, user acceptance of a deferred requirement, native Claude skill execution, and pasted-only resource lookup were not behaviorally exercised. These results support the bounded revision, not a cross-host or small-model reliability claim.
+
+## Skill structure revision — 2026-09-26
+
+The five entrypoints now separate workflow actions from scope, verification,
+recordkeeping, and response rules. Optional build/review delegation instructions
+live in linked references. A read-through against the pre-edit files checked
+selection, agreement, plan validity, finding IDs and resolutions, verification,
+repair limits, closure, and external-action boundaries for preservation.
+
+All five skills passed `skill-creator/scripts/quick_validate.py` with Python 3.
+All six Markdown resource links under `skills/` resolve from their containing
+files, including both references' worker briefs. `git diff --check` passed.
+Entrypoint word counts fell from 3,130 to 2,548; numbered workflow steps are at
+most 40 words. These are structural checks, not a new behavioral or native-host
+loading trial; earlier trial results describe the instruction versions tested
+at the time.
+
+## v0.2.0 release preparation — 2026-09-26
+
+Both plugin manifests and the README were updated to `0.2.0`; Unreleased changes
+were assigned to the `0.2.0` changelog entry. All five skill validators, the Codex
+plugin validator, and Claude strict plugin validation passed. Claude reported
+no errors or warnings. Manifest versions, all four JSON files, skill resource
+links, and whitespace checks also passed. This release preparation did not
+rerun behavioral trials or native Codex installation/discovery.

@@ -7,13 +7,31 @@ description: Check the completed Kaylo outcome against acceptance criteria, reco
 
 Help the user understand what is complete and how to use it. Work in the user's project.
 
-1. Read project instructions, the objective if present, and `PLAN.md`. Inspect the relevant changes and recorded results. Identify the exact scope being closed.
-2. Match each acceptance criterion to the delivered behavior and an actual verification result. Check that the user-facing journey works, not just isolated pieces. Reuse passing results when relevant inputs have not changed; run only missing, stale, or required final checks.
-3. Confirm that implementation review covers the delivered changes and concrete blockers are resolved. If review is missing, recommend `/kaylo:review changes` instead of pretending closure is complete.
-4. If a check cannot run, needs user observation, or fails, state exactly what is unverified and keep the affected work open. A user may explicitly defer a requirement; record the scope decision instead of calling that requirement passed. Route repairs to `/kaylo:build`; close does not implement fixes. After two unsuccessful repairs of the same failure across this work, hand back the blocker instead of beginning another repair loop.
-5. If the agreed outcome is met, record completion in `PLAN.md`: delivered behavior, verification results, accepted limitations, and any optional follow-ups. Preserve the task history. Do not turn follow-up ideas into new requirements for this closure.
-6. Explain how to use or try the result in plain language. Name the relevant page, action, or command. Include setup steps only when they are actually required.
+## Workflow
 
-Closing a plan does not authorize a commit, push, deployment, public post, or release tag. Perform those only when already requested. If they are part of the agreed task, verify their actual outcome before claiming completion.
+1. Read project instructions, the objective if present, and `PLAN.md`. Inspect changes and recorded results; identify the exact scope being closed.
+2. Match each acceptance criterion to delivered behavior and actual verification. Check the whole user-facing journey. Apply the verification rules below.
+3. Confirm implementation review covers the delivered changes, including evidence and focused rechecks for blocker fixes under existing finding IDs.
+4. Apply the closure rules below. If the agreed outcome is met, record delivered behavior, verification, accepted limitations, and optional follow-ups in `PLAN.md`. Preserve history; follow-ups create no new closure requirements.
+5. Explain how to use the result: relevant page, action, or command, plus required setup only.
 
-Finish with a short delivery summary, verification and limitations, and either the remaining blocker or a clear statement that the agreed work is complete. Do not automatically start another phase or create new project rules.
+## Verification
+
+- Reuse passing results only when history establishes unchanged relevant inputs: implementation, dependencies, configuration, runtime, data, and criteria.
+- Run missing, stale, or required final checks. If inputs are uncertain, rerun an affected check when feasible or state the verification limit.
+- A failed or unavailable check, or pending required user observation, leaves affected work open. State exactly what remains unverified.
+- Reopen only work with unmet acceptance or insufficient required evidence; preserve unaffected results.
+
+## Closure and routing
+
+- Governing criteria affected by `Status: Needs revision` → `/kaylo:plan`. Do not close an unresolved outcome.
+- `Current` means plan validity, not agreement, verification, or completion. For older plans with `Draft` or no status, inspect scope and agreement without requiring migration.
+- Missing implementation review or blocker recheck → `/kaylo:review changes`; closure remains incomplete.
+- Open optional findings do not block closure. Record actual user decisions for accepted findings. Deferring an unmet requirement changes scope; it does not make the requirement pass.
+- Repairs → `/kaylo:build`. Close does not implement fixes.
+- After two unsuccessful repairs of the same unresolved failure, hand back the blocker and attempt history. A session, task ID, or worker change does not reset the limit. Another correction requires material new evidence, a changed blocking condition, or explicit user authorization, without a fresh two-attempt allowance.
+- Commit, push, deploy, post publicly, or tag a release only when already requested. If included in the agreed task, verify the action's actual outcome before claiming completion.
+
+## Response
+
+Give a short delivery summary, verification and limitations, and either the remaining blocker or a clear completion statement. Do not automatically start another phase or create project rules.

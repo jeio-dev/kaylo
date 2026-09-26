@@ -7,13 +7,37 @@ description: Review a Kaylo plan or implemented changes against the agreed outco
 
 Review either `plan` or `changes`. If unspecified, inspect `PLAN.md` and the working changes to choose the relevant target; ask only if the target remains ambiguous.
 
-1. Prefer a fresh reviewer conversation or subagent when available within the user's tools and budget. Give it this package's `agents/reviewer.md` brief, the objective, plan, relevant repository instructions, and the exact files or diff being reviewed, including untracked files in scope. Include requirements and facts, not the author's defense of the approach. Without a fresh context, perform the review and disclose that limitation.
-2. For a plan, check whether it delivers the requested outcome, uses existing capabilities, has executable tasks and correct dependencies, and specifies meaningful verification. Identify decisions that a small-model builder would otherwise have to guess.
-3. For changes, inspect the actual implementation and relevant callers against acceptance criteria. Check correctness, regressions, and applicable security, accessibility, or data-handling concerns. Also look for duplicated capability, unnecessary dependencies, and speculative abstractions. Fewer lines alone is not a reason to change readable, correct code. Read recorded verification and run a focused missing check when useful. Do not blindly rerun passing checks for unchanged inputs.
-4. Report concrete issues with a file or task reference, an observable failure or unmet requirement, and the smallest useful correction. Separate blockers from optional improvements. Do not make preferences or hypothetical future features release blockers.
-5. Check existing findings before adding another. Rechecking a fix should focus on the finding and affected behavior; widen review only when new evidence warrants it.
-6. Record the review target, findings, coverage, and limitations in the review section of `PLAN.md`. A delegated reviewer returns its report without editing shared plan state; the guiding assistant records it. Keep unresolved findings visible until fixed or explicitly accepted by the user.
+## Workflow
 
-Do not implement fixes during review. A valid result can be no findings; never invent a problem to justify the review. Passing tests alone do not establish that the intended behavior is wired into the product.
+1. Prefer a fresh reviewer conversation or subagent within the user's tools and budget. When using one, read [references/delegation.md](references/delegation.md). Otherwise review directly and disclose the lack of a fresh context.
+2. Inspect the selected target against the review checks below.
+3. Read recorded verification. Run a focused missing check when useful. Reuse passing results only when history establishes unchanged relevant inputs: implementation, dependencies, configuration, runtime, data, and criteria. If uncertain, run an affected check when feasible or state the limit.
+4. Check existing findings before reporting concrete issues. Use the finding rules below to record results in `PLAN.md`.
 
-Finish with whether the target is ready, the concrete blockers if any, and one next step: `/kaylo:plan` for plan corrections, `/kaylo:build` for implementation fixes, or `/kaylo:close` when the implementation is ready. A successful plan review leads to agreement if still needed, then build.
+## Review checks
+
+- **Plan:** requested outcome, reuse of existing capabilities, executable tasks, correct dependencies, and meaningful verification. Identify decisions a small-model builder would otherwise guess.
+- **Changes:** actual implementation and relevant callers, acceptance criteria, correctness, regressions, and applicable security, accessibility, and data handling. Check that the user can reach the intended behavior; passing tests alone do not establish this.
+- Identify duplicated capability, unnecessary dependencies, and speculative abstractions. Fewer lines alone do not justify changing readable, correct code.
+- Report observable failures or unmet requirements. Preferences and hypothetical future features are not blockers. No findings is a valid result.
+- Do not implement fixes during review.
+
+## Findings and plan updates
+
+- Record target, coverage, and limitations in the review section of `PLAN.md`.
+- Each finding needs a file or task reference, consequence, smallest useful correction, blocker/optional label, and resolution: `open`, `fixed` with evidence, or `accepted by user` with the decision.
+- The guiding assistant assigns stable `R1`, `R2`, etc. Never renumber or reuse IDs. Give older unnumbered findings an ID when needed; avoid duplicates.
+- Recheck a fix under its existing ID, recording evidence and outcome. Focus on the finding and affected behavior; widen review only for new evidence. Blocker fixes require this recheck before closure.
+- The guiding assistant records resolutions after inspecting artifacts and evidence. Delegated reviewers return reports without editing shared plan state.
+- Keep unresolved findings visible. Optional findings alone do not reopen completed tasks or block closure.
+- Reopen affected work only when a blocker shows acceptance is unmet or relevant changes make required evidence insufficient.
+- A material scope mismatch requires `Status: Needs revision: <reason>` and a return to plan. An ordinary implementation defect does not. Plan restores `Current` after revision; status does not imply agreement or completion.
+
+## Response
+
+State readiness, concrete blockers, and one next step:
+
+- Plan corrections → `/kaylo:plan`.
+- Implementation fixes → `/kaylo:build`.
+- Implementation ready → `/kaylo:close`.
+- Plan ready → obtain any missing agreement, then build.
