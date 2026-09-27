@@ -1,15 +1,14 @@
 {
-  "name": "kaylo",
+  "name": "kaylo-local",
   "interface": {
-    "displayName": "Kaylo"
+    "displayName": "Kaylo local checkout"
   },
   "plugins": [
     {
       "name": "kaylo",
       "source": {
-        "source": "url",
-        "url": "https://github.com/jeio-dev/kaylo.git",
-        "ref": "v0.6.0"
+        "source": "local",
+        "path": "./package"
       },
       "policy": {
         "installation": "AVAILABLE",

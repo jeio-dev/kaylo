@@ -1,6 +1,6 @@
 # Choose a worker
 
-The files in `agents/` are portable role briefs with Claude-compatible frontmatter. Loading the Claude plugin exposes `kaylo:researcher`, `kaylo:builder`, and `kaylo:reviewer`; their default model is inherited from the guiding session. Other hosts can use the Markdown body as a task brief. This package does not install Codex agent profiles or automatically connect vendors.
+The files in `agents/` are shared role briefs with Gemini-compatible frontmatter. Generated `claude-agents/` adapters preserve their bodies and map the researcher's read-only tool names to Claude's names. Loading the Claude plugin exposes `kaylo:researcher`, `kaylo:builder`, and `kaylo:reviewer`; their default model is inherited from the guiding session. Other hosts can use the Markdown body as a task brief. This package does not install Codex agent profiles or automatically connect vendors.
 
 From a skill's directory, a brief is at `../../agents/<role>.md`; resolve that path against the directory containing `SKILL.md`, not the project being built. If only pasted instructions are available and the brief is needed, supply its location or body.
 

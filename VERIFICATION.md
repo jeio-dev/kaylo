@@ -282,9 +282,8 @@ output they need to implement or verify, or `None`); required packages and tools
 are listed separately. Build selects the first task whose dependencies are
 checked and whose `Result` records no unresolved blocker, names the blocked
 tasks it skips, reconsiders one once its blocking condition changes, asks before
-starting a named task early, and routes invalid dependency lines to plan. The rules follow
-coldsession's task graph (same-phase, earlier-only, acyclic) without its
-frontmatter, status field, or lint script. Recorded under Unreleased.
+starting a named task early, and routes invalid dependency lines to plan. The
+task graph is same-phase, earlier-only, and acyclic. Recorded under Unreleased.
 
 | Check | Observed result |
 | --- | --- |
@@ -468,3 +467,52 @@ not establish behavior parity or native Codex hook execution.
 Gemini CLI was unavailable locally and remains unverified as a native host.
 README now distinguishes it from Antigravity and points to direct-file use.
 No model-compliance trials or normal-profile installations were performed.
+
+
+## Release installation and update parity — 2026-09-27
+
+Prepared the 0.6.0 package with GitHub marketplace catalogs selecting `v0.6.0`,
+a native Gemini extension, a contained development catalog, and install/update/
+removal instructions for all five hosts. No production release or public tag was
+created. Historical results above describe their earlier package revisions.
+
+| Check | Observed result |
+| --- | --- |
+| Claude Code 2.1.283, temporary `CLAUDE_CONFIG_DIR` | Git catalog install succeeded; native update moved fixture 0.6.0 to 0.6.1 and installed the changed build instructions |
+| Codex CLI 0.157.1, temporary `CODEX_HOME` | Git catalog install, marketplace upgrade, and reinstall succeeded; fresh app-server discovery returned five enabled Kaylo skills without errors |
+| Gemini CLI 0.61.0, installed only under `/tmp`, temporary `GEMINI_CLI_HOME` | Git source install at a tag, uninstall/reinstall at a newer tag, local install, and local update commands succeeded; skill listing found all five shared skills |
+| Antigravity CLI 1.2.11, private profile mounted with Bubblewrap | Install/reinstall succeeded with five skills and three worker definitions; network disabled during Antigravity operations |
+| OpenCode 2.0.18, temporary XDG directories and project | Loopback API discovery returned all five skills from the updated fixture checkout with exact instruction bodies |
+| Installed resource comparison | All 22 shared skill, worker, adapter, template, script, and hook files match source bytes in Claude, Codex, Gemini, and Antigravity packages before and after update |
+| Local Codex development catalog | A parent-directory source was rejected; staging under `development/package/` fixed containment, and native install succeeded |
+| Claude manifests, Codex plugin-creator validator, Antigravity validator | Passed; Claude manifest/catalog validation used `--strict` |
+| Node 24.21.0 fixture checks | All 61 tests passed: 52 plan tests and nine package/loader/staging tests |
+| Source JSON, relative resource links, repository diff whitespace | Passed |
+
+The native Git trials use two temporary fixture releases with a changed build
+skill. Claude and Codex Git transport was redirected to an isolated bare mirror;
+Gemini used a loopback smart HTTP Git mirror because its Git process did not
+honor the test's global URL rewrite. These establish native catalog/tag/update
+behavior without publishing test releases. Public GitHub transport against a
+published 0.6.0 remains to be checked after publication.
+
+Gemini rejected Claude's researcher tool frontmatter. Shared briefs now use
+Gemini tool names; generated Claude adapters preserve the Markdown instruction
+bodies and restore Claude's read-only researcher tool names. The final Gemini
+extension install/list checks contain no agent-definition errors. Package
+validation rejects stale adapters. Native worker execution was not tested.
+
+The default hook configuration works across Claude, Codex, and Gemini: exact
+startup/resume groups, shared script, plugin-root environment variables or Gemini
+extension-path substitution, and each host's native timeout default. Loader tests
+exercise all three path-resolution cases, JSON context output, and suppression.
+No signed-in session lifecycle or native hook trust interaction was exercised.
+The skills and shared resources establish package parity, not identical model
+behavior, worker execution, permissions, or UI behavior. Antigravity IDE loading
+remains untested.
+
+Evidence: `/tmp/kaylo-release-parity-6po9qybr`,
+`/tmp/kaylo-install-parity.log`, `/tmp/kaylo-package-tests.log`, and
+`/tmp/kaylo-local-catalog-ql4aopo4`. Temporary profiles contain no copied account
+credentials. Normal host profiles, trust settings, and repository Git history
+were unchanged.

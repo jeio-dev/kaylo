@@ -1,2 +1,6 @@
 __pycache__/
 .DS_Store
+development/package/
+# Local contributor guidance; keep out of Git-based user installs.
+/AGENT.md
+/AGENTS.md
