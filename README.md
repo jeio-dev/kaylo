@@ -2,7 +2,7 @@
 
 Build software with patient, practical guidance, using the AI tools you already have.
 
-Kaylo is an early `0.5.0` package; see [verification](VERIFICATION.md) for what has actually been checked.
+Kaylo is an early `0.5.1` package; see [verification](VERIFICATION.md) for what has actually been checked.
 
 ## Five commands
 
@@ -87,6 +87,10 @@ agy plugin list
 Start a new Antigravity CLI session in your target project and select the loaded Kaylo skill, or ask the assistant to load it by name before giving your request. Installation copies the checkout, including templates and delegation references. After editing it, reinstall and start a new session. Remove it with `agy plugin uninstall kaylo`.
 
 For Antigravity 2.0 or the standalone IDE, place the full checkout at `<project>/.agents/plugins/kaylo/` and inspect its skills in Customizations. CLI validation and installation are verified here; IDE loading remains untested. Kaylo's optional session reminder is configured for Claude and Codex.
+
+### Gemini CLI
+
+Gemini CLI is a separate host from Antigravity. Native Gemini installation, skill discovery, and workflow behavior have not been verified; the Antigravity checks above do not establish Gemini compatibility. Use the direct-file method below with the full checkout available so templates, worker briefs, and the validator can still be read. Pasted skills require manual plan inspection when supporting files are unavailable.
 
 ### Any tool, without installing
 
@@ -178,7 +182,7 @@ Delegated builds record the starting workspace state, confirm dependencies are p
 - `hooks/`: the optional reminder; no workflow runtime or persistent state.
 - `scripts/`: read-only plan validator; `tests/`: validator fixtures and behavioral trial prompts.
 
-No custom installer, automatic model router, terminal modifications, or release machinery. Validator fixtures check structure; behavioral trials do not guarantee model compliance. `0.5.0` is an early package version, not a release-readiness claim.
+No custom installer, automatic model router, terminal modifications, or release machinery. Validator fixtures check structure; behavioral trials do not guarantee model compliance. `0.5.1` is an early package version, not a release-readiness claim.
 
 The simplicity guidance was informed by [Ponytail](https://github.com/DietrichGebert/ponytail); Kaylo does not bundle or require it. The instructions are adapted to patient explanations and acceptance criteria rather than line-count targets.
 
