@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-09-27
+
+- Phase-plan tasks record `Depends on:` with tasks listed above in the same
+  phase whose output they need to implement or verify, or `None`; required
+  packages and tools are listed separately. Build picks the first unblocked
+  task whose dependencies are checked, names the blocked tasks it skips,
+  reconsiders one once its blocking condition changes, and needs the user's
+  go-ahead to start a named task early. Invalid dependency lines return to
+  plan. Dependencies set order, not concurrency.
+
 ## [0.3.0] - 2026-09-27
 
 - Refine delegated builds with workspace baselines, dependency readiness,

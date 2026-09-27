@@ -274,3 +274,65 @@ from its installed NVM path because it was not on this shell's PATH.
 Local audit notes under `.local/` are excluded from the release commit. Earlier
 host-loading results remain historical; no new native installation or live model
 workflow trial was performed for this release preparation.
+
+## Task dependencies — 2026-09-27
+
+Phase-plan tasks gain `Depends on:` (tasks listed above in the same phase whose
+output they need to implement or verify, or `None`); required packages and tools
+are listed separately. Build selects the first task whose dependencies are
+checked and whose `Result` records no unresolved blocker, names the blocked
+tasks it skips, reconsiders one once its blocking condition changes, asks before
+starting a named task early, and routes invalid dependency lines to plan. The rules follow
+coldsession's task graph (same-phase, earlier-only, acyclic) without its
+frontmatter, status field, or lint script. Recorded under Unreleased.
+
+| Check | Observed result |
+| --- | --- |
+| Claude Code 2.1.283: `claude plugin validate . --strict` | Passed |
+| Skill-creator validator on each skill | All five valid |
+| `git diff --check` | Passed |
+
+Five fresh headless Claude Code 2.1.283 sessions ran with
+`--plugin-dir` pointing at this checkout and `KAYLO_SESSION_REMINDER=0`, each on
+its own copy of a Python greeting fixture. The phase had T1 checked, T2
+`Blocked:` pending a user decision, T3 depending on T1, and T4 depending on T2
+and T3.
+
+| Request | Observed result |
+| --- | --- |
+| `/kaylo:build` | Selected T3, named T2 as skipped because it is blocked, added `--shout`, ran both checks (exit 0), and checked off T3. Rerunning `python3 greet.py --shout` and `python3 greet.py` printed `HELLO, WORLD` and `Hello, World` |
+| `/kaylo:build T4` | Reported T2 blocked and T3 unchecked, offered to proceed only on explicit go-ahead, and made no edits |
+| `/kaylo:build` with T3 changed to `Depends on: T3` | Identified the self-dependency as a plan error, routed to `/kaylo:plan`, and made no edits |
+| `/kaylo:build`, rerun after the blocker exclusion was made explicit | Again selected T3, skipped T2 as blocked, and noted T4 waits on T2; both checks exit 0 |
+| ``/kaylo:build — the config key is `name`.`` | Treated the answer as a changed blocking condition, selected T2, recorded the decision, and checked it off. Rerunning with `{"name": "Ada"}` printed `Hello, Ada`; without `config.json`, `Hello, World` |
+
+The explicit exclusion followed a separate parity review: the earlier selector
+wording, read literally, would pick T2, whose dependency was met, although the
+model skipped it. Both runs that built T3 also noted the skipped T2 in its
+`Result`; the rule requires only the report, but the extra note is harmless. Each case was one run, so these results
+don't measure reliability. The legacy fallback (a task with no `Depends on`
+line), other hosts' models, and delegated workers were not exercised.
+
+The same parity review, run by a separate agent against the earlier wording,
+reported the following loading checks; they were not repeated here. Codex CLI
+0.157.1 with a fresh temporary `CODEX_HOME` listed five enabled `kaylo:*` skills
+without discovery errors. OpenCode 2.0.18 discovered five skills with matching
+instruction bodies. Antigravity CLI 1.2.11 validated and installed in an
+isolated, network-disabled profile, with files matching the checkout. Gemini CLI
+was not on PATH. These establish that the shared instructions load on those
+hosts, not that their models follow them.
+
+## v0.4.0 release preparation — 2026-09-27
+
+Updated Claude and Codex manifest versions and README to `0.4.0`, and moved the
+task-dependency change into the dated release entry. Claude Code 2.1.283 strict
+plugin validation passed; Antigravity validation processed five skills and three
+agents. All five skill validators, five JSON files, manifest version consistency,
+and `git diff --check` passed. Of 19 relative Markdown links, 17 resolve; the two
+others are the phase-path placeholders in `templates/PLAN.md`, which point into a
+user's project. Node 24.21.0 checked hook syntax, the reminder output as JSON,
+and the disabled mode (no output), invoked from its NVM path.
+
+Local audit notes under `.local/` are excluded from the release commit. No new
+native installation or live model trial was performed for this release
+preparation beyond the task-dependency runs above.

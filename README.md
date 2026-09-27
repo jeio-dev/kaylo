@@ -2,7 +2,7 @@
 
 Build software with patient, practical guidance, using the AI tools you already have.
 
-Kaylo is an early `0.3.0` package; see [verification](VERIFICATION.md) for what has actually been checked.
+Kaylo is an early `0.4.0` package; see [verification](VERIFICATION.md) for what has actually been checked.
 
 ## Five commands
 
@@ -126,7 +126,7 @@ Delegated builds record the starting workspace state, confirm dependencies are p
 - `.claude-plugin/`, `.codex-plugin/`, `plugin.json`, `.agents/plugins/`: native packaging for Claude, Codex, and Antigravity, and the local Codex catalog. OpenCode loads the shared skills directory directly.
 - `hooks/`: the optional reminder; no workflow runtime or persistent state.
 
-No custom installer, conformance suite, automatic model router, terminal modifications, or release machinery. `0.3.0` is an early package version, not a release-readiness claim.
+No custom installer, conformance suite, automatic model router, terminal modifications, or release machinery. `0.4.0` is an early package version, not a release-readiness claim.
 
 The simplicity guidance was informed by [Ponytail](https://github.com/DietrichGebert/ponytail); Kaylo does not bundle or require it. The instructions are adapted to patient explanations and acceptance criteria rather than line-count targets.
 
