@@ -1,0 +1,21 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "kaylo",
+  "owner": {
+    "name": "Kaylo contributors",
+    "url": "https://github.com/jeio-dev"
+  },
+  "plugins": [
+    {
+      "name": "kaylo",
+      "description": "Patient development guidance: define, plan, build, review, and close.",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/jeio-dev/kaylo.git",
+        "ref": "v0.6.0"
+      },
+      "category": "productivity"
+    }
+  ],
+  "description": "Five shared skills for patient software development."
+}

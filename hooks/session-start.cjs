@@ -1,7 +1,7 @@
 'use strict';
 
 // Context only: no project reads, writes, subprocesses, or persistent state.
-// Both hosts use the same SessionStart output. The skills work without this hook.
+// Claude, Codex, and Gemini use the same SessionStart context output. The skills work without this hook.
 if (process.env.KAYLO_SESSION_REMINDER !== '0') {
   process.stdout.write(JSON.stringify({
     suppressOutput: true,

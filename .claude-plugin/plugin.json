@@ -1,6 +1,13 @@
 {
   "name": "kaylo",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "description": "Patient development guidance: define, plan, build, review, and close.",
-  "author": { "name": "Kaylo contributors" }
+  "author": {
+    "name": "Kaylo contributors"
+  },
+  "agents": [
+    "./claude-agents/builder.md",
+    "./claude-agents/researcher.md",
+    "./claude-agents/reviewer.md"
+  ]
 }
