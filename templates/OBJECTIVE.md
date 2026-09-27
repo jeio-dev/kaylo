@@ -10,7 +10,7 @@
 
 ## Included
 
-- [Smallest useful capability]
+- [Essential product capability]
 
 ## Out of scope
 

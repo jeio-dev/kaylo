@@ -153,3 +153,124 @@ plugin validator, and Claude strict plugin validation passed. Claude reported
 no errors or warnings. Manifest versions, all four JSON files, skill resource
 links, and whitespace checks also passed. This release preparation did not
 rerun behavioral trials or native Codex installation/discovery.
+
+## Phased plans — 2026-09-26
+
+`PLAN.md` becomes a phase index; phase details move to
+`.kaylo/phases/NN-slug/NN-PLAN.md`. Recorded under Unreleased; manifest versions
+unchanged. Checked from the repository root on Linux:
+
+| Check | Observed result |
+| --- | --- |
+| Claude Code 2.1.283: `claude plugin validate . --strict` | Passed, exit 0 |
+| `skill-creator/scripts/quick_validate.py` on each skill | All five valid |
+| Relative Markdown links in skills, agents, and root docs | All resolve, including the new phase template |
+| `node --check hooks/session-start.cjs`; hook output parsed as JSON; `KAYLO_SESSION_REMINDER=0` | Passed; disabled hook prints nothing |
+| `git diff --check` | Passed |
+| Numbered workflow steps | All at most 40 words; entrypoints total 3,290 words |
+| `grep -rn "PLAN.md" --include=*.md --include=*.cjs .` outside `.local/` | Every hit means the index, an older single-file plan, an `NN-PLAN.md` path, or historical notes above |
+| Skills and templates searched for a State column or index `Status:` line | None |
+
+A paper walkthrough traced the revised skill text, not a model run: POS
+define → plan (index plus `01-PLAN.md` only) → build `T1` → review changes →
+close (phase 01 checked, `Current:` unchanged) → build `T1` (routed to plan,
+no phase open) → plan (creates `02-PLAN.md`, moves `Current:`, rechecks 03+).
+No step creates a later phase folder early. An interrupted build leaves
+`Result: In progress`; the next build selects that unfinished task and treats
+working-tree edits as its work. An inline 0.2-style `PLAN.md` is the current
+phase plan for define, build, review, and close; only plan converts it, during
+a relevant update.
+
+No behavioral trial, native Codex install, or fresh-agent run was performed for
+this change.
+
+## Phased-plan parity review — 2026-09-26
+
+Claude strict validation, five skill validators, resource links, four JSON files,
+hook syntax, both plugin-root launchers, disabled hook, and git diff --check
+passed. Isolated Codex 0.157.1 install and app-server skills/list found five
+enabled Kaylo skills without errors; cached instructions/resources match.
+Evidence: /tmp/kaylo-parity-z55_y9_z.
+
+Paper POS/legacy/interruption traces found two issues: plan deleted its previous
+Approach rules; build permits worker dispatch before Result: In progress.
+No implementation fixes or model workflow trials performed.
+
+OpenCode and OpenCode2 both use v2.0.18; the latter is a wrapper. An isolated
+/skill probe returned HTML, so discovery was not established. Gemini is absent
+from PATH. Antigravity 1.2.11 agy plugin validate . failed: missing root
+plugin.json. Official skill docs were checked for format/discovery compatibility;
+native plugin and model behavior parity remain unverified. No normal tool
+configuration changed.
+
+## Phased-plan review fixes — 2026-09-26
+
+Resolved both review blockers. Plan restores its four Approach rules unchanged,
+beside the phase rules. Build step 4 now writes `Result: In progress` in the
+current phase plan before any edit or worker dispatch, so a delegated
+interruption leaves the marker. Claude strict validation, all five skill
+validators, and `git diff --check` passed; every numbered workflow step stays at
+most 40 words. No model workflow trial was performed.
+
+## OpenCode and Antigravity loading — 2026-09-26
+
+Added Antigravity's root `plugin.json` and documented native Antigravity
+installation and OpenCode 2's shared-directory source. The five skill names,
+contents, resources, and existing manifest versions are unchanged by this fix.
+
+| Check | Observed result |
+| --- | --- |
+| OpenCode 2.0.18, isolated project with `skills: ["<checkout>/skills"]`, persistent loopback server, authenticated `GET /api/skill` | Discovered `define`, `plan`, `build`, `review`, and `close`; paths and instruction bodies match the checkout |
+| OpenCode initialization | Initial response was empty, then contained built-ins, then all five Kaylo skills; earlier immediate probes did not wait for initialization |
+| Antigravity CLI 1.2.11: `agy plugin validate .` | Passed: five skills and three agents processed |
+| `agy plugin install <checkout>` and `agy plugin list`, sandboxed profile | Installed and listed components `skills` and `agents`; installed skills, references, templates, and briefs match byte-for-byte; relative resource links resolve |
+| Codex 0.157.1, fresh isolated marketplace install and app-server `skills/list` with the new root manifest | Five enabled Kaylo skills, no discovery errors; cached skills and supporting resources match |
+| Claude strict plugin validation; plugin-creator validator | Both passed |
+| Five skill validators; five JSON files; relative skill/agent resource links; `git diff --check` | Passed |
+
+OpenCode used temporary XDG directories. Antigravity ran in a Bubblewrap
+namespace with an empty profile mounted over `.gemini`, unchanged `HOME`, and
+network disabled. Normal host configuration was not changed. Evidence:
+`/tmp/kaylo-host-parity-3zxencih`.
+
+This establishes native skill loading and resource preservation. No model
+workflow trial, OpenCode 1 runtime, Gemini CLI, Antigravity IDE loading, or
+Antigravity session hook was tested. Antigravity uses the new root manifest;
+OpenCode uses its native skill source, not a runtime plugin. The optional
+reminder remains configured for Claude and Codex.
+
+## Delegation refinements — 2026-09-27
+
+Added workspace starting-state records and file ownership, dependency readiness
+in the actual workspace, compact build reports, and continuation details in the
+existing phase plan. Related corrections can be batched; failed repair history
+and the two-unsuccessful-repair limit remain authoritative. Build and close now
+explicitly check combined behavior where tasks connect.
+
+| Check | Observed result |
+| --- | --- |
+| Skill-creator validator for build, review, and close | All three passed |
+| Relative Markdown links in README, WORKERS, skills, and agents | All 16 resolve |
+| `git diff --check` | Passed |
+| Direct instruction review | Task scope, one worker at a time, guiding-assistant ownership of plans, fresh-review preference, and blocker rechecks remain intact |
+
+Instruction walkthroughs covered a dirty shared workspace, a separate workspace
+missing uncommitted prerequisites, interrupted work, correction requests carrying
+previous failures, and connected tasks with only isolated checks. These were
+direct checks of the written rules, not model workflow trials. No native host
+installation, live worker execution, routing change, or measured savings was
+tested for this change.
+
+## v0.3.0 release preparation — 2026-09-27
+
+Updated Claude and Codex manifest versions and README to `0.3.0`, and moved
+Unreleased changes into the dated release entry. Claude strict plugin validation
+passed without warnings; Antigravity validation processed five skills and three
+agents. All five skill validators, five JSON files, 16 relative resource links,
+manifest version consistency, and `git diff --check` passed. Node 24.21.0 checked
+hook syntax, the phase reminder output, and the disabled mode. Node was invoked
+from its installed NVM path because it was not on this shell's PATH.
+
+Local audit notes under `.local/` are excluded from the release commit. Earlier
+host-loading results remain historical; no new native installation or live model
+workflow trial was performed for this release preparation.

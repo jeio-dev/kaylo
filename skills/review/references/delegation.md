@@ -6,9 +6,10 @@ Use [the reviewer brief](../../../agents/reviewer.md), resolved relative to this
 
 Supply:
 
-- Objective and plan, including existing findings and IDs.
+- Objective and current phase plan, including existing findings and IDs.
 - Applicable repository instructions.
 - Exact files or diff being reviewed, including untracked files in scope.
+- The build's recorded starting state when available, so the reviewer can distinguish assigned changes from pre-existing edits. If it is unavailable, disclose the attribution limit and still inspect relevant behavior.
 - Requirements and facts, without the author's defense of the approach.
 
-The reviewer returns findings, readiness, coverage, and limitations without editing shared plan state. The guiding assistant inspects the artifacts and evidence and records the results in `PLAN.md`.
+The reviewer returns findings, readiness, coverage, and limitations without editing shared plan state. The guiding assistant inspects the artifacts and evidence and records the results in the current phase plan.
