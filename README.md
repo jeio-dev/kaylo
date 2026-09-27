@@ -2,7 +2,7 @@
 
 Build software with patient, practical guidance, using the AI tools you already have.
 
-Kaylo is an early `0.5.1` package; see [verification](VERIFICATION.md) for what has actually been checked.
+Kaylo is an early `0.5.2` package; see [verification](VERIFICATION.md) for what has actually been checked.
 
 ## Five commands
 
@@ -182,10 +182,6 @@ Delegated builds record the starting workspace state, confirm dependencies are p
 - `hooks/`: the optional reminder; no workflow runtime or persistent state.
 - `scripts/`: read-only plan validator; `tests/`: validator fixtures and behavioral trial prompts.
 
-No custom installer, automatic model router, terminal modifications, or release machinery. Validator fixtures check structure; behavioral trials do not guarantee model compliance. `0.5.1` is an early package version, not a release-readiness claim.
-
-The simplicity guidance was informed by [Ponytail](https://github.com/DietrichGebert/ponytail); Kaylo does not bundle or require it. The instructions are adapted to patient explanations and acceptance criteria rather than line-count targets.
-
-Delegation refinements were informed by [Astra Flash Orchestrator](https://github.com/ethanplusai/astra-flash-orchestrator). Kaylo keeps its own task, repair, and review rules and does not bundle its router or installer.
+No custom installer, automatic model router, terminal modifications, or release machinery. Validator fixtures check structure; behavioral trials do not guarantee model compliance. `0.5.2` is an early package version, not a release-readiness claim.
 
 Native integration references: [Claude plugin layout](https://code.claude.com/docs/en/plugins-reference), [Claude agents](https://code.claude.com/docs/en/sub-agents), [Codex plugin packaging](https://developers.openai.com/plugins/build/plugins), [Codex skill invocation](https://developers.openai.com/codex/skills), [Codex hooks](https://developers.openai.com/codex/hooks), [OpenCode 2 skills](https://opencode.ai/v2/docs/skills), and [Antigravity plugins](https://antigravity.google/docs/plugins). Host behavior and availability can vary by version; the verification record identifies the versions inspected here.
