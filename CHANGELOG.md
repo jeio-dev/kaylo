@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.5.2] - 2026-09-27
+
+- Remove the Ponytail and Astra Flash Orchestrator attribution paragraphs from
+  the README's package and scope section.
+
 ## [0.5.1] - 2026-09-27
 
 - Reject closure for indented `Status: Needs revision` records, with regressions
