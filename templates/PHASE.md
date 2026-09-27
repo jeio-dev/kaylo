@@ -20,11 +20,12 @@ Status: Current
 
 - [ ] T1: [Observable result]
   - Complexity: S
+  - Depends on: None
   - Acceptance: [What must be true]
   - Verify: [Working directory, exact command and expected result, or manual action and observation; identify any check that must first be created]
   - Result: Not started
 
-[For tasks that need them, add starting points, dependencies, concrete steps, and a complexity reason. Use M or L for more complex work. IDs restart per phase. `Result` becomes `In progress` before the first edit. Retain failed-repair history whenever it exists; a blocked result includes the failure and next action.]
+[`Depends on` lists tasks above this one in this phase whose output it needs to implement or verify, or None. It sets order, not concurrency. For tasks that need them, add starting points, required packages or tools, concrete steps, and a complexity reason. Use M or L for more complex work. IDs restart per phase. `Result` becomes `In progress` before the first edit. Retain failed-repair history whenever it exists; a blocked result includes the failure and next action.]
 
 ## Review
 

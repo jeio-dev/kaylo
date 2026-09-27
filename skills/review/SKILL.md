@@ -18,7 +18,7 @@ Read `PLAN.md` and follow its `Current:` link to the current phase plan; review 
 
 ## Review checks
 
-- **Plan:** requested outcome, reuse of existing capabilities, executable tasks, correct dependencies, and meaningful verification. Identify decisions a small-model builder would otherwise guess.
+- **Plan:** requested outcome, reuse of existing capabilities, executable tasks, `Depends on` lines naming real prerequisites listed above in the same phase, and meaningful verification. Identify decisions a small-model builder would otherwise guess.
 - **Changes:** actual implementation and relevant callers, acceptance criteria, correctness, regressions, and applicable security, accessibility, and data handling. Check that the user can reach the intended behavior; passing tests alone do not establish this.
 - Identify duplicated capability, unnecessary dependencies, and speculative abstractions. Fewer lines alone do not justify changing readable, correct code.
 - Report observable failures or unmet requirements. Preferences and hypothetical future features are not blockers. No findings is a valid result.

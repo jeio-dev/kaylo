@@ -22,7 +22,10 @@ Work in the user's project. Complete the requested task without expanding the pr
 - Work only in the current phase while it is open. If its index line is checked `[x]`, report that no phase is open and route to `/kaylo:plan`.
 - Use the supplied ID, such as `T1` or `R2`; a bare ID means the current phase. Route a qualified ID for another phase, such as `01-T3`, to `/kaylo:plan`. Report an unknown ID; do not substitute other work.
 - A task already `In progress` was interrupted. Inspect the working tree and prior results before continuing; treat those edits as that task's work, not unrelated changes.
-- Without an ID, choose the first unfinished task with completed dependencies. Do not automatically select optional findings.
+- A dependency is met when its task is checked. Without a `Depends on` line, every task listed above counts as a dependency.
+- Without an ID, choose the first unfinished task whose dependencies are met and whose `Result` records no unresolved blocker, and name the blocked tasks skipped. Reconsider a blocked task once its blocking condition has changed, such as the user supplying the missing decision. Do not automatically select optional findings.
+- For a supplied ID with an unmet dependency, report it and proceed only with the user's explicit go-ahead, recorded in `Result`.
+- A `Depends on` naming the task itself, an unknown ID, a task listed below, or another phase is a plan finding; return to `/kaylo:plan`.
 - Before implementation, confirm prerequisite changes and contracts are present in the actual working directory; a completed plan entry alone does not establish workspace readiness.
 - A plan finding returns to `/kaylo:plan`. An implementation finding needs a bounded correction, affected criteria, and relevant verification.
 - Confirm agreement from the conversation or plan. A finding does not authorize extra scope. If agreement is missing, explain the work and ask; existing authorization counts.

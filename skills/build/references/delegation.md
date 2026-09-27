@@ -16,11 +16,12 @@ Use [the builder brief](../../../agents/builder.md), resolved relative to this r
 Supply:
 
 - Project location and task or finding, with its phase.
-- Steps, constraints, starting files, and dependencies.
+- Steps, constraints, starting files, and required packages or tools.
+- Contracts the task uses from completed tasks, such as interfaces, formats, or commands, and where they live; not whole `Result` histories.
 - Acceptance criteria and verification checks.
 - Earlier failed repair attempts and outcomes.
 
-Supply relevant decisions and interface contracts, rather than the full conversation. Keep the assignment within the selected task or finding; implementing, testing, and debugging it does not authorize the rest of the phase.
+Supply relevant decisions and interface contracts, rather than the full conversation. `Depends on` sets order only; it does not authorize running tasks concurrently. Keep the assignment within the selected task or finding; implementing, testing, and debugging it does not authorize the rest of the phase.
 
 ## Workspace and execution
 

@@ -50,10 +50,11 @@ Each task requires:
 - ID and checkbox; intended result and acceptance criteria.
 - Verification: working directory, exact command and expected result, or manual action and observation.
 - S/M/L complexity and free-text `Result` for evidence or blockers.
-- Starting points, dependencies, concrete steps, and a complexity reason when needed to execute without guessing. Clear local S tasks need no redundant explanation.
+- `Depends on:` IDs of tasks listed above this one in this phase whose output it needs to implement or verify, or `None`. Never name a task listed below, another phase, or a task only for its position. Needs from a closed phase belong in starting points or constraints. `Depends on` sets order, not concurrency.
+- Starting points, required packages or tools, concrete steps, and a complexity reason when needed to execute without guessing. Clear local S tasks need no redundant explanation.
 - Existing failed-repair history.
 
-Task and finding IDs restart per phase (`T1`, `R1`). A bare ID means the current phase; `02-T3` or `02-R1` names a specific phase. Never renumber or reuse an ID within a phase.
+Task and finding IDs restart per phase (`T1`, `R1`). A bare ID means the current phase; `02-T3` or `02-R1` names a specific phase. Never renumber or reuse an ID within a phase. An inserted task takes the next free ID; list position sets order.
 
 Complexity: **S** = clear local edit following an existing pattern; **M** = bounded feature or bug fix requiring reasoning; **L** = uncertain or cross-cutting work. Account for consequence: a short sensitive change may need a stronger model. Research tasks deliver findings, not code.
 
