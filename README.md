@@ -2,7 +2,7 @@
 
 Build software with patient, practical guidance, using the AI tools you already have.
 
-Kaylo is an early `0.5.0` package; see [verification](VERIFICATION.md) for what has actually been checked.
+Kaylo is an early `0.5.1` package; see [verification](VERIFICATION.md) for what has actually been checked.
 
 ## Five commands
 
@@ -182,7 +182,7 @@ Delegated builds record the starting workspace state, confirm dependencies are p
 - `hooks/`: the optional reminder; no workflow runtime or persistent state.
 - `scripts/`: read-only plan validator; `tests/`: validator fixtures and behavioral trial prompts.
 
-No custom installer, automatic model router, terminal modifications, or release machinery. Validator fixtures check structure; behavioral trials do not guarantee model compliance. `0.5.0` is an early package version, not a release-readiness claim.
+No custom installer, automatic model router, terminal modifications, or release machinery. Validator fixtures check structure; behavioral trials do not guarantee model compliance. `0.5.1` is an early package version, not a release-readiness claim.
 
 The simplicity guidance was informed by [Ponytail](https://github.com/DietrichGebert/ponytail); Kaylo does not bundle or require it. The instructions are adapted to patient explanations and acceptance criteria rather than line-count targets.
 
