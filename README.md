@@ -2,7 +2,7 @@
 
 Build software with patient, practical guidance, using the AI tools you already have.
 
-Kaylo is an early `0.5.2` package; see [verification](VERIFICATION.md) for what has actually been checked.
+Kaylo is an early `0.6.0` package; see [verification](VERIFICATION.md) for what has actually been checked.
 
 ## Five commands
 
@@ -33,36 +33,77 @@ PLAN.md                                   Current link and ordered phase checkli
 
 Plan details one phase at a time; later phases stay one line in `PLAN.md` until they start. Close checks off the phase, and the next plan moves `Current:`. Build and review work only in the current phase plan. Completed phases stay in place as history. Commit `.kaylo/` with your project. An older `PLAN.md` with tasks inline keeps working as a single phase until plan next updates it.
 
-## Use Kaylo
+## Install and use Kaylo
 
-Run Kaylo in the project you want to build. The package contains one shared set of skills; their internal names remain `define`, `plan`, `build`, `review`, and `close`.
+Run Kaylo in the project you want to build. Every host uses the same five skill
+files and supporting resources. Installation includes the full package; copying
+only `SKILL.md` loses templates, worker briefs, delegation references, and the
+plan validator. The internal skill names remain `define`, `plan`, `build`,
+`review`, and `close`.
+
+Claude and Codex marketplaces select a tested release tag. The commands below
+use `v0.6.0`. For an
+unpublished checkout, use the development instructions below. See
+[release maintenance](RELEASING.md) for the publication process.
 
 ### Claude Code
 
-From your target project, load this checkout for the current session:
+Send these as two separate prompts in Claude Code:
 
-```powershell
-claude --plugin-dir '<kaylo-checkout>'
+```text
+/plugin marketplace add jeio-dev/kaylo
+/plugin install kaylo@kaylo
 ```
 
-Then use `/kaylo:define`, `/kaylo:plan`, `/kaylo:build T1`, `/kaylo:build R2`, `/kaylo:review plan`, `/kaylo:review changes`, or `/kaylo:close`. These are five skills, with arguments selecting a task, finding, or review target. Replace `<kaylo-checkout>` with the path of your clone of this repository. This does not install a global plugin; omit `--plugin-dir` next time to stop loading it.
+In your target project, use `/kaylo:define`, `/kaylo:plan`, `/kaylo:build T1`,
+`/kaylo:build R2`, `/kaylo:review plan`, `/kaylo:review changes`, or `/kaylo:close`.
+
+Update from your shell:
+
+```sh
+claude plugin marketplace update kaylo
+claude plugin update kaylo@kaylo
+```
+
+Start a new session afterward. Third-party marketplaces have auto-update off
+by default; enable it for Kaylo in `/plugin` → Marketplaces if desired.
+Remove with `claude plugin uninstall kaylo@kaylo`; optionally remove the
+catalog with `claude plugin marketplace remove kaylo`.
 
 ### Codex
 
-The repository includes a local marketplace so the native CLI can install it without a Kaylo installer:
-
-```powershell
-codex plugin marketplace add '<kaylo-checkout>'
-codex plugin add kaylo@kaylo-local
+```sh
+codex plugin marketplace add jeio-dev/kaylo
+codex plugin add kaylo@kaylo
 ```
 
-Start a new Codex session in your target project. Use `/skills` or the `$` skill picker and select the Kaylo skill (`kaylo:define`, `kaylo:plan`, `kaylo:build`, `kaylo:review`, or `kaylo:close`), then supply your request, such as `Implement T1`. Some app surfaces use `@` to select skills. **Codex does not register Claude-style `/kaylo:<command>` slash commands through this package.** That spelling remains Kaylo's workflow notation; use the matching skill in Codex. Selecting the Kaylo entry avoids collisions with other skills named `plan` or `build`.
+Start a new session in your target project. Use `/skills` or the `$` skill picker
+and select `kaylo:define`, `kaylo:plan`, `kaylo:build`, `kaylo:review`, or
+`kaylo:close`, then supply your request, such as `Implement T1`. Some app surfaces
+use `@` to select skills. Codex does not register Claude-style
+`/kaylo:<command>` slash commands through this package. Select the Kaylo entry
+to avoid collisions with other skills named `plan` or `build`.
 
-Codex copies local plugins into its cache. After editing your checkout, reinstall `kaylo@kaylo-local` and start a new session. Remove it with `codex plugin remove kaylo@kaylo-local`; remove the catalog with `codex plugin marketplace remove kaylo-local`. These are host commands, not an installer script shipped by Kaylo.
+Update the catalog and reinstall the cached package:
+
+```sh
+codex plugin marketplace upgrade kaylo
+codex plugin add kaylo@kaylo
+```
+
+Start a new session afterward. Remove with `codex plugin remove kaylo@kaylo`;
+optionally remove the catalog with `codex plugin marketplace remove kaylo`.
 
 ### OpenCode 2
 
-In your target project's existing `opencode.json` or `opencode.jsonc`, add the checkout's skills directory to the `skills` array. Preserve any existing entries and settings:
+Clone the full package at a released tag:
+
+```sh
+git clone --branch v0.6.0 https://github.com/jeio-dev/kaylo.git kaylo
+```
+
+In your target project's existing `opencode.json` or `opencode.jsonc`, add the
+checkout's skills directory to the `skills` array. Preserve existing settings:
 
 ```json
 {
@@ -70,27 +111,115 @@ In your target project's existing `opencode.json` or `opencode.jsonc`, add the c
 }
 ```
 
-Start a new OpenCode session in that project. Ask it to load the `define`, `plan`, `build`, `review`, or `close` skill, then give your request, such as `Load the Kaylo build skill and implement T1`. These are bare skill IDs; OpenCode does not use the Claude/Codex `kaylo:` namespace for a directory source. Avoid another source defining the same IDs. Point at the full checkout so relative templates and worker briefs remain available.
+Start a new session. Ask it to load the `define`, `plan`, `build`, `review`, or
+`close` skill, then give your request, such as `Load the Kaylo build skill and
+implement T1`. These are bare IDs; avoid another source defining the same IDs.
+OpenCode 2 loads the shared directory without a runtime plugin.
 
-OpenCode initializes its skill catalog after server startup. When checking discovery through `GET /api/skill`, wait until the returned IDs include all five skills and confirm their paths point into this checkout; an immediate empty response does not establish a loading failure. This configuration is verified with OpenCode 2.0.18; OpenCode 1 uses a different configuration format. Kaylo does not install an OpenCode runtime plugin or session hook.
+To update, fetch tags and check out the desired release in that clone:
+
+```sh
+git -C /absolute/path/to/kaylo fetch --tags origin
+git -C /absolute/path/to/kaylo checkout --detach v0.6.0
+```
+
+Replace `v0.6.0` with the newer release tag when updating. Preserve any local
+edits; do not force checkout. Restart the OpenCode session/server afterward.
+Remove the Kaylo path from the `skills` array to uninstall.
+
+OpenCode initializes its catalog after server startup. For a discovery check,
+wait until `GET /api/skill` includes all five IDs with paths into this checkout;
+an immediate empty response does not establish a failure. These instructions
+use OpenCode 2; OpenCode 1 has a different configuration format.
 
 ### Antigravity
 
-The root `plugin.json` packages the same skills and worker briefs for Antigravity. Install the checkout with its native CLI:
+Clone the same released package as OpenCode above, then install the full checkout:
 
-```powershell
-agy plugin validate '<kaylo-checkout>'
-agy plugin install '<kaylo-checkout>'
+```sh
+agy plugin validate /absolute/path/to/kaylo
+agy plugin install /absolute/path/to/kaylo
 agy plugin list
 ```
 
-Start a new Antigravity CLI session in your target project and select the loaded Kaylo skill, or ask the assistant to load it by name before giving your request. Installation copies the checkout, including templates and delegation references. After editing it, reinstall and start a new session. Remove it with `agy plugin uninstall kaylo`.
+Start a new CLI session in your target project. Select the loaded Kaylo skill,
+or ask the assistant to load it by name before giving your request. Installation
+copies the package, including templates, worker briefs, references, and validator.
 
-For Antigravity 2.0 or the standalone IDE, place the full checkout at `<project>/.agents/plugins/kaylo/` and inspect its skills in Customizations. CLI validation and installation are verified here; IDE loading remains untested. Kaylo's optional session reminder is configured for Claude and Codex.
+To update, fetch and check out the newer release tag as shown for OpenCode, then
+run `agy plugin install /absolute/path/to/kaylo` again and start a new session.
+Remove with `agy plugin uninstall kaylo`.
+
+For Antigravity 2.0 or the standalone IDE, place the full released checkout at
+`<project>/.agents/plugins/kaylo/` and inspect its skills in Customizations.
+Update that checkout to the newer tag and restart the host. Remove that package
+directory to uninstall. CLI loading is checked separately from IDE loading;
+see [verification](VERIFICATION.md).
 
 ### Gemini CLI
 
-Gemini CLI is a separate host from Antigravity. Native Gemini installation, skill discovery, and workflow behavior have not been verified; the Antigravity checks above do not establish Gemini compatibility. Use the direct-file method below with the full checkout available so templates, worker briefs, and the validator can still be read. Pasted skills require manual plan inspection when supporting files are unavailable.
+Gemini has its own extension manifest and loads the shared `skills/` directory:
+
+```sh
+gemini extensions install https://github.com/jeio-dev/kaylo --ref v0.6.0
+gemini extensions list
+gemini skills list --all
+```
+
+Start a new session in your target project. Ask it to activate the Kaylo
+`define`, `plan`, `build`, `review`, or `close` skill, then give your request.
+These are bare skill names, so avoid another source defining the same names.
+Gemini may ask for consent when activating a skill and reading its resources.
+
+A tag-pinned installation stays on that tag. To move to a newer release,
+uninstall and install again with the new tag:
+
+```sh
+gemini extensions uninstall kaylo
+gemini extensions install https://github.com/jeio-dev/kaylo --ref v0.6.0
+```
+
+Replace `v0.6.0` with the newer tag and restart the session. Reapply any
+host-specific enable/disable scope preferences after reinstalling. For a
+local-directory install, `gemini extensions update kaylo` refreshes that source;
+check out the desired release in the source directory first.
+
+### Development from a checkout
+
+Use these alternatives to test unpublished edits:
+
+| Host | Load the local checkout | After editing |
+| --- | --- | --- |
+| Claude | `claude --plugin-dir /absolute/path/to/kaylo` | Start a new session with the same argument |
+| Codex | Stage the checkout as below, add the `development/` catalog, then add `kaylo@kaylo-local` | Stage again, remove/add `kaylo@kaylo-local`, then start a new session |
+| OpenCode 2 | Configure the checkout's `skills/` path as above | Restart the session/server |
+| Antigravity | `agy plugin install /absolute/path/to/kaylo` | Reinstall, then start a new session |
+| Gemini | `gemini extensions install /absolute/path/to/kaylo` | Uninstall `kaylo`, install the checkout again, then start a new session |
+
+Codex requires local plugin sources to stay inside the catalog root. Stage a
+copy of the current checkout before adding the development catalog:
+
+```sh
+node /absolute/path/to/kaylo/scripts/stage-development.cjs
+codex plugin marketplace add /absolute/path/to/kaylo/development
+codex plugin add kaylo@kaylo-local
+```
+
+The staging command only replaces generated `development/package/` files;
+it does not change host settings. Run it again after each source edit.
+
+Removal before reinstalling refreshes same-version development edits; native
+update commands may reuse cached files when the version stays unchanged. For
+Codex, use `codex plugin remove kaylo@kaylo-local` followed by
+`codex plugin add kaylo@kaylo-local`. For Gemini, use
+`gemini extensions uninstall kaylo` followed by the local install command.
+
+The local Codex catalog is separate from the released catalog. When moving
+from the old checkout install to the GitHub install, remove
+`kaylo@kaylo-local` and its `kaylo-local` marketplace first to avoid duplicate
+skills. To keep developing with an old root-based `kaylo-local` catalog, remove
+that catalog and add the new `development/` path instead. Keep only one
+installation of Kaylo enabled in each host.
 
 ### Any tool, without installing
 
@@ -98,21 +227,52 @@ Give the assistant the skill file and your request:
 
 > Read `<kaylo-checkout>/skills/plan/SKILL.md` and follow it in this project. I want to add a reading list.
 
-Paste the skill text if the tool cannot read that path. This works without the plugin or hook.
+Use the full released checkout so supporting files remain available. To update,
+check out the newer tag and begin a new session. Pasting the skill alone works
+with manual plan inspection when the validator and supporting files are absent.
+
+### What stays the same across hosts
+
+| Capability | Claude | Codex | OpenCode 2 | Antigravity CLI | Gemini CLI |
+| --- | --- | --- | --- | --- | --- |
+| Five shared skills and workflow | Yes | Yes | Yes | Yes | Yes |
+| Templates, briefs, references, validator | Full package | Full package | Full checkout | Full package | Full package |
+| Project state | `OBJECTIVE.md`, `PLAN.md`, `.kaylo/phases/` | Same | Same | Same | Same |
+| Optional session reminder | Native hook | Native hook, requires trust | No adapter | No adapter | Native hook |
+| Update source | Released catalog | Released catalog | Release checkout | Release checkout + reinstall | Release tag + reinstall |
+
+Skill loading and identical resources establish package parity. They do not
+guarantee identical model behavior, invocation UI, permissions, or native
+worker delegation. The three worker briefs remain readable in every full
+package; native agent registration depends on the host.
 
 ## Optional session reminder
 
-Both plugin packages discover `hooks/hooks.json`. It runs one small Node.js script on startup or resume, supplying a short reminder to read project instructions and existing objective/plan when Kaylo work is requested. It does not read or write project files, track sessions, run tests, route models, or authorize implementation. There are no per-prompt, compaction, tool, stop, or subagent hooks.
+Claude, Codex, and Gemini discover `hooks/hooks.json`. Its exact startup/resume
+matchers work in all three hosts. The loader uses Claude/Codex's plugin-root
+environment variables or Gemini's extension-path substitution to run the same
+`hooks/session-start.cjs`. It does not read or write project files, track sessions,
+run tests, route models, or authorize implementation. OpenCode and Antigravity
+use the same skills without this optional adapter.
 
-Node must be on the host's PATH for the reminder. If Node is missing, the host may report a hook error; the skills remain usable. The hook has a two-second timeout and never returns a blocking decision. Missing script/load errors are quiet. It is guidance, not enforcement or a guarantee that the assistant read the plan.
+Node must be on the host's PATH. If Node is missing, the host may report a hook
+error; the skills remain usable. Missing script/load errors are quiet. The
+reminder never returns a blocking decision. Timeout is left at each host's native
+default because their APIs use different units. It is guidance, not enforcement.
 
-Codex requires you to review and trust plugin hooks through its native `/hooks` controls before they run. Leaving the hook untrusted keeps the skills usable. To suppress Kaylo's reminder in either host, launch it from a shell with `KAYLO_SESSION_REMINDER=0`:
+Codex requires you to review and trust plugin hooks through `/hooks` before
+they run. Leaving the hook untrusted keeps the skills usable. To suppress the
+reminder in any supported hook host, launch it from a shell with
+`KAYLO_SESSION_REMINDER=0`. For example, in PowerShell:
 
 ```powershell
 $env:KAYLO_SESSION_REMINDER = '0'
 ```
 
-This affects programs started from that shell and still allows the tiny hook process to run. To avoid the hook process entirely, use the direct-file method above; Codex can also leave the hook untrusted. No hook trust or global settings are changed by this repository.
+This affects programs started from that shell and still allows the tiny hook
+process to run. Use direct-file loading to avoid the hook process entirely;
+Codex can also leave the hook untrusted. Kaylo does not change global hook trust
+or permissions.
 
 ## Guardrails and plan validation
 
@@ -176,12 +336,14 @@ Delegated builds record the starting workspace state, confirm dependencies are p
 ## Package and scope
 
 - `skills/`: five command entrypoints with optional build/review delegation references.
-- `agents/`: three portable briefs, also discoverable as Claude agents.
+- `agents/`: three shared worker briefs; `claude-agents/`: generated native Claude adapters with identical instruction bodies.
 - `templates/`: optional objective, plan index, and phase plan starting points.
-- `.claude-plugin/`, `.codex-plugin/`, `plugin.json`, `.agents/plugins/`: native packaging for Claude, Codex, and Antigravity, and the local Codex catalog. OpenCode loads the shared skills directory directly.
+- `.claude-plugin/`, `.codex-plugin/`, `plugin.json`, `.agents/plugins/`: native packaging for Claude, Codex, and Antigravity, and the released Codex catalog. OpenCode loads the shared skills directory directly.
+- `gemini-extension.json`: native Gemini packaging of the shared skills.
+- `development/`: the separate local Codex catalog and ignored generated package.
 - `hooks/`: the optional reminder; no workflow runtime or persistent state.
-- `scripts/`: read-only plan validator; `tests/`: validator fixtures and behavioral trial prompts.
+- `scripts/`: plan/package validators, the Claude agent adapter generator, and local development staging; `tests/`: validator fixtures and behavioral trial prompts.
 
-No custom installer, automatic model router, terminal modifications, or release machinery. Validator fixtures check structure; behavioral trials do not guarantee model compliance. `0.5.2` is an early package version, not a release-readiness claim.
+No custom installer, automatic model router, or terminal modifications. Releases use Git tags and native host commands; see [release maintenance](RELEASING.md). Validator fixtures check structure; behavioral trials do not guarantee model compliance. `0.6.0` is an early package version, not a release-readiness claim.
 
-Native integration references: [Claude plugin layout](https://code.claude.com/docs/en/plugins-reference), [Claude agents](https://code.claude.com/docs/en/sub-agents), [Codex plugin packaging](https://developers.openai.com/plugins/build/plugins), [Codex skill invocation](https://developers.openai.com/codex/skills), [Codex hooks](https://developers.openai.com/codex/hooks), [OpenCode 2 skills](https://opencode.ai/v2/docs/skills), and [Antigravity plugins](https://antigravity.google/docs/plugins). Host behavior and availability can vary by version; the verification record identifies the versions inspected here.
+Native integration references: [Claude plugin layout](https://code.claude.com/docs/en/plugins-reference), [Claude agents](https://code.claude.com/docs/en/sub-agents), [Codex plugin packaging](https://developers.openai.com/plugins/build/plugins), [Codex skill invocation](https://developers.openai.com/codex/skills), [Codex hooks](https://developers.openai.com/codex/hooks), [OpenCode 2 skills](https://opencode.ai/v2/docs/skills), [Antigravity plugins](https://antigravity.google/docs/plugins), and [Gemini extensions](https://geminicli.com/docs/extensions/reference/). Host behavior and availability can vary by version; the verification record identifies the versions inspected here.

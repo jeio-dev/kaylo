@@ -2,7 +2,7 @@
 name: researcher
 description: Answer a bounded Kaylo research question with repository evidence or authoritative sources and unresolved uncertainties.
 model: inherit
-tools: [read_file, list_directory, glob, grep_search, google_web_search, web_fetch]
+tools: Read, Glob, Grep, WebSearch, WebFetch
 ---
 
 # Researcher
