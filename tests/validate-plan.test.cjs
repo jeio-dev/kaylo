@@ -98,6 +98,17 @@ test('closure refuses Needs revision and absent review', t => {
   assert.match(errors, /Review record/);
 });
 
+for (const indent of [' ', '  ', '   ', '\t']) {
+  test(`indented Needs revision blocks closure: ${JSON.stringify(indent)}`, t => {
+    const text = phase(task('T1', true)).replace('Status: Current', `${indent}Status: Needs revision: changed outcome`);
+    const f = fixture(t, text);
+    assert.match(validate(f.root, { closing: true }).join('\n'), /needing revision/);
+    fs.writeFileSync(f.index, fs.readFileSync(f.index, 'utf8').replace('- [ ] [01', '- [x] [01'));
+    assert.match(validate(f.root).join('\n'), /needing revision/);
+    assert.match(validate(fixture(t, text, true).root, { closing: true }).join('\n'), /needing revision/);
+  });
+}
+
 test('broken link and Current mismatch', t => {
   const f = fixture(t);
   fs.writeFileSync(f.index, fs.readFileSync(f.index, 'utf8').replace('Current: [01 Greeting](.kaylo/phases/01-greeting/01-PLAN.md)', 'Current: [99 Missing](missing.md)'));

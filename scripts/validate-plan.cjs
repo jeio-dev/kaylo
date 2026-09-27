@@ -191,7 +191,7 @@ function validate(project, { closing = false } = {}) {
   }
   if (closing || closed) {
     for (const task of tasks) if (!task.checked) fail(`${task.id}: phase closure requires completed tasks`);
-    if (/^Status:\s*Needs revision\b/m.test(phase)) fail('Phase needing revision cannot close');
+    if (/^[ \t]*Status:[ \t]*Needs revision\b/m.test(phase)) fail('Phase needing revision cannot close');
     if (!review || /^\[[^]*\]$/.test(review)) fail('Phase closure needs a Review record (None is allowed)');
     if (!meaningful(sections.get('Completion')[0])) fail('Phase closure needs a substantive Completion record');
   }
