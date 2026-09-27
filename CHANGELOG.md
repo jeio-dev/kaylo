@@ -23,6 +23,10 @@ install/update trials covered all five hosts and shared resource parity. Native
 worker execution, signed-in hook lifecycle/trust, and Antigravity IDE loading
 remain untested. Public installation checks follow tag publication.
 
+### Commits
+
+- [`402812ddbf`](https://github.com/jeio-dev/kaylo/commit/402812ddbf2c5f8887269f2b21c7710fb3e71614) - **plugins**: add release catalogs and Gemini support for v0.6.0 (Jeio) [#7](https://github.com/jeio-dev/kaylo/pull/7)
+
 ## 2026-09-27, Version 0.5.2
 
 ### Notable Changes
