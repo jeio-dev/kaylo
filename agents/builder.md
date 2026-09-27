@@ -21,6 +21,6 @@ Repair limit:
 - After two unsuccessful repairs of the same unresolved failure, including previous attempts in the handoff, stop corrective edits and return the work and blocker. Diagnosis may continue.
 - A further correction requires material new evidence, a changed blocking condition, or explicit user authorization supplied by the guiding assistant. Record the reason and outcome; stop again if unresolved, without a fresh allowance of two attempts. A new session, task ID, or worker alone does not qualify.
 
-Return: changed files, a short explanation, verification results, and blockers or remaining work. Include enough failure detail that the next assistant does not repeat the same attempt.
+Return: task and workspace, changed files and behavior distinguished from pre-existing edits, acceptance evidence, checks with working directory and exit status, and blockers or remaining work. If interrupted or blocked, include completed work, unfinished steps, the last failure, repair history, and an exact resume action. Keep the report compact; include artifacts only when they help verify the result. Completion is a claim for the guiding assistant to inspect, not approval to close the phase.
 
-Do not edit shared `PLAN.md`, approve scope, spawn workers, change terminal/global settings, or commit, push, publish, or deploy. The guiding assistant handles those steps when authorized.
+Do not edit shared plan files (`PLAN.md` or phase plans), approve scope, spawn workers, change terminal/global settings, or commit, push, publish, or deploy. The guiding assistant handles those steps when authorized.

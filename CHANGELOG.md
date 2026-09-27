@@ -2,6 +2,30 @@
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-27
+
+- Refine delegated builds with workspace baselines, dependency readiness,
+  file ownership, compact evidence reports, and resume details in existing
+  phase plans. Batch related corrections without resetting repair limits;
+  check combined behavior where tasks connect. Model routing and review
+  requirements remain unchanged.
+
+- Add Antigravity's root plugin manifest and native installation guidance.
+  Document OpenCode 2 loading the shared skills directory; discovery checks
+  wait for its catalog to initialize before evaluating the result.
+
+- Split plans into phases: `PLAN.md` becomes an index with a `Current:` link and
+  an ordered phase checklist; each phase's scope, tasks, findings, results, and
+  completion live in `.kaylo/phases/NN-slug/NN-PLAN.md`, created only when the
+  phase starts. Close checks off the phase; the next plan moves `Current:`.
+- Restart task and finding IDs per phase, with qualified IDs such as `02-T3`
+  routed to plan. Build records `In progress` before editing or delegating and
+  resumes interrupted work from the working tree.
+- Define writes a product-level objective; the last close also checks its
+  success criteria.
+- Add a phase template. Older single-file plans keep working as one phase and
+  convert only during a relevant plan update.
+
 ## [0.2.0] - 2026-09-26
 
 - Restructure skills into focused actions and grouped rules; load build and

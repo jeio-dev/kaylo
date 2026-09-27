@@ -18,7 +18,7 @@ Start with one worker at a time. If native subagents are unavailable, open the c
 
 ```text
 Role: researcher / builder / reviewer
-Task: [one question, task ID, or review target]
+Task: [one question, task ID with its phase, or review target]
 Brief: [role file path if accessible; otherwise paste its Markdown body]
 Project location: [actual path or attached relevant files]
 Outcome: [observable result]
@@ -29,10 +29,25 @@ Acceptance: [what must be true]
 Verify: [working directory, exact command and expected result, or manual steps]
 Previous attempts: [failed repairs and evidence, or None]
 Existing findings: [IDs, corrections and recheck evidence relevant to this task, or None]
-Return: findings or changed files, checks and results, remaining blockers
+Workspace baseline: [starting changes and relevant original content, or clean commit; confirm dependencies are present]
+Contracts: [relevant interfaces and decisions, or None]
+Return: findings or the compact build report below
 ```
 
-The guiding assistant maintains `PLAN.md` and checks returned claims against the available files and results. A worker does not approve scope, change model settings, or spawn more workers.
+The guiding assistant maintains `PLAN.md` and the phase plans, and checks returned claims against the available files and results. A worker does not approve scope, change model settings, or spawn more workers.
+
+For a build, use this compact report; omit fields that do not apply. Return it to the guiding assistant, who records evidence and resume information in the existing phase plan.
+
+```text
+Task and workspace: [phase/task ID, path, starting state]
+Changes: [paths and resulting behavior; distinguish pre-existing edits]
+Acceptance: [criteria met and criteria still unresolved]
+Verification: [commands, working directory, exit status, useful result; artifacts when needed]
+Blockers or limits: [failed or unavailable checks, decisions needed, or None]
+Resume: [completed work, unfinished steps, last failure, repair attempts, exact next action; thread ID if needed]
+```
+
+For delegated builds, see [build delegation](skills/build/references/delegation.md) for workspace ownership and continuation. Keep enough context to execute the task without forwarding unrelated conversation history. Worker completion still requires inspection of the changes and evidence, followed by Kaylo's implementation review before close.
 
 If a model cannot complete the task, diagnose the failure. Narrow the task or recommend a stronger available model. Carry forward failed attempts and evidence; switching tools does not justify restarting the same unsuccessful approach. Ask the user only when the next choice requires their decision or unavailable access.
 
