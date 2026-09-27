@@ -2,7 +2,7 @@
 
 Build software with patient, practical guidance, using the AI tools you already have.
 
-Kaylo is an early `0.4.0` package; see [verification](VERIFICATION.md) for what has actually been checked.
+Kaylo is an early `0.5.0` package; see [verification](VERIFICATION.md) for what has actually been checked.
 
 ## Five commands
 
@@ -110,6 +110,57 @@ $env:KAYLO_SESSION_REMINDER = '0'
 
 This affects programs started from that shell and still allows the tiny hook process to run. To avoid the hook process entirely, use the direct-file method above; Codex can also leave the hook untrusted. No hook trust or global settings are changed by this repository.
 
+## Guardrails and plan validation
+
+All five skills and the worker briefs include rules for untrusted source content,
+secret handling, consequential actions, and preserving existing edits. These are
+assistant instructions, not security boundaries. Existing user authorization
+counts; ordinary agreed edits and checks need no additional approval. The startup
+hook remains a reminder and does not enforce these rules.
+
+With Node.js available, run the read-only structural validator from any directory:
+
+```sh
+node /absolute/path/to/kaylo/scripts/validate-plan.cjs /absolute/path/to/project
+node /absolute/path/to/kaylo/scripts/validate-plan.cjs /absolute/path/to/project --closing
+```
+
+Exit codes: `0` means supported structural checks passed; `1` means plan errors;
+`2` means invalid command usage. The validator does not edit files or execute
+Markdown, verification commands, hooks, or model calls. Build runs it before
+marking tasks complete; close writes the proposed completion record and runs
+`--closing` before checking the phase in the index. If the script/runtime is
+unavailable, the skills require manual inspection and disclosure of that limit.
+
+Supported Markdown uses `Current: [label](relative-file)`, phase checklist entries
+with two-digit IDs, task entries such as `- [ ] T1: title`, and single-line
+`Acceptance:`, `Verify:`, `Result:`, and optional `Depends on:` fields. Dependencies
+are `None` or comma-separated earlier task IDs. Horizontal whitespace around
+list markers and checkboxes and indentation are supported; recognizable malformed
+task, phase, and Current records produce errors rather than being skipped.
+Legacy inline tasks without a `Current:` link or dependency field remain
+supported. Examples in fenced code
+blocks and HTML comments are ignored. Links must resolve inside the project,
+including symlink targets. Linked phases cannot share the same file identity
+through symlink or hard-link aliases. All linked phase files are checked for
+readability; task and finding contents are checked only in the current phase.
+
+It checks duplicate phase/task/finding IDs, phase links, dependency references,
+task titles and acceptance/verification fields, and Result record presence.
+Checked tasks additionally need a substantive Result. Closure additionally requires
+all current tasks checked, no `Needs revision` status, and `## Review` and
+`## Completion` records. Duplicate Review or Completion sections are errors;
+retain their history under a single heading. Finding IDs are recognized across
+Review records, including duplicate sections. Other equivalent
+Markdown layouts need manual inspection rather than automatic migration.
+
+A pass does **not** establish authorization, truthful evidence, passing tests,
+resolved review findings, or correct software. Host permissions and required CI
+checks can provide enforcement outside the assistant; Kaylo installs none.
+Run the validator's fixture tests with `node --test tests/validate-plan.test.cjs`.
+See [guardrail trials](tests/GUARDRAIL-TRIALS.md) for behavioral scenarios and
+[the review handover](REVIEW-HANDOVER.md) for an independent challenge pass.
+
 ## Workers and budgets
 
 Claude and Codex can guide a project. Gemini/Antigravity can receive research work, and OpenCode with an available DeepSeek model can receive implementation work. Read [working with a worker](WORKERS.md) for a copyable handoff and model-selection guidance.
@@ -125,8 +176,9 @@ Delegated builds record the starting workspace state, confirm dependencies are p
 - `templates/`: optional objective, plan index, and phase plan starting points.
 - `.claude-plugin/`, `.codex-plugin/`, `plugin.json`, `.agents/plugins/`: native packaging for Claude, Codex, and Antigravity, and the local Codex catalog. OpenCode loads the shared skills directory directly.
 - `hooks/`: the optional reminder; no workflow runtime or persistent state.
+- `scripts/`: read-only plan validator; `tests/`: validator fixtures and behavioral trial prompts.
 
-No custom installer, conformance suite, automatic model router, terminal modifications, or release machinery. `0.4.0` is an early package version, not a release-readiness claim.
+No custom installer, automatic model router, terminal modifications, or release machinery. Validator fixtures check structure; behavioral trials do not guarantee model compliance. `0.5.0` is an early package version, not a release-readiness claim.
 
 The simplicity guidance was informed by [Ponytail](https://github.com/DietrichGebert/ponytail); Kaylo does not bundle or require it. The instructions are adapted to patient explanations and acceptance criteria rather than line-count targets.
 
