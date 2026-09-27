@@ -1,0 +1,272 @@
+'use strict';
+
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const { spawnSync } = require('node:child_process');
+const { test } = require('node:test');
+const { validate } = require('../scripts/validate-plan.cjs');
+
+const task = (id, checked = false, depends = 'None') => `- [${checked ? 'x' : ' '}] ${id}: Print a greeting
+  - Depends on: ${depends}
+  - Acceptance: Output Hello
+  - Verify: node greet.cjs; expect Hello, exit 0
+  - Result: ${checked ? 'node greet.cjs printed Hello, exit 0' : 'Not started'}
+`;
+const phase = tasks => `# 01 Greeting
+Status: Current
+
+## Tasks
+${tasks}
+## Review
+None; inspected greeting and command output.
+
+## Completion
+Greeting delivered; node greet.cjs printed Hello, exit 0. No known limitations.
+`;
+
+function fixture(t, text = phase(task('T1')), legacy = false) {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'kaylo-plan-'));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const relative = '.kaylo/phases/01-greeting/01-PLAN.md';
+  fs.mkdirSync(path.dirname(path.join(root, relative)), { recursive: true });
+  fs.writeFileSync(path.join(root, relative), text);
+  fs.writeFileSync(path.join(root, 'PLAN.md'), legacy ? text : `# Plan
+Current: [01 Greeting](${relative})
+
+- [ ] [01 Greeting](${relative}) — Print a greeting
+- [ ] 02 Future — Decide later
+`);
+  return { root, file: path.join(root, legacy ? 'PLAN.md' : relative), index: path.join(root, 'PLAN.md') };
+}
+
+test('valid index with unopened future phase; validator makes no writes', t => {
+  const f = fixture(t);
+  const before = [f.index, f.file].map(p => fs.readFileSync(p, 'utf8'));
+  assert.deepEqual(validate(f.root), []);
+  assert.deepEqual([f.index, f.file].map(p => fs.readFileSync(p, 'utf8')), before);
+});
+
+test('legacy plan without Depends on or status stays supported', t => {
+  const f = fixture(t, phase(task('T1')).replace('  - Depends on: None\n', '').replace('Status: Current\n', ''), true);
+  assert.deepEqual(validate(f.root), []);
+});
+
+test('valid dependency and completed task evidence', t => {
+  assert.deepEqual(validate(fixture(t, phase(task('T1', true) + task('T2', false, 'T1'))).root), []);
+});
+
+for (const [label, tasks, expected] of [
+  ['duplicate task', task('T1') + task('T1'), /Duplicate task/],
+  ['unknown dependency', task('T1', false, 'T9'), /dependency T9/],
+  ['self dependency', task('T1', false, 'T1'), /dependency T1/],
+  ['forward dependency', task('T1', false, 'T2') + task('T2'), /dependency T2/],
+  ['cross-phase dependency', task('T1', false, '02-T1'), /comma-separated/],
+  ['duplicate dependency', task('T1') + task('T2', false, 'T1, T1'), /comma-separated/],
+  ['missing completed evidence', task('T1', true).replace(/  - Result:.*\n/, ''), /Result record/],
+  ['placeholder completed evidence', task('T1', true).replace(/  - Result:.*\n/, '  - Result: [Evidence here]\n'), /Result record/],
+  ['blank completed acceptance cannot consume next field', task('T1', true).replace('Acceptance: Output Hello', 'Acceptance: '), /Acceptance record/],
+  ['duplicate result field', task('T1', true) + '  - Result: Another claim\n', /duplicate Result/],
+  ['unfinished task still requires verification instructions', task('T1').replace(/  - Verify:.*\n/, ''), /Verify record/],
+]) test(label, t => assert.match(validate(fixture(t, phase(tasks)).root).join('\n'), expected));
+
+test('duplicate findings only count entries in Review', t => {
+  const text = phase(task('T1')).replace('None; inspected greeting and command output.', '- R1: optional — open\n- R1: blocker — open');
+  assert.match(validate(fixture(t, text).root).join('\n'), /Duplicate finding/);
+});
+
+test('examples inside fences and comments do not become tasks', t => {
+  const text = phase(task('T1')).replace('## Review', '```md\n' + task('T1') + '```\n<!--\n' + task('T1') + '-->\n## Review');
+  assert.deepEqual(validate(fixture(t, text).root), []);
+});
+
+test('completed phase and --closing require records and finished tasks', t => {
+  const f = fixture(t);
+  assert.match(validate(f.root, { closing: true }).join('\n'), /requires completed tasks/);
+  fs.writeFileSync(f.file, phase(task('T1', true)));
+  assert.deepEqual(validate(f.root, { closing: true }), []);
+  fs.writeFileSync(f.index, fs.readFileSync(f.index, 'utf8').replace('- [ ] [01', '- [x] [01'));
+  fs.writeFileSync(f.file, phase(task('T1', true)).replace(/## Completion[^]*/, '## Completion\n[Record later]\n'));
+  assert.match(validate(f.root).join('\n'), /Completion record/);
+});
+
+test('closure refuses Needs revision and absent review', t => {
+  const f = fixture(t, phase(task('T1', true)).replace('Status: Current', 'Status: Needs revision: changed outcome').replace(/## Review[^]*?(?=## Completion)/, ''));
+  const errors = validate(f.root, { closing: true }).join('\n');
+  assert.match(errors, /needing revision/);
+  assert.match(errors, /Review record/);
+});
+
+test('broken link and Current mismatch', t => {
+  const f = fixture(t);
+  fs.writeFileSync(f.index, fs.readFileSync(f.index, 'utf8').replace('Current: [01 Greeting](.kaylo/phases/01-greeting/01-PLAN.md)', 'Current: [99 Missing](missing.md)'));
+  assert.match(validate(f.root).join('\n'), /Current must match/);
+  fs.rmSync(f.file);
+  assert.match(validate(f.root).join('\n'), /Cannot read plan/);
+});
+
+test('duplicate phase IDs and duplicate Current lines', t => {
+  const f = fixture(t);
+  const text = fs.readFileSync(f.index, 'utf8');
+  fs.writeFileSync(f.index, text + text.split('\n')[1] + '\n- [ ] 01 Duplicate — invalid\n');
+  const errors = validate(f.root).join('\n');
+  assert.match(errors, /exactly one Current/);
+  assert.match(errors, /Duplicate phase ID/);
+});
+
+test('reject path traversal and symlink escape', t => {
+  const f = fixture(t);
+  const external = fs.mkdtempSync(path.join(os.tmpdir(), 'kaylo-outside-'));
+  t.after(() => fs.rmSync(external, { recursive: true, force: true }));
+  const outside = path.join(external, 'external.md');
+  fs.writeFileSync(outside, phase(task('T1')));
+  const relative = path.relative(f.root, outside);
+  const index = target => `Current: [01 Greeting](${target})\n- [ ] [01 Greeting](${target})\n`;
+  fs.writeFileSync(f.index, index(relative));
+  assert.match(validate(f.root).join('\n'), /leaves project/);
+  fs.symlinkSync(outside, path.join(f.root, 'linked.md'));
+  fs.writeFileSync(f.index, index('linked.md'));
+  assert.match(validate(f.root).join('\n'), /leaves project/);
+});
+
+test('encoded paths with spaces resolve; external URLs rejected', t => {
+  const f = fixture(t);
+  fs.renameSync(f.file, path.join(path.dirname(f.file), 'plan with spaces.md'));
+  const text = fs.readFileSync(f.index, 'utf8').replaceAll('01-PLAN.md', 'plan%20with%20spaces.md');
+  fs.writeFileSync(f.index, text);
+  assert.deepEqual(validate(f.root), []);
+  fs.writeFileSync(f.index, text.replaceAll('.kaylo/phases/01-greeting/plan%20with%20spaces.md', 'https://example.com/plan.md'));
+  assert.match(validate(f.root).join('\n'), /relative project file/);
+});
+
+test('CLI returns 0, 1, and 2 for valid plan, invalid plan, and usage', t => {
+  const f = fixture(t);
+  const script = path.resolve(__dirname, '../scripts/validate-plan.cjs');
+  const run = args => spawnSync(process.execPath, [script, ...args], { encoding: 'utf8' });
+  assert.equal(run([f.root]).status, 0);
+  assert.equal(run([f.root, '--closing']).status, 1);
+  assert.equal(run([]).status, 2);
+  assert.equal(run([f.root, '--unknown']).status, 2);
+});
+
+test('supported whitespace keeps unfinished tasks visible at closure', t => {
+  const unfinished = task('T2').replace('- [ ] T2:', '  -\t[ ]  T2:');
+  const f = fixture(t, phase(task('T1', true) + unfinished));
+  assert.deepEqual(validate(f.root), []);
+  assert.match(validate(f.root, { closing: true }).join('\n'), /T2: phase closure requires completed tasks/);
+});
+
+for (const entry of ['- [ ] T2 Still unfinished', '- [?] T2: Still unfinished',
+  '- [ T2: Still unfinished', '- T2: Still unfinished', '+ [ ] T2: Still unfinished']) {
+  test(`malformed task cannot disappear: ${entry}`, t => {
+    const f = fixture(t, phase(task('T1', true) + entry + '\n'));
+    assert.match(validate(f.root, { closing: true }).join('\n'), /Unsupported task entry/);
+  });
+}
+
+test('fields below a malformed task cannot complete its predecessor', t => {
+  const first = task('T1', true).replace(/  - Result:.*\n/, '');
+  const second = '- [ ] T2 Still unfinished\n  - Result: Pretend success, exit 0\n';
+  const errors = validate(fixture(t, phase(first + second)).root, { closing: true }).join('\n');
+  assert.match(errors, /T1:.*Result record/);
+  assert.match(errors, /Unsupported task entry/);
+});
+
+for (const entry of ['- [?] 03 Future — invalid', '- [ 03 Future — invalid', '- [ ] Future — invalid']) {
+  test(`malformed phase cannot disappear: ${entry}`, t => {
+    const f = fixture(t);
+    fs.appendFileSync(f.index, entry + '\n');
+    assert.match(validate(f.root).join('\n'), /Unsupported phase entry/);
+  });
+}
+
+test('indented Current cannot silently switch an index to legacy mode', t => {
+  const f = fixture(t, phase(task('T1', true)), true);
+  fs.appendFileSync(f.index, '\n  Current: [01 Greeting](.kaylo/phases/01-greeting/01-PLAN.md)\n');
+  assert.match(validate(f.root, { closing: true }).join('\n'), /Index mixes a Current link/);
+});
+
+test('whitespace in valid phase and Current records is supported', t => {
+  const f = fixture(t);
+  fs.writeFileSync(f.index, fs.readFileSync(f.index, 'utf8').replace('Current:', '  Current:').replaceAll('- [ ] ', '  -\t[ ]  '));
+  assert.deepEqual(validate(f.root), []);
+});
+
+test('malformed Current is diagnosed even beside inline tasks', t => {
+  const f = fixture(t, phase(task('T1', true)), true);
+  fs.appendFileSync(f.index, '\n Current [01 Greeting](.kaylo/phases/01-greeting/01-PLAN.md)\n');
+  assert.match(validate(f.root).join('\n'), /Unsupported Current record/);
+});
+
+test('fence-like lines with info suffixes do not expose example tasks', t => {
+  const text = phase(task('T1', true)).replace('## Review', '```md\n```js\n' + task('T9') + '```\n## Review');
+  assert.deepEqual(validate(fixture(t, text).root, { closing: true }), []);
+});
+
+test('real tasks after a closing fence stay visible after an info suffix', t => {
+  const text = phase(task('T1', true)).replace('## Review', '```md\n```js\nexample\n```\n' + task('T2') + '## Review');
+  assert.match(validate(fixture(t, text).root, { closing: true }).join('\n'), /T2: phase closure requires completed tasks/);
+});
+
+test('closing fences require matching character and sufficient length', t => {
+  const text = phase(task('T1', true)).replace('## Review', '~~~~md\n~~~\n```\n' + task('T9') + '~~~~ \t\n## Review');
+  assert.deepEqual(validate(fixture(t, text).root, { closing: true }), []);
+});
+
+test('literal comment markers in a fence cannot hide later real tasks', t => {
+  const text = phase(task('T1', true)).replace('## Review', '```md\n<!--\n```\n' + task('T2') + '-->\n## Review');
+  assert.match(validate(fixture(t, text).root, { closing: true }).join('\n'), /T2: phase closure requires completed tasks/);
+});
+
+for (const fence of ['```', '~~~']) {
+  test(`comment marker in ${fence} opening info cannot hide an unfinished task`, t => {
+    const unfinished = '- [ ] T2: Still unfinished\n' +
+      '  - Acceptance: Prints GOODBYE\n  - Verify: Check goodbye\n  - Result: Not started\n';
+    const text = phase(task('T1', true)).replace('## Review',
+      `${fence}md <!--\nexample\n${fence}\n${unfinished}-->\n## Review`);
+    const f = fixture(t, text);
+    const before = fs.readFileSync(f.file, 'utf8');
+    const result = spawnSync(process.execPath,
+      [path.resolve(__dirname, '../scripts/validate-plan.cjs'), f.root, '--closing'], { encoding: 'utf8' });
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /T2: phase closure requires completed tasks/);
+    assert.doesNotMatch(result.stdout, /PASS/);
+    assert.equal(fs.readFileSync(f.file, 'utf8'), before);
+  });
+}
+
+test('opening info comments cannot expose tasks inside a valid fence', t => {
+  const text = phase(task('T1', true)).replace('## Review',
+    '```md <!--\n-->\n' + task('T9') + '```\n## Review');
+  assert.deepEqual(validate(fixture(t, text).root, { closing: true }), []);
+});
+
+test('fence markers inside a real HTML comment do not open a fence', t => {
+  const text = phase(task('T1', true)).replace('## Review',
+    '<!--\n```md\n-->\n' + task('T2') + '## Review');
+  assert.match(validate(fixture(t, text).root, { closing: true }).join('\n'), /T2: phase closure requires completed tasks/);
+});
+
+test('duplicate Review sections and cross-section finding IDs are diagnosed', t => {
+  const text = phase(task('T1', true)).replace('None; inspected greeting and command output.', '- R1: optional — open\n\n## Review\n- R1: optional — open');
+  const errors = validate(fixture(t, text).root, { closing: true }).join('\n');
+  assert.match(errors, /Duplicate Review sections/);
+  assert.match(errors, /Duplicate finding ID: R1/);
+});
+
+test('duplicate Completion sections fail even before closure', t => {
+  const text = phase(task('T1')) + '\n## Completion\nA second record\n';
+  assert.match(validate(fixture(t, text).root).join('\n'), /Duplicate Completion sections/);
+});
+
+for (const kind of ['symlink', 'hardlink']) {
+  test(`${kind} aliases cannot give two phases the same plan file`, t => {
+    const f = fixture(t);
+    const alias = path.join(f.root, 'alias.md');
+    if (kind === 'symlink') fs.symlinkSync(f.file, alias);
+    else fs.linkSync(f.file, alias);
+    fs.appendFileSync(f.index, '- [ ] [03 Alias](alias.md) — Shares existing plan\n');
+    assert.match(validate(f.root).join('\n'), /Duplicate phase link \(same file\)/);
+  });
+}

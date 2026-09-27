@@ -336,3 +336,113 @@ and the disabled mode (no output), invoked from its NVM path.
 Local audit notes under `.local/` are excluded from the release commit. No new
 native installation or live model trial was performed for this release
 preparation beyond the task-dependency runs above.
+
+## Guardrails and structural validator — 2026-09-27
+
+Added advisory guardrails to the five skills and three worker briefs, direct-build
+baseline recording, a read-only plan validator, and build/close invocation rules.
+The session reminder hook, manifests, host permissions, and package version are
+unchanged. No commit, publication, or installation was performed.
+
+| Check | Observed result |
+| --- | --- |
+| Node 24.21.0: `node --test tests/validate-plan.test.cjs` | 23 tests passed, exit 0 |
+| Skill-creator `quick_validate.py` on each skill | All five valid |
+| `claude plugin validate . --strict` | Passed, exit 0 |
+| `git diff --check` | Passed, exit 0 |
+
+Node was not on this shell's PATH; tests used
+`/home/jeio/.nvm/versions/node/v24.21.0/bin/node`. No PATH or global configuration
+was changed. Fixtures covered canonical and legacy plans, dependency errors,
+duplicate IDs/fields, missing or placeholder records, ignored fenced/commented
+examples, closure prerequisites, broken links, encoded paths, traversal and
+symlink escapes, and CLI exit codes. The read-only check compared plan contents
+before and after validation. These establish structural behavior on those
+fixtures, not complete Markdown support or a security boundary.
+
+The parser supports the subset documented in README.md. It inspects current
+phase contents and linked-file readability, not historical phase semantics.
+Nonempty evidence and review records can contain false claims; the script does
+not verify authorization, executed checks, finding resolutions, review quality,
+or implementation correctness. Manual fallback and script invocation remain
+assistant instructions, not mandatory host gates.
+
+`tests/GUARDRAIL-TRIALS.md` contains prepared behavioral scenarios. **None of the
+new model-compliance trials has been run.** No fresh reviewer/model session or
+new native loading trial was used for this change. `REVIEW-HANDOVER.md` provides
+a separate review and challenge prompt; that review remains pending.
+
+### Corrections after the user's independent review — 2026-09-27
+
+The user supplied a review reporting four structural defects: malformed records
+could be skipped, fence suffixes could hide or expose tasks, duplicate Review
+sections were not checked, and symlink aliases could share phase files. The
+reviewer reported 35 additional temporary fixtures; those results are supplied
+review evidence, not checks executed in this implementation session.
+
+Corrections recognize supported horizontal whitespace and diagnose recognizable
+malformed records, use the same task candidates to bound field collection,
+distinguish fence openings from valid closings, reject duplicate Review and
+Completion sections while checking all recorded finding IDs, and compare file
+identities to catch symlink and hard-link aliases. Fence handling also keeps
+literal comment markers in code examples from hiding later plan records.
+Close's workflow now explicitly validates between writing its proposed record
+and checking the index. Manual fallback retains diagnostics and distinguishes
+unsupported formatting from genuine blocking errors.
+
+Node 24.21.0 ran `node --test tests/validate-plan.test.cjs`: **44 tests passed,
+exit 0**, including 21 added regressions and closely related cases. These are
+implementation checks, not an independent recheck or model-compliance trial.
+Skill-creator validation of the two updated skills (build and close) and
+`git diff --check` also passed.
+The independent review of these corrections remains pending; use the updated
+REVIEW-HANDOVER.md. The earlier 23-test record describes the original version.
+
+### Fence opening info-string correction — 2026-09-27
+
+The user's focused recheck confirmed the four original reproductions were fixed,
+but reported that `<!--` in a valid fence opening's info string could leave HTML
+comment state active and hide a real unfinished task after the closing fence.
+The reviewer reported 22 independent fixtures; this is supplied review evidence.
+
+Three new opening-info regressions failed against the previous implementation,
+including the exact reported CLI fixture and a tilde-fence variant, both of
+which incorrectly returned exit 0. The parser now recognizes raw valid fence
+openings outside existing comments before scanning for HTML comment markers.
+It no longer creates fence openings by stripping comments from a line.
+
+Node 24.21.0 ran `node --test tests/validate-plan.test.cjs`: **48 tests passed,
+exit 0**. Four new tests cover unfinished tasks after backtick and tilde fences,
+ignored examples inside fences with comment-like info strings, and fence markers
+inside genuine HTML comments. Both CLI regressions now return exit 1 and name
+unfinished T2, with no PASS output or change to fixture contents.
+`git diff --check` passed. No skills, hooks, manifests, permissions, or global
+settings changed in this correction. Independent recheck of this final correction
+and behavioral compliance trials remain pending.
+
+### Independent focused recheck accepted — 2026-09-27
+
+The user supplied the final reviewer report: ready within the reviewed scope,
+with no remaining implementation findings. The reviewer reported all 48 tests
+passing on Node 24.21.0 and 17 independent temporary fixtures covering the exact
+reproduction, nearby fence/comment cases, earlier defects, file aliases,
+closure, and CLI exit codes. The exact reproduction exited 1, reported unfinished
+T2, and produced no PASS. Fixture contents and metadata remained unchanged;
+`git diff --check` passed, and hooks and manifests remained unchanged.
+
+These are supplied independent review results, not reruns in this implementation
+session. They resolve the pending structural implementation recheck above.
+Behavioral compliance trials remain unrun; structural validation does not prove
+authorization, truthful evidence, or model compliance. The reviewer made no
+repository edits, removed temporary fixtures, and left changes uncommitted.
+
+## v0.5.0 release preparation — 2026-09-27
+
+Updated the Claude and Codex manifest versions and README to `0.5.0`, and moved
+the guardrail and structural-validator changes into the dated changelog entry.
+Node 24.21.0 reran all 48 validator tests successfully. Claude strict plugin
+validation, all five skill validators, JSON parsing and version consistency
+checks, and `git diff --check` passed. The successful independent structural
+recheck above applies to the implementation included in this release.
+Behavioral compliance trials remain unrun; this version does not claim enforced
+authorization, evidence truth, or guaranteed model compliance.
