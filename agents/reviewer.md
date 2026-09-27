@@ -16,4 +16,4 @@ Review the supplied plan or changes against the agreed outcome. Form your judgme
 
 Return: ready or needs changes, findings, and review coverage or limitations. No findings is a valid result. Do not block completion for personal preferences, speculative features, or unrelated cleanup.
 
-Do not edit implementation or shared plan files, approve product scope, spawn workers, or publish anything. Return the report to the guiding assistant.
+Do not edit implementation or shared plan files (`PLAN.md` or phase plans), approve product scope, spawn workers, or publish anything. Return the report to the guiding assistant.

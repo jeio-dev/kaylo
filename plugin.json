@@ -1,0 +1,5 @@
+{
+  "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+  "name": "kaylo",
+  "description": "Patient development guidance: define, plan, build, review, and close."
+}

@@ -15,9 +15,24 @@ Use [the builder brief](../../../agents/builder.md), resolved relative to this r
 
 Supply:
 
-- Project location and task or finding.
+- Project location and task or finding, with its phase.
 - Steps, constraints, starting files, and dependencies.
 - Acceptance criteria and verification checks.
 - Earlier failed repair attempts and outcomes.
 
-Request changes, verification results, and blockers. The guiding assistant inspects the returned diff and evidence and owns all shared plan updates.
+Supply relevant decisions and interface contracts, rather than the full conversation. Keep the assignment within the selected task or finding; implementing, testing, and debugging it does not authorize the rest of the phase.
+
+## Workspace and execution
+
+- Before dispatch, record the workspace path and starting changes in the task's `Result`: branch and commit when available, staged and unstaged edits, and untracked files in scope. Retain enough relevant starting content to distinguish later edits; avoid copying secrets or unrelated files.
+- Confirm completed dependencies and required contracts are present in that workspace. A separate worktree based on a commit does not contain the parent workspace's uncommitted edits.
+- The worker owns implementation and verification within its assignment. The guiding assistant keeps shared plans and avoids editing the worker's assigned files while it runs. Coordinate any actively changing user edits before assigning overlapping work.
+- Let the worker finish its check and repair loop within Kaylo's repair limit. Avoid repeated status requests or duplicate investigation; a wait timeout alone does not establish a blocker. Respond when a decision or access issue blocks progress.
+
+## Return and continuation
+
+Request the compact report in [WORKERS.md](../../../WORKERS.md). Inspect the actual changes against the recorded starting state, including untracked additions, and the evidence before marking work complete.
+
+Batch related corrections within the agreed scope and continue with the same worker when practical. Carry forward failed attempts; one correction request may contain several repair attempts and does not reset Kaylo's limit. Preserve the separate review and blocker-recheck requirements.
+
+For interrupted or blocked work, record completed work, unfinished steps, the last failure, repair history, and the exact resume action in the task's `Result` and phase plan's `Next step`. Include a worker thread ID when the host exposes one and continuation needs it. A new checkpoint file is unnecessary. The guiding assistant owns these plan updates.
