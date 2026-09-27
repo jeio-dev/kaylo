@@ -446,3 +446,25 @@ checks, and `git diff --check` passed. The successful independent structural
 recheck above applies to the implementation included in this release.
 Behavioral compliance trials remain unrun; this version does not claim enforced
 authorization, evidence truth, or guaranteed model compliance.
+
+## Post-release status indentation correction — 2026-09-27
+
+A review reproduced an indented `Status: Needs revision` passing `--closing`
+when all other closure records were present. The validator now recognizes
+horizontal indentation before Status and horizontal whitespace after its colon.
+Four new regressions failed before the fix and pass afterward, covering one to
+three spaces and a tab in linked phases, checked index entries, and legacy inline
+plans. Node 24.21.0 ran all **52 tests successfully**; `git diff --check` passed.
+
+The same review checked Codex CLI 0.157.1 with a fresh temporary `CODEX_HOME`:
+installation and discovery returned five enabled Kaylo skills, and supporting
+files including the validator matched the checkout. OpenCode 2.0.18 discovered
+all five skills with matching instruction bodies. Antigravity CLI 1.2.11 installed
+five skills and three agents in an isolated, network-disabled profile; supporting
+files including the validator matched. Claude Code 2.1.283 strict package
+validation passed. These loading checks preceded the status correction; they do
+not establish behavior parity or native Codex hook execution.
+
+Gemini CLI was unavailable locally and remains unverified as a native host.
+README now distinguishes it from Antigravity and points to direct-file use.
+No model-compliance trials or normal-profile installations were performed.

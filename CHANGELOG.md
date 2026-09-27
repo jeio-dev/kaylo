@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Reject closure for indented `Status: Needs revision` records, with regressions
+  for linked and legacy plans. Clarify Gemini CLI's unverified native support.
+
 ## [0.5.0] - 2026-09-27
 
 - Add portable guardrails to the five skills and worker briefs for untrusted

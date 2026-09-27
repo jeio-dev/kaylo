@@ -88,6 +88,10 @@ Start a new Antigravity CLI session in your target project and select the loaded
 
 For Antigravity 2.0 or the standalone IDE, place the full checkout at `<project>/.agents/plugins/kaylo/` and inspect its skills in Customizations. CLI validation and installation are verified here; IDE loading remains untested. Kaylo's optional session reminder is configured for Claude and Codex.
 
+### Gemini CLI
+
+Gemini CLI is a separate host from Antigravity. Native Gemini installation, skill discovery, and workflow behavior have not been verified; the Antigravity checks above do not establish Gemini compatibility. Use the direct-file method below with the full checkout available so templates, worker briefs, and the validator can still be read. Pasted skills require manual plan inspection when supporting files are unavailable.
+
 ### Any tool, without installing
 
 Give the assistant the skill file and your request:
