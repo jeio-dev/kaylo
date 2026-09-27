@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-09-27
+
+- Add portable guardrails to the five skills and worker briefs for untrusted
+  content, secrets, consequential-action authorization, and workspace preservation.
+- Add a read-only Node plan validator, build/close invocation guidance, structural
+  fixture tests, and behavioral challenge prompts. Document parser limitations
+  and manual fallback; the startup hook and host permissions are unchanged.
+
 ## [0.4.0] - 2026-09-27
 
 - Phase-plan tasks record `Depends on:` with tasks listed above in the same
