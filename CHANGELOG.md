@@ -15,16 +15,16 @@
   or `optional`. Phases, phase plan paths (`.kaylo/phases/NN-slug/NN-PLAN.md`),
   task and review IDs, `Result:`, `Status:`, `Current:`, and the five command
   names are unchanged. Templates, skills, worker briefs, generated Claude
-  adapters, and the session reminder use the new names.
+  adapters, and the session reminder use the new names. [#8](https://github.com/jeio-dev/kaylo/pull/8)
 - **tools**: **Breaking.** The plan validator and the skills' manual inspection no
   longer accept older formats. They reject `OBJECTIVE.md`, `PLAN.md` without
   `ROADMAP.md`, tasks written inline in the index, a phase plan without
   `Status: Current` or `Status: Needs revision: <reason>` (including `Draft`), a
   task without `Blocked by:`, and the old field names and review labels, alone or
-  mixed with new ones. Each diagnostic names the replacement.
+  mixed with new ones. Each diagnostic names the replacement. [#8](https://github.com/jeio-dev/kaylo/pull/8)
 - **docs**: Add [INDUSTRY-TERMS.md](INDUSTRY-TERMS.md), a glossary for readers
   new to software teams. It explains each term, where Kaylo differs from common
-  practice, what Kaylo does not cover yet, and the exact format contract.
+  practice, what Kaylo does not cover yet, and the exact format contract. [#8](https://github.com/jeio-dev/kaylo/pull/8)
 
 To convert an existing project, run `/kaylo:plan`. Its instructions convert
 `OBJECTIVE.md`, the `PLAN.md` index, and the current phase plan before other
@@ -58,11 +58,12 @@ its history.
 ### Verification
 
 All 89 Node tests, package consistency checks, strict Claude plugin and marketplace
-validation, Antigravity validation, and whitespace checks passed. Isolated
-update trials installed the real v0.6.0 in Claude, Codex, Gemini, and Antigravity,
-then updated each to the prepared 0.7.0; installed copies match all 22 shared
-resources, and the hook loader returns the new reminder from each hook host's
-copy. Codex and OpenCode discovered all five skills in fresh sessions. Old-format
+validation, Codex plugin validation, Antigravity validation, and whitespace
+checks passed. Isolated update trials installed the v0.6.0 release tree from local
+Git mirrors in Claude, Codex, Gemini, and Antigravity, then updated each to the
+prepared 0.7.0; installed copies match all 22 shared resources, and the hook
+loader returns the new reminder from each hook host's copy. Fresh Codex
+app-server and OpenCode server discovery returned all five skills. Old-format
 conversion was checked structurally with fixtures. No live-model trial ran, so
 whether models follow the renamed workflow or convert older projects is untested.
 Native worker execution, signed-in hook lifecycle/trust, and Antigravity IDE
