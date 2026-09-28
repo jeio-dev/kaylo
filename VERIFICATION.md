@@ -595,3 +595,30 @@ convert older projects remains unverified.
 Evidence: `/tmp/claude-1000/-home-jeio-src-kaylo/2cf32f63-d53f-4752-b884-e2b495a04c4a/scratchpad/release-0.7.0/parity.py`, `/tmp/claude-1000/-home-jeio-src-kaylo/2cf32f63-d53f-4752-b884-e2b495a04c4a/scratchpad/release-0.7.0/parity.log`, and
 `/tmp/claude-1000/-home-jeio-src-kaylo/2cf32f63-d53f-4752-b884-e2b495a04c4a/scratchpad/release-0.7.0/parity-9psigcb6`. Temporary profiles contain no copied account
 credentials. Normal host profiles and trust settings were not changed.
+
+## Public installation 0.7.0 — 2026-09-28
+
+After the `v0.7.0` tag (`10020db`) was pushed, PR #8 was merged with a merge
+commit (`0e6e8a1`) and the GitHub release was published. Fresh temporary
+profiles then installed Kaylo from public GitHub with no Git URL rewriting.
+
+| Host | Command path | Observed result |
+| --- | --- | --- |
+| Claude Code 2.1.283, temporary `CLAUDE_CONFIG_DIR` | `claude plugin marketplace add jeio-dev/kaylo`, `claude plugin install kaylo@kaylo` | Installed 0.7.0 |
+| Codex CLI 0.157.1, temporary `CODEX_HOME` | `codex plugin marketplace add jeio-dev/kaylo`, `codex plugin add kaylo@kaylo` | Installed 0.7.0 |
+| Gemini CLI 0.61.0, temporary `GEMINI_CLI_HOME` | `gemini extensions install https://github.com/jeio-dev/kaylo --ref v0.7.0` | Installed; skill listing shows all five skills enabled |
+| Antigravity CLI 1.2.11, private profile mounted with Bubblewrap | `git clone --branch v0.7.0` from GitHub, then `agy plugin install` with the network disabled | Installed five skills and three agents |
+
+Each installed package matches all 22 shared resources, reports version 0.7.0
+in its manifests, has the tag's exact build skill, and contains no
+`templates/OBJECTIVE.md`, `templates/PLAN.md`, or contributor `AGENTS.md`.
+The merge commit's tree is identical to the tag, and all nine commits listed in
+the changelog are reachable from `main`.
+
+Because `main` and `v0.7.0` have the same tree, these installs do not show
+that the catalogs select the tag rather than the default branch. OpenCode loads
+a checkout directly and was not reinstalled. No model requests, hook trust,
+signed-in session lifecycle, or native worker execution were exercised. Normal
+host profiles were not changed.
+
+Evidence: `/tmp/claude-1000/-home-jeio-src-kaylo/2cf32f63-d53f-4752-b884-e2b495a04c4a/scratchpad/release-0.7.0/public-check.py` and `/tmp/claude-1000/-home-jeio-src-kaylo/2cf32f63-d53f-4752-b884-e2b495a04c4a/scratchpad/release-0.7.0/public-zdlb68qf`.
