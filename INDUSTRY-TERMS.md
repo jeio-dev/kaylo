@@ -8,7 +8,7 @@ Teams vary. One company says "ticket", another "issue", another "work item". The
 
 The command names are unchanged. They are ordinary verbs that teams already use.
 
-| Kaylo step | What a team does at this point | How Kaylo differs |
+| Kaylo step | What a team may do at this point | How Kaylo differs |
 | --- | --- | --- |
 | `define` | Writes the product requirements, for example as a PRD. At a company, a product manager may lead this. | You and Kaylo write a lean PRD together. |
 | `plan` | Writes a technical design, then breaks the work into small tasks with acceptance criteria and estimates. In Scrum (a framework that organizes team work into fixed-length cycles called sprints), backlog refinement clarifies and splits planned product work; developers also break selected work into implementation tasks during Sprint Planning. | Kaylo plans one phase in detail at a time and keeps later phases as one line each. |
@@ -117,7 +117,7 @@ Sources: [Conventional Comments](https://conventionalcomments.org/), [Google cod
 
 These have no exact team equivalent, so Kaylo keeps its own name rather than borrowing a term that means something else.
 
-- **`Result:`** holds a task's progress, evidence, and blockers. On a team, this information is spread across a ticket's status and its comments.
+- **`Result:`** holds a task's progress, evidence, and blockers. A team might record this information in a ticket's status and comments.
 - **`Status:`** says whether a phase plan is still valid: `Current`, or `Needs revision: <reason>` after something changed. It does not mean agreed or finished. Every phase plan needs it; a missing status or `Draft` is rejected.
 - **`Current:`** in `ROADMAP.md` points to the phase being worked on. It picks *which* phase; `Status:` says whether that phase's plan still holds.
 - **`## Completion`** records what a phase delivered, how it was checked, and what's left. It records phase closure; release notes describe changes in a software release.
@@ -168,7 +168,7 @@ This section is the exact contract for Kaylo's files, for people changing the va
 | `NN-RESEARCH.md` | Follows "phase". | Instructions only |
 | Task | Accurately describes Kaylo's unit of work. | Entry format `- [ ] T1: title`; unique IDs. |
 | IDs `T1`, `R1`, `02-T3` | Already short and unambiguous. | `T1` and `R1` must be unique. Qualified IDs such as `02-T3` are instructions only. |
-| `Result:` | Kaylo convention; no single team field matches. | Required on every task; substantive on a checked task. |
+| `Result:` | Kaylo convention; no single team field matches. | Nonempty on every task; substantive on a checked task. |
 | `Status:` (`Current`, `Needs revision: <reason>`) | Kaylo convention for plan validity. | Required; see the rules below. |
 | `Current:` | Kaylo convention for index selection. | Required; exactly one, matching one phase entry. |
 | `## Review` | Already the plain word. | Checked at closure. |
@@ -194,7 +194,7 @@ Unchanged structural checks, under the new names:
 - `ROADMAP.md` has exactly one `Current:` line in the form `Current: [label](relative-file)`, and it matches exactly one phase entry.
 - Phase entries have a checkbox and a two-digit ID. Phase IDs are unique. A checked phase needs a plan link. Two entries cannot link the same file, including through symbolic or hard links.
 - Plan links are relative and stay inside the project.
-- Tasks use `- [ ] T1: title`, and task IDs are unique. Each task has a substantive title, `Acceptance criteria:`, and `Test plan:`, and a `Result:` line. A checked task needs a substantive `Result:`.
-- `Blocked by:` is `None` or comma-separated IDs of earlier tasks in the same phase.
-- A field appears at most once per task. `## Review` and `## Completion` each appear at most once. Review comment IDs (`R1`) are unique.
+- Tasks use `- [ ] T1: title`, and task IDs are unique. Each task has a substantive title, `Acceptance criteria:`, and `Test plan:`, and a nonempty `Result:`. A checked task needs a substantive `Result:`.
+- `Blocked by:` is `None` or comma-separated, distinct IDs of earlier tasks in the same phase.
+- `Acceptance criteria:`, `Test plan:`, `Result:`, and `Blocked by:` each appear at most once per task. `## Review` and `## Completion` each appear at most once. Review comment IDs (`R1`) are unique.
 - Closure (`--closing`, or a checked current phase) requires every task checked, no `Status: Needs revision`, a record under `## Review` (`None` is allowed), and a substantive record under `## Completion`.
