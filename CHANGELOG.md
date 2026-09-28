@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### Notable Changes
+
+- **tools**: `validate-package.cjs --installed` now also compares `WORKERS.md`
+  and rejects files in the shared folders that the source does not have, such
+  as templates left behind by an in-place update. The release update trial
+  installs the previous release first and checks that catalogs select the
+  release tag rather than the default branch.
+
 ## 2026-09-28, Version 0.7.0
 
 ### Notable Changes

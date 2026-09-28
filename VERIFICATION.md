@@ -622,3 +622,24 @@ signed-in session lifecycle, or native worker execution were exercised. Normal
 host profiles were not changed.
 
 Evidence: `/tmp/claude-1000/-home-jeio-src-kaylo/2cf32f63-d53f-4752-b884-e2b495a04c4a/scratchpad/release-0.7.0/public-check.py` and `/tmp/claude-1000/-home-jeio-src-kaylo/2cf32f63-d53f-4752-b884-e2b495a04c4a/scratchpad/release-0.7.0/public-zdlb68qf`.
+
+## Installed-package checks and update trial — 2026-09-28
+
+Follow-up to the 0.7.0 release review (R46). `validate-package.cjs --installed`
+now compares `WORKERS.md` and rejects unexpected files in the shared folders.
+Checks ran on branch `tools/installed-package-checks` at `653a957` with Node
+24.21.0.
+
+| Check | Observed result |
+| --- | --- |
+| `node --test tests/*.test.cjs` | 90 tests passed, including a new case: a leftover `templates/OBJECTIVE.md` is rejected, and a changed or missing `WORKERS.md` is reported |
+| `node scripts/validate-package.cjs`, `git diff --check` | Passed; clean |
+| New validator against copies of the nine real 0.7.0 install roots from the release trials (Claude, Codex, Gemini, Antigravity; mirrored and public) | All pass with 23 resources; no host adds files to the shared folders |
+| A real 0.7.0 install copy with 0.6.0's `templates/OBJECTIVE.md` and `templates/PLAN.md` added | Rejected: "unexpected file: templates/OBJECTIVE.md" |
+| Local update trial, `v0.6.0` → `653a957` (as 0.7.0), all five hosts in temporary profiles | Passed. After each tag, the mirror's `main` moved one commit ahead with a changed build skill. The Claude and Codex catalog clones received that commit, while their installed plugins matched the tag, so the catalogs select the tag. The v0.6.0 install was confirmed on every host before updating. Gemini listed all five skills at both steps; each 0.7.0 install passed the new validator with 23 resources |
+
+The trial script is a local contributor tool in the excluded `.local/release/`
+folder, not a shipped resource. The trial used local Git mirrors; public
+transport was last checked for the published `v0.7.0`. No model requests, hook
+trust, signed-in session lifecycle, or native worker execution were exercised.
+Evidence: `/tmp/kaylo-parity-q3_0yoe4`.
