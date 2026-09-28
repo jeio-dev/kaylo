@@ -516,3 +516,82 @@ Evidence: `/tmp/kaylo-release-parity-6po9qybr`,
 `/tmp/kaylo-local-catalog-ql4aopo4`. Temporary profiles contain no copied account
 credentials. Normal host profiles, trust settings, and repository Git history
 were unchanged.
+
+## Industry-terms rename — 2026-09-28
+
+Renamed Kaylo's project files, task fields, and review labels to common
+software-team names and removed older-format support (see the changelog's
+0.7.0 entry and [industry terms](INDUSTRY-TERMS.md)). Checks ran on
+branch `industry-terms` with Node 24.21.0. No release was prepared.
+
+| Check | Observed result |
+| --- | --- |
+| `node --test tests/*.test.cjs` | 89 tests passed: 80 plan tests, including rejection of each old file, field, and label, mixed old and new names, `Draft` or missing status, and a missing `Blocked by:`; and nine package/loader/staging tests |
+| `node scripts/validate-package.cjs` | Passed |
+| `git diff --check` | Clean |
+| Fixtures from the actual templates (run while updating templates and skills earlier the same day; not rerun) | An open phase passes; a closed phase passes `--closing`; a phase with a linked next phase and an unlinked later phase passes. Controls fail: the open phase with `--closing`, `Status: Delivered`, `R1: optional`, and `Depends on:` |
+| Changelog conversion steps, applied to five old-format projects | A linked old project (`OBJECTIVE.md`, `PLAN.md`, `Status: Draft`, old fields, `optional` label, one task without `Depends on:`) and a legacy project with tasks inline in `PLAN.md` each failed with diagnostics naming the replacements, then passed after steps 1–5. A completed legacy inline project passes, including closure checks, only when step 2 moves its whole phase record; a phase plan with `Status: Delivered` fails until step 3. A project with a closed old-format phase 01 and a converted current phase 02 passes, as the changelog states |
+| Search for old names across the package, including hidden manifest directories | Remaining matches are allowed: `NN-PLAN.md` paths, generic "blocker", "optional", and "approach" prose, the skills' older-format lists and conversion steps, and the validator's old-name diagnostics and their tests |
+| Relative links in changed Markdown | All resolve except README's `REVIEW-HANDOVER.md`, which was already missing and is out of scope |
+
+These checks cover structure and wording only. They do not show that a model
+creates `PRD.md` and `ROADMAP.md`, follows `Current:`, keeps repair history,
+labels review comments correctly, routes review and closure correctly, or
+converts an older project through `/kaylo:plan`; no live-model trial was run.
+Native host validators and isolated install/update checks from
+[release maintenance](RELEASING.md) were not rerun, so release readiness is not
+established.
+
+Follow-up the same day: `/kaylo:plan`'s older-format conversion now moves the
+whole phase record of a plan with inline tasks, including completion, matching
+the changelog's step 2. Afterwards 89 tests passed, package validation passed, and
+`git diff --check` was clean. This is an instruction change; whether a model
+follows it remains untested.
+
+## Release preparation 0.7.0 — 2026-09-28
+
+Prepared 0.7.0 at `7fb4197`: manifests set to 0.7.0 and both release catalogs
+select `v0.7.0`. No tag was created and nothing was published. Commits after
+`7fb4197` change only `CHANGELOG.md`, `VERIFICATION.md`, and the `RELEASING.md`
+tag example; the shipped package files checked here are unchanged.
+
+| Check | Observed result |
+| --- | --- |
+| Node 24.21.0: `node --test tests/*.test.cjs` | 89 tests passed |
+| `node scripts/validate-package.cjs` | Package v0.7.0: versions and release catalogs match |
+| Claude Code 2.1.283: `claude plugin validate` on the plugin and marketplace manifests with `--strict` | Both passed |
+| Antigravity CLI 1.2.11: `agy plugin validate .` | Passed: five skills and three agents |
+| Codex plugin-creator `validate_plugin.py`, PyYAML from a temporary `uv` environment | Passed |
+| `git diff --check` | Clean |
+| Claude Code 2.1.283, temporary `CLAUDE_CONFIG_DIR` | Git catalog install of the real v0.6.0, then native marketplace update and plugin update to 0.7.0 |
+| Codex CLI 0.157.1, temporary `CODEX_HOME` | Git catalog install of v0.6.0, then marketplace upgrade and reinstall to 0.7.0; fresh app-server discovery returned five enabled Kaylo skills without errors |
+| Gemini CLI 0.61.0, temporary `GEMINI_CLI_HOME` | Git install at `v0.6.0`, then uninstall and install at `v0.7.0`; skill listing shows all five skills enabled |
+| Antigravity CLI 1.2.11, private profile mounted with Bubblewrap, network disabled | Install of the v0.6.0 checkout, then reinstall from 0.7.0: five skills, three agents |
+| OpenCode 2.0.18, temporary XDG directories | Loopback API discovery returned all five skills from the 0.7.0 checkout with exact instruction bodies |
+| Installed resource comparison after update | Every 0.7.0 install root in Claude, Codex, Gemini, and Antigravity matches all 22 shared resources and the 0.7.0 build skill bytes |
+| Hook loader run from each installed copy (Claude and Codex plugin-root variables, Gemini extension path) | Returns SessionStart context naming `PRD.md` and `ROADMAP.md` |
+
+The fixture releases were built with `git archive` from the real `v0.6.0` tag
+and from `7fb4197`, so they contain only tracked files. Git transport was
+redirected to a local bare mirror for Claude and Codex and to a loopback smart
+HTTP mirror for Gemini, as in the 0.6.0 trial. Public GitHub transport against
+a published `v0.7.0` remains to be checked after publication. The fixture
+`main` and release tag point at the same commit, so this trial does not show
+that the catalogs select the tag rather than the default branch.
+
+The resource comparison is one-directional: it checks that each shared source
+file matches its installed copy, not that no extra files remain. An independent
+review listed the active install roots and found no leftover `templates/OBJECTIVE.md`
+or `templates/PLAN.md`, and a matching `WORKERS.md`, which the comparison omits.
+The trial log truncates Gemini's skill listing; a separate listing of a copy of the
+same profile shows all five skills enabled.
+
+The hook check runs the configured loader command directly; it does not
+exercise signed-in session lifecycle or Codex hook trust. Native worker
+execution, Antigravity IDE loading, and model behavior were not tested. No
+model requests were made, so whether models follow the renamed workflow or
+convert older projects remains unverified.
+
+Evidence: `/tmp/claude-1000/-home-jeio-src-kaylo/2cf32f63-d53f-4752-b884-e2b495a04c4a/scratchpad/release-0.7.0/parity.py`, `/tmp/claude-1000/-home-jeio-src-kaylo/2cf32f63-d53f-4752-b884-e2b495a04c4a/scratchpad/release-0.7.0/parity.log`, and
+`/tmp/claude-1000/-home-jeio-src-kaylo/2cf32f63-d53f-4752-b884-e2b495a04c4a/scratchpad/release-0.7.0/parity-9psigcb6`. Temporary profiles contain no copied account
+credentials. Normal host profiles and trust settings were not changed.

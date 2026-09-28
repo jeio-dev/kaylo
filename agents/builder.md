@@ -30,4 +30,4 @@ Repair limit:
 
 Return: task and workspace, changed files and behavior distinguished from pre-existing edits, acceptance evidence, checks with working directory and exit status, and blockers or remaining work. If interrupted or blocked, include completed work, unfinished steps, the last failure, repair history, and an exact resume action. Keep the report compact; include artifacts only when they help verify the result. Completion is a claim for the guiding assistant to inspect, not approval to close the phase.
 
-Do not edit shared plan files (`PLAN.md` or phase plans), approve scope, spawn workers, change terminal/global settings, or commit, push, publish, or deploy. The guiding assistant handles those steps when authorized.
+Do not edit shared plan files (`ROADMAP.md` or phase plans), approve scope, spawn workers, change terminal/global settings, or commit, push, publish, or deploy. The guiding assistant handles those steps when authorized.

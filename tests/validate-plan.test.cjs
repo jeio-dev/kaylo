@@ -8,10 +8,11 @@ const { spawnSync } = require('node:child_process');
 const { test } = require('node:test');
 const { validate } = require('../scripts/validate-plan.cjs');
 
-const task = (id, checked = false, depends = 'None') => `- [${checked ? 'x' : ' '}] ${id}: Print a greeting
-  - Depends on: ${depends}
-  - Acceptance: Output Hello
-  - Verify: node greet.cjs; expect Hello, exit 0
+const task = (id, checked = false, blockedBy = 'None') => `- [${checked ? 'x' : ' '}] ${id}: Print a greeting
+  - Estimate: S
+  - Blocked by: ${blockedBy}
+  - Acceptance criteria: Output Hello
+  - Test plan: node greet.cjs; expect Hello, exit 0
   - Result: ${checked ? 'node greet.cjs printed Hello, exit 0' : 'Not started'}
 `;
 const phase = tasks => `# 01 Greeting
@@ -26,31 +27,84 @@ None; inspected greeting and command output.
 Greeting delivered; node greet.cjs printed Hello, exit 0. No known limitations.
 `;
 
-function fixture(t, text = phase(task('T1')), legacy = false) {
+function fixture(t, text = phase(task('T1'))) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'kaylo-plan-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const relative = '.kaylo/phases/01-greeting/01-PLAN.md';
   fs.mkdirSync(path.dirname(path.join(root, relative)), { recursive: true });
   fs.writeFileSync(path.join(root, relative), text);
-  fs.writeFileSync(path.join(root, 'PLAN.md'), legacy ? text : `# Plan
+  fs.writeFileSync(path.join(root, 'ROADMAP.md'), `# Roadmap
 Current: [01 Greeting](${relative})
 
 - [ ] [01 Greeting](${relative}) — Print a greeting
 - [ ] 02 Future — Decide later
 `);
-  return { root, file: path.join(root, legacy ? 'PLAN.md' : relative), index: path.join(root, 'PLAN.md') };
+  return { root, file: path.join(root, relative), index: path.join(root, 'ROADMAP.md') };
 }
 
-test('valid index with unopened future phase; validator makes no writes', t => {
+test('valid roadmap with unlinked future phase; validator makes no writes', t => {
   const f = fixture(t);
   const before = [f.index, f.file].map(p => fs.readFileSync(p, 'utf8'));
   assert.deepEqual(validate(f.root), []);
   assert.deepEqual([f.index, f.file].map(p => fs.readFileSync(p, 'utf8')), before);
 });
 
-test('legacy plan without Depends on or status stays supported', t => {
-  const f = fixture(t, phase(task('T1')).replace('  - Depends on: None\n', '').replace('Status: Current\n', ''), true);
+test('PRD.md is optional, and an unrelated PLAN.md beside ROADMAP.md is ignored', t => {
+  const f = fixture(t);
+  fs.writeFileSync(path.join(f.root, 'PRD.md'), '# Greeting\n');
+  fs.writeFileSync(path.join(f.root, 'PLAN.md'), '# Unrelated notes\n');
   assert.deepEqual(validate(f.root), []);
+});
+
+test('Needs revision with a reason is valid before closure', t => {
+  const f = fixture(t, phase(task('T1')).replace('Status: Current', 'Status: Needs revision: changed outcome'));
+  assert.deepEqual(validate(f.root), []);
+});
+
+test('PLAN.md without ROADMAP.md is rejected and names the replacement', t => {
+  const f = fixture(t);
+  fs.renameSync(f.index, path.join(f.root, 'PLAN.md'));
+  assert.deepEqual(validate(f.root), ['PLAN.md is no longer supported; rename it to ROADMAP.md']);
+});
+
+test('missing ROADMAP.md is rejected', t => {
+  const f = fixture(t);
+  fs.rmSync(f.index);
+  assert.deepEqual(validate(f.root), ['Missing ROADMAP.md']);
+});
+
+test('OBJECTIVE.md is rejected, alone or beside PRD.md', t => {
+  const f = fixture(t);
+  fs.writeFileSync(path.join(f.root, 'OBJECTIVE.md'), '# Greeting\n');
+  assert.deepEqual(validate(f.root), ['OBJECTIVE.md is no longer supported; rename it to PRD.md']);
+  fs.writeFileSync(path.join(f.root, 'PRD.md'), '# Greeting\n');
+  assert.deepEqual(validate(f.root), ['OBJECTIVE.md is no longer supported; rename it to PRD.md']);
+});
+
+test('inline roadmap tasks without Current are rejected', t => {
+  const f = fixture(t);
+  fs.writeFileSync(f.index, phase(task('T1')));
+  const errors = validate(f.root).join('\n');
+  assert.match(errors, /ROADMAP\.md contains tasks/);
+  assert.match(errors, /ROADMAP\.md needs a Current/);
+});
+
+test('roadmap without Current or tasks is rejected', t => {
+  const f = fixture(t);
+  fs.writeFileSync(f.index, '# Roadmap\n\n- [ ] 01 Greeting — Print a greeting\n');
+  assert.match(validate(f.root).join('\n'), /ROADMAP\.md needs a Current/);
+});
+
+for (const [label, edit, expected] of [
+  ['missing', text => text.replace('Status: Current\n', ''), /Phase plan needs Status: Current or Status: Needs revision/],
+  ['Draft', text => text.replace('Status: Current', 'Status: Draft'), /Unsupported Status: Draft/],
+  ['Current with extra text', text => text.replace('Status: Current', 'Status: Currently drafting'), /Unsupported Status: Currently drafting/],
+  ['blank', text => text.replace('Status: Current', 'Status:'), /Unsupported Status: \(blank\)/],
+  ['Needs revision without a reason', text => text.replace('Status: Current', 'Status: Needs revision:'), /Unsupported Status: Needs revision:/],
+  ['Needs revision with a placeholder', text => text.replace('Status: Current', 'Status: Needs revision: [reason]'), /Unsupported Status/],
+  ['a second, invalid line', text => text.replace('## Tasks', 'Status: Draft\n\n## Tasks'), /Unsupported Status: Draft/],
+]) test(`phase plan Status rejected: ${label}`, t => {
+  assert.match(validate(fixture(t, edit(phase(task('T1', true)))).root).join('\n'), expected);
 });
 
 test('valid dependency and completed task evidence', t => {
@@ -59,21 +113,60 @@ test('valid dependency and completed task evidence', t => {
 
 for (const [label, tasks, expected] of [
   ['duplicate task', task('T1') + task('T1'), /Duplicate task/],
-  ['unknown dependency', task('T1', false, 'T9'), /dependency T9/],
-  ['self dependency', task('T1', false, 'T1'), /dependency T1/],
-  ['forward dependency', task('T1', false, 'T2') + task('T2'), /dependency T2/],
-  ['cross-phase dependency', task('T1', false, '02-T1'), /comma-separated/],
-  ['duplicate dependency', task('T1') + task('T2', false, 'T1, T1'), /comma-separated/],
+  ['unknown blocker', task('T1', false, 'T9'), /Blocked by T9 must name an earlier task/],
+  ['self blocker', task('T1', false, 'T1'), /Blocked by T1 must name an earlier task/],
+  ['forward blocker', task('T1', false, 'T2') + task('T2'), /Blocked by T2 must name an earlier task/],
+  ['cross-phase blocker', task('T1', false, '02-T1'), /comma-separated/],
+  ['duplicate blocker', task('T1') + task('T2', false, 'T1, T1'), /comma-separated/],
+  ['empty Blocked by', task('T1', false, ''), /Blocked by must be None or comma-separated/],
+  ['missing Blocked by', task('T1').replace(/  - Blocked by:.*\n/, ''), /T1: task needs a Blocked by record \(None is allowed\)/],
+  ['duplicate Blocked by', task('T1').replace('  - Result:', '  - Blocked by: None\n  - Result:'), /duplicate Blocked by/],
   ['missing completed evidence', task('T1', true).replace(/  - Result:.*\n/, ''), /Result record/],
   ['placeholder completed evidence', task('T1', true).replace(/  - Result:.*\n/, '  - Result: [Evidence here]\n'), /Result record/],
-  ['blank completed acceptance cannot consume next field', task('T1', true).replace('Acceptance: Output Hello', 'Acceptance: '), /Acceptance record/],
+  ['blank completed acceptance criteria cannot consume next field', task('T1', true).replace('Acceptance criteria: Output Hello', 'Acceptance criteria: '), /Acceptance criteria record/],
+  ['missing acceptance criteria', task('T1').replace(/  - Acceptance criteria:.*\n/, ''), /T1: task needs a substantive Acceptance criteria record/],
+  ['duplicate acceptance criteria', task('T1').replace('  - Result:', '  - Acceptance criteria: Output Hi\n  - Result:'), /duplicate Acceptance criteria/],
   ['duplicate result field', task('T1', true) + '  - Result: Another claim\n', /duplicate Result/],
-  ['unfinished task still requires verification instructions', task('T1').replace(/  - Verify:.*\n/, ''), /Verify record/],
+  ['unfinished task still requires a test plan', task('T1').replace(/  - Test plan:.*\n/, ''), /Test plan record/],
 ]) test(label, t => assert.match(validate(fixture(t, phase(tasks)).root).join('\n'), expected));
 
-test('duplicate findings only count entries in Review', t => {
-  const text = phase(task('T1')).replace('None; inspected greeting and command output.', '- R1: optional — open\n- R1: blocker — open');
-  assert.match(validate(fixture(t, text).root).join('\n'), /Duplicate finding/);
+for (const [old, replacement] of [['Complexity', 'Estimate'], ['Depends on', 'Blocked by'],
+  ['Acceptance', 'Acceptance criteria'], ['Verify', 'Test plan']]) {
+  test(`old task field ${old}: is rejected and names ${replacement}:`, t => {
+    const oldOnly = task('T1').replace(`  - ${replacement}:`, `  - ${old}:`);
+    const expected = `T1: ${old}: is no longer supported; use ${replacement}:`;
+    assert.ok(validate(fixture(t, phase(oldOnly)).root).includes(expected));
+    const mixed = task('T1').replace('  - Result:', `  - ${old}: S\n  - Result:`);
+    assert.deepEqual(validate(fixture(t, phase(mixed)).root), [expected]);
+  });
+}
+
+test('Estimate values are instructions only', t => {
+  const f = fixture(t, phase(task('T1').replace('Estimate: S', 'Estimate: XXL') + task('T2').replace(/  - Estimate:.*\n/, '')));
+  assert.deepEqual(validate(f.root), []);
+});
+
+test('blocking and non-blocking review comments pass', t => {
+  const text = phase(task('T1', true)).replace('None; inspected greeting and command output.',
+    '- R1: blocking — fixed\n  - Recheck: node greet.cjs printed Hello\n- R2: non-blocking — optional follow-up accepted by user\n- R3: non-blocking - fixed; the flag is optional now\n- R4: blocking—fixed; optional flag removed\n- R5: non-blocking–fixed; optional flag kept\n- R6: non-blocking – fixed; optional flag kept');
+  assert.deepEqual(validate(fixture(t, text).root, { closing: true }), []);
+});
+
+for (const [entry, expected] of [
+  ['- R1: blocker — open', 'R1: label blocker is no longer supported; use blocking'],
+  ['- R1: optional — open', 'R1: label optional is no longer supported; use non-blocking'],
+  ['- R1: Optional - accepted by user', 'R1: label optional is no longer supported; use non-blocking'],
+  ['- R1: blocker / blocking — fixed', 'R1: label blocker is no longer supported; use blocking'],
+]) test(`old review label is rejected: ${entry}`, t => {
+  const text = phase(task('T1')).replace('None; inspected greeting and command output.', entry);
+  assert.deepEqual(validate(fixture(t, text).root), [expected]);
+});
+
+test('duplicate review comments only count entries in Review', t => {
+  const text = phase(task('T1')).replace('None; inspected greeting and command output.', '- R1: non-blocking — open\n- R1: blocking — open');
+  assert.match(validate(fixture(t, text).root).join('\n'), /Duplicate review comment ID: R1/);
+  const outside = phase(task('T1')).replace('## Tasks', '- R1: example\n\n## Tasks').replace('None; inspected greeting and command output.', '- R1: blocking — open');
+  assert.deepEqual(validate(fixture(t, outside).root), []);
 });
 
 test('examples inside fences and comments do not become tasks', t => {
@@ -105,7 +198,6 @@ for (const indent of [' ', '  ', '   ', '\t']) {
     assert.match(validate(f.root, { closing: true }).join('\n'), /needing revision/);
     fs.writeFileSync(f.index, fs.readFileSync(f.index, 'utf8').replace('- [ ] [01', '- [x] [01'));
     assert.match(validate(f.root).join('\n'), /needing revision/);
-    assert.match(validate(fixture(t, text, true).root, { closing: true }).join('\n'), /needing revision/);
   });
 }
 
@@ -192,10 +284,11 @@ for (const entry of ['- [?] 03 Future — invalid', '- [ 03 Future — invalid',
   });
 }
 
-test('indented Current cannot silently switch an index to legacy mode', t => {
-  const f = fixture(t, phase(task('T1', true)), true);
-  fs.appendFileSync(f.index, '\n  Current: [01 Greeting](.kaylo/phases/01-greeting/01-PLAN.md)\n');
-  assert.match(validate(f.root, { closing: true }).join('\n'), /Index mixes a Current link/);
+test('inline roadmap tasks are rejected even beside an indented Current', t => {
+  const f = fixture(t, phase(task('T1', true)));
+  fs.appendFileSync(f.index, '\n' + task('T1', true));
+  fs.writeFileSync(f.index, fs.readFileSync(f.index, 'utf8').replace('Current:', '  Current:'));
+  assert.match(validate(f.root, { closing: true }).join('\n'), /ROADMAP\.md contains tasks/);
 });
 
 test('whitespace in valid phase and Current records is supported', t => {
@@ -205,9 +298,11 @@ test('whitespace in valid phase and Current records is supported', t => {
 });
 
 test('malformed Current is diagnosed even beside inline tasks', t => {
-  const f = fixture(t, phase(task('T1', true)), true);
-  fs.appendFileSync(f.index, '\n Current [01 Greeting](.kaylo/phases/01-greeting/01-PLAN.md)\n');
-  assert.match(validate(f.root).join('\n'), /Unsupported Current record/);
+  const f = fixture(t, phase(task('T1', true)));
+  fs.writeFileSync(f.index, phase(task('T1', true)) + '\n Current [01 Greeting](.kaylo/phases/01-greeting/01-PLAN.md)\n');
+  const errors = validate(f.root).join('\n');
+  assert.match(errors, /Unsupported Current record/);
+  assert.match(errors, /ROADMAP\.md contains tasks/);
 });
 
 test('fence-like lines with info suffixes do not expose example tasks', t => {
@@ -233,7 +328,7 @@ test('literal comment markers in a fence cannot hide later real tasks', t => {
 for (const fence of ['```', '~~~']) {
   test(`comment marker in ${fence} opening info cannot hide an unfinished task`, t => {
     const unfinished = '- [ ] T2: Still unfinished\n' +
-      '  - Acceptance: Prints GOODBYE\n  - Verify: Check goodbye\n  - Result: Not started\n';
+      '  - Blocked by: None\n  - Acceptance criteria: Prints GOODBYE\n  - Test plan: Check goodbye\n  - Result: Not started\n';
     const text = phase(task('T1', true)).replace('## Review',
       `${fence}md <!--\nexample\n${fence}\n${unfinished}-->\n## Review`);
     const f = fixture(t, text);
@@ -259,11 +354,11 @@ test('fence markers inside a real HTML comment do not open a fence', t => {
   assert.match(validate(fixture(t, text).root, { closing: true }).join('\n'), /T2: phase closure requires completed tasks/);
 });
 
-test('duplicate Review sections and cross-section finding IDs are diagnosed', t => {
-  const text = phase(task('T1', true)).replace('None; inspected greeting and command output.', '- R1: optional — open\n\n## Review\n- R1: optional — open');
+test('duplicate Review sections and cross-section review comment IDs are diagnosed', t => {
+  const text = phase(task('T1', true)).replace('None; inspected greeting and command output.', '- R1: non-blocking — open\n\n## Review\n- R1: non-blocking — open');
   const errors = validate(fixture(t, text).root, { closing: true }).join('\n');
   assert.match(errors, /Duplicate Review sections/);
-  assert.match(errors, /Duplicate finding ID: R1/);
+  assert.match(errors, /Duplicate review comment ID: R1/);
 });
 
 test('duplicate Completion sections fail even before closure', t => {

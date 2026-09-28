@@ -16,19 +16,19 @@ Guide the user toward the simplest approach that meets the outcome. Work in the 
 
 ## Workflow
 
-1. Read project instructions, `OBJECTIVE.md` if present, `PLAN.md`, and the current phase plan its `Current:` line links. A concrete small-change request can supply the objective. Ask for missing intent only when it changes the work.
+1. Read project instructions, `PRD.md` if present, `ROADMAP.md`, and the current phase plan its `Current:` line links. Convert older formats first (see below). A concrete small-change request can stand in for a PRD. Ask for missing intent only when it changes the work.
 2. Inspect relevant code, dependencies, and checks. Establish repository facts yourself. A research worker may answer a bounded factual question; request file references or source links and remaining uncertainties.
-3. Identify the planning case below. Trace the user flow and choose an approach using the rules below. Explain why it meets the outcome.
+3. Identify the planning case below. Trace the user flow and choose a design using the rules below. Explain why it meets the outcome.
 4. Resolve consequential unknowns: at most three numbered questions per round, each with a recommendation. For technical investigation, define a bounded research task with a question and expected deliverable.
 5. Write or revise the phase plan using the plan and task requirements below, then update the index. Apply the revision rules when existing work is affected.
 
 ## Index and phases
 
-- `PLAN.md` is the index: a `Current:` link to the current phase plan, then one ordered checklist line per phase with checkbox, number, name, link once its file exists, and a one-line goal. Nothing else.
-- The phase plan holds everything else: scope, approach, agreement, tasks, findings, results, repair history, next step, and completion. Never duplicate these in the index.
+- `ROADMAP.md` is the index: a `Current:` link to the current phase plan, then one ordered checklist line per phase with checkbox, number, name, link once its file exists, and a one-line goal. Nothing else.
+- The phase plan holds everything else: scope, design, agreement, tasks, review comments, results, repair history, next step, and completion. Never duplicate these in the index.
 - Phase state is derived: `[x]` is closed; the phase `Current:` links is current; other unchecked phases are planned. `Current:` may rest on a closed phase until the next plan; then no phase is open.
 - Phase numbers are two-digit permanent IDs. Never renumber. An inserted phase takes the next free number; checklist position sets order. The folder slug is fixed at creation.
-- A phase plan lives at `.kaylo/phases/NN-slug/NN-PLAN.md`; the index links are authoritative. Add `NN-RESEARCH.md` beside it only when research findings are too long for the phase plan.
+- A phase plan lives at `.kaylo/phases/NN-slug/NN-PLAN.md`; the index links are authoritative. Add `NN-RESEARCH.md` beside it only when research notes are too long for the phase plan.
 - `.kaylo/` is project history; commit it with the project. Closed phases stay in place; read them only when a task needs their history.
 
 ## Planning cases
@@ -39,7 +39,9 @@ Guide the user toward the simplest approach that meets the outcome. Work in the 
 - Write the phase plan before moving `Current:`. Never create a later phase's folder or file while the current phase is open.
 - Build routes work for another phase, or any ID while no phase is open, here. Reopen a closed phase only for unmet acceptance or insufficient evidence while no phase is open: uncheck it and move `Current:` back. Otherwise plan the work in the current or a new phase.
 
-## Approach
+## Design
+
+Record the chosen approach under the phase plan's `## Design`.
 
 - Check existing capability and configuration first, then helpers, standard libraries, native features, and installed dependencies before custom code.
 - Prefer extending existing patterns. Recommend a more elaborate option only for a concrete requirement.
@@ -48,42 +50,53 @@ Guide the user toward the simplest approach that meets the outcome. Work in the 
 
 ## Plan contents
 
-Each phase plan records goal, scope and exclusions, approach, constraints, dependency-ordered tasks, review findings, actual agreement, and next step. Never invent approval. Preserve unrelated work and completed results.
+Each phase plan records goal, scope and exclusions, design, constraints, tasks ordered by prerequisites, review comments, actual agreement, and next step. Never invent approval. Preserve unrelated work and completed results.
 
-Use the optional [index template](../../templates/PLAN.md) and [phase template](../../templates/PHASE.md), resolved relative to this skill directory, or preserve an existing equivalent format. A missing template does not block planning.
+Use the optional [roadmap template](../../templates/ROADMAP.md) and [phase template](../../templates/PHASE.md), resolved relative to this skill directory, or preserve an existing equivalent format that uses the names below. A missing template does not block planning.
 
 Each task requires:
 
-- ID and checkbox; intended result and acceptance criteria.
-- Verification: working directory, exact command and expected result, or manual action and observation.
-- S/M/L complexity and free-text `Result` for evidence or blockers.
-- `Depends on:` IDs of tasks listed above this one in this phase whose output it needs to implement or verify, or `None`. Never name a task listed below, another phase, or a task only for its position. Needs from a closed phase belong in starting points or constraints. `Depends on` sets order, not concurrency.
-- Starting points, required packages or tools, concrete steps, and a complexity reason when needed to execute without guessing. Clear local S tasks need no redundant explanation.
+- ID and checkbox; intended result and `Acceptance criteria:`.
+- `Test plan:` working directory, exact command and expected result, or manual action and observation.
+- `Estimate:` S/M/L and free-text `Result:` for evidence or blockers.
+- `Blocked by:` IDs of tasks listed above this one in this phase whose output it needs to implement or verify, or `None`. Every task needs this line. Never name a task listed below, another phase, or a task only for its position. Needs from a closed phase belong in starting points or constraints. `Blocked by` sets order, not concurrency.
+- Starting points, required packages or tools, concrete steps, and an estimate reason when needed to execute without guessing. Clear local S tasks need no redundant explanation.
 - Existing failed-repair history.
 
-Task and finding IDs restart per phase (`T1`, `R1`). A bare ID means the current phase; `02-T3` or `02-R1` names a specific phase. Never renumber or reuse an ID within a phase. An inserted task takes the next free ID; list position sets order.
+Task and review comment IDs restart per phase (`T1`, `R1`). A bare ID means the current phase; `02-T3` or `02-R1` names a specific phase. Never renumber or reuse an ID within a phase. An inserted task takes the next free ID; list position sets order.
 
-Complexity: **S** = clear local edit following an existing pattern; **M** = bounded feature or bug fix requiring reasoning; **L** = uncertain or cross-cutting work. Account for consequence: a short sensitive change may need a stronger model. Research tasks deliver findings, not code.
+Estimate: **S** = clear local edit following an existing pattern; **M** = bounded feature or bug fix requiring reasoning; **L** = uncertain or cross-cutting work. Account for consequence: a short sensitive change may need a stronger model. Research tasks deliver answers with sources, not code.
 
 ## Verification
 
-- Verify that named commands exist; label proposed checks still needing creation.
+- In `Test plan:`, name only commands that exist; label proposed checks still needing creation.
 - Checks must establish acceptance, not repeat implementation. Use existing project checks; do not add a testing framework for a small change.
 - Include a user-facing check when automated tests do not establish the feature works.
 
 ## Status and revision
 
 - `Status: Current` in a phase plan means it matches intended work. Otherwise use `Status: Needs revision: <reason>`; restore `Status: Current` after revising affected instructions and any index lines the reason names. Status does not mean agreed, verified, or complete.
-- For older plans with `Draft` or no status, inspect scope and agreement. Normalize status during a relevant update without requiring a wholesale rewrite.
-- Identify affected tasks and evidence. Reopen only for unmet acceptance or insufficient evidence following relevant changes. Optional findings alone do not reopen work.
+- Every line in the phase plan that starts with `Status:` counts as its status, including lines under other headings. Write no other such line, for example in `## Completion`.
+- Identify affected tasks and evidence. Reopen only for unmet acceptance or insufficient evidence following relevant changes. Non-blocking review comments alone do not reopen work.
 - Reconsider dependent checks only when their inputs or assumptions changed, not merely because a task reopened.
-- Preserve finding IDs, resolutions, and repair history. A new task ID does not reset an unresolved failure's repair limit.
+- Preserve review comment IDs, resolutions, and repair history. A new task ID does not reset an unresolved failure's repair limit.
 - Request renewed agreement only for material changes to outcome, scope, or tradeoffs.
 
-## Older single-file plans
+## Older formats
 
-- A `PLAN.md` with tasks inline is one implicit phase, including its `Status:` line. Build, review, and close use it unchanged.
-- Convert it only during a relevant update: move its contents unchanged into `.kaylo/phases/01-<slug>/01-PLAN.md`, preserving IDs, findings, status, and history. Then write the index with `Current:` linking it, checked if its completion is recorded.
+Kaylo no longer reads these. Define, build, review, and close route them here.
+
+- `OBJECTIVE.md` (now `PRD.md`) and a `PLAN.md` index (now `ROADMAP.md`).
+- A `PLAN.md` or `ROADMAP.md` with tasks inline.
+- A phase plan status other than `Current` or `Needs revision: <reason>`, including `Draft` or no status.
+- `## Approach` (now `## Design`); task fields `Complexity:`, `Depends on:`, `Acceptance:`, and `Verify:` (now `Estimate:`, `Blocked by:`, `Acceptance criteria:`, and `Test plan:`); review labels `blocker` and `optional` (now `blocking` and `non-blocking`).
+
+Before other planning, convert `OBJECTIVE.md`, a `PLAN.md` index, `ROADMAP.md`, and the current phase plan, and tell the user each change. Convert a closed phase plan only when a task needs its history.
+
+- Rename files, headings, fields, and labels without changing their content. Preserve IDs, results, review comments, repair history, agreement, and completion.
+- When a `PLAN.md` or `ROADMAP.md` has tasks inline, move its whole phase record, unchanged, into `.kaylo/phases/01-<slug>/01-PLAN.md`: goal and scope, agreement, tasks with their results and repair history, review comments, and completion. Then replace `ROADMAP.md` with the index: `Current:` linking that plan and a matching phase entry, checked if its completion is recorded.
+- A task without `Depends on:` depended on every task listed above it. Write those IDs in `Blocked by:`, or `None` for the first task. This keeps the old order, as an exception to naming tasks only for their position; narrow the list only when revising those tasks.
+- Replace `Draft`, a missing status, or any other unsupported status with `Status: Current` only after confirming the plan matches intended work; otherwise use `Status: Needs revision: <reason>`. The old label grants no approval.
 
 ## Response
 
