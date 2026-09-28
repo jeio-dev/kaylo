@@ -2,7 +2,7 @@
 
 Build software with patient, practical guidance, using the AI tools you already have.
 
-Kaylo is an early `0.6.0` package; see [verification](VERIFICATION.md) for what has actually been checked.
+Kaylo is an early `0.7.0` package; see [verification](VERIFICATION.md) for what has actually been checked.
 
 ## Five commands
 
@@ -44,7 +44,7 @@ plan validator. The internal skill names remain `define`, `plan`, `build`,
 `review`, and `close`.
 
 Claude and Codex marketplaces select a tested release tag. The commands below
-use `v0.6.0`. For an
+use `v0.7.0`. For an
 unpublished checkout, use the development instructions below. See
 [release maintenance](RELEASING.md) for the publication process.
 
@@ -101,7 +101,7 @@ optionally remove the catalog with `codex plugin marketplace remove kaylo`.
 Clone the full package at a released tag:
 
 ```sh
-git clone --branch v0.6.0 https://github.com/jeio-dev/kaylo.git kaylo
+git clone --branch v0.7.0 https://github.com/jeio-dev/kaylo.git kaylo
 ```
 
 In your target project's existing `opencode.json` or `opencode.jsonc`, add the
@@ -122,10 +122,10 @@ To update, fetch tags and check out the desired release in that clone:
 
 ```sh
 git -C /absolute/path/to/kaylo fetch --tags origin
-git -C /absolute/path/to/kaylo checkout --detach v0.6.0
+git -C /absolute/path/to/kaylo checkout --detach v0.7.0
 ```
 
-Replace `v0.6.0` with the newer release tag when updating. Preserve any local
+Replace `v0.7.0` with the newer release tag when updating. Preserve any local
 edits; do not force checkout. Restart the OpenCode session/server afterward.
 Remove the Kaylo path from the `skills` array to uninstall.
 
@@ -163,7 +163,7 @@ see [verification](VERIFICATION.md).
 Gemini has its own extension manifest and loads the shared `skills/` directory:
 
 ```sh
-gemini extensions install https://github.com/jeio-dev/kaylo --ref v0.6.0
+gemini extensions install https://github.com/jeio-dev/kaylo --ref v0.7.0
 gemini extensions list
 gemini skills list --all
 ```
@@ -178,10 +178,10 @@ uninstall and install again with the new tag:
 
 ```sh
 gemini extensions uninstall kaylo
-gemini extensions install https://github.com/jeio-dev/kaylo --ref v0.6.0
+gemini extensions install https://github.com/jeio-dev/kaylo --ref v0.7.0
 ```
 
-Replace `v0.6.0` with the newer tag and restart the session. Reapply any
+Replace `v0.7.0` with the newer tag and restart the session. Reapply any
 host-specific enable/disable scope preferences after reinstalling. For a
 local-directory install, `gemini extensions update kaylo` refreshes that source;
 check out the desired release in the source directory first.
@@ -352,6 +352,6 @@ Delegated builds record the starting workspace state, confirm dependencies are p
 - `hooks/`: the optional reminder; no workflow runtime or persistent state.
 - `scripts/`: plan/package validators, the Claude agent adapter generator, and local development staging; `tests/`: validator fixtures and behavioral trial prompts.
 
-No custom installer, automatic model router, or terminal modifications. Releases use Git tags and native host commands; see [release maintenance](RELEASING.md). Validator fixtures check structure; behavioral trials do not guarantee model compliance. `0.6.0` is an early package version, not a release-readiness claim.
+No custom installer, automatic model router, or terminal modifications. Releases use Git tags and native host commands; see [release maintenance](RELEASING.md). Validator fixtures check structure; behavioral trials do not guarantee model compliance. `0.7.0` is an early package version, not a release-readiness claim.
 
 Native integration references: [Claude plugin layout](https://code.claude.com/docs/en/plugins-reference), [Claude agents](https://code.claude.com/docs/en/sub-agents), [Codex plugin packaging](https://developers.openai.com/plugins/build/plugins), [Codex skill invocation](https://developers.openai.com/codex/skills), [Codex hooks](https://developers.openai.com/codex/hooks), [OpenCode 2 skills](https://opencode.ai/v2/docs/skills), [Antigravity plugins](https://antigravity.google/docs/plugins), and [Gemini extensions](https://geminicli.com/docs/extensions/reference/). Host behavior and availability can vary by version; the verification record identifies the versions inspected here.
