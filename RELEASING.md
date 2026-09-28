@@ -42,7 +42,7 @@ advancing the public marketplace on the default branch. For example, after
 committing the prepared 0.7.0 package:
 
 ```sh
-git tag v0.7.0
+git tag -a v0.7.0 -m "Kaylo v0.7.0: <release title>"
 git push origin v0.7.0
 git push origin HEAD:main
 ```

@@ -521,7 +521,7 @@ were unchanged.
 
 Renamed Kaylo's project files, task fields, and review labels to common
 software-team names and removed older-format support (see the changelog's
-`[Unreleased]` entry and [industry terms](INDUSTRY-TERMS.md)). Checks ran on
+0.7.0 entry and [industry terms](INDUSTRY-TERMS.md)). Checks ran on
 branch `industry-terms` with Node 24.21.0. No release was prepared.
 
 | Check | Observed result |
@@ -551,7 +551,9 @@ follows it remains untested.
 ## Release preparation 0.7.0 — 2026-09-28
 
 Prepared 0.7.0 at `56a0288`: manifests set to 0.7.0 and both release catalogs
-select `v0.7.0`. No tag was created and nothing was published.
+select `v0.7.0`. No tag was created and nothing was published. Commits after
+`56a0288` change only `CHANGELOG.md`, `VERIFICATION.md`, and the `RELEASING.md`
+tag example; the shipped package files checked here are unchanged.
 
 | Check | Observed result |
 | --- | --- |
@@ -559,6 +561,7 @@ select `v0.7.0`. No tag was created and nothing was published.
 | `node scripts/validate-package.cjs` | Package v0.7.0: versions and release catalogs match |
 | Claude Code 2.1.283: `claude plugin validate` on the plugin and marketplace manifests with `--strict` | Both passed |
 | Antigravity CLI 1.2.11: `agy plugin validate .` | Passed: five skills and three agents |
+| Codex plugin-creator `validate_plugin.py`, PyYAML from a temporary `uv` environment | Passed |
 | `git diff --check` | Clean |
 | Claude Code 2.1.283, temporary `CLAUDE_CONFIG_DIR` | Git catalog install of the real v0.6.0, then native marketplace update and plugin update to 0.7.0 |
 | Codex CLI 0.157.1, temporary `CODEX_HOME` | Git catalog install of v0.6.0, then marketplace upgrade and reinstall to 0.7.0; fresh app-server discovery returned five enabled Kaylo skills without errors |
@@ -572,7 +575,16 @@ The fixture releases were built with `git archive` from the real `v0.6.0` tag
 and from `56a0288`, so they contain only tracked files. Git transport was
 redirected to a local bare mirror for Claude and Codex and to a loopback smart
 HTTP mirror for Gemini, as in the 0.6.0 trial. Public GitHub transport against
-a published `v0.7.0` remains to be checked after publication.
+a published `v0.7.0` remains to be checked after publication. The fixture
+`main` and release tag point at the same commit, so this trial does not show
+that the catalogs select the tag rather than the default branch.
+
+The resource comparison is one-directional: it checks that each shared source
+file matches its installed copy, not that no extra files remain. An independent
+review listed the active install roots and found no leftover `templates/OBJECTIVE.md`
+or `templates/PLAN.md`, and a matching `WORKERS.md`, which the comparison omits.
+The trial log truncates Gemini's skill listing; a separate listing of the same
+profile shows all five skills enabled.
 
 The hook check runs the configured loader command directly; it does not
 exercise signed-in session lifecycle or Codex hook trust. Native worker
