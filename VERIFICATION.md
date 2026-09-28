@@ -547,3 +547,39 @@ whole phase record of a plan with inline tasks, including completion, matching
 the changelog's step 2. Afterwards 89 tests passed, package validation passed, and
 `git diff --check` was clean. This is an instruction change; whether a model
 follows it remains untested.
+
+## Release preparation 0.7.0 — 2026-09-28
+
+Prepared 0.7.0 at `7fb4197`: manifests set to 0.7.0 and both release catalogs
+select `v0.7.0`. No tag was created and nothing was published.
+
+| Check | Observed result |
+| --- | --- |
+| Node 24.21.0: `node --test tests/*.test.cjs` | 89 tests passed |
+| `node scripts/validate-package.cjs` | Package v0.7.0: versions and release catalogs match |
+| Claude Code 2.1.283: `claude plugin validate` on the plugin and marketplace manifests with `--strict` | Both passed |
+| Antigravity CLI 1.2.11: `agy plugin validate .` | Passed: five skills and three agents |
+| `git diff --check` | Clean |
+| Claude Code 2.1.283, temporary `CLAUDE_CONFIG_DIR` | Git catalog install of the real v0.6.0, then native marketplace update and plugin update to 0.7.0 |
+| Codex CLI 0.157.1, temporary `CODEX_HOME` | Git catalog install of v0.6.0, then marketplace upgrade and reinstall to 0.7.0; fresh app-server discovery returned five enabled Kaylo skills without errors |
+| Gemini CLI 0.61.0, temporary `GEMINI_CLI_HOME` | Git install at `v0.6.0`, then uninstall and install at `v0.7.0`; skill listing shows all five skills enabled |
+| Antigravity CLI 1.2.11, private profile mounted with Bubblewrap, network disabled | Install of the v0.6.0 checkout, then reinstall from 0.7.0: five skills, three agents |
+| OpenCode 2.0.18, temporary XDG directories | Loopback API discovery returned all five skills from the 0.7.0 checkout with exact instruction bodies |
+| Installed resource comparison after update | Every 0.7.0 install root in Claude, Codex, Gemini, and Antigravity matches all 22 shared resources and the 0.7.0 build skill bytes |
+| Hook loader run from each installed copy (Claude and Codex plugin-root variables, Gemini extension path) | Returns SessionStart context naming `PRD.md` and `ROADMAP.md` |
+
+The fixture releases were built with `git archive` from the real `v0.6.0` tag
+and from `7fb4197`, so they contain only tracked files. Git transport was
+redirected to a local bare mirror for Claude and Codex and to a loopback smart
+HTTP mirror for Gemini, as in the 0.6.0 trial. Public GitHub transport against
+a published `v0.7.0` remains to be checked after publication.
+
+The hook check runs the configured loader command directly; it does not
+exercise signed-in session lifecycle or Codex hook trust. Native worker
+execution, Antigravity IDE loading, and model behavior were not tested. No
+model requests were made, so whether models follow the renamed workflow or
+convert older projects remains unverified.
+
+Evidence: `/tmp/claude-1000/-home-jeio-src-kaylo/2cf32f63-d53f-4752-b884-e2b495a04c4a/scratchpad/release-0.7.0/parity.py`, `/tmp/claude-1000/-home-jeio-src-kaylo/2cf32f63-d53f-4752-b884-e2b495a04c4a/scratchpad/release-0.7.0/parity.log`, and
+`/tmp/claude-1000/-home-jeio-src-kaylo/2cf32f63-d53f-4752-b884-e2b495a04c4a/scratchpad/release-0.7.0/parity-9psigcb6`. Temporary profiles contain no copied account
+credentials. Normal host profiles and trust settings were not changed.

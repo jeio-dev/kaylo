@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## 2026-09-28, Version 0.7.0
+
 ### Notable Changes
 
 - **skills**: **Breaking.** Kaylo's files, fields, and labels now use common
@@ -52,6 +54,31 @@ tested. To convert by hand instead:
 
 Closed phase plans can keep their old names; convert one only when a task needs
 its history.
+
+### Verification
+
+All 89 Node tests, package consistency checks, strict Claude plugin and marketplace
+validation, Antigravity validation, and whitespace checks passed. Isolated
+update trials installed the real v0.6.0 in Claude, Codex, Gemini, and Antigravity,
+then updated each to the prepared 0.7.0; installed copies match all 22 shared
+resources, and the hook loader returns the new reminder from each hook host's
+copy. Codex and OpenCode discovered all five skills in fresh sessions. Old-format
+conversion was checked structurally with fixtures. No live-model trial ran, so
+whether models follow the renamed workflow or convert older projects is untested.
+Native worker execution, signed-in hook lifecycle/trust, and Antigravity IDE
+loading remain untested. Public installation checks follow tag publication.
+
+### Commits
+
+- [`c665fb1946`](https://github.com/jeio-dev/kaylo/commit/c665fb19463d4680828c74bb12d08aa50bbb7a05) - **docs**: add industry terms glossary and format contract (Jeio) [#8](https://github.com/jeio-dev/kaylo/pull/8)
+- [`61e96b888b`](https://github.com/jeio-dev/kaylo/commit/61e96b888be85049ca67f3a593c16a087b70ebb8) - **docs**: align industry terms contract with validator checks (Jeio) [#8](https://github.com/jeio-dev/kaylo/pull/8)
+- [`30b041d2ca`](https://github.com/jeio-dev/kaylo/commit/30b041d2ca8f02e594026a496dffe014b55a7d00) - **tools**: enforce industry-terms contract in plan validator (Jeio) [#8](https://github.com/jeio-dev/kaylo/pull/8)
+- [`ef051b073a`](https://github.com/jeio-dev/kaylo/commit/ef051b073ae85b97ca12005f82932c78b5cdfa45) - **skills**: adopt industry terms in templates and skills (Jeio) [#8](https://github.com/jeio-dev/kaylo/pull/8)
+- [`6e678b85b3`](https://github.com/jeio-dev/kaylo/commit/6e678b85b316541442250928eea2db966d961596) - **agents**: adopt industry terms in worker briefs and hook (Jeio) [#8](https://github.com/jeio-dev/kaylo/pull/8)
+- [`0fbcdab1ad`](https://github.com/jeio-dev/kaylo/commit/0fbcdab1ad1ba4570d7ed246e7719fc5a2bd6208) - **docs**: adopt industry terms in active docs and changelog (Jeio) [#8](https://github.com/jeio-dev/kaylo/pull/8)
+- [`5db8f744bd`](https://github.com/jeio-dev/kaylo/commit/5db8f744bd18119b1800c21c9ad901655b3cf1e2) - **skills**: keep the whole phase record when converting inline plans (Jeio) [#8](https://github.com/jeio-dev/kaylo/pull/8)
+- [`9297e3adab`](https://github.com/jeio-dev/kaylo/commit/9297e3adabc2f6b90db300f2cb48dbf715048150) - **docs**: remove README link to deleted review handover (Jeio) [#8](https://github.com/jeio-dev/kaylo/pull/8)
+- [`7fb4197222`](https://github.com/jeio-dev/kaylo/commit/7fb4197222cdb6062265d98b81743aec63287813) - **plugins**: set version 0.7.0 and select the v0.7.0 tag (Jeio) [#8](https://github.com/jeio-dev/kaylo/pull/8)
 
 ## 2026-09-27, Version 0.6.0
 
