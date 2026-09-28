@@ -34,7 +34,7 @@ Use plain Markdown and preserve an existing equivalent format. The optional [PRD
 ## Revision and scope
 
 - If planned work no longer matches and the current phase is open, set `Status: Needs revision: <reason>` in the current phase plan. Name affected later phases or order in the reason so plan revises both. If the current phase is closed, the next `/kaylo:plan` rechecks the phase list.
-- Older formats are unsupported: `OBJECTIVE.md` (now `PRD.md`) and `PLAN.md` (now `ROADMAP.md`), including a `PLAN.md` with tasks inline. Report each with its replacement and route to `/kaylo:plan`, which converts them; do not convert them here.
+- Older formats are unsupported: `OBJECTIVE.md` (now `PRD.md`) and a `PLAN.md` index without `ROADMAP.md` (now `ROADMAP.md`), including a `PLAN.md` with tasks inline. Report each with its replacement and route to `/kaylo:plan`, which converts them; do not convert them here, and do not write `PRD.md` while `OBJECTIVE.md` exists.
 - `/kaylo:plan` restores `Status: Current` after revision; status means validity, not agreement or completion.
 - Preserve history and unaffected results. Reopen only work whose acceptance or required evidence is insufficient.
 - Choose frameworks, services, dependencies, or abstractions only when needed to define the outcome. Do not implement the product.

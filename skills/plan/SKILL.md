@@ -91,7 +91,7 @@ Kaylo no longer reads these. Define, build, review, and close route them here.
 - A phase plan status other than `Current` or `Needs revision: <reason>`, including `Draft` or no status.
 - `## Approach` (now `## Design`); task fields `Complexity:`, `Depends on:`, `Acceptance:`, and `Verify:` (now `Estimate:`, `Blocked by:`, `Acceptance criteria:`, and `Test plan:`); review labels `blocker` and `optional` (now `blocking` and `non-blocking`).
 
-Before other planning, convert `OBJECTIVE.md`, `PLAN.md`, `ROADMAP.md`, and the current phase plan, and tell the user each change. Convert a closed phase plan only when a task needs its history.
+Before other planning, convert `OBJECTIVE.md`, a `PLAN.md` index, `ROADMAP.md`, and the current phase plan, and tell the user each change. Convert a closed phase plan only when a task needs its history.
 
 - Rename files, headings, fields, and labels without changing their content. Preserve IDs, results, review comments, repair history, and agreement.
 - Move tasks written inline in a `PLAN.md` or `ROADMAP.md`, unchanged, into `.kaylo/phases/01-<slug>/01-PLAN.md`. Then write `ROADMAP.md` with `Current:` linking it, checked if its completion is recorded.

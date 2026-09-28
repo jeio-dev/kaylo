@@ -34,7 +34,7 @@ Work in the user's project. Complete the requested task without expanding the pr
 - For a supplied ID with an unmet prerequisite, report it and proceed only with the user's explicit go-ahead, recorded in `Result`.
 - A `Blocked by` naming the task itself, an unknown ID, a task listed below, or another phase is a plan error; return to `/kaylo:plan`.
 - Before implementation, confirm prerequisite changes and contracts are present in the actual working directory; a completed plan entry alone does not establish workspace readiness.
-- A review comment on the plan returns to `/kaylo:plan`. A review comment on the implementation needs a bounded correction, affected criteria, and relevant verification.
+- A review comment that needs a plan correction returns to `/kaylo:plan`. One that needs an implementation correction needs a bounded correction, affected criteria, and relevant verification.
 - Confirm agreement from the conversation or plan. A review comment does not authorize extra scope. If agreement is missing, explain the work and ask; existing authorization counts.
 - If the selected work depends on a plan area marked `Needs revision`, return to plan. Unaffected, agreed work may proceed.
 - A material scope mismatch requires `Status: Needs revision: <reason>` in the current phase plan and a return to plan. A missing consequential decision also returns to plan; an ordinary implementation defect does not invalidate it.

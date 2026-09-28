@@ -6,7 +6,7 @@ Use [the reviewer brief](../../../agents/reviewer.md), resolved relative to this
 
 Supply:
 
-- PRD and current phase plan, including existing review comments and their IDs.
+- The PRD if present, and the current phase plan, including existing review comments and their IDs.
 - Applicable repository instructions.
 - Exact files or diff being reviewed, including untracked files in scope.
 - The build's recorded starting state when available, so the reviewer can distinguish assigned changes from pre-existing edits. If it is unavailable, disclose the attribution limit and still inspect relevant behavior.

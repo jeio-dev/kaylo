@@ -44,7 +44,7 @@ Read `ROADMAP.md` and follow its `Current:` link to the current phase plan; revi
 
 ## Response
 
-State readiness, concrete blockers, and one next step:
+State readiness, open blocking comments, and one next step:
 
 - Plan corrections → `/kaylo:plan`.
 - Implementation fixes → `/kaylo:build`.
