@@ -164,8 +164,8 @@ Evidence: `/tmp/claude-1000/-home-jeio-src-kaylo/2cf32f63-d53f-4752-b884-e2b495a
 
 Follow-up to the 0.7.0 release review (R46). `validate-package.cjs --installed`
 now compares `WORKERS.md` and rejects unexpected files in the shared folders.
-Checks ran on branch `tools/installed-package-checks` at `653a957` with Node
-24.21.0.
+Checks ran on branch `tools/installed-package-checks` at `653a957` (PR #10,
+squash-merged into `main`) with Node 24.21.0.
 
 | Check | Observed result |
 | --- | --- |
