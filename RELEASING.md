@@ -23,11 +23,15 @@ publish a skills-only subset or independently edit host copies.
    `claude plugin validate .claude-plugin/plugin.json --strict`,
    `claude plugin validate .claude-plugin/marketplace.json --strict`,
    `agy plugin validate .`, and `git diff --check`.
-5. In temporary profiles, install/reinstall Claude, Codex, Antigravity, and Gemini,
+5. In temporary profiles, install the previous release in Claude, Codex,
+   Antigravity, and Gemini, confirm it, then update each to the prepared release,
    and load the checkout in OpenCode 2. Confirm all five skills are discovered.
    Run `node scripts/validate-package.cjs --installed <package-root>` against
-   copied packages to compare every shared resource. Check hook discovery and
-   startup context separately from skill loading.
+   each installed package; it compares every shared resource and `WORKERS.md` and
+   rejects leftover files in the shared folders. When Git transport is redirected
+   to a local mirror, move the mirror's default branch one changed commit past each
+   release tag and confirm installs match the tag, not the branch. Check hook
+   discovery and startup context separately from skill loading.
 
 All three hook-capable hosts discover `hooks/hooks.json`. Use exact startup
 and resume matchers and keep the shared loader's two root-resolution mechanisms.

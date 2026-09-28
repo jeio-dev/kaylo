@@ -20,7 +20,7 @@ The assistant investigates repository facts, recommends an approach, and asks a 
 
 Phase plans use `Status: Current` or `Needs revision: <reason>` to describe whether task instructions match the intended work; agreement and completion are separate. Clear local S tasks can use a compact record. Task and review comment IDs restart per phase; `02-R1` names another phase's review comment. Review comments keep stable IDs such as `R2`: build can select a task or an implementation review comment, and fixes to blocking comments receive a focused recheck before closure. Non-blocking comments do not block the agreed outcome.
 
-Kaylo uses common software-team names for its files and fields: a PRD, a roadmap, acceptance criteria, and blocking or non-blocking review comments. [Industry terms](INDUSTRY-TERMS.md) explains each term, where Kaylo differs from common practice, and which team practices Kaylo does not cover yet.
+Kaylo uses common software-team names for its files and fields: a PRD, a roadmap, acceptance criteria, and blocking or non-blocking review comments. The [glossary](GLOSSARY.md) explains each term, where Kaylo differs from common practice, and which team practices Kaylo does not cover yet.
 
 Simplicity means using existing capability, configuration, standard libraries, native features, and installed dependencies where sufficient. Keep requested behavior, readability, security, and accessibility. A short diff is not proof of a correct solution.
 

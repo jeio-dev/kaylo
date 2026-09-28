@@ -55,6 +55,19 @@ test('installed package preserves supporting files and detects missing or altere
   fs.unlinkSync(path.join(dir, 'scripts/validate-plan.cjs'));
   assert.equal(check(repo, ['--installed', dir]).status, 1);
 });
+test('installed package rejects leftover files and checks root resources', t => {
+  const dir = fixture(t);
+  fs.writeFileSync(path.join(dir, 'templates/OBJECTIVE.md'), '# Objective\n');
+  const leftover = check(repo, ['--installed', dir]);
+  assert.equal(leftover.status, 1);
+  assert.match(leftover.stderr, /unexpected file: templates[\\/]OBJECTIVE\.md/);
+  fs.unlinkSync(path.join(dir, 'templates/OBJECTIVE.md'));
+  assert.equal(check(repo, ['--installed', dir]).status, 0);
+  fs.appendFileSync(path.join(dir, 'WORKERS.md'), '\nChanged guide\n');
+  assert.match(check(repo, ['--installed', dir]).stderr, /differs: WORKERS\.md/);
+  fs.unlinkSync(path.join(dir, 'WORKERS.md'));
+  assert.match(check(repo, ['--installed', dir]).stderr, /missing: WORKERS\.md/);
+});
 test('stale generated worker instructions are rejected', t => {
   const dir = fixture(t);
   fs.appendFileSync(path.join(dir, 'agents/reviewer.md'), '\nUpdated reviewer instructions\n');
