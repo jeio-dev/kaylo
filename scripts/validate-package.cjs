@@ -13,6 +13,8 @@ if (args.length && (args.length !== 2 || args[0] !== '--installed')) {
 const read = name => JSON.parse(fs.readFileSync(path.join(root, name), 'utf8'));
 const skills = ['build', 'close', 'define', 'plan', 'review'];
 const payload = ['skills', 'agents', 'claude-agents', 'templates', 'scripts', 'hooks'];
+// Root files that skills or briefs load by relative path.
+const rootResources = ['WORKERS.md'];
 function files(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
     const file = path.join(dir, entry.name);
@@ -82,16 +84,25 @@ try {
   const readme = fs.readFileSync(path.join(root, 'README.md'), 'utf8');
   assert(readme.includes(`\`${claude.version}\``), 'README version must match');
   assert(readme.includes(tag), 'README must name the release tag');
-  // Every installed host must preserve the same source bytes and sibling layout.
+  // Every installed host must preserve the same source bytes and sibling layout,
+  // with no leftover files from an earlier release in the shared folders.
   let compared = 0;
   if (args.length) {
     const installed = path.resolve(args[1]);
+    const expected = [...payload.flatMap(folder => files(path.join(root, folder))
+      .map(source => path.relative(root, source))), ...rootResources];
+    for (const relative of expected) {
+      const target = path.join(installed, relative);
+      assert(fs.existsSync(target), `Installed resource is missing: ${relative}`);
+      assert(fs.readFileSync(path.join(root, relative)).equals(fs.readFileSync(target)),
+        `Installed resource differs: ${relative}`);
+      compared++;
+    }
+    const known = new Set(expected);
     for (const folder of payload) {
-      for (const source of files(path.join(root, folder))) {
-        const relative = path.relative(root, source);
-        assert(fs.readFileSync(source).equals(fs.readFileSync(path.join(installed, relative))),
-          `Installed resource differs: ${relative}`);
-        compared++;
+      for (const file of files(path.join(installed, folder))) {
+        const relative = path.relative(installed, file);
+        assert(known.has(relative), `Installed package has an unexpected file: ${relative}`);
       }
     }
   }
