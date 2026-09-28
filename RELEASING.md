@@ -70,6 +70,8 @@ Keep historical fixture checks distinct from checks against the published tag.
   update of a pinned source does not select a different release tag. Local installs
   can refresh with `gemini extensions update kaylo` after changing their source.
 
-Start a new session after updating. Existing project objectives and phase plans
-remain in the user's project. Preserve local modifications and host scope preferences;
-do not force checkout or silently reset user settings.
+Start a new session after updating. Existing PRDs, roadmaps, and phase plans
+remain in the user's project. After the industry-terms rename, `/kaylo:plan`
+converts older project files; the changelog lists the manual steps. Preserve
+local modifications and host scope preferences; do not force checkout or
+silently reset user settings.
