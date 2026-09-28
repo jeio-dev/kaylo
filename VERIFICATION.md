@@ -516,3 +516,28 @@ Evidence: `/tmp/kaylo-release-parity-6po9qybr`,
 `/tmp/kaylo-local-catalog-ql4aopo4`. Temporary profiles contain no copied account
 credentials. Normal host profiles, trust settings, and repository Git history
 were unchanged.
+
+## Industry-terms rename — 2026-09-28
+
+Renamed Kaylo's project files, task fields, and review labels to common
+software-team names and removed older-format support (see the changelog's
+`[Unreleased]` entry and [industry terms](INDUSTRY-TERMS.md)). Checks ran on
+branch `industry-terms` with Node 24.21.0. No release was prepared.
+
+| Check | Observed result |
+| --- | --- |
+| `node --test tests/*.test.cjs` | 89 tests passed: 80 plan tests, including rejection of each old file, field, and label, mixed old and new names, `Draft` or missing status, and a missing `Blocked by:`; and nine package/loader/staging tests |
+| `node scripts/validate-package.cjs` | Passed |
+| `git diff --check` | Clean |
+| Fixtures from the actual templates (run while updating templates and skills earlier the same day; not rerun) | An open phase passes; a closed phase passes `--closing`; a phase with a linked next phase and an unlinked later phase passes. Controls fail: the open phase with `--closing`, `Status: Delivered`, `R1: optional`, and `Depends on:` |
+| Changelog conversion steps, applied to five old-format projects | A linked old project (`OBJECTIVE.md`, `PLAN.md`, `Status: Draft`, old fields, `optional` label, one task without `Depends on:`) and a legacy project with tasks inline in `PLAN.md` each failed with diagnostics naming the replacements, then passed after steps 1–5. A completed legacy inline project passes, including closure checks, only when step 2 moves its whole phase record; a phase plan with `Status: Delivered` fails until step 3. A project with a closed old-format phase 01 and a converted current phase 02 passes, as the changelog states |
+| Search for old names across the package, including hidden manifest directories | Remaining matches are allowed: `NN-PLAN.md` paths, generic "blocker", "optional", and "approach" prose, the skills' older-format lists and conversion steps, and the validator's old-name diagnostics and their tests |
+| Relative links in changed Markdown | All resolve except README's `REVIEW-HANDOVER.md`, which was already missing and is out of scope |
+
+These checks cover structure and wording only. They do not show that a model
+creates `PRD.md` and `ROADMAP.md`, follows `Current:`, keeps repair history,
+labels review comments correctly, routes review and closure correctly, or
+converts an older project through `/kaylo:plan`; no live-model trial was run.
+Native host validators and isolated install/update checks from
+[release maintenance](RELEASING.md) were not rerun, so release readiness is not
+established.

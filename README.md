@@ -8,30 +8,32 @@ Kaylo is an early `0.6.0` package; see [verification](VERIFICATION.md) for what 
 
 | Command | What it helps you do | What you get |
 | --- | --- | --- |
-| `/kaylo:define` | Turn an idea into a clear product outcome | `OBJECTIVE.md` |
-| `/kaylo:plan` | Inspect the project and choose a simple approach | Ordered phases in `PLAN.md`; executable tasks in the current phase plan |
+| `/kaylo:define` | Turn an idea into a clear product outcome | `PRD.md` (product requirements document) |
+| `/kaylo:plan` | Inspect the project and choose a simple approach | Ordered phases in `ROADMAP.md`; executable tasks in the current phase plan |
 | `/kaylo:build` | Implement and verify an agreed task | A working change and recorded evidence |
-| `/kaylo:review` | Get a second opinion on a plan or change | Concrete findings in the current phase plan |
+| `/kaylo:review` | Get a second opinion on a plan or change | Review comments, labelled blocking or non-blocking, in the current phase plan |
 | `/kaylo:close` | Check the promised outcome and finish the phase | Phase checked off, usage guidance, and remaining limitations |
 
 Start with define, then plan. A concrete small change can start with plan. Review substantial or uncertain plans before building; review implementation before close. Revise through plan and build. Each response should explain what matters and give one clear next step.
 
-The assistant investigates repository facts, recommends an approach, and asks a short numbered round only for consequential decisions. Tasks include acceptance criteria and meaningful verification. Reuse passing checks unless relevant inputs changed. After two unsuccessful repairs of the same failure, preserve the work and recommend a different next action.
+The assistant investigates repository facts, recommends an approach, and asks a short numbered round only for consequential decisions. Tasks include acceptance criteria and a test plan with meaningful checks. Reuse passing checks unless relevant inputs changed. After two unsuccessful repairs of the same failure, preserve the work and recommend a different next action.
 
-Phase plans use `Status: Current` or `Needs revision: <reason>` to describe whether task instructions match the intended work; agreement and completion are separate. Clear local S tasks can use a compact record. Task and finding IDs restart per phase; `02-R1` names another phase's finding. Review findings keep stable IDs such as `R2`: build can select a task or implementation finding, and blocker fixes receive a focused recheck before closure. Optional findings do not block the agreed outcome.
+Phase plans use `Status: Current` or `Needs revision: <reason>` to describe whether task instructions match the intended work; agreement and completion are separate. Clear local S tasks can use a compact record. Task and review comment IDs restart per phase; `02-R1` names another phase's review comment. Review comments keep stable IDs such as `R2`: build can select a task or an implementation review comment, and fixes to blocking comments receive a focused recheck before closure. Non-blocking comments do not block the agreed outcome.
+
+Kaylo uses common software-team names for its files and fields: a PRD, a roadmap, acceptance criteria, and blocking or non-blocking review comments. [Industry terms](INDUSTRY-TERMS.md) explains each term, where Kaylo differs from common practice, and which team practices Kaylo does not cover yet.
 
 Simplicity means using existing capability, configuration, standard libraries, native features, and installed dependencies where sufficient. Keep requested behavior, readability, security, and accessibility. A short diff is not proof of a correct solution.
 
 ## Project files
 
 ```text
-OBJECTIVE.md                              product objective
-PLAN.md                                   Current link and ordered phase checklist
-.kaylo/phases/01-ledger-core/01-PLAN.md   phase plan: scope, tasks, findings, results, completion
+PRD.md                                    product requirements: problem, users, outcome
+ROADMAP.md                                Current link and ordered phase checklist
+.kaylo/phases/01-ledger-core/01-PLAN.md   phase plan: scope, tasks, review comments, results, completion
 .kaylo/phases/02-sales/02-PLAN.md         created when phase 02 starts
 ```
 
-Plan details one phase at a time; later phases stay one line in `PLAN.md` until they start. Close checks off the phase, and the next plan moves `Current:`. Build and review work only in the current phase plan. Completed phases stay in place as history. Commit `.kaylo/` with your project. An older `PLAN.md` with tasks inline keeps working as a single phase until plan next updates it.
+Plan details one phase at a time; later phases stay one line in `ROADMAP.md` until they start. Close checks off the phase, and the next plan moves `Current:`. Build and review work only in the current phase plan. Completed phases stay in place as history. Commit `.kaylo/` with your project. Older Kaylo files (`OBJECTIVE.md`, `PLAN.md`, and the old task fields) are no longer read; plan converts them, and the [changelog](CHANGELOG.md) lists the steps to convert by hand.
 
 ## Install and use Kaylo
 
@@ -237,7 +239,7 @@ with manual plan inspection when the validator and supporting files are absent.
 | --- | --- | --- | --- | --- | --- |
 | Five shared skills and workflow | Yes | Yes | Yes | Yes | Yes |
 | Templates, briefs, references, validator | Full package | Full package | Full checkout | Full package | Full package |
-| Project state | `OBJECTIVE.md`, `PLAN.md`, `.kaylo/phases/` | Same | Same | Same | Same |
+| Project state | `PRD.md`, `ROADMAP.md`, `.kaylo/phases/` | Same | Same | Same | Same |
 | Optional session reminder | Native hook | Native hook, requires trust | No adapter | No adapter | Native hook |
 | Update source | Released catalog | Released catalog | Release checkout | Release checkout + reinstall | Release tag + reinstall |
 
@@ -296,30 +298,37 @@ marking tasks complete; close writes the proposed completion record and runs
 `--closing` before checking the phase in the index. If the script/runtime is
 unavailable, the skills require manual inspection and disclosure of that limit.
 
-Supported Markdown uses `Current: [label](relative-file)`, phase checklist entries
-with two-digit IDs, task entries such as `- [ ] T1: title`, and single-line
-`Acceptance:`, `Verify:`, `Result:`, and optional `Depends on:` fields. Dependencies
-are `None` or comma-separated earlier task IDs. Horizontal whitespace around
-list markers and checkboxes and indentation are supported; recognizable malformed
-task, phase, and Current records produce errors rather than being skipped.
-Legacy inline tasks without a `Current:` link or dependency field remain
-supported. Examples in fenced code
+Supported Markdown uses exactly one `Current: [label](relative-file)` line in
+`ROADMAP.md`, matching exactly one phase checklist entry with a two-digit ID. The
+current phase plan needs `Status: Current` or `Status: Needs revision: <reason>`;
+every line starting with `Status:` is checked. Tasks use entries such as
+`- [ ] T1: title` with single-line `Acceptance criteria:`, `Test plan:`,
+`Result:`, and `Blocked by:` fields. `Blocked by:` is required and is `None` or
+comma-separated, distinct IDs of earlier tasks in the same phase. Horizontal whitespace around list markers and checkboxes and indentation are
+supported; recognizable malformed task, phase, and Current records produce errors
+rather than being skipped. Older formats are rejected with a diagnostic naming the
+replacement: `OBJECTIVE.md`, `PLAN.md` without `ROADMAP.md`, tasks inline in the
+index, `Complexity:`, `Depends on:`, `Acceptance:`, `Verify:`, and `blocker` or
+`optional` review labels. Examples in fenced code
 blocks and HTML comments are ignored. Links must resolve inside the project,
 including symlink targets. Linked phases cannot share the same file identity
 through symlink or hard-link aliases. All linked phase files are checked for
-readability; task and finding contents are checked only in the current phase.
+readability; task and review comment contents are checked only in the current phase.
 
-It checks duplicate phase/task/finding IDs, phase links, dependency references,
-task titles and acceptance/verification fields, and Result record presence.
-Checked tasks additionally need a substantive Result. Closure additionally requires
-all current tasks checked, no `Needs revision` status, and `## Review` and
-`## Completion` records. Duplicate Review or Completion sections are errors;
-retain their history under a single heading. Finding IDs are recognized across
+It checks duplicate phase/task/review comment IDs, phase links, and `Blocked by:`
+references. Each task needs a substantive title, acceptance criteria, and test
+plan, and a nonempty Result. `Acceptance criteria:`, `Test plan:`, `Result:`,
+and `Blocked by:` may each appear only once per task.
+Checked tasks additionally need a substantive Result. Closure checks run with
+`--closing` or when the current phase is checked in `ROADMAP.md`. They require
+all current tasks checked, no `Needs revision` status, a `## Review` record
+(`None` is allowed), and a substantive `## Completion` record. Duplicate Review or Completion sections are errors;
+retain their history under a single heading. Review comment IDs are recognized across
 Review records, including duplicate sections. Other equivalent
 Markdown layouts need manual inspection rather than automatic migration.
 
 A pass does **not** establish authorization, truthful evidence, passing tests,
-resolved review findings, or correct software. Host permissions and required CI
+resolved review comments, or correct software. Host permissions and required CI
 checks can provide enforcement outside the assistant; Kaylo installs none.
 Run the validator's fixture tests with `node --test tests/validate-plan.test.cjs`.
 See [guardrail trials](tests/GUARDRAIL-TRIALS.md) for behavioral scenarios and
@@ -329,7 +338,7 @@ See [guardrail trials](tests/GUARDRAIL-TRIALS.md) for behavioral scenarios and
 
 Claude and Codex can guide a project. Gemini/Antigravity can receive research work, and OpenCode with an available DeepSeek model can receive implementation work. Read [working with a worker](WORKERS.md) for a copyable handoff and model-selection guidance.
 
-Work directly when that is sufficient; use one worker at a time when helpful. The guiding assistant maintains `PLAN.md` and the phase plans; workers return results. Native delegation is optional and never implies cross-vendor subscription access. Narrow uncertain work before giving it to a smaller model; no prompt guarantees every model can complete every task.
+Work directly when that is sufficient; use one worker at a time when helpful. The guiding assistant maintains `ROADMAP.md` and the phase plans; workers return results. Native delegation is optional and never implies cross-vendor subscription access. Narrow uncertain work before giving it to a smaller model; no prompt guarantees every model can complete every task.
 
 Delegated builds record the starting workspace state, confirm dependencies are present, and keep one owner for assigned implementation files. Workers return compact acceptance and verification evidence with resume details when needed. The guiding assistant records those details in the existing phase plan and checks combined behavior when tasks connect.
 
@@ -337,7 +346,7 @@ Delegated builds record the starting workspace state, confirm dependencies are p
 
 - `skills/`: five command entrypoints with optional build/review delegation references.
 - `agents/`: three shared worker briefs; `claude-agents/`: generated native Claude adapters with identical instruction bodies.
-- `templates/`: optional objective, plan index, and phase plan starting points.
+- `templates/`: optional PRD, roadmap, and phase plan starting points.
 - `.claude-plugin/`, `.codex-plugin/`, `plugin.json`, `.agents/plugins/`: native packaging for Claude, Codex, and Antigravity, and the released Codex catalog. OpenCode loads the shared skills directory directly.
 - `gemini-extension.json`: native Gemini packaging of the shared skills.
 - `development/`: the separate local Codex catalog and ignored generated package.

@@ -2,6 +2,57 @@
 
 ## [Unreleased]
 
+### Notable Changes
+
+- **skills**: **Breaking.** Kaylo's files, fields, and labels now use common
+  software-team names. `OBJECTIVE.md` is `PRD.md`, and the `PLAN.md` index is
+  `ROADMAP.md`. In phase plans, `## Approach` is `## Design`; task fields
+  `Complexity:`, `Depends on:`, `Acceptance:`, and `Verify:` are `Estimate:`,
+  `Blocked by:`, `Acceptance criteria:`, and `Test plan:`; and review findings
+  are review comments labelled `blocking` or `non-blocking` instead of `blocker`
+  or `optional`. Phases, phase plan paths (`.kaylo/phases/NN-slug/NN-PLAN.md`),
+  task and review IDs, `Result:`, `Status:`, `Current:`, and the five command
+  names are unchanged. Templates, skills, worker briefs, generated Claude
+  adapters, and the session reminder use the new names.
+- **tools**: **Breaking.** The plan validator and the skills' manual inspection no
+  longer accept older formats. They reject `OBJECTIVE.md`, `PLAN.md` without
+  `ROADMAP.md`, tasks written inline in the index, a phase plan without
+  `Status: Current` or `Status: Needs revision: <reason>` (including `Draft`), a
+  task without `Blocked by:`, and the old field names and review labels, alone or
+  mixed with new ones. Each diagnostic names the replacement.
+- **docs**: Add [INDUSTRY-TERMS.md](INDUSTRY-TERMS.md), a glossary for readers
+  new to software teams. It explains each term, where Kaylo differs from common
+  practice, what Kaylo does not cover yet, and the exact format contract.
+
+To convert an existing project, run `/kaylo:plan`. Its instructions convert
+`OBJECTIVE.md`, the `PLAN.md` index, and the current phase plan before other
+planning, and report each change; whether a model follows them has not been
+tested. To convert by hand instead:
+
+1. Rename `OBJECTIVE.md` to `PRD.md` and `PLAN.md` to `ROADMAP.md`.
+2. If `ROADMAP.md` lists tasks directly, move its whole phase record, not only
+   the tasks, into `.kaylo/phases/01-<slug>/01-PLAN.md`: goal and scope,
+   agreement, tasks with their results and repair history, review comments, and
+   completion. Keep the content unchanged; `templates/PHASE.md` shows the
+   headings. Then replace `ROADMAP.md` with an index:
+   `Current: [01 <name>](.kaylo/phases/01-<slug>/01-PLAN.md)` and a matching
+   phase entry, checked if the completion is recorded.
+3. In the current phase plan, rename `## Approach` to `## Design`. If its status
+   is `Draft`, missing, or anything other than `Current` or
+   `Needs revision: <reason>`, set `Status: Current` only if the plan still
+   matches the intended work; otherwise use `Status: Needs revision: <reason>`.
+4. In each task of that plan, rename `Complexity:` to `Estimate:`, `Depends on:` to
+   `Blocked by:`, `Acceptance:` to `Acceptance criteria:`, and `Verify:` to
+   `Test plan:`. A task without `Depends on:` depended on every task above it:
+   list those IDs in `Blocked by:`, or `None` for the first task.
+5. Under its `## Review`, change the labels `blocker` to `blocking` and `optional` to
+   `non-blocking`.
+6. Run `node <kaylo>/scripts/validate-plan.cjs <project>` and fix any reported
+   errors.
+
+Closed phase plans can keep their old names; convert one only when a task needs
+its history.
+
 ## 2026-09-27, Version 0.6.0
 
 ### Notable Changes
