@@ -541,3 +541,9 @@ converts an older project through `/kaylo:plan`; no live-model trial was run.
 Native host validators and isolated install/update checks from
 [release maintenance](RELEASING.md) were not rerun, so release readiness is not
 established.
+
+Follow-up the same day: `/kaylo:plan`'s older-format conversion now moves the
+whole phase record of a plan with inline tasks, including completion, matching
+the changelog's step 2. Afterwards 89 tests passed, package validation passed, and
+`git diff --check` was clean. This is an instruction change; whether a model
+follows it remains untested.
