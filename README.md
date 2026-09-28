@@ -331,8 +331,7 @@ A pass does **not** establish authorization, truthful evidence, passing tests,
 resolved review comments, or correct software. Host permissions and required CI
 checks can provide enforcement outside the assistant; Kaylo installs none.
 Run the validator's fixture tests with `node --test tests/validate-plan.test.cjs`.
-See [guardrail trials](tests/GUARDRAIL-TRIALS.md) for behavioral scenarios and
-[the review handover](REVIEW-HANDOVER.md) for an independent challenge pass.
+See [guardrail trials](tests/GUARDRAIL-TRIALS.md) for behavioral scenarios.
 
 ## Workers and budgets
 
