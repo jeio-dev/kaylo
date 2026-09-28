@@ -93,8 +93,8 @@ Kaylo no longer reads these. Define, build, review, and close route them here.
 
 Before other planning, convert `OBJECTIVE.md`, a `PLAN.md` index, `ROADMAP.md`, and the current phase plan, and tell the user each change. Convert a closed phase plan only when a task needs its history.
 
-- Rename files, headings, fields, and labels without changing their content. Preserve IDs, results, review comments, repair history, and agreement.
-- Move tasks written inline in a `PLAN.md` or `ROADMAP.md`, unchanged, into `.kaylo/phases/01-<slug>/01-PLAN.md`. Then write `ROADMAP.md` with `Current:` linking it, checked if its completion is recorded.
+- Rename files, headings, fields, and labels without changing their content. Preserve IDs, results, review comments, repair history, agreement, and completion.
+- When a `PLAN.md` or `ROADMAP.md` has tasks inline, move its whole phase record, unchanged, into `.kaylo/phases/01-<slug>/01-PLAN.md`: goal and scope, agreement, tasks with their results and repair history, review comments, and completion. Then replace `ROADMAP.md` with the index: `Current:` linking that plan and a matching phase entry, checked if its completion is recorded.
 - A task without `Depends on:` depended on every task listed above it. Write those IDs in `Blocked by:`, or `None` for the first task. This keeps the old order, as an exception to naming tasks only for their position; narrow the list only when revising those tasks.
 - Replace `Draft`, a missing status, or any other unsupported status with `Status: Current` only after confirming the plan matches intended work; otherwise use `Status: Needs revision: <reason>`. The old label grants no approval.
 
