@@ -58,7 +58,7 @@ were unchanged.
 
 Renamed Kaylo's project files, task fields, and review labels to common
 software-team names and removed older-format support (see the changelog's
-0.7.0 entry and [industry terms](INDUSTRY-TERMS.md)). Checks ran on
+0.7.0 entry and [glossary](GLOSSARY.md)). Checks ran on
 branch `industry-terms` with Node 24.21.0. No release was prepared.
 
 | Check | Observed result |

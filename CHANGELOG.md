@@ -9,6 +9,9 @@
   as templates left behind by an in-place update. The release update trial
   installs the previous release first and checks that catalogs select the
   release tag rather than the default branch.
+- **docs**: Rename `INDUSTRY-TERMS.md` to [GLOSSARY.md](GLOSSARY.md), the usual
+  name for this kind of page. `VERIFICATION.md` now keeps records from 0.6.0
+  onward; earlier records remain in Git history.
 
 ## 2026-09-28, Version 0.7.0
 
@@ -30,7 +33,7 @@
   `Status: Current` or `Status: Needs revision: <reason>` (including `Draft`), a
   task without `Blocked by:`, and the old field names and review labels, alone or
   mixed with new ones. Each diagnostic names the replacement. [#8](https://github.com/jeio-dev/kaylo/pull/8)
-- **docs**: Add [INDUSTRY-TERMS.md](INDUSTRY-TERMS.md), a glossary for readers
+- **docs**: Add [INDUSTRY-TERMS.md](GLOSSARY.md), a glossary for readers
   new to software teams. It explains each term, where Kaylo differs from common
   practice, what Kaylo does not cover yet, and the exact format contract. [#8](https://github.com/jeio-dev/kaylo/pull/8)
 

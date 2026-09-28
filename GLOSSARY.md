@@ -1,4 +1,4 @@
-# Industry terms
+# Glossary
 
 Kaylo uses the words software teams use, so working with Kaylo also teaches you the vocabulary you'll hear at a job. This page explains each term, what teams call it, and where Kaylo's version is different. Where no team term fits exactly, Kaylo keeps its own word and says so here.
 
