@@ -583,8 +583,8 @@ The resource comparison is one-directional: it checks that each shared source
 file matches its installed copy, not that no extra files remain. An independent
 review listed the active install roots and found no leftover `templates/OBJECTIVE.md`
 or `templates/PLAN.md`, and a matching `WORKERS.md`, which the comparison omits.
-The trial log truncates Gemini's skill listing; a separate listing of the same
-profile shows all five skills enabled.
+The trial log truncates Gemini's skill listing; a separate listing of a copy of the
+same profile shows all five skills enabled.
 
 The hook check runs the configured loader command directly; it does not
 exercise signed-in session lifecycle or Codex hook trust. Native worker
