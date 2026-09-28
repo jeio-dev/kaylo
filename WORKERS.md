@@ -25,23 +25,23 @@ Outcome: [observable result]
 Constraints: [applicable user decisions and project rules]
 Starting points: [files, sources, dependencies, or diff]
 Steps: [concrete implementation steps, when building]
-Acceptance: [what must be true]
-Verify: [working directory, exact command and expected result, or manual steps]
+Acceptance criteria: [what must be true]
+Test plan: [working directory, exact command and expected result, or manual steps]
 Previous attempts: [failed repairs and evidence, or None]
-Existing findings: [IDs, corrections and recheck evidence relevant to this task, or None]
+Existing review comments: [IDs, labels, corrections and recheck evidence relevant to this task, or None]
 Workspace baseline: [starting changes and relevant original content, or clean commit; confirm dependencies are present]
 Contracts: [relevant interfaces and decisions, or None]
-Return: findings or the compact build report below
+Return: review comments or the compact build report below
 ```
 
-The guiding assistant maintains `PLAN.md` and the phase plans, and checks returned claims against the available files and results. A worker does not approve scope, change model settings, or spawn more workers.
+The guiding assistant maintains `ROADMAP.md` and the phase plans, and checks returned claims against the available files and results. A worker does not approve scope, change model settings, or spawn more workers.
 
 For a build, use this compact report; omit fields that do not apply. Return it to the guiding assistant, who records evidence and resume information in the existing phase plan.
 
 ```text
 Task and workspace: [phase/task ID, path, starting state]
 Changes: [paths and resulting behavior; distinguish pre-existing edits]
-Acceptance: [criteria met and criteria still unresolved]
+Acceptance criteria: [criteria met and criteria still unresolved]
 Verification: [commands, working directory, exit status, useful result; artifacts when needed]
 Blockers or limits: [failed or unavailable checks, decisions needed, or None]
 Resume: [completed work, unfinished steps, last failure, repair attempts, exact next action; thread ID if needed]

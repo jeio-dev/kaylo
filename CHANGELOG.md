@@ -2,6 +2,85 @@
 
 ## [Unreleased]
 
+## 2026-09-28, Version 0.7.0
+
+### Notable Changes
+
+- **skills**: **Breaking.** Kaylo's files, fields, and labels now use common
+  software-team names. `OBJECTIVE.md` is `PRD.md`, and the `PLAN.md` index is
+  `ROADMAP.md`. In phase plans, `## Approach` is `## Design`; task fields
+  `Complexity:`, `Depends on:`, `Acceptance:`, and `Verify:` are `Estimate:`,
+  `Blocked by:`, `Acceptance criteria:`, and `Test plan:`; and review findings
+  are review comments labelled `blocking` or `non-blocking` instead of `blocker`
+  or `optional`. Phases, phase plan paths (`.kaylo/phases/NN-slug/NN-PLAN.md`),
+  task and review IDs, `Result:`, `Status:`, `Current:`, and the five command
+  names are unchanged. Templates, skills, worker briefs, generated Claude
+  adapters, and the session reminder use the new names. [#8](https://github.com/jeio-dev/kaylo/pull/8)
+- **tools**: **Breaking.** The plan validator and the skills' manual inspection no
+  longer accept older formats. They reject `OBJECTIVE.md`, `PLAN.md` without
+  `ROADMAP.md`, tasks written inline in the index, a phase plan without
+  `Status: Current` or `Status: Needs revision: <reason>` (including `Draft`), a
+  task without `Blocked by:`, and the old field names and review labels, alone or
+  mixed with new ones. Each diagnostic names the replacement. [#8](https://github.com/jeio-dev/kaylo/pull/8)
+- **docs**: Add [INDUSTRY-TERMS.md](INDUSTRY-TERMS.md), a glossary for readers
+  new to software teams. It explains each term, where Kaylo differs from common
+  practice, what Kaylo does not cover yet, and the exact format contract. [#8](https://github.com/jeio-dev/kaylo/pull/8)
+
+To convert an existing project, run `/kaylo:plan`. Its instructions convert
+`OBJECTIVE.md`, the `PLAN.md` index, and the current phase plan before other
+planning, and report each change; whether a model follows them has not been
+tested. To convert by hand instead:
+
+1. Rename `OBJECTIVE.md` to `PRD.md` and `PLAN.md` to `ROADMAP.md`.
+2. If `ROADMAP.md` lists tasks directly, move its whole phase record, not only
+   the tasks, into `.kaylo/phases/01-<slug>/01-PLAN.md`: goal and scope,
+   agreement, tasks with their results and repair history, review comments, and
+   completion. Keep the content unchanged; `templates/PHASE.md` shows the
+   headings. Then replace `ROADMAP.md` with an index:
+   `Current: [01 <name>](.kaylo/phases/01-<slug>/01-PLAN.md)` and a matching
+   phase entry, checked if the completion is recorded.
+3. In the current phase plan, rename `## Approach` to `## Design`. If its status
+   is `Draft`, missing, or anything other than `Current` or
+   `Needs revision: <reason>`, set `Status: Current` only if the plan still
+   matches the intended work; otherwise use `Status: Needs revision: <reason>`.
+4. In each task of that plan, rename `Complexity:` to `Estimate:`, `Depends on:` to
+   `Blocked by:`, `Acceptance:` to `Acceptance criteria:`, and `Verify:` to
+   `Test plan:`. A task without `Depends on:` depended on every task above it:
+   list those IDs in `Blocked by:`, or `None` for the first task.
+5. Under its `## Review`, change the labels `blocker` to `blocking` and `optional` to
+   `non-blocking`.
+6. Run `node <kaylo>/scripts/validate-plan.cjs <project>` and fix any reported
+   errors.
+
+Closed phase plans can keep their old names; convert one only when a task needs
+its history.
+
+### Verification
+
+All 89 Node tests, package consistency checks, strict Claude plugin and marketplace
+validation, Codex plugin validation, Antigravity validation, and whitespace
+checks passed. Isolated update trials installed the v0.6.0 release tree from local
+Git mirrors in Claude, Codex, Gemini, and Antigravity, then updated each to the
+prepared 0.7.0; installed copies match all 22 shared resources, and the hook
+loader returns the new reminder from each hook host's copy. Fresh Codex
+app-server and OpenCode server discovery returned all five skills. Old-format
+conversion was checked structurally with fixtures. No live-model trial ran, so
+whether models follow the renamed workflow or convert older projects is untested.
+Native worker execution, signed-in hook lifecycle/trust, and Antigravity IDE
+loading remain untested. Public installation checks follow tag publication.
+
+### Commits
+
+- [`60bd5dce30`](https://github.com/jeio-dev/kaylo/commit/60bd5dce308723e0365b4ae94fe09271b97afcef) - **docs**: add industry terms glossary and format contract (Jeio) [#8](https://github.com/jeio-dev/kaylo/pull/8)
+- [`be339976ac`](https://github.com/jeio-dev/kaylo/commit/be339976ac76df900a96acc42ee3c42afda2c8cd) - **docs**: align industry terms contract with validator checks (Jeio) [#8](https://github.com/jeio-dev/kaylo/pull/8)
+- [`279194a7cd`](https://github.com/jeio-dev/kaylo/commit/279194a7cd9af0561cc846f057a25509d3dfc295) - **tools**: enforce industry-terms contract in plan validator (Jeio) [#8](https://github.com/jeio-dev/kaylo/pull/8)
+- [`fd6e0b2cab`](https://github.com/jeio-dev/kaylo/commit/fd6e0b2cab54e25c9c722d5be85ffabfe65b840f) - **skills**: adopt industry terms in templates and skills (Jeio) [#8](https://github.com/jeio-dev/kaylo/pull/8)
+- [`3e03cf8688`](https://github.com/jeio-dev/kaylo/commit/3e03cf86886e3ab2b4c32da4ff5c243425fac6ce) - **agents**: adopt industry terms in worker briefs and hook (Jeio) [#8](https://github.com/jeio-dev/kaylo/pull/8)
+- [`d0d2477075`](https://github.com/jeio-dev/kaylo/commit/d0d2477075025401f3a4c2245e1c7d8e45e7b687) - **docs**: adopt industry terms in active docs and changelog (Jeio) [#8](https://github.com/jeio-dev/kaylo/pull/8)
+- [`a5f78580bf`](https://github.com/jeio-dev/kaylo/commit/a5f78580bf9470cbb21b4f21f022bbe5bf4aedc1) - **skills**: keep the whole phase record when converting inline plans (Jeio) [#8](https://github.com/jeio-dev/kaylo/pull/8)
+- [`a7ebd64217`](https://github.com/jeio-dev/kaylo/commit/a7ebd642171cfa50ad36846b05d1bc395385d0da) - **docs**: remove README link to deleted review handover (Jeio) [#8](https://github.com/jeio-dev/kaylo/pull/8)
+- [`56a0288c70`](https://github.com/jeio-dev/kaylo/commit/56a0288c705e9fdecf187e7b917a32e112d46abd) - **plugins**: set version 0.7.0 and select the v0.7.0 tag (Jeio) [#8](https://github.com/jeio-dev/kaylo/pull/8)
+
 ## 2026-09-27, Version 0.6.0
 
 ### Notable Changes

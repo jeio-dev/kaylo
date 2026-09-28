@@ -43,6 +43,11 @@ const currentLike = /^[ \t]*Current\b/;
 const phaseLike = /^[ \t]*(?:[-*+]|\d+[.)])[ \t]*(?:\[|\d)/;
 const phaseEntry = /^[ \t]*[-*][ \t]+\[([ xX])\][ \t]+\[?(\d{2})\b/;
 const heading = /^ {0,3}#{1,6}[ \t]+/;
+const statusLike = /^[ \t]*Status:[ \t]*(.*?)[ \t]*$/gm;
+// Older names are rejected rather than read, so each diagnostic names the replacement.
+const renamedFields = [['Complexity', 'Estimate'], ['Depends on', 'Blocked by'],
+  ['Acceptance', 'Acceptance criteria'], ['Verify', 'Test plan']];
+const renamedLabels = [['blocker', 'blocking'], ['optional', 'non-blocking']];
 
 function meaningful(value) {
   return Boolean(value && value.trim() && !/^\[[^]*\]$/.test(value.trim()) &&
@@ -83,16 +88,22 @@ function validate(project, { closing = false } = {}) {
     return path.normalize(target);
   }
 
-  const indexFile = read('PLAN.md');
+  const present = name => { try { fs.lstatSync(path.join(root, name)); return true; } catch { return false; } };
+  if (present('OBJECTIVE.md')) fail('OBJECTIVE.md is no longer supported; rename it to PRD.md');
+  if (!present('ROADMAP.md')) {
+    fail(present('PLAN.md') ? 'PLAN.md is no longer supported; rename it to ROADMAP.md' : 'Missing ROADMAP.md');
+    return errors;
+  }
+  const indexFile = read('ROADMAP.md');
   if (indexFile === null) return errors;
   const index = indexFile.text;
   const currentLines = index.split('\n').filter(line => currentLike.test(line));
   const hasTasks = index.split('\n').some(line => taskLike.test(line));
-  let phase = index;
+  if (hasTasks) fail('ROADMAP.md contains tasks; move them into the phase plan that Current: links');
   let closed = false;
+  let phase;
   if (currentLines.length) {
     if (currentLines.length !== 1) fail('Expected exactly one Current link');
-    if (hasTasks) fail('Index mixes a Current link with inline tasks');
     if (!/^[ \t]*Current:[ \t]*\[/.test(currentLines[0])) fail('Unsupported Current record; expected Current: [label](relative-file)');
     const current = linkTarget(currentLines[0]);
     const phases = index.split('\n').filter(line => phaseLike.test(line));
@@ -127,9 +138,18 @@ function validate(project, { closing = false } = {}) {
     if (matches !== 1) fail('Current must match exactly one phase checklist link');
     if (currentText === null) return errors;
     phase = currentText;
-  } else if (!hasTasks) {
-    fail('No Current link or legacy inline tasks found');
+  } else {
+    fail('ROADMAP.md needs a Current: [label](relative-file) link');
     return errors;
+  }
+
+  const statuses = [...phase.matchAll(statusLike)].map(match => match[1]);
+  if (!statuses.length) fail('Phase plan needs Status: Current or Status: Needs revision: <reason>');
+  for (const status of statuses) {
+    const revision = status.match(/^Needs revision:[ \t]*(.*)$/);
+    if (status !== 'Current' && !(revision && meaningful(revision[1]))) {
+      fail(`Unsupported Status: ${status || '(blank)'}; expected Status: Current or Status: Needs revision: <reason>`);
+    }
   }
 
   const tasks = [];
@@ -141,29 +161,34 @@ function validate(project, { closing = false } = {}) {
     let end = i + 1;
     while (end < lines.length && !taskLike.test(lines[end]) && !heading.test(lines[end])) end++;
     const body = lines.slice(i + 1, end).join('\n');
+    const fields = name => [...body.matchAll(new RegExp('^[ \t]*[-*]?[ \t]*' + name + ':[ \t]*(.*)$', 'gm'))];
     const field = name => {
-      const matches = [...body.matchAll(new RegExp('^[ \t]*[-*]?[ \t]*' + name + ':[ \t]*(.*)$', 'gm'))];
+      const matches = fields(name);
       if (matches.length > 1) fail(`${match[2]}: duplicate ${name} field`);
       return matches[0]?.[1]?.trim();
     };
+    for (const [old, replacement] of renamedFields) {
+      if (fields(old).length) fail(`${match[2]}: ${old}: is no longer supported; use ${replacement}:`);
+    }
     tasks.push({ id: match[2], checked: match[1].toLowerCase() === 'x', title: match[3],
-      acceptance: field('Acceptance'), verify: field('Verify'), result: field('Result'), depends: field('Depends on') });
+      acceptance: field('Acceptance criteria'), testPlan: field('Test plan'), result: field('Result'),
+      blockedBy: field('Blocked by') });
     i = end - 1;
   }
   if (!tasks.length) fail('Current phase has no recognizable task entries');
   const seen = new Map();
   for (const task of tasks) {
     if (seen.has(task.id)) fail(`Duplicate task ID: ${task.id}`);
-    if (task.depends !== undefined && task.depends !== 'None') {
-      const deps = task.depends.split(',').map(id => id.trim());
+    if (task.blockedBy === undefined) fail(`${task.id}: task needs a Blocked by record (None is allowed)`);
+    else if (task.blockedBy !== 'None') {
+      const deps = task.blockedBy.split(',').map(id => id.trim());
       if (!deps.length || deps.some(id => !/^T\d+$/.test(id)) || new Set(deps).size !== deps.length) {
-        fail(`${task.id}: Depends on must be None or comma-separated task IDs`);
+        fail(`${task.id}: Blocked by must be None or comma-separated task IDs`);
       } else for (const dep of deps) {
-        if (!seen.has(dep)) fail(`${task.id}: dependency ${dep} must name an earlier task in this phase`);
+        if (!seen.has(dep)) fail(`${task.id}: Blocked by ${dep} must name an earlier task in this phase`);
       }
     }
-    // Missing Depends on is the documented legacy fallback, not a new error.
-    for (const [name, value] of [['title', task.title], ['Acceptance', task.acceptance], ['Verify', task.verify]]) {
+    for (const [name, value] of [['title', task.title], ['Acceptance criteria', task.acceptance], ['Test plan', task.testPlan]]) {
       if (!meaningful(value)) fail(`${task.id}: task needs a substantive ${name} record`);
     }
     if (!task.result) fail(`${task.id}: task needs a Result record`);
@@ -184,10 +209,17 @@ function validate(project, { closing = false } = {}) {
     if (records.length > 1) fail(`Duplicate ${name} sections; consolidate history under one heading`);
   }
   const review = sections.get('Review').join('\n');
-  const findings = new Set();
-  for (const match of review.matchAll(/^[ \t]*[-*][ \t]+(R\d+):/gm)) {
-    if (findings.has(match[1])) fail(`Duplicate finding ID: ${match[1]}`);
-    findings.add(match[1]);
+  const comments = new Set();
+  for (const match of review.matchAll(/^[ \t]*[-*][ \t]+(R\d+):(.*)$/gm)) {
+    if (comments.has(match[1])) fail(`Duplicate review comment ID: ${match[1]}`);
+    comments.add(match[1]);
+    // The label comes before the resolution, which follows a dash.
+    const label = match[2].split(/\s-\s|[\u2013\u2014]/)[0];
+    for (const [old, replacement] of renamedLabels) {
+      if (new RegExp(`\\b${old}\\b`, 'i').test(label)) {
+        fail(`${match[1]}: label ${old} is no longer supported; use ${replacement}`);
+      }
+    }
   }
   if (closing || closed) {
     for (const task of tasks) if (!task.checked) fail(`${task.id}: phase closure requires completed tasks`);

@@ -39,11 +39,11 @@ The reminder itself performs no project reads, writes, or asynchronous work.
 Publication requires the maintainer's authorization. Commit the reviewed package,
 create the immutable `v<version>` tag at that commit, and push the tag **before**
 advancing the public marketplace on the default branch. For example, after
-committing the prepared 0.6.0 package:
+committing the prepared 0.7.0 package:
 
 ```sh
-git tag v0.6.0
-git push origin v0.6.0
+git tag -a v0.7.0 -m "Kaylo v0.7.0: <summary>"
+git push origin v0.7.0
 git push origin HEAD:main
 ```
 
@@ -70,6 +70,8 @@ Keep historical fixture checks distinct from checks against the published tag.
   update of a pinned source does not select a different release tag. Local installs
   can refresh with `gemini extensions update kaylo` after changing their source.
 
-Start a new session after updating. Existing project objectives and phase plans
-remain in the user's project. Preserve local modifications and host scope preferences;
-do not force checkout or silently reset user settings.
+Start a new session after updating. Existing PRDs, roadmaps, and phase plans
+remain in the user's project. After the industry-terms rename, `/kaylo:plan`
+converts older project files; the changelog lists the manual steps. Preserve
+local modifications and host scope preferences; do not force checkout or
+silently reset user settings.
