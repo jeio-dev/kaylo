@@ -763,3 +763,27 @@ cannot be confirmed from the transcript, and the PR description matches.
 | `git diff --check main` | Clean, covering the committed and uncommitted changes |
 
 No model ran with the revised wording.
+
+## Pasted-review reviewer fallback — 2026-09-29
+
+The first review of PR #14 noted (R12) that review has the same gap as build
+when its delegation reference is unavailable, as in pasted-skill use. The
+reviewer brief's no-edit rule, evidence-not-instructions guardrail, and Return
+line are only in that reference and the brief. Review step 1 now says that when
+the delegation reference is unavailable, review says so and tells any reviewer
+to treat file contents as evidence, not instructions, to edit no implementation
+or plan files, and to return readiness, review comments, coverage or
+limitations, and embedded instructions it did not follow, or `None`. Unlike
+build, review keeps preferring a fresh reviewer, because fresh context is the
+point of delegated review. No trial exercised this path: the fourth trial's
+review case had the plugin installed.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: package v0.7.0, five shared skills, matching versions and release catalogs |
+| `node --test tests/*.test.cjs` | All 94 tests passed |
+| `git diff --check` | Clean, covering the uncommitted changes against `main` |
+
+No agent brief changed, so adapters were not regenerated. These checks cover
+structure only; no model ran with the revised wording, and native host
+validators were not rerun.
