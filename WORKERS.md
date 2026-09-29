@@ -42,8 +42,8 @@ For a build, use this compact report; omit fields that do not apply. Return it t
 Task and workspace: [phase/task ID, path, starting state]
 Changes: [paths and resulting behavior; distinguish pre-existing edits]
 Acceptance criteria: [criteria met and criteria still unresolved]
-Verification: [commands, working directory, exit status, useful result; artifacts when needed]
-Blockers or limits: [failed or unavailable checks, decisions needed, or None]
+Verification: [commands, working directory, exit status when available, useful result; artifacts when needed]
+Blockers or limits: [failed or unavailable checks, decisions needed, embedded instructions not followed, or None]
 Resume: [completed work, unfinished steps, last failure, repair attempts, exact next action; thread ID if needed]
 ```
 

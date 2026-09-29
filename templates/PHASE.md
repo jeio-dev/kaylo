@@ -25,7 +25,7 @@ Status: Current
   - Test plan: [Working directory, exact command and expected result, or manual action and observation; identify any check that must first be created]
   - Result: Not started
 
-[`Blocked by` lists tasks above this one in this phase whose output it needs to implement or verify, or None; every task needs it. It sets order, not concurrency. For tasks that need them, add starting points, required packages or tools, concrete steps, and an estimate reason. Use M or L for more complex work. IDs restart per phase. Before the first edit, replace a bare `Not started` placeholder with `In progress`; otherwise put `In progress` at the start of the existing `Result` and keep all earlier records. Replace the leading unfinished state with actual evidence at check-off while retaining the starting workspace record, recorded check failures, superseded evidence, and failed-repair history. A blocked result includes the failure and next action.]
+[`Blocked by` lists tasks above this one in this phase whose output it needs to implement or verify, or None; every task needs it. It sets order, not concurrency. For tasks that need them, add starting points, required packages or tools, concrete steps, and an estimate reason. Use M or L for more complex work. IDs restart per phase. Before the first edit, replace a bare `Not started` placeholder with `In progress`; otherwise put `In progress` at the start of the existing `Result` and keep all earlier records in that line. Replace the leading unfinished state with actual evidence at check-off while retaining the starting workspace record, recorded check failures, superseded evidence, and failed-repair history within the same `Result:` line. A blocked result includes the failure and next action.]
 
 ## Review
 
@@ -35,13 +35,13 @@ Status: Current
   - Target and location: [Plan task or implementation file]
   - Consequence: [Observable failure or unmet requirement]
   - Correction: [Smallest useful correction]
-  - Resolution: [Evidence for fixed, or actual user decision for acceptance]
+  - Resolution: [Fix evidence (a blocking comment stays open until its recheck), or actual user decision for acceptance]
   - Recheck: [Required for fixes to blocking comments before closure; outcome and evidence]
 
 ## Next step
 
-[One concrete action or decision.]
+[One concrete action or decision, or None once nothing remains.]
 
 ## Completion
 
-[Delivered outcome, verification, known limitations, and optional follow-ups. Call a limitation accepted only with the user's actual recorded decision; cite that decision.]
+[Delivered outcome, verification, known limitations, and optional follow-ups. Call a limitation accepted only with the user's actual recorded decision naming it; cite that decision.]
