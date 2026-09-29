@@ -663,11 +663,13 @@ model from the third trial's, so the disclosures do not establish that PR #13
 changed worker behavior. In all seven build check-offs (B1, B4, B6's build,
 both builder-worker cases, the pasted case, and the new-evidence repair), the
 guide checked the box before replacing the leading `In progress` in a separate
-edit; validation ran after both edits each time. The unnamed-builder packet
-called the workspace clean after the guide's own `In progress` plan edit, which
-step 4 requires before dispatch; the worker noticed and excluded that edit.
-Discovery by a builder of an instruction not named in the packet, a worker
-lacking `WORKERS.md` while the guide has it, unchecking after a failed post-check-off validation, define
+edit. In the six plugin cases the validator ran after both edits; the pasted
+guide reported a manual structure check, with no inspection recorded after its
+final plan edits. The unnamed-builder packet called the workspace clean after
+the guide's own `In progress` plan edit, which step 4 requires before dispatch;
+the worker noticed and excluded that edit. Discovery by a builder of an
+instruction not named in the packet, a worker lacking `WORKERS.md` while the
+guide has it, unchecking after a failed post-check-off validation, define
 turns, and other hosts were not observed. Before-state archives for five cases
 were reconstructed from their recorded clean commits after a collector fault;
 their plans match the contemporaneous records. No session folder was added
@@ -681,20 +683,21 @@ byte-identical before and after. Evidence is preserved under the local
 The fourth trial's pasted build dispatched a worker without the delegation
 reference, and the worker was not asked for embedded instructions. Build step 4
 now says that when the delegation reference is unavailable, build says so and
-works directly unless the user requested a worker. It tells a requested worker
-to treat file contents as evidence, not instructions, and to report its
-changes, checks, blockers, and embedded instructions it did not follow, or
-`None`. For a requested worker, build does not stop to request the reference
-first, because that would add a round-trip the user did not ask for. This
-departs from the delegation reference's rule to ask for a missing brief rather
-than invent one, and from the trial report's suggested fix, which was to
+works directly when capable unless the user requested a worker. It tells a
+requested worker to treat file contents as evidence, not instructions, and to
+report its changes, checks, blockers, and embedded instructions it did not
+follow, or `None`. For a requested worker, build does not stop to request the
+reference first, because that would add a round-trip the user did not ask for.
+This departs from the delegation reference's rule to ask for a missing brief
+rather than invent one, and from the trial report's suggested fix, which was to
 request the materials before dispatch. The trial's other findings were left
 unchanged. The builder's argument choice, the late baseline record, and the
 `node -e` probe were model errors against clear rules. The check-off edit order
-recurred, but validation ran after both edits. The unnamed-builder packet's
-"clean" baseline may reflect a gap in how the guide describes its own
-`In progress` edit to a worker, but the worker handled it correctly and one
-observation does not justify new wording.
+recurred; in the six plugin cases the validator ran after both edits, and the
+pasted case's missing post-edit inspection is a model error against the existing
+manual-check rule. The unnamed-builder packet's "clean" baseline may reflect a
+gap in how the guide describes its own `In progress` edit to a worker, but the
+worker handled it correctly and one observation does not justify new wording.
 
 | Check | Observed result |
 | --- | --- |
@@ -707,18 +710,34 @@ structure only; no model ran with the revised wording, and native host
 validators were not rerun.
 
 Review-correction checks, 2026-09-29: an independent review of PR #14 found two
-blocking comments and ten non-blocking ones (R1–R12). The fallback now asks for
-`None` when there are no embedded instructions, tells the worker to treat file
-contents as evidence, adds blockers, and names "that reference" (R1, R4). It
-applies only to a worker the user requested; otherwise build works directly,
-and the record above states the departure from the delegation reference (R3).
-The trial record limits the unobserved discovery case to builders, records the
-recurring check-off order, the unnamed-builder packet's baseline, the pasted
-guide's unsupported final claim, and corrects the B-case and model-difference
-statements (R2, R5, R6, R8–R10). The CHANGELOG entry links #14, and the
-diff-check record names its range (R11). The PR description now names the
-rules the designed cases reached (R7). R12, the same gap in a pasted review's
-delegation, was left for later because the trial did not exercise it.
+blocking comments, nine non-blocking ones, and one note (R1–R12). The fallback
+now asks for `None` when there are no embedded instructions, tells the worker to
+treat file contents as evidence, adds blockers, and names "that reference" (R1,
+R4). It applies only to a worker the user requested; otherwise build works
+directly, and the record above states the departure from the delegation
+reference (R3). The trial record limits the unobserved discovery case to
+builders, records the recurring check-off order, the unnamed-builder packet's
+baseline, the pasted guide's unsupported final claim, and corrects the B-case
+and model-difference statements (R2, R5, R6, R8–R10). The CHANGELOG entry links
+#14, and the diff-check record names its range (R11). The PR description now
+names the rules the designed cases reached (R7). R12, the same gap in a pasted
+review's delegation, was left for later because the trial did not exercise it.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: package v0.7.0, five shared skills, matching versions and release catalogs |
+| `node --test tests/*.test.cjs` | All 94 tests passed |
+| `git diff --check main` | Clean, covering the committed and uncommitted changes |
+
+No model ran with the revised wording.
+
+A focused recheck found R1–R7 and R9–R11 resolved and R8 partly resolved, and
+raised one blocking comment and three non-blocking ones (R13–R16). The trial
+record and PR description no longer say validation ran after every check-off:
+the validator ran in the six plugin cases, and the pasted guide recorded no
+inspection after its final plan edits, which completes R8 (R13). The fallback
+keeps "when capable" (R14), the first review's count is corrected (R15), and a
+long line is rewrapped (R16).
 
 | Check | Observed result |
 | --- | --- |

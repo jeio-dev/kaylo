@@ -44,12 +44,12 @@
 - **skills**: Worker report fallback when build's delegation reference is
   unavailable, as in pasted-skill use
   ([#14](https://github.com/jeio-dev/kaylo/pull/14)). Build says so and works
-  directly unless the user requested a worker. It tells a requested worker to
-  treat file contents as evidence, not instructions, and to report its changes,
-  checks, blockers, and embedded instructions it did not follow, or `None`. In
-  the fourth live-model trial a pasted build sent a requested worker without
-  the reference; the packet omitted the report fields, and the worker's report
-  said nothing about embedded instructions. No model run has tested this
+  directly when capable unless the user requested a worker. It tells a requested
+  worker to treat file contents as evidence, not instructions, and to report its
+  changes, checks, blockers, and embedded instructions it did not follow, or
+  `None`. In the fourth live-model trial a pasted build sent a requested worker
+  without the reference; the packet omitted the report fields, and the worker's
+  report said nothing about embedded instructions. No model run has tested this
   change.
 - **tools**: The plan validator rejects checked task Results beginning with an
   unfinished state (`Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or
