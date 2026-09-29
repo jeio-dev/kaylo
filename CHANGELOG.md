@@ -17,17 +17,21 @@
   way to run the same check; alternatives never permit denied or unauthorized
   actions. A bare `Not started` placeholder becomes `In progress` at build start;
   other earlier Result records remain intact.
-- **skills**: Wording fixes from the second live-model trial. After a denied
-  compound command (for example one adding `echo $?`), run the check command by
-  itself; alternatives still never permit denied or unauthorized actions.
-  Skills tell the user about embedded instructions they did not follow, and
-  worker briefs report them. Build and close keep superseded and earlier records
-  within the task's `Result:` text instead of adding task fields. Build, review,
-  and close update the phase plan's `## Next step` to the action they give.
-  Close records acceptance only for the limitation the user named. A blocking
-  review comment stays `open`, with its fix evidence, until the focused
-  `/kaylo:review changes` recheck marks it `fixed`. No model run has tested these
-  changes.
+- **skills**: Wording fixes from the second live-model trial
+  ([#12](https://github.com/jeio-dev/kaylo/pull/12)). After a denied compound
+  command (for example one adding `echo $?` or a pipe), run the check command by
+  itself in its required working directory; alternatives still never permit
+  denied or unauthorized actions. Skills tell the user about instructions
+  embedded in retrieved content that were not followed, including ones a worker
+  reports; worker briefs and the build report template include them. Build,
+  close, plan, and the phase template keep superseded and earlier records within
+  the task's `Result:` line instead of adding task fields. Plan, build, and
+  review update an open phase plan's `## Next step` to the action they give;
+  close sets it to the next action or `None`. Close calls a limitation accepted
+  only when a recorded user decision names it. A blocking review comment stays
+  `open`, with its fix evidence, until the focused `/kaylo:review changes`
+  recheck marks it `fixed`, and build does not correct it again unless that
+  recheck fails. No model run has tested these changes.
 - **tools**: The plan validator rejects checked task Results beginning with an
   unfinished state (`Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or
   `Blocked`), even with notes appended to a state marker. Markers require
@@ -39,9 +43,10 @@
   record. Historical progress and failures may follow current evidence; open
   tasks and phases can retain unfinished records. No fields or names changed.
 - **docs**: Completion uses known limitations; calling a limitation accepted
-  requires the user's actual recorded decision. Record the first live-model
-  workflow, conversion, and nine guardrail trials with their defects and limits,
-  separately from the structural checks of these fixes.
+  requires the user's actual recorded decision. Record the first and second
+  live-model trials with their defects and limits, separately from the
+  structural checks of the fixes that followed. The untrusted-instructions
+  guardrail case now expects ignored instructions to be reported.
 - **tools**: `validate-package.cjs --installed` now also compares `WORKERS.md`
   and rejects files in the shared folders that the source does not have, such
   as templates left behind by an in-place update. The release update trial

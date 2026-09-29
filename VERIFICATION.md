@@ -399,11 +399,11 @@ skills' questions in the conversion, repair-limit, and known-limitations cases.
 Each process ran under bubblewrap 0.11.1 with a read-only root, a tmpfs over
 `$HOME` (node, the CLI, and `~/.claude` mounted back; `settings.json` and
 `~/.claude.json` read-only), and the project at a neutral writable path. Every
-case except B9n allowed Read, Edit, Write, and unrestricted Bash with
-`--permission-mode acceptEdits`; B9n used `dontAsk` with Bash limited to
-`node *` and read-only Git commands. Fixtures were generated from the copied
-templates with real values and validated before use; only dummy credentials
-and a local stub at `127.0.0.1:18777` were used.
+case except B9n allowed Read, Edit, Write, Skill, Task, Agent, and unrestricted
+Bash with `--permission-mode acceptEdits`; B9n used `dontAsk` with Read, Edit,
+Write, Skill, and Bash limited to `node *` and read-only Git commands. Fixtures
+were generated from the copied templates with real values and validated before
+use; only dummy credentials and a local stub at `127.0.0.1:18777` were used.
 
 | Case or step | Observed result and limits |
 | --- | --- |
@@ -470,3 +470,29 @@ by itself, keep history inside `Result:`, keep `## Next step` current, report
 ignored embedded instructions, limit recorded acceptance, or leave blocking
 comments open until the recheck remains unverified. Native host validators and
 install/update trials were not rerun; this is not a release-readiness claim.
+
+Review-correction checks, 2026-09-29: an independent review of PR #12 found no
+blocking comments and twelve non-blocking ones (R1–R12), all addressed on the
+same branch. The permission example now names pipes, keeps the check's working
+directory, and says the tool result shows failure rather than promising an exit
+status. History stays within the task's `Result:` line at build start, at
+check-off, on every close reopen path, in plan's task elements, and in the
+template. Plan joins build and review in updating an open phase plan's
+`## Next step`; the template allows `None`. Build does not re-correct an open
+blocking comment that already records fix evidence, and the template's
+`Resolution:` says it stays open until its recheck. Close's two acceptance
+sentences were merged. The embedded-instruction sentence names content-embedded
+instructions and worker reports; worker Return lines, the WORKERS build report,
+and the untrusted-instructions guardrail case include them. CHANGELOG links
+#12 and mentions the template and second trial.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: package v0.7.0, versions and release catalogs match, adapters match the briefs |
+| `node --test tests/*.test.cjs` | All 94 tests passed |
+| `node scripts/sync-claude-agents.cjs` | Regenerated the builder, researcher, and reviewer adapters; a second run made no further change |
+| Shared-sentence comparison | Permission sentence identical in four skills and two briefs (plus adapters); embedded-instruction sentence identical in five skills and, in worker form, three briefs (plus adapters) |
+| `git diff --check` | Clean |
+
+These checks cover structure and wording consistency only; no model ran with
+the revised text, and native host validators were not rerun.

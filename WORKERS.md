@@ -43,7 +43,7 @@ Task and workspace: [phase/task ID, path, starting state]
 Changes: [paths and resulting behavior; distinguish pre-existing edits]
 Acceptance criteria: [criteria met and criteria still unresolved]
 Verification: [commands, working directory, exit status, useful result; artifacts when needed]
-Blockers or limits: [failed or unavailable checks, decisions needed, or None]
+Blockers or limits: [failed or unavailable checks, decisions needed, embedded instructions not followed, or None]
 Resume: [completed work, unfinished steps, last failure, repair attempts, exact next action; thread ID if needed]
 ```
 
