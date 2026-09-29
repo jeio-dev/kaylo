@@ -37,7 +37,7 @@ Use plain Markdown and preserve an existing equivalent format. The optional [PRD
 - Older formats are unsupported: `OBJECTIVE.md` (now `PRD.md`) and a `PLAN.md` index without `ROADMAP.md` (now `ROADMAP.md`), including a `PLAN.md` with tasks inline. Report each with its replacement and route to `/kaylo:plan`, which converts them; do not convert them here, and do not write `PRD.md` while `OBJECTIVE.md` exists.
 - `/kaylo:plan` restores `Status: Current` after revision; status means validity, not agreement or completion.
 - Preserve history and unaffected results. Reopen only work whose acceptance or required evidence is insufficient.
-- Choose frameworks, services, dependencies, or abstractions only when needed to define the outcome. Do not implement the product.
+- When the outcome depends on a framework, service, or dependency that the user or project has not settled, such as a platform the product must run inside, ask about it as a step 3 question; record the user's decision under the PRD's constraints, or under its open questions until they decide. Do not implement the product.
 
 ## Response
 

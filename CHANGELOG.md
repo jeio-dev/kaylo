@@ -70,6 +70,14 @@
   implementation ([#17](https://github.com/jeio-dev/kaylo/pull/17)). In the
   fifth live-model trial define disclosed its choice of Python and then listed
   it as a PRD constraint. No model run has tested these changes.
+- **skills**: Define asks about a framework, service, or dependency the outcome
+  depends on ([#18](https://github.com/jeio-dev/kaylo/pull/18)). When the user
+  or project has not settled such a choice, such as a platform the product must
+  run inside, define asks about it among its consequential questions, records
+  the user's decision under the PRD's constraints, and lists it under open
+  questions until they decide. Define no longer describes choosing frameworks,
+  services, dependencies, or abstractions itself. No model run has tested this
+  change.
 - **tools**: The plan validator rejects checked task Results beginning with an
   unfinished state (`Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or
   `Blocked`), even with notes appended to a state marker. Markers require
