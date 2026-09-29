@@ -245,8 +245,9 @@ their original scratchpad paths. This local evidence is not shipped.
 
 ## Live-trial finding fixes — 2026-09-28
 
-Initial checks below ran on branch `fix/live-trial-findings`, based on `main`
-at `5f9a408`, through `a133d31`. Review-correction checks follow separately.
+Initial checks below ran on branch `fix/live-trial-findings` (PR #11,
+squash-merged into `main`; its commits remain on the PR), based on `main` at
+`5f9a408`, through `a133d31`. Review-correction checks follow separately.
 The fixes clarify verification and conversion gates, persist failed close
 rechecks, replace unfinished task Result prefixes with evidence, reject those
 prefixes on checked tasks and bare `Not complete.` at closure, and distinguish
