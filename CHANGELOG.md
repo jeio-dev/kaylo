@@ -136,7 +136,7 @@ publication.
 - [`9ff53cb5ad`](https://github.com/jeio-dev/kaylo/commit/9ff53cb5add74bb079a8d2207260ad8bc6f81dc1) - **skills**: record the fifth live-model trial and clarify define's PRD constraints (Jeio) [#16](https://github.com/jeio-dev/kaylo/pull/16)
 - [`9c16a97b80`](https://github.com/jeio-dev/kaylo/commit/9c16a97b80cb3460e71703485faf470d76ae9e3d) - **skills**: limit define's own defaults to minor product details (Jeio) [#17](https://github.com/jeio-dev/kaylo/pull/17)
 - [`d1f748301c`](https://github.com/jeio-dev/kaylo/commit/d1f748301cbcfa10afdc3ac775967e6fdd66a77e) - **skills**: ask about framework or service choices the outcome depends on (Jeio) [#18](https://github.com/jeio-dev/kaylo/pull/18)
-- [`9f2b2b3f98`](https://github.com/jeio-dev/kaylo/commit/9f2b2b3f981a44bde2207df67fce436c8b6109c8) - **plugins**: set version 0.8.0 and select the v0.8.0 tag (Jeio)
+- [`9f2b2b3f98`](https://github.com/jeio-dev/kaylo/commit/9f2b2b3f981a44bde2207df67fce436c8b6109c8) - **plugins**: set version 0.8.0 and select the v0.8.0 tag (Jeio) [#19](https://github.com/jeio-dev/kaylo/pull/19)
 
 ## 2026-09-28, Version 0.7.0
 
