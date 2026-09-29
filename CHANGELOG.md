@@ -17,6 +17,17 @@
   way to run the same check; alternatives never permit denied or unauthorized
   actions. A bare `Not started` placeholder becomes `In progress` at build start;
   other earlier Result records remain intact.
+- **skills**: Wording fixes from the second live-model trial. After a denied
+  compound command (for example one adding `echo $?`), run the check command by
+  itself; alternatives still never permit denied or unauthorized actions.
+  Skills tell the user about embedded instructions they did not follow, and
+  worker briefs report them. Build and close keep superseded and earlier records
+  within the task's `Result:` text instead of adding task fields. Build, review,
+  and close update the phase plan's `## Next step` to the action they give.
+  Close records acceptance only for the limitation the user named. A blocking
+  review comment stays `open`, with its fix evidence, until the focused
+  `/kaylo:review changes` recheck marks it `fixed`. No model run has tested these
+  changes.
 - **tools**: The plan validator rejects checked task Results beginning with an
   unfinished state (`Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or
   `Blocked`), even with notes appended to a state marker. Markers require
