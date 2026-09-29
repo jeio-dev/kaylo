@@ -344,3 +344,44 @@ and allowed-command alternatives remain instruction changes unverified with a
 model. Worker execution and the earlier unexercised behavioral paths also
 remain untested. No native host validators or install/update checks were rerun,
 and no release-readiness claim is made.
+
+### Final corrections R62–R63 and permission wording
+
+The focused recheck of `adf4826` reported R55–R61 and both additions resolved,
+with a ready-for-PR verdict. This final pass addresses only R62, R63, and the
+permission sentence. En/em dashes now mark unfinished checked Results even
+without surrounding spaces; only a plain hyphen requires whitespace on at
+least one side. The glossary, all three manual fallbacks, README, and changelog
+use the same rule. Build and the phase template replace a bare `Not started`
+placeholder with `In progress` while retaining all other earlier records.
+The four check-running skills and shared builder/reviewer briefs use identical
+permission wording: another allowed way must run the same check and must never
+perform a denied or unauthorized action. Claude adapters were regenerated.
+
+Decision on R62's optional parenthesis marker: do not add `(`. It would reject
+finished prose such as `Pending (queued) orders now persist`; that passing
+control is included in the tests and CLI probe. Parenthesized progress prose
+without another state marker remains subject to manual evidence inspection.
+This preserves the read-only, structural validator and the 0.7.0 names/fields.
+
+| Check | Observed result |
+| --- | --- |
+| nvm Node v24.21.0: `node --test tests/*.test.cjs` | All 94 tests passed: 84 plan tests and ten package/loader/staging tests. New failing cases include `In progress—baseline recorded.` and `Blocked–check failed.`; all R56 finished examples and the parenthesized finished-prose control still pass. |
+| `node scripts/validate-package.cjs` | Passed: v0.7.0 versions/catalogs match, five shared skills, generated adapters match shared briefs. |
+| `git diff --check`, `git diff main...HEAD --check` | Clean. |
+| Relative file links in changed Markdown | All 17 resolve across 13 changed Markdown files, with the same exclusions as earlier checks. |
+| Fresh-copy R56/R62 CLI probe | All eight R56 finished examples and four prose-limit controls pass (exit 0). Eight existing unfinished forms and five adjacent/whitespace dash controls fail (exit 1). The reviewed validator at `adf4826` incorrectly passes the four adjacent-dash forms; the changed validator rejects them. R55's proposed-check-off/rollback sequence still passes its expected outcomes. |
+| Preservation and wording checks | Complete saved-source and per-validator-input hashes remain unchanged. All six shared permission sentences are identical, both regenerated worker adapters byte-match their shared briefs, and older-format fallback lists are unchanged. |
+
+Artifacts: `.local/plans/live-trial-final-polish.md`,
+`.local/plans/probe-live-trial-r56-r62.py`,
+`.local/plans/live-trial-final-probe.log`,
+`.local/plans/live-trial-final-checks/r56-r62-probe-results.json`,
+`.local/plans/live-trial-final-tests.log`,
+`.local/plans/live-trial-final-package.log`, and
+`.local/plans/live-trial-final-links.log`. Node was invoked through command-local
+PATH or its existing nvm binary; no profile or global settings changed.
+No model rerun was performed, so the Result transition and tightened permission
+instructions remain unverified with a model. Native host validation and
+install/update trials were not rerun. No additional review round was requested
+for this limited pass.

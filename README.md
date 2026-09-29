@@ -327,8 +327,9 @@ plan, and a nonempty Result. `Acceptance criteria:`, `Test plan:`, `Result:`,
 and `Blocked by:` may each appear only once per task.
 Checked tasks additionally need a substantive Result that does not start with
 `Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or `Blocked` as an unfinished
-state marker, even with notes appended. A marker needs punctuation, a separated
-dash, or the end of the record after optional whitespace; whitespace alone or
+state marker, even with notes appended. A marker needs punctuation, an en/em
+dash, or a hyphen with whitespace on at least one side, or the end of the record
+after optional whitespace; whitespace alone or
 an attached hyphen does not count. Other prose still needs evidence inspection.
 Earlier progress and failure history may follow
 the current evidence. Closure checks run with

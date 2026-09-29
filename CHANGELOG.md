@@ -13,12 +13,15 @@
   unresolved checks and the next action in affected task Results, unchecks them,
   and names their IDs when routing to build; stating a verification limit never
   permits completion. Skills that run checks and builder/reviewer briefs now
-  treat a permission denial as applying to that command and try allowed
-  alternatives before declaring checks unavailable.
+  treat a permission denial as applying to that command and try another allowed
+  way to run the same check; alternatives never permit denied or unauthorized
+  actions. A bare `Not started` placeholder becomes `In progress` at build start;
+  other earlier Result records remain intact.
 - **tools**: The plan validator rejects checked task Results beginning with an
   unfinished state (`Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or
   `Blocked`), even with notes appended to a state marker. Markers require
-  punctuation, a separated dash, or end-of-text after optional whitespace;
+  punctuation, an en/em dash, or a hyphen with whitespace on at least one side,
+  or end-of-text after optional whitespace;
   ordinary words and attached hyphens such as `TODO list` and `Blocked-user`
   pass. Unmarked prose such as `Pending verification.` requires evidence
   inspection by the skills. Closure rejects a bare `Not complete.`
