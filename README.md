@@ -353,7 +353,7 @@ Claude and Codex can guide a project. Gemini/Antigravity can receive research wo
 
 Work directly when that is sufficient; use one worker at a time when helpful. The guiding assistant maintains `ROADMAP.md` and the phase plans; workers return results. Native delegation is optional and never implies cross-vendor subscription access. Narrow uncertain work before giving it to a smaller model; no prompt guarantees every model can complete every task.
 
-Delegated builds record the starting workspace state, confirm dependencies are present, and keep one owner for assigned implementation files. Workers return compact acceptance and verification evidence with resume details when needed. The guiding assistant records those details in the existing phase plan and checks combined behavior when tasks connect.
+Delegated builds record the starting workspace state, confirm dependencies are present, and keep one owner for assigned implementation files. Workers return compact acceptance and verification evidence, embedded instructions not followed, and resume details when needed. The guiding assistant records those details in the existing phase plan and checks combined behavior when tasks connect.
 
 ## Package and scope
 
