@@ -1054,3 +1054,32 @@ hosts' model behavior, and Antigravity IDE loading remain untested.
 Evidence: `/tmp/kaylo-parity-mmv8u8m6` (including `trial.log`). Temporary
 profiles contain no copied account credentials. Normal host profiles and trust
 settings were not changed.
+
+## Public installation 0.8.0 — 2026-09-29
+
+After the `v0.8.0` tag (`2dc647f`) was pushed, PR #19 was merged with a merge
+commit (`e3446f4`) and the GitHub release was published. Fresh temporary
+profiles then installed Kaylo from public GitHub with no Git URL rewriting.
+
+| Host | Command path | Observed result |
+| --- | --- | --- |
+| Claude Code 2.1.285, temporary `CLAUDE_CONFIG_DIR` | `claude plugin marketplace add jeio-dev/kaylo`, `claude plugin install kaylo@kaylo` | Installed 0.8.0 |
+| Codex CLI 0.159.0, temporary `CODEX_HOME` | `codex plugin marketplace add jeio-dev/kaylo`, `codex plugin add kaylo@kaylo` | Installed 0.8.0 |
+| Gemini CLI 0.62.0, temporary `GEMINI_CLI_HOME` | `gemini extensions install https://github.com/jeio-dev/kaylo --ref v0.8.0` | Installed; skill listing shows all five skills enabled |
+| Antigravity CLI 1.2.11, private profile mounted with Bubblewrap | `git clone --branch v0.8.0` from GitHub, then `agy plugin install` with the network disabled | Installed five skills and three agents |
+
+Each installed package passed the tag's `validate-package.cjs --installed` with
+23 matching resources, reports version 0.8.0 in its manifests, has the tag's
+exact build skill, and contains no contributor `AGENTS.md`. The merge commit's
+tree is identical to the tag, and all eleven commits listed in the changelog
+are reachable from `main`.
+
+Because `main` and `v0.8.0` have the same tree, these installs do not show
+that the catalogs select the tag rather than the default branch; the local
+update trial in the preparation record does. OpenCode loads a checkout directly
+and was not reinstalled. No model requests, hook trust, signed-in session
+lifecycle, or native worker execution were exercised. Normal host profiles
+were not changed.
+
+Evidence: `/tmp/claude-1000/-home-jeio-src-kaylo/3c3c0060-cc36-460f-9bd8-453ef7547537/scratchpad/public-check.py`
+and `/tmp/kaylo-public-rzse5ftm`.
