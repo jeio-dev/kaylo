@@ -30,8 +30,9 @@
   close sets it to the next action or `None`. Close calls a limitation accepted
   only when a recorded user decision names it. A blocking review comment stays
   `open`, with its fix evidence, until the focused `/kaylo:review changes`
-  recheck marks it `fixed`, and build does not correct it again unless that
-  recheck fails. No model run has tested these changes.
+  recheck marks it `fixed`. Build corrects it again only after a failed recheck,
+  material new evidence that the fix is incomplete, or the user's explicit
+  request. No model run has tested these changes.
 - **tools**: The plan validator rejects checked task Results beginning with an
   unfinished state (`Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or
   `Blocked`), even with notes appended to a state marker. Markers require

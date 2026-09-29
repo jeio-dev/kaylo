@@ -496,3 +496,25 @@ and the untrusted-instructions guardrail case include them. CHANGELOG links
 
 These checks cover structure and wording consistency only; no model ran with
 the revised text, and native host validators were not rerun.
+
+Recheck corrections, 2026-09-29: the focused recheck of PR #12 found no blocking
+comments. R13–R15 and two wording leftovers are addressed on the same branch.
+Build allows another correction after a failed recheck, material new evidence
+that the fix is incomplete, or the user's explicit request. Check instructions
+and report formats require an exit status only when available. All five skills
+use "including those a worker reports"; review's next-step update follows its
+route list. The review delegation and README report summaries include embedded
+instructions not followed. Claude adapters were regenerated. Checks used the
+existing nvm Node v24.21.0 binary.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: package v0.7.0, versions and release catalogs match, adapters match the briefs |
+| `node --test tests/*.test.cjs` | All 94 tests passed |
+| `node scripts/sync-claude-agents.cjs`, then `git status --short` | Builder adapter updated; a second run left all three adapter content hashes and status unchanged |
+| Shared-sentence grep and comparison | Permission sentence identical in four skills and two briefs (plus adapters); embedded-instruction sentence identical in five skills and, in worker form, three briefs (plus adapters) |
+| `git diff --check` | Clean |
+
+These checks cover structure and wording consistency only; no model ran with
+the revised text, and native host validators and install/update trials were not
+rerun.
