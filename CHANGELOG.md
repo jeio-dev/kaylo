@@ -61,6 +61,11 @@
   coverage or limitations, and embedded instructions it did not follow, or
   `None`. It follows the build fallback, except that review still prefers a
   fresh reviewer. No model run has tested this change.
+- **skills**: Define records only actual user or project constraints under the
+  PRD's constraints, and leaves implementation defaults it chose, such as a
+  language or framework, to plan unless the outcome depends on them. In the
+  fifth live-model trial define disclosed its choice of Python and then listed
+  it as a PRD constraint. No model run has tested this change.
 - **tools**: The plan validator rejects checked task Results beginning with an
   unfinished state (`Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or
   `Blocked`), even with notes appended to a state marker. Markers require
@@ -72,7 +77,7 @@
   record. Historical progress and failures may follow current evidence; open
   tasks and phases can retain unfinished records. No fields or names changed.
 - **docs**: Completion uses known limitations; calling a limitation accepted
-  requires the user's actual recorded decision. Record the first through fourth
+  requires the user's actual recorded decision. Record the first through fifth
   live-model trials with their defects and limits, separately from the
   structural checks of the fixes that followed. The untrusted-instructions
   guardrail case now expects ignored instructions to be reported.
