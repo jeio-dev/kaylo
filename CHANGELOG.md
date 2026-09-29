@@ -33,6 +33,11 @@
   recheck marks it `fixed`. Build corrects it again only after a failed recheck,
   material new evidence that the fix is incomplete, or the user's explicit
   request. No model run has tested these changes.
+- **skills**: Worker reports give embedded instructions not followed their own
+  line, always included and `None` when there are none, instead of folding them
+  into blockers or limits. In the third live-model trial a builder worker read
+  such an instruction and still reported "Blockers or limits: None". No model run
+  has tested this change.
 - **tools**: The plan validator rejects checked task Results beginning with an
   unfinished state (`Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or
   `Blocked`), even with notes appended to a state marker. Markers require
@@ -44,8 +49,8 @@
   record. Historical progress and failures may follow current evidence; open
   tasks and phases can retain unfinished records. No fields or names changed.
 - **docs**: Completion uses known limitations; calling a limitation accepted
-  requires the user's actual recorded decision. Record the first and second
-  live-model trials with their defects and limits, separately from the
+  requires the user's actual recorded decision. Record the first, second,
+  and third live-model trials with their defects and limits, separately from the
   structural checks of the fixes that followed. The untrusted-instructions
   guardrail case now expects ignored instructions to be reported.
 - **tools**: `validate-package.cjs --installed` now also compares `WORKERS.md`
