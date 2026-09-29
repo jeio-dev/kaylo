@@ -310,10 +310,10 @@ horizontal whitespace for all six unfinished state markers, instead of
 retaining bare whitespace for the two-word states. This avoids rejecting
 `In progress bar renders` without a special-case exception, and attached
 hyphens in feature names such as `Blocked-user` do not mark unfinished states.
-The deliberate structural limit allows `Pending verification.`, `In progress
-with baseline notes.`, and `Not started implementation.`; skills must still
-assess actual evidence and leave unresolved work open. This limit is recorded
-in the glossary, README, changelog, and all three manual fallbacks.
+The deliberate structural limit allows `Pending verification.`,
+`In progress with baseline notes.`, and `Not started implementation.`; skills
+must still assess actual evidence and leave unresolved work open. This limit is
+recorded in the glossary, README, changelog, and all three manual fallbacks.
 
 All follow-up checks used the same existing nvm Node v24.21.0, through a
 command-local PATH or direct binary. No profiles or global settings changed.
@@ -980,3 +980,38 @@ later decision. R4, a split code span in an older section, was left unchanged.
 | `git diff --check main` | Clean, covering the committed and uncommitted changes |
 
 No model ran with the revised wording.
+
+## Define outcome-dependent choices — 2026-09-29
+
+The PR #17 review left R2 open: define had no stated route for an
+implementation choice the outcome does depend on, such as a platform the product
+must run inside or a service it must use. Step 3 limits questions to the user,
+scope, constraints, or success, and records only actual user or project
+constraints; its scope rule said define may "choose" frameworks, services,
+dependencies, or abstractions when needed to define the outcome, which also
+conflicted with step 3's rule that define's own implementation suggestions are
+not decisions. That scope rule now says that when the outcome depends on a
+framework, service, or dependency that the user or project has not settled,
+define asks about it as a step 3 question, so the three-question limit,
+recommendation, and tradeoff apply, and records the user's decision under the
+PRD's constraints, or under its open questions until they decide. Abstractions
+are no longer named; step 3 already leaves implementation choices to plan. The
+PRD template, glossary, and plan skill are unchanged: the template's
+constraints and open-questions placeholders already cover both records, and
+plan resolves consequential unknowns in its own questions.
+
+R4, the `In progress with baseline notes.` code span split across two lines in
+the R56 paragraph of an older section, is now on one line; that paragraph was
+rewrapped from the split line onward, with no words changed. A scan of the
+file's non-table lines outside code fences for an odd number of backticks found
+no other split spans.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: package v0.7.0, five shared skills, matching versions and release catalogs |
+| `node --test tests/*.test.cjs` | All 94 tests passed |
+| `git diff --check main...HEAD` | Clean, covering the committed branch change |
+
+All checks used Node v24.21.0. No agent brief changed, so adapters were not
+regenerated. These checks cover structure only; no model ran with the revised
+wording, and native host validators were not rerun.
