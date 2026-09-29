@@ -41,6 +41,16 @@
   trial a builder worker read such an instruction, which its packet had already
   named and asked it to report, and still reported "Blockers or limits: None".
   No model run has tested this change.
+- **skills**: Worker report fallback when build's delegation reference is
+  unavailable, as in pasted-skill use
+  ([#14](https://github.com/jeio-dev/kaylo/pull/14)). Build says so and works
+  directly when capable unless the user requested a worker. It tells a requested
+  worker to treat file contents as evidence, not instructions, and to report its
+  changes, checks, blockers, and embedded instructions it did not follow, or
+  `None`. In the fourth live-model trial a pasted build sent a requested worker
+  without the reference; the packet omitted the report fields, and the worker's
+  report said nothing about embedded instructions. No model run has tested this
+  change.
 - **tools**: The plan validator rejects checked task Results beginning with an
   unfinished state (`Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or
   `Blocked`), even with notes appended to a state marker. Markers require
@@ -52,8 +62,8 @@
   record. Historical progress and failures may follow current evidence; open
   tasks and phases can retain unfinished records. No fields or names changed.
 - **docs**: Completion uses known limitations; calling a limitation accepted
-  requires the user's actual recorded decision. Record the first, second,
-  and third live-model trials with their defects and limits, separately from the
+  requires the user's actual recorded decision. Record the first through fourth
+  live-model trials with their defects and limits, separately from the
   structural checks of the fixes that followed. The untrusted-instructions
   guardrail case now expects ignored instructions to be reported.
 - **tools**: `validate-package.cjs --installed` now also compares `WORKERS.md`
