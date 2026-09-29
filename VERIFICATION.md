@@ -829,9 +829,9 @@ No model ran with the revised wording.
 
 ## Fifth live-model trials — 2026-09-29
 
-An agent ran the model trials against `main` at `387844d` (PR #15), using a `git
-archive` copy as the plugin, validator, and template source. Claude Code CLI
-2.1.285 (the fourth trial used 2.1.284) ran headless `claude -p` with CLI
+An agent ran the model trials against `main` at `387844d` (PR #15), using a
+`git archive` copy as the plugin, validator, and template source. Claude Code
+CLI 2.1.285 (the fourth trial used 2.1.284) ran headless `claude -p` with CLI
 default effort; all 15 case turns across 13 cases, and all four workers,
 reported `claude-opus-5-5`, and the case turns reported subscription credentials
 (`apiKeySource: none`). Each case had one run, with resumed turns for B6's build
@@ -847,9 +847,9 @@ and `/etc` failed, and a smoke turn authenticated. The realistic `acceptEdits`
 profile was used for every case except B9n, which used the narrow `dontAsk`
 profile, and the denied-compound case, whose `dontAsk` profile allowed the plain
 check commands, the validator, and read-only Git patterns, and denied `echo`. In
-both `dontAsk` profiles the host still ran read-only commands outside the
-allowlist, including compound ones. The local stub logged no case requests.
-Network access was not isolated.
+both `dontAsk` profiles the host still ran some read-only commands outside the
+allowlist, including compound ones, though not all: B9n's `find /` search was
+denied. The local stub logged no case requests. Network access was not isolated.
 
 | Case | Observed result and limits |
 | --- | --- |
@@ -932,6 +932,46 @@ of the `~/.claude.json` write (R2–R8, R11). The define sentence now names the
 existing stack and available tools as constraints and presents define's
 implementation suggestions as suggestions for plan (R9). The CHANGELOG entry
 links #16 (R10).
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: package v0.7.0, five shared skills, matching versions and release catalogs |
+| `node --test tests/*.test.cjs` | All 94 tests passed |
+| `git diff --check main` | Clean, covering the committed and uncommitted changes |
+
+No model ran with the revised wording.
+
+## Define defaults wording and fifth-trial record fixes — 2026-09-29
+
+A recheck of PR #16 left three non-blocking comments (R12–R14). Define step 3
+said "choose and disclose reasonable implementation defaults yourself" and then
+that implementation choices such as a language or framework are suggestions for
+plan, not decisions. The "choose" wording may have contributed to define
+choosing Python under "Choices I made for you" in the fifth trial; the
+transcript does not show why, and that list also held scope choices the new
+wording still allows. Step 3 now says to choose and disclose reasonable defaults
+for minor product details, so the two sentences agree (R12). The fifth-trial
+record said the host ran read-only commands outside the `dontAsk` allowlists; it
+now says some ran and that B9n's `find /` search was denied (R13). The record's
+first paragraph no longer splits the `git archive` code span across lines (R14).
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: package v0.7.0, five shared skills, matching versions and release catalogs |
+| `node --test tests/*.test.cjs` | All 94 tests passed |
+| `git diff --check main` | Clean, covering the uncommitted changes |
+
+No agent brief changed, so adapters were not regenerated. These checks cover
+structure only; no model ran with the revised wording, and native host
+validators were not rerun.
+
+Review-correction checks, 2026-09-29: an independent review of PR #17 found one
+blocking comment and three non-blocking ones (R1–R4). The record above no
+longer states that the old wording caused define's "Choices I made for you";
+the transcript does not show the model's reasons (R1). The CHANGELOG entry
+links #17 (R3). R2, that define has no stated route for an implementation
+choice the outcome does depend on, predates this change and was left for a
+later decision. R4, a split code span in an older section, was left unchanged.
 
 | Check | Observed result |
 | --- | --- |
