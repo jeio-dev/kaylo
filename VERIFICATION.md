@@ -693,11 +693,14 @@ rather than invent one, and from the trial report's suggested fix, which was to
 request the materials before dispatch. The trial's other findings were left
 unchanged. The builder's argument choice, the late baseline record, and the
 `node -e` probe were model errors against clear rules. The check-off edit order
-recurred; in the six plugin cases the validator ran after both edits, and the
-pasted case's missing post-edit inspection is a model error against the existing
-manual-check rule. The unnamed-builder packet's "clean" baseline may reflect a
-gap in how the guide describes its own `In progress` edit to a worker, but the
-worker handled it correctly and one observation does not justify new wording.
+recurred; in the six plugin cases the validator ran after both edits. The
+pasted guide recorded in Result that the automated check was unavailable and
+that it inspected the structure manually, as the fallback rule asks, but no
+inspection was recorded after its final plan edits, so the reported manual check
+cannot be confirmed from the transcript. The unnamed-builder packet's "clean"
+baseline may reflect a gap in how the guide describes its own `In progress` edit
+to a worker, but the worker handled it correctly and one observation does not
+justify new wording.
 
 | Check | Observed result |
 | --- | --- |
@@ -738,6 +741,20 @@ the validator ran in the six plugin cases, and the pasted guide recorded no
 inspection after its final plan edits, which completes R8 (R13). The fallback
 keeps "when capable" (R14), the first review's count is corrected (R15), and a
 long line is rewrapped (R16).
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: package v0.7.0, five shared skills, matching versions and release catalogs |
+| `node --test tests/*.test.cjs` | All 94 tests passed |
+| `git diff --check main` | Clean, covering the committed and uncommitted changes |
+
+No model ran with the revised wording.
+
+A second recheck found R8 and R13–R16 resolved and raised one non-blocking
+comment (R17): calling the pasted case's unrecorded inspection a model error
+went beyond the transcript, since the guide's Result records the manual check
+the fallback rule asks for. The fallback record now says the reported check
+cannot be confirmed from the transcript, and the PR description matches.
 
 | Check | Observed result |
 | --- | --- |
