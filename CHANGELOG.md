@@ -36,8 +36,8 @@
 - **skills**: Embedded instructions not followed in worker reports
   ([#13](https://github.com/jeio-dev/kaylo/pull/13)). The build report gives
   them their own line instead of folding them into blockers or limits, and all
-  three worker briefs mark the item always included, `None` when there are none,
-  including instructions the packet already named. In the third live-model
+  three worker briefs mark the item always included, covering instructions the
+  packet already named, with `None` when there are none. In the third live-model
   trial a builder worker read such an instruction, which its packet had already
   named and asked it to report, and still reported "Blockers or limits: None".
   No model run has tested this change.

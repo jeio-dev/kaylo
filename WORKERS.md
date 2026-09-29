@@ -31,7 +31,7 @@ Previous attempts: [failed repairs and evidence, or None]
 Existing review comments: [IDs, labels, corrections and recheck evidence relevant to this task, or None]
 Workspace baseline: [starting changes and relevant original content, or clean commit; confirm dependencies are present]
 Contracts: [relevant interfaces and decisions, or None]
-Return: the items in the worker brief's Return line; for a build, the compact report below
+Return: the items in the worker brief's Return line; for a build, the compact report fields below, copied into this packet
 ```
 
 The guiding assistant maintains `ROADMAP.md` and the phase plans, and checks returned claims against the available files and results. A worker does not approve scope, change model settings, or spawn more workers.

@@ -560,10 +560,10 @@ security claims. Recovery from a denied pipe, the two-attempt repair stop,
 unchecking after a failed post-check-off validation, plan and define turns,
 fresh-context delegated review, and other hosts were not observed. No session
 folder was added under the normal Claude projects directory; the 15 trial
-project folders, including the setup smoke, are in the trial-owned directory. `~/.claude/settings.json` and
-`~/.claude.json` were byte-identical before and after. Evidence and projects
-are preserved under the local `.local/trials/live-3/` directory. This local
-evidence is not shipped.
+project folders, including the setup smoke, are in the trial-owned directory.
+`~/.claude/settings.json` and `~/.claude.json` were byte-identical before and
+after. Evidence and projects are preserved under the local
+`.local/trials/live-3/` directory. This local evidence is not shipped.
 
 ## Worker report field for ignored instructions — 2026-09-29
 
@@ -610,5 +610,14 @@ longer says every retested case followed PR #12 (R11).
 | `node scripts/sync-claude-agents.cjs` | Regenerated the three adapters; a second run changed nothing |
 | Return-line comparison | The revised Return clause appears once in each of the three briefs and their adapters |
 | `git diff --check` | Clean |
+
+A focused recheck found R1–R11 resolved and raised five non-blocking comments
+(R12–R16). R12, R13, R15, and R16 were addressed: a rewrapped line, the
+packet's `Return:` line now asks for the build report fields to be copied into
+the packet so a worker without `WORKERS.md` still receives them, a corrected
+PR description, and a reordered CHANGELOG clause. R14 (the reviewer and
+researcher briefs say "packet", a term only the builder brief defines) was left
+as is because the sentence reads correctly. The checks above were rerun after
+these edits with the same results.
 
 No model ran with the revised report format.
