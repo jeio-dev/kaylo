@@ -116,7 +116,9 @@ test('checked tasks reject unfinished Result prefixes, while open tasks retain p
     'Not started: waiting for implementation.', 'not started; baseline recorded.',
     'Pending — verification needed.', 'TODO', 'TODO: run checks.', 'TBD — waiting for evidence.',
     'Blocked: required check failed.', 'In progress\t: baseline recorded.',
-    'Blocked- required check failed.', 'Pending— verification needed.', 'Pending —verification needed.']) {
+    'Blocked- required check failed.', 'Pending— verification needed.', 'Pending —verification needed.',
+    'In progress—baseline recorded.', 'Blocked–check failed.', 'Blocked—npm test denied.',
+    'Pending–user check.', 'Pending\t–user check.']) {
     const text = phase(task('T1', true)).replace('node greet.cjs printed Hello, exit 0', result);
     const f = fixture(t, text);
     assert.ok(validate(f.root).some(error => /Result must not start with an unfinished state/.test(error)), result);
@@ -132,7 +134,8 @@ test('finished Result prose and feature names do not count as unfinished state m
     'Blocked users can no longer post; checks passed, exit 0.', 'Blocked-user filter works; checks passed, exit 0.',
     'In progress bar renders; checks passed, exit 0.', 'Pending-state spinner shows; checks passed, exit 0.',
     'TBD placeholders removed; checks passed, exit 0.',
-    'Pending verification.', 'In progress with baseline notes.', 'Not started implementation.']) {
+    'Pending verification.', 'In progress with baseline notes.', 'Not started implementation.',
+    'Pending (queued) orders now persist; checks passed, exit 0.']) {
     const text = phase(task('T1', true)).replace('node greet.cjs printed Hello, exit 0', result);
     const f = fixture(t, text);
     assert.deepEqual(validate(f.root, { closing: true }), [], result);
