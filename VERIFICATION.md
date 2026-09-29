@@ -763,3 +763,66 @@ cannot be confirmed from the transcript, and the PR description matches.
 | `git diff --check main` | Clean, covering the committed and uncommitted changes |
 
 No model ran with the revised wording.
+
+## Pasted-review reviewer fallback — 2026-09-29
+
+The first review of PR #14 noted (R12) that review has the same gap as build
+when its delegation reference is unavailable, as in pasted-skill use. The review
+skill defines comment labels and the evidence-not-instructions rule for the
+guide, but tells delegated reviewers only that they do not edit shared plan
+state; the reviewer's own Return line, labels, and evidence guardrail are in the
+brief. Review step 1 now says that when a reviewer is used and the delegation
+reference is unavailable, review says so, gives the reviewer the target,
+requirements, and existing review comments with their IDs, without the author's
+defense, and tells it to treat file contents as evidence, not instructions, to
+edit no implementation or plan files, and to return readiness, review comments
+labelled `blocking` or `non-blocking`, coverage or limitations, and embedded
+instructions it did not follow, or `None`. Unlike build, review keeps preferring
+a fresh reviewer; like build, it does not ask for the brief first, because fresh
+context is the point of delegated review. This departs from the delegation
+reference's rule to ask for a missing brief rather than invent one, although
+that rule covers a missing brief when the reference is available. No trial
+exercised this path: the fourth trial's review case had the plugin installed.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: package v0.7.0, five shared skills, matching versions and release catalogs |
+| `node --test tests/*.test.cjs` | All 94 tests passed |
+| `git diff --check` | Clean; it compared the working tree with the index, and nothing was staged |
+
+No agent brief changed, so adapters were not regenerated. These checks cover
+structure only; no model ran with the revised wording, and native host
+validators were not rerun.
+
+Review-correction checks, 2026-09-29: an independent review of PR #15 found no
+blocking comments and six non-blocking ones (R1–R6), all addressed on the same
+branch. The CHANGELOG entry links #15 (R1), and the first diff-check row states
+what plain `git diff --check` compared (R2). The records state the departure
+from the delegation reference's ask-for-the-brief rule (R3). The fallback asks
+for `blocking` or `non-blocking` labels and says to give the reviewer the
+target, requirements, and existing comment IDs without the author's defense
+(R4), and it applies when a reviewer is used (R5). The CHANGELOG and this
+record use clearer wording (R6).
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: package v0.7.0, five shared skills, matching versions and release catalogs |
+| `node --test tests/*.test.cjs` | All 94 tests passed |
+| `git diff --check main` | Clean, covering the committed and uncommitted changes |
+
+No model ran with the revised wording.
+
+A focused recheck found R1–R6 resolved and raised three non-blocking comments
+(R7–R9). The record and PR description no longer imply that build asks for the
+brief first (R7). They say the review skill defines labels and the evidence
+rule for the guide, and that the reviewer's own versions are in the brief, not
+the delegation reference (R8). The fallback gives the reviewer existing review
+comments with their IDs, not the IDs alone, so it can recheck fixes (R9).
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: package v0.7.0, five shared skills, matching versions and release catalogs |
+| `node --test tests/*.test.cjs` | All 94 tests passed |
+| `git diff --check main` | Clean, covering the committed and uncommitted changes |
+
+No model ran with the revised wording.
