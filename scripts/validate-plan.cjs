@@ -194,8 +194,9 @@ function validate(project, { closing = false } = {}) {
     if (!task.result) fail(`${task.id}: task needs a Result record`);
     if (task.checked) {
       if (!meaningful(task.result)) fail(`${task.id}: completed task needs a substantive Result record`);
-      // These leading states describe unfinished work, even with notes appended.
-      if (/^(?:not started|in progress|pending|todo|tbd|blocked)(?=$|[\s.!:;,\u2013\u2014-])/i.test(task.result || '')) {
+      // Recognize state markers, not ordinary words or hyphenated feature names.
+      // A dash needs whitespace on at least one side; free prose is assessed manually.
+      if (/^(?:not started|in progress|pending|todo|tbd|blocked)(?:[ \t]*(?:[.!:;,]|$)|[ \t]+[\u2013\u2014-]|[\u2013\u2014-](?=[ \t]|$))/i.test(task.result || '')) {
         fail(`${task.id}: completed task Result must not start with an unfinished state (Not started, In progress, Pending, TODO, TBD, or Blocked)`);
       }
     }

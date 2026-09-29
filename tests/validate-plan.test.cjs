@@ -114,14 +114,29 @@ test('valid dependency and completed task evidence', t => {
 test('checked tasks reject unfinished Result prefixes, while open tasks retain progress notes', t => {
   for (const result of ['In progress', 'In progress. Baseline recorded; checks passed, exit 0.',
     'Not started: waiting for implementation.', 'not started; baseline recorded.',
-    'Pending verification.', 'TODO: run checks.', 'TBD — waiting for evidence.',
-    'Blocked: required check failed.', 'In progress\twith baseline notes.']) {
+    'Pending — verification needed.', 'TODO', 'TODO: run checks.', 'TBD — waiting for evidence.',
+    'Blocked: required check failed.', 'In progress\t: baseline recorded.',
+    'Blocked- required check failed.', 'Pending— verification needed.', 'Pending —verification needed.']) {
     const text = phase(task('T1', true)).replace('node greet.cjs printed Hello, exit 0', result);
     const f = fixture(t, text);
     assert.ok(validate(f.root).some(error => /Result must not start with an unfinished state/.test(error)), result);
     assert.equal(fs.readFileSync(f.file, 'utf8'), text);
     fs.writeFileSync(f.file, text.replace('- [x] T1:', '- [ ] T1:'));
     assert.deepEqual(validate(f.root), [], result);
+  }
+});
+
+test('finished Result prose and feature names do not count as unfinished state markers', t => {
+  for (const result of ['Todo items now persist; checks passed, exit 0.',
+    'TODO list renders; checks passed, exit 0.', 'Pending orders now appear; checks passed, exit 0.',
+    'Blocked users can no longer post; checks passed, exit 0.', 'Blocked-user filter works; checks passed, exit 0.',
+    'In progress bar renders; checks passed, exit 0.', 'Pending-state spinner shows; checks passed, exit 0.',
+    'TBD placeholders removed; checks passed, exit 0.',
+    'Pending verification.', 'In progress with baseline notes.', 'Not started implementation.']) {
+    const text = phase(task('T1', true)).replace('node greet.cjs printed Hello, exit 0', result);
+    const f = fixture(t, text);
+    assert.deepEqual(validate(f.root, { closing: true }), [], result);
+    assert.equal(fs.readFileSync(f.file, 'utf8'), text);
   }
 });
 
