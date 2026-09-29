@@ -65,9 +65,11 @@
   the existing stack or available tools, under the PRD's constraints
   ([#16](https://github.com/jeio-dev/kaylo/pull/16)). It leaves implementation
   choices such as a language or framework to plan unless the outcome depends on
-  them, and presents any it suggests as suggestions for plan, not decisions. In
-  the fifth live-model trial define disclosed its choice of Python and then
-  listed it as a PRD constraint. No model run has tested this change.
+  them, and presents any it suggests as suggestions for plan, not decisions.
+  Defaults define chooses itself now cover minor product details rather than
+  implementation. In the fifth live-model trial define disclosed its choice of
+  Python and then listed it as a PRD constraint. No model run has tested this
+  change.
 - **tools**: The plan validator rejects checked task Results beginning with an
   unfinished state (`Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or
   `Blocked`), even with notes appended to a state marker. Markers require
