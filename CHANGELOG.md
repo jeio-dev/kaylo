@@ -33,11 +33,14 @@
   recheck marks it `fixed`. Build corrects it again only after a failed recheck,
   material new evidence that the fix is incomplete, or the user's explicit
   request. No model run has tested these changes.
-- **skills**: Worker reports give embedded instructions not followed their own
-  line ([#13](https://github.com/jeio-dev/kaylo/pull/13)), always included and `None` when there are none, instead of folding them
-  into blockers or limits. In the third live-model trial a builder worker read
-  such an instruction and still reported "Blockers or limits: None". No model run
-  has tested this change.
+- **skills**: Embedded instructions not followed in worker reports
+  ([#13](https://github.com/jeio-dev/kaylo/pull/13)). The build report gives
+  them their own line instead of folding them into blockers or limits, and all
+  three worker briefs mark the item always included, `None` when there are none,
+  including instructions the packet already named. In the third live-model
+  trial a builder worker read such an instruction, which its packet had already
+  named and asked it to report, and still reported "Blockers or limits: None".
+  No model run has tested this change.
 - **tools**: The plan validator rejects checked task Results beginning with an
   unfinished state (`Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or
   `Blocked`), even with notes appended to a state marker. Markers require
