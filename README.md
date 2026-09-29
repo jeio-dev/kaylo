@@ -297,8 +297,10 @@ Exit codes: `0` means supported structural checks passed; `1` means plan errors;
 `2` means invalid command usage. The validator does not edit files or execute
 Markdown, verification commands, hooks, or model calls. Plan runs it after writing
 or converting plans and reports remaining errors and unfinished conversion steps;
-the user must confirm a converted plan before it gets `Status: Current`. Build runs it before
-marking tasks complete; close writes the proposed completion record and runs
+the user must confirm a converted plan before it gets `Status: Current`. Build checks
+the task off as proposed completion, then runs the validator; a failure unchecks
+the task, with Result corrections handled within build and genuine plan errors
+routed to plan. Close writes the proposed completion record and runs
 `--closing` before checking the phase in the index. If the script/runtime is
 unavailable, the skills require manual inspection and disclosure of that limit.
 
@@ -325,7 +327,10 @@ plan, and a nonempty Result. `Acceptance criteria:`, `Test plan:`, `Result:`,
 and `Blocked by:` may each appear only once per task.
 Checked tasks additionally need a substantive Result that does not start with
 `Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or `Blocked` as an unfinished
-state, even with notes appended. Earlier progress and failure history may follow
+state marker, even with notes appended. A marker needs punctuation, a separated
+dash, or the end of the record after optional whitespace; whitespace alone or
+an attached hyphen does not count. Other prose still needs evidence inspection.
+Earlier progress and failure history may follow
 the current evidence. Closure checks run with
 `--closing` or when the current phase is checked in `ROADMAP.md`. They require
 all current tasks checked, no `Needs revision` status, a `## Review` record

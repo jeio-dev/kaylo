@@ -168,7 +168,7 @@ This section is the exact contract for Kaylo's files, for people changing the va
 | `NN-RESEARCH.md` | Follows "phase". | Instructions only |
 | Task | Accurately describes Kaylo's unit of work. | Entry format `- [ ] T1: title`; unique IDs. |
 | IDs `T1`, `R1`, `02-T3` | Already short and unambiguous. | `T1` and `R1` must be unique. Qualified IDs such as `02-T3` are instructions only. |
-| `Result:` | Kaylo convention; no single team field matches. | Nonempty on every task; substantive on a checked task. |
+| `Result:` | Kaylo convention; no single team field matches. | Nonempty on every task; substantive on a checked task, with no leading unfinished state marker (see Validation rules). |
 | `Status:` (`Current`, `Needs revision: <reason>`) | Kaylo convention for plan validity. | Required; see the rules below. |
 | `Current:` | Kaylo convention for index selection. | Required; exactly one, matching one phase entry. |
 | `## Review` | Already the plain word. | Checked at closure. |
@@ -189,12 +189,12 @@ Older formats removed:
 - Keep: unlinked one-line entries for future phases in `ROADMAP.md`. These are valid, not legacy.
 - Instruction-only (not validated): `Estimate:` values, the `## Design` heading, and linked plan paths matching `.kaylo/phases/NN-slug/NN-PLAN.md`. `## Next step` is also instruction-only.
 
-Unchanged structural checks, under the new names:
+Structural checks:
 
 - `ROADMAP.md` has exactly one `Current:` line in the form `Current: [label](relative-file)`, and it matches exactly one phase entry.
 - Phase entries have a checkbox and a two-digit ID. Phase IDs are unique. A checked phase needs a plan link. Two entries cannot link the same file, including through symbolic or hard links.
 - Plan links are relative and stay inside the project.
-- Tasks use `- [ ] T1: title`, and task IDs are unique. Each task has a substantive title, `Acceptance criteria:`, and `Test plan:`, and a nonempty `Result:`. A checked task needs a substantive `Result:` that does not start with an unfinished state: `Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or `Blocked` (case-insensitive, followed by whitespace, `.`, `!`, `:`, `;`, `,`, `–`, `—`, `-`, or the end of the record). Notes appended to that state do not make it complete; historical progress or failures may follow current evidence.
+- Tasks use `- [ ] T1: title`, and task IDs are unique. Each task has a substantive title, `Acceptance criteria:`, and `Test plan:`, and a nonempty `Result:`. A checked task needs a substantive `Result:` without a leading unfinished state marker: `Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or `Blocked` (case-insensitive), followed by optional horizontal whitespace and `.`, `!`, `:`, `;`, `,`, a dash (`–`, `—`, `-`) with whitespace on at least one side, or the end of the record. Notes appended to a marker do not make it complete; historical progress or failures may follow current evidence. Bare whitespace and attached hyphens do not mark a state, so ordinary prose such as `TODO list renders`, `In progress bar renders`, and `Blocked-user filter works` passes. The same structural limit allows `Pending verification.` and `In progress with baseline notes.`; skills must still assess the evidence and leave unresolved work open.
 - `Blocked by:` is `None` or comma-separated, distinct IDs of earlier tasks in the same phase.
 - `Acceptance criteria:`, `Test plan:`, `Result:`, and `Blocked by:` each appear at most once per task. `## Review` and `## Completion` each appear at most once. Review comment IDs (`R1`) are unique.
 - Closure (`--closing`, or a checked current phase) requires every task checked, no `Status: Needs revision`, a record under `## Review` (`None` is allowed), and a substantive record under `## Completion`. A bare `Not complete` (case-insensitive, with an optional period or exclamation mark) is a placeholder; an open phase may retain it before closure.

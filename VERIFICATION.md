@@ -211,7 +211,7 @@ authorized POST.
 | A3 review plan | Recorded target, coverage, and limits; no comments, no fresh context. Structure passed. |
 | A4 build T1 | Recorded agreement and starting workspace before edits; changed only `greet.js`, ran all five test-plan commands, validated before and after check-off. Structure passed. |
 | A4b build T2 | Changed only README; same evidence/check-off order. Structure passed. |
-| A5 review changes | Ran PRD commands, no comments; attempted a `/tmp/old-greet.js` write was denied. Structure passed. |
+| A5 review changes | Ran PRD commands, no comments; an attempted `/tmp/old-greet.js` write was denied. Structure passed. |
 | A6 close | Reran checks, recorded completion, ran `--closing` before checking the roadmap; kept Current in place, no next phase. Both validator modes passed. Called its own review and edge-case limits accepted without a user decision. |
 | A conversion | Renamed old files/heading/fields/review label and preserved IDs, evidence including T1's failed first attempt, agreement, and review details. Set Current after its own code comparison without user confirmation; lightly reworded content. Never ran the validator. Denied removal left OBJECTIVE and PLAN alongside the new files; harness validation failed on OBJECTIVE, then passed after source files were removed. |
 | A build on old format | Made no edits and routed to plan; named replacements for old task fields vaguely. |
@@ -245,7 +245,8 @@ their original scratchpad paths. This local evidence is not shipped.
 
 ## Live-trial finding fixes — 2026-09-28
 
-Checks ran on branch `fix/live-trial-findings`, based on `main` at `5f9a408`.
+Initial checks below ran on branch `fix/live-trial-findings`, based on `main`
+at `5f9a408`, through `a133d31`. Review-correction checks follow separately.
 The fixes clarify verification and conversion gates, persist failed close
 rechecks, replace unfinished task Result prefixes with evidence, reject those
 prefixes on checked tasks and bare `Not complete.` at closure, and distinguish
@@ -285,4 +286,61 @@ obtain conversion confirmation, run the plan check, persist B6 failures,
 replace B5 progress text, and distinguish known from accepted limitations
 remains unverified. Native manifest validators, host install/update trials,
 and the earlier unexercised behavioral paths were not rerun; this is not a
-release-readiness claim. Item 8's small model errors remain unchanged.
+release-readiness claim. At that initial checkpoint, item 8's small model errors
+remained unchanged; the permission-denial inference is addressed below.
+
+### Independent-review corrections R55–R61
+
+Independent review of `a133d31` reported no blocking issues and seven
+non-blocking comments. The follow-up changes on the same branch address R55–R61
+plus named-task routing and item 8's permission-denial inference. Build now
+validates proposed checked state, unchecks failures, and corrects Result records
+within build. Restart and check-off preserve recorded failures, superseded
+evidence, workspace baseline, and repair history. Close records unresolved
+verification and next actions in unchecked task Results and names task IDs
+when routing to build. Manual fallback uses a non-exhaustive list of errors;
+older-format lists are unchanged. The glossary and A5 trial wording were
+corrected. The four skills that run checks and the builder/reviewer briefs
+share the permission-denial guidance; Claude adapters were regenerated with
+`node scripts/sync-claude-agents.cjs`.
+
+R56 uses punctuation, a separated dash, or end-of-text after optional
+horizontal whitespace for all six unfinished state markers, instead of
+retaining bare whitespace for the two-word states. This avoids rejecting
+`In progress bar renders` without a special-case exception, and attached
+hyphens in feature names such as `Blocked-user` do not mark unfinished states.
+The deliberate structural limit allows `Pending verification.`, `In progress
+with baseline notes.`, and `Not started implementation.`; skills must still
+assess actual evidence and leave unresolved work open. This limit is recorded
+in the glossary, README, changelog, and all three manual fallbacks.
+
+All follow-up checks used the same existing nvm Node v24.21.0, through a
+command-local PATH or direct binary. No profiles or global settings changed.
+
+| Check | Observed result |
+| --- | --- |
+| `node --test tests/*.test.cjs` | All 94 tests passed: 84 plan tests and ten package/loader/staging tests. Finished prose and feature-name controls pass, real unfinished markers fail, open progress remains valid, and real completion mentioning incomplete optional coverage still passes. |
+| `node scripts/validate-package.cjs` | Passed: package v0.7.0, versions/catalogs match, five shared skills, generated adapters match the shared briefs. |
+| `git diff --check`, `git diff main...HEAD --check` | Clean. |
+| Relative file links in all Markdown changed from main | All 17 resolve across 13 changed Markdown files, using the same file-existence check and exclusions as the initial check. |
+| Fresh copies of saved B5 and workflow projects | Baseline `5f9a408` still incorrectly passes both defects; changed validator rejects B5's checked `In progress.` and workflow pre-close `Not complete.` with exit 1. Corrected B5 evidence, open-phase placeholder, and actual workflow completion controls pass with exit 0. Workflow plan/index restored to saved pre-close commit `aef64c2` only in the copy. |
+| R56 CLI probe on another fresh B5 copy | All eight finished examples from R56 pass (exit 0), including `In progress bar` and attached-hyphen names. Three documented unmarked-prose controls also pass. Validator at `a133d31` rejects all eleven. Eight real unfinished markers fail (exit 1), including `In progress.`, `Blocked:`, bare `TODO`, and `Pending —`, plus whitespace/punctuation/dash variations. |
+| R55 structural sequence on the probe copy | Unchecked progress passes; proposed check-off with unchanged progress fails; rollback to unchecked passes; replacing only the leading state with evidence and checking off passes. This checks structure, not model adherence to the new sequence. |
+| Read-only and source preservation | Input hashes match before/after every validator run; complete saved-source project hashes match before/after reproductions and probes. All intentional fixture edits occurred in fresh copies. |
+
+Follow-up artifacts: `.local/plans/live-trial-review-all-tests.log`,
+`.local/plans/live-trial-review-package-check.log`,
+`.local/plans/live-trial-review-relative-links.log`,
+`.local/plans/reproduce-live-trial-review-gaps.py`,
+`.local/plans/live-trial-review-reproduction.log`,
+`.local/plans/probe-live-trial-r56.py`,
+`.local/plans/live-trial-review-r56-probe.log`, and
+`.local/plans/live-trial-review-checks/` (JSON commands, exits, diagnostics,
+and fresh copy locations).
+
+No live-model rerun was performed. Proposed check-off and rollback, Result
+history preservation, close's unavailable-check records and named routing,
+and allowed-command alternatives remain instruction changes unverified with a
+model. Worker execution and the earlier unexercised behavioral paths also
+remain untested. No native host validators or install/update checks were rerun,
+and no release-readiness claim is made.

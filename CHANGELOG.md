@@ -7,13 +7,21 @@
 - **skills**: Plan requires the user's confirmation before marking a converted
   plan `Current`, runs a read-only structural check after plan writes and
   conversions, and reports unfinished conversion steps. Build replaces leading
-  progress text with evidence before task check-off. Close keeps uncertain
-  verification open and records failed rechecks in affected task Results,
-  unchecking them before routing to build; stating a verification limit never
-  permits completion.
+  unfinished states with evidence, retains baseline and failure history, checks
+  the task off as proposed completion, and validates that checked state; failures
+  uncheck it and Result corrections stay within build. Close records failed or
+  unresolved checks and the next action in affected task Results, unchecks them,
+  and names their IDs when routing to build; stating a verification limit never
+  permits completion. Skills that run checks and builder/reviewer briefs now
+  treat a permission denial as applying to that command and try allowed
+  alternatives before declaring checks unavailable.
 - **tools**: The plan validator rejects checked task Results beginning with an
   unfinished state (`Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or
-  `Blocked`), even with notes appended. Closure rejects a bare `Not complete.`
+  `Blocked`), even with notes appended to a state marker. Markers require
+  punctuation, a separated dash, or end-of-text after optional whitespace;
+  ordinary words and attached hyphens such as `TODO list` and `Blocked-user`
+  pass. Unmarked prose such as `Pending verification.` requires evidence
+  inspection by the skills. Closure rejects a bare `Not complete.`
   record. Historical progress and failures may follow current evidence; open
   tasks and phases can retain unfinished records. No fields or names changed.
 - **docs**: Completion uses known limitations; calling a limitation accepted
