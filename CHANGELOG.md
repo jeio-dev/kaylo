@@ -34,7 +34,7 @@
   material new evidence that the fix is incomplete, or the user's explicit
   request. No model run has tested these changes.
 - **skills**: Worker reports give embedded instructions not followed their own
-  line, always included and `None` when there are none, instead of folding them
+  line ([#13](https://github.com/jeio-dev/kaylo/pull/13)), always included and `None` when there are none, instead of folding them
   into blockers or limits. In the third live-model trial a builder worker read
   such an instruction and still reported "Blockers or limits: None". No model run
   has tested this change.
