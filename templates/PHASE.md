@@ -44,4 +44,4 @@ Status: Current
 
 ## Completion
 
-[Delivered outcome, verification, accepted limitations, and optional follow-ups.]
+[Delivered outcome, verification, known limitations, and optional follow-ups. Call a limitation accepted only with the user's actual recorded decision; cite that decision.]

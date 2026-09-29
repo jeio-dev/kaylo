@@ -21,6 +21,7 @@ Guide the user toward the simplest approach that meets the outcome. Work in the 
 3. Identify the planning case below. Trace the user flow and choose a design using the rules below. Explain why it meets the outcome.
 4. Resolve consequential unknowns: at most three numbered questions per round, each with a recommendation. For technical investigation, define a bounded research task with a question and expected deliverable.
 5. Write or revise the phase plan using the plan and task requirements below, then update the index. Apply the revision rules when existing work is affected.
+6. Run the structural plan check below after writing or converting plans. Report remaining errors and unfinished conversion steps before giving the next action.
 
 ## Index and phases
 
@@ -75,7 +76,7 @@ Estimate: **S** = clear local edit following an existing pattern; **M** = bounde
 
 ## Status and revision
 
-- `Status: Current` in a phase plan means it matches intended work. Otherwise use `Status: Needs revision: <reason>`; restore `Status: Current` after revising affected instructions and any index lines the reason names. Status does not mean agreed, verified, or complete.
+- `Status: Current` in a phase plan means it matches intended work. Otherwise use `Status: Needs revision: <reason>`; restore `Status: Current` after revising affected instructions and any index lines the reason names. A converted plan awaiting user confirmation keeps `Needs revision` until that confirmation arrives. Status does not mean agreed, verified, or complete.
 - Every line in the phase plan that starts with `Status:` counts as its status, including lines under other headings. Write no other such line, for example in `## Completion`.
 - Identify affected tasks and evidence. Reopen only for unmet acceptance or insufficient evidence following relevant changes. Non-blocking review comments alone do not reopen work.
 - Reconsider dependent checks only when their inputs or assumptions changed, not merely because a task reopened.
@@ -96,7 +97,14 @@ Before other planning, convert `OBJECTIVE.md`, a `PLAN.md` index, `ROADMAP.md`, 
 - Rename files, headings, fields, and labels without changing their content. Preserve IDs, results, review comments, repair history, agreement, and completion.
 - When a `PLAN.md` or `ROADMAP.md` has tasks inline, move its whole phase record, unchanged, into `.kaylo/phases/01-<slug>/01-PLAN.md`: goal and scope, agreement, tasks with their results and repair history, review comments, and completion. Then replace `ROADMAP.md` with the index: `Current:` linking that plan and a matching phase entry, checked if its completion is recorded.
 - A task without `Depends on:` depended on every task listed above it. Write those IDs in `Blocked by:`, or `None` for the first task. This keeps the old order, as an exception to naming tasks only for their position; narrow the list only when revising those tasks.
-- Replace `Draft`, a missing status, or any other unsupported status with `Status: Current` only after confirming the plan matches intended work; otherwise use `Status: Needs revision: <reason>`. The old label grants no approval.
+- Replace `Draft`, a missing status, or any other unsupported status with `Status: Current` only after the user confirms that the converted plan matches intended work. Record that actual confirmation; until then use `Status: Needs revision: awaiting user confirmation of the converted plan` and ask for confirmation in the response. The old label grants no approval.
+- A conversion is unfinished while its old source files still need removal. Report them and the remaining action even if the validator passes: it rejects `OBJECTIVE.md`, but allows an unrelated `PLAN.md` beside `ROADMAP.md` and cannot identify a leftover converted source index. Do not claim conversion is complete or route to build while conversion errors or required confirmation remain.
+
+## Structural plan check
+
+After writing or converting plans and updating the index, run `node "<kaylo-root>/scripts/validate-plan.cjs" "<project-root>"`. Resolve the script relative to this skill directory (`../../scripts/validate-plan.cjs`), not the project's working directory. This check is read-only. Preserve validator diagnostics with secrets redacted and report remaining errors; a failed check or unfinished conversion needs further planning before build.
+
+If Node or the script is unavailable (including pasted-skill use), inspect the same structure manually and record that the automated check was unavailable. Equivalent plan formats outside the documented parser subset also need manual inspection; do not rewrite historical plans solely to satisfy the parser. Older formats listed above are errors, not equivalent formats, and the fallback does not excuse them. Every line in the phase plan that starts with `Status:` counts as its status. Identify each failure attributable solely to equivalent formatting outside the parser subset and record the equivalent manual check and its outcome. Genuine structural errors remain blocking: tasks need `Blocked by:`, checked tasks need substantive Results that do not start with `Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or `Blocked`, and closure needs finished tasks and a substantive Completion record, not a bare `Not complete.`. Do not install a runtime or change global settings automatically. The validator checks Markdown structure and record presence, not authorization, evidence truth, implementation correctness, or review quality; the existing agreement and verification rules still apply.
 
 ## Response
 
