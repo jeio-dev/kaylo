@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## 2026-09-29, Version 0.8.0
 
 ### Notable Changes
 
@@ -16,7 +16,7 @@
   treat a permission denial as applying to that command and try another allowed
   way to run the same check; alternatives never permit denied or unauthorized
   actions. A bare `Not started` placeholder becomes `In progress` at build start;
-  other earlier Result records remain intact.
+  other earlier Result records remain intact. [#11](https://github.com/jeio-dev/kaylo/pull/11)
 - **skills**: Wording fixes from the second live-model trial
   ([#12](https://github.com/jeio-dev/kaylo/pull/12)). After a denied compound
   command (for example one adding `echo $?` or a pipe), run the check command by
@@ -88,19 +88,55 @@
   inspection by the skills. Closure rejects a bare `Not complete.`
   record. Historical progress and failures may follow current evidence; open
   tasks and phases can retain unfinished records. No fields or names changed.
+  An existing plan with such a checked task now fails validation until its
+  Result records evidence or the task is unchecked. [#11](https://github.com/jeio-dev/kaylo/pull/11)
 - **docs**: Completion uses known limitations; calling a limitation accepted
-  requires the user's actual recorded decision. Record the first through fifth
-  live-model trials with their defects and limits, separately from the
-  structural checks of the fixes that followed. The untrusted-instructions
-  guardrail case now expects ignored instructions to be reported.
+  requires the user's actual recorded decision ([#11](https://github.com/jeio-dev/kaylo/pull/11)). Record the first
+  through fifth live-model trials with their defects and limits, separately from
+  the structural checks of the fixes that followed ([#11](https://github.com/jeio-dev/kaylo/pull/11)–[#16](https://github.com/jeio-dev/kaylo/pull/16)). The
+  untrusted-instructions guardrail case now expects ignored instructions to be
+  reported ([#12](https://github.com/jeio-dev/kaylo/pull/12)).
 - **tools**: `validate-package.cjs --installed` now also compares `WORKERS.md`
   and rejects files in the shared folders that the source does not have, such
   as templates left behind by an in-place update. The release update trial
   installs the previous release first and checks that catalogs select the
-  release tag rather than the default branch.
+  release tag rather than the default branch. [#10](https://github.com/jeio-dev/kaylo/pull/10)
 - **docs**: Rename `INDUSTRY-TERMS.md` to [GLOSSARY.md](GLOSSARY.md), the usual
   name for this kind of page. `VERIFICATION.md` now keeps records from 0.6.0
-  onward; earlier records remain in Git history.
+  onward; earlier records remain in Git history. [#10](https://github.com/jeio-dev/kaylo/pull/10)
+
+### Verification
+
+All 94 Node tests, package consistency checks, strict Claude plugin and
+marketplace validation, Antigravity validation, and whitespace checks passed.
+An isolated update trial installed the real `v0.7.0` tree from local Git mirrors
+in Claude, Codex, Gemini, and Antigravity, confirmed it, then updated each to
+the prepared 0.8.0. With each mirror's `main` one changed commit past the tag,
+every install matched the tag, and each 0.8.0 install passed the installed-package
+validator with 23 matching resources. The hook loader returned the prepared
+reminder from each hook host's copy, and Codex app-server and OpenCode discovery
+returned all five skills. The Codex plugin-creator validator was not available
+and did not run. Five live-model trials ran with Claude Code and
+`claude-opus-5-5` during this cycle, the last against `9cf7059`; the define
+changes in [#16](https://github.com/jeio-dev/kaylo/pull/16)–[#18](https://github.com/jeio-dev/kaylo/pull/18) came after it and have not run with a model. `VERIFICATION.md`
+records what each trial exercised. Other models and hosts, native worker
+execution outside Claude Code, signed-in hook lifecycle and trust, and
+Antigravity IDE loading remain untested. Public installation checks follow tag
+publication.
+
+### Commits
+
+- [`2d76fd3b33`](https://github.com/jeio-dev/kaylo/commit/2d76fd3b331bd7f1b66337c42349d6f3db7d514e) - **docs**: record v0.7.0 public installation checks (Jeio) [#9](https://github.com/jeio-dev/kaylo/pull/9)
+- [`5f9a40866a`](https://github.com/jeio-dev/kaylo/commit/5f9a40866a619874f4640c61bf3d59bcf1c83722) - **tools**: stricter installed-package checks, glossary rename, and verification trim (Jeio) [#10](https://github.com/jeio-dev/kaylo/pull/10)
+- [`daf5200e48`](https://github.com/jeio-dev/kaylo/commit/daf5200e48324925d61714e7379ebbdb45e3a57c) - **skills**: fix gaps found in the first live-model trials (Jeio) [#11](https://github.com/jeio-dev/kaylo/pull/11)
+- [`73faa8782c`](https://github.com/jeio-dev/kaylo/commit/73faa8782c6b6ab8bdfde08686356e89274e8047) - **skills**: wording fixes from the second live-model trial (Jeio) [#12](https://github.com/jeio-dev/kaylo/pull/12)
+- [`ad9d60a0c0`](https://github.com/jeio-dev/kaylo/commit/ad9d60a0c03ceafd4c3683fcee7301ee329714a6) - **agents**: separate worker report field for ignored embedded instructions (Jeio) [#13](https://github.com/jeio-dev/kaylo/pull/13)
+- [`36211073b5`](https://github.com/jeio-dev/kaylo/commit/36211073b5a6b2269fd31b577864bea23494132f) - **skills**: ask workers for embedded instructions when the delegation reference is missing (Jeio) [#14](https://github.com/jeio-dev/kaylo/pull/14)
+- [`9cf7059223`](https://github.com/jeio-dev/kaylo/commit/9cf70592230f10c6eb8476d2923da3b586344ce9) - **skills**: tell reviewers the core rules when review's delegation reference is missing (Jeio) [#15](https://github.com/jeio-dev/kaylo/pull/15)
+- [`f1354c3b20`](https://github.com/jeio-dev/kaylo/commit/f1354c3b200a0edfe7a56be6484070fafb876530) - **skills**: record the fifth live-model trial and clarify define's PRD constraints (Jeio) [#16](https://github.com/jeio-dev/kaylo/pull/16)
+- [`5e1a12c631`](https://github.com/jeio-dev/kaylo/commit/5e1a12c63111d9195dac5f32d9474329cfcf501c) - **skills**: limit define's own defaults to minor product details (Jeio) [#17](https://github.com/jeio-dev/kaylo/pull/17)
+- [`b03f673c2c`](https://github.com/jeio-dev/kaylo/commit/b03f673c2c2b5c9f55aa87c046738310ed7c7742) - **skills**: ask about framework or service choices the outcome depends on (Jeio) [#18](https://github.com/jeio-dev/kaylo/pull/18)
+- [`32250263b4`](https://github.com/jeio-dev/kaylo/commit/32250263b459e251195db24f86058e920c68aa15) - **plugins**: set version 0.8.0 and select the v0.8.0 tag (Jeio) [#19](https://github.com/jeio-dev/kaylo/pull/19)
 
 ## 2026-09-28, Version 0.7.0
 

@@ -1015,3 +1015,42 @@ no other split spans.
 All checks used Node v24.21.0. No agent brief changed, so adapters were not
 regenerated. These checks cover structure only; no model ran with the revised
 wording, and native host validators were not rerun.
+
+## Release preparation 0.8.0 — 2026-09-29
+
+Prepared 0.8.0 at `3225026` on branch `release-0.8.0`: manifests set to 0.8.0,
+both release catalogs select `v0.8.0`, and README and `RELEASING.md` examples
+name the new tag. No tag was created and nothing was pushed or published.
+Commits after `3225026` change only `CHANGELOG.md` and `VERIFICATION.md`; the
+shipped package files checked here are unchanged.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/sync-claude-agents.cjs` | No adapter changes |
+| Node 24.21.0: `node --test tests/*.test.cjs` | All 94 tests passed |
+| `node scripts/validate-package.cjs` | Package v0.8.0: five shared skills, matching versions and release catalogs |
+| Claude Code 2.1.285: `claude plugin validate` on the plugin and marketplace manifests with `--strict` | Both passed |
+| Antigravity CLI 1.2.11: `agy plugin validate .` | Passed: five skills and three agents |
+| `git diff --check` | Clean |
+| Update trial, `.local/release/parity.py v0.7.0`, temporary profiles on all five hosts | Passed. Claude Code 2.1.285, Codex CLI 0.159.0, Gemini CLI 0.62.0 (installed under `/tmp`), and Antigravity CLI 1.2.11 (private profile mounted with Bubblewrap, network disabled) installed the real `v0.7.0` tree, which each confirmed, then updated to `3225026` as `v0.8.0`. After each tag the mirror's `main` moved one commit ahead with a changed build skill; every install matched the tag, not the branch. Gemini listed all five skills enabled at both steps. Each 0.8.0 install passed `validate-package.cjs --installed` with 23 matching resources |
+| Hook loader run from each installed 0.8.0 copy (Claude and Codex plugin-root variables, Gemini extension path) | Returns the prepared SessionStart reminder |
+| Codex app-server and OpenCode 2.0.18 loopback API discovery | Codex returned five enabled Kaylo skills; OpenCode returned all five skills from the `v0.8.0` fixture checkout with exact instruction bodies |
+
+The fixture releases were built with `git archive`, so they contain only
+tracked files. Git transport was redirected to a local bare mirror for Claude
+and Codex and to a loopback smart HTTP mirror for Gemini. Public GitHub
+transport against a published `v0.8.0` remains to be checked after
+publication. The Codex plugin-creator `validate_plugin.py`, run for 0.7.0, was
+not available on this machine and did not run; Codex installation and discovery
+above are the Codex checks for this release.
+
+The hook check runs the configured loader command directly; it does not
+exercise signed-in session lifecycle or Codex hook trust. No model requests
+were made in this preparation. The live-model trials recorded above ran with
+Claude Code and `claude-opus-5-5`, the last against `9cf7059`; the define
+changes in PRs #16–#18 were not run with a model, and other models, other
+hosts' model behavior, and Antigravity IDE loading remain untested.
+
+Evidence: `/tmp/kaylo-parity-mmv8u8m6` (including `trial.log`). Temporary
+profiles contain no copied account credentials. Normal host profiles and trust
+settings were not changed.
