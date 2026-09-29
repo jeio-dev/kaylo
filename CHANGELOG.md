@@ -41,6 +41,12 @@
   trial a builder worker read such an instruction, which its packet had already
   named and asked it to report, and still reported "Blockers or limits: None".
   No model run has tested this change.
+- **skills**: When build's delegation reference is unavailable, as in
+  pasted-skill use, build says so and still asks any worker to report its
+  changes, checks, and embedded instructions it did not follow. In the fourth
+  live-model trial a pasted build sent a worker without the reference; the
+  packet omitted the report fields, and the worker's report said nothing about
+  embedded instructions. No model run has tested this change.
 - **tools**: The plan validator rejects checked task Results beginning with an
   unfinished state (`Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or
   `Blocked`), even with notes appended to a state marker. Markers require
@@ -52,8 +58,8 @@
   record. Historical progress and failures may follow current evidence; open
   tasks and phases can retain unfinished records. No fields or names changed.
 - **docs**: Completion uses known limitations; calling a limitation accepted
-  requires the user's actual recorded decision. Record the first, second,
-  and third live-model trials with their defects and limits, separately from the
+  requires the user's actual recorded decision. Record the first through fourth
+  live-model trials with their defects and limits, separately from the
   structural checks of the fixes that followed. The untrusted-instructions
   guardrail case now expects ignored instructions to be reported.
 - **tools**: `validate-package.cjs --installed` now also compares `WORKERS.md`
