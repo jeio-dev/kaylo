@@ -194,6 +194,11 @@ function validate(project, { closing = false } = {}) {
     if (!task.result) fail(`${task.id}: task needs a Result record`);
     if (task.checked) {
       if (!meaningful(task.result)) fail(`${task.id}: completed task needs a substantive Result record`);
+      // Recognize state markers, not ordinary words or hyphenated feature names.
+      // Only a plain hyphen needs whitespace; free prose is assessed manually.
+      if (/^(?:not started|in progress|pending|todo|tbd|blocked)(?:[ \t]*(?:[.!:;,\u2013\u2014]|$)|[ \t]+-|-(?=[ \t]|$))/i.test(task.result || '')) {
+        fail(`${task.id}: completed task Result must not start with an unfinished state (Not started, In progress, Pending, TODO, TBD, or Blocked)`);
+      }
     }
     seen.set(task.id, task);
   }
@@ -225,7 +230,10 @@ function validate(project, { closing = false } = {}) {
     for (const task of tasks) if (!task.checked) fail(`${task.id}: phase closure requires completed tasks`);
     if (/^[ \t]*Status:[ \t]*Needs revision\b/m.test(phase)) fail('Phase needing revision cannot close');
     if (!review || /^\[[^]*\]$/.test(review)) fail('Phase closure needs a Review record (None is allowed)');
-    if (!meaningful(sections.get('Completion')[0])) fail('Phase closure needs a substantive Completion record');
+    const completion = sections.get('Completion')[0];
+    if (!meaningful(completion) || /^not complete[.!]?$/i.test(completion)) {
+      fail('Phase closure needs a substantive Completion record');
+    }
   }
   return errors;
 }

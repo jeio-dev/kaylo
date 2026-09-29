@@ -111,6 +111,47 @@ test('valid dependency and completed task evidence', t => {
   assert.deepEqual(validate(fixture(t, phase(task('T1', true) + task('T2', false, 'T1'))).root), []);
 });
 
+test('checked tasks reject unfinished Result prefixes, while open tasks retain progress notes', t => {
+  for (const result of ['In progress', 'In progress. Baseline recorded; checks passed, exit 0.',
+    'Not started: waiting for implementation.', 'not started; baseline recorded.',
+    'Pending — verification needed.', 'TODO', 'TODO: run checks.', 'TBD — waiting for evidence.',
+    'Blocked: required check failed.', 'In progress\t: baseline recorded.',
+    'Blocked- required check failed.', 'Pending— verification needed.', 'Pending —verification needed.',
+    'In progress—baseline recorded.', 'Blocked–check failed.', 'Blocked—npm test denied.',
+    'Pending–user check.', 'Pending\t–user check.']) {
+    const text = phase(task('T1', true)).replace('node greet.cjs printed Hello, exit 0', result);
+    const f = fixture(t, text);
+    assert.ok(validate(f.root).some(error => /Result must not start with an unfinished state/.test(error)), result);
+    assert.equal(fs.readFileSync(f.file, 'utf8'), text);
+    fs.writeFileSync(f.file, text.replace('- [x] T1:', '- [ ] T1:'));
+    assert.deepEqual(validate(f.root), [], result);
+  }
+});
+
+test('finished Result prose and feature names do not count as unfinished state markers', t => {
+  for (const result of ['Todo items now persist; checks passed, exit 0.',
+    'TODO list renders; checks passed, exit 0.', 'Pending orders now appear; checks passed, exit 0.',
+    'Blocked users can no longer post; checks passed, exit 0.', 'Blocked-user filter works; checks passed, exit 0.',
+    'In progress bar renders; checks passed, exit 0.', 'Pending-state spinner shows; checks passed, exit 0.',
+    'TBD placeholders removed; checks passed, exit 0.',
+    'Pending verification.', 'In progress with baseline notes.', 'Not started implementation.',
+    'Pending (queued) orders now persist; checks passed, exit 0.']) {
+    const text = phase(task('T1', true)).replace('node greet.cjs printed Hello, exit 0', result);
+    const f = fixture(t, text);
+    assert.deepEqual(validate(f.root, { closing: true }), [], result);
+    assert.equal(fs.readFileSync(f.file, 'utf8'), text);
+  }
+});
+
+test('checked Results can retain historical progress and failure notes after current evidence', t => {
+  for (const result of ['node greet.cjs printed Hello, exit 0. Earlier: In progress; baseline recorded.',
+    'Done: node greet.cjs printed Hello, exit 0. Previously Blocked: check failed.',
+    'In progression checks, node greet.cjs printed Hello, exit 0.']) {
+    const text = phase(task('T1', true)).replace('node greet.cjs printed Hello, exit 0', result);
+    assert.deepEqual(validate(fixture(t, text).root, { closing: true }), [], result);
+  }
+});
+
 for (const [label, tasks, expected] of [
   ['duplicate task', task('T1') + task('T1'), /Duplicate task/],
   ['unknown blocker', task('T1', false, 'T9'), /Blocked by T9 must name an earlier task/],
@@ -189,6 +230,23 @@ test('closure refuses Needs revision and absent review', t => {
   const errors = validate(f.root, { closing: true }).join('\n');
   assert.match(errors, /needing revision/);
   assert.match(errors, /Review record/);
+});
+
+test('bare Not complete is a closure placeholder, including a checked current phase', t => {
+  for (const completion of ['Not complete.', 'Not complete', 'not complete!']) {
+    const text = phase(task('T1', true)).replace(/## Completion[^]*/, `## Completion\n${completion}\n`);
+    const f = fixture(t, text);
+    assert.deepEqual(validate(f.root), []); // An open phase may keep its placeholder.
+    assert.deepEqual(validate(f.root, { closing: true }), ['Phase closure needs a substantive Completion record']);
+    assert.equal(fs.readFileSync(f.file, 'utf8'), text);
+    fs.writeFileSync(f.index, fs.readFileSync(f.index, 'utf8').replace('- [ ] [01', '- [x] [01'));
+    assert.deepEqual(validate(f.root), ['Phase closure needs a substantive Completion record']);
+  }
+  const f = fixture(t, phase(task('T1', true)));
+  assert.deepEqual(validate(f.root, { closing: true }), []);
+  fs.writeFileSync(f.file, fs.readFileSync(f.file, 'utf8').replace('No known limitations.',
+    'Not complete coverage of optional edge cases; no user decision recorded.'));
+  assert.deepEqual(validate(f.root, { closing: true }), []);
 });
 
 for (const indent of [' ', '  ', '   ', '\t']) {
