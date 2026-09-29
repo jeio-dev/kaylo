@@ -4,6 +4,33 @@
 
 ### Notable Changes
 
+- **skills**: Plan requires the user's confirmation before marking a converted
+  plan `Current`, runs a read-only structural check after plan writes and
+  conversions, and reports unfinished conversion steps. Build replaces leading
+  unfinished states with evidence, retains baseline and failure history, checks
+  the task off as proposed completion, and validates that checked state; failures
+  uncheck it and Result corrections stay within build. Close records failed or
+  unresolved checks and the next action in affected task Results, unchecks them,
+  and names their IDs when routing to build; stating a verification limit never
+  permits completion. Skills that run checks and builder/reviewer briefs now
+  treat a permission denial as applying to that command and try another allowed
+  way to run the same check; alternatives never permit denied or unauthorized
+  actions. A bare `Not started` placeholder becomes `In progress` at build start;
+  other earlier Result records remain intact.
+- **tools**: The plan validator rejects checked task Results beginning with an
+  unfinished state (`Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or
+  `Blocked`), even with notes appended to a state marker. Markers require
+  punctuation, an en/em dash, or a hyphen with whitespace on at least one side,
+  or end-of-text after optional whitespace;
+  ordinary words and attached hyphens such as `TODO list` and `Blocked-user`
+  pass. Unmarked prose such as `Pending verification.` requires evidence
+  inspection by the skills. Closure rejects a bare `Not complete.`
+  record. Historical progress and failures may follow current evidence; open
+  tasks and phases can retain unfinished records. No fields or names changed.
+- **docs**: Completion uses known limitations; calling a limitation accepted
+  requires the user's actual recorded decision. Record the first live-model
+  workflow, conversion, and nine guardrail trials with their defects and limits,
+  separately from the structural checks of these fixes.
 - **tools**: `validate-package.cjs --installed` now also compares `WORKERS.md`
   and rejects files in the shared folders that the source does not have, such
   as templates left behind by an in-place update. The release update trial

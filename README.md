@@ -20,6 +20,8 @@ The assistant investigates repository facts, recommends an approach, and asks a 
 
 Phase plans use `Status: Current` or `Needs revision: <reason>` to describe whether task instructions match the intended work; agreement and completion are separate. Clear local S tasks can use a compact record. Task and review comment IDs restart per phase; `02-R1` names another phase's review comment. Review comments keep stable IDs such as `R2`: build can select a task or an implementation review comment, and fixes to blocking comments receive a focused recheck before closure. Non-blocking comments do not block the agreed outcome.
 
+Completion records known limitations. A limitation is accepted only with the user's actual recorded decision. Uncertain verification leaves affected work open when unchanged inputs cannot be established and checks cannot run; stating that limit does not permit closure.
+
 Kaylo uses common software-team names for its files and fields: a PRD, a roadmap, acceptance criteria, and blocking or non-blocking review comments. The [glossary](GLOSSARY.md) explains each term, where Kaylo differs from common practice, and which team practices Kaylo does not cover yet.
 
 Simplicity means using existing capability, configuration, standard libraries, native features, and installed dependencies where sufficient. Keep requested behavior, readability, security, and accessibility. A short diff is not proof of a correct solution.
@@ -293,8 +295,12 @@ node /absolute/path/to/kaylo/scripts/validate-plan.cjs /absolute/path/to/project
 
 Exit codes: `0` means supported structural checks passed; `1` means plan errors;
 `2` means invalid command usage. The validator does not edit files or execute
-Markdown, verification commands, hooks, or model calls. Build runs it before
-marking tasks complete; close writes the proposed completion record and runs
+Markdown, verification commands, hooks, or model calls. Plan runs it after writing
+or converting plans and reports remaining errors and unfinished conversion steps;
+the user must confirm a converted plan before it gets `Status: Current`. Build checks
+the task off as proposed completion, then runs the validator; a failure unchecks
+the task, with Result corrections handled within build and genuine plan errors
+routed to plan. Close writes the proposed completion record and runs
 `--closing` before checking the phase in the index. If the script/runtime is
 unavailable, the skills require manual inspection and disclosure of that limit.
 
@@ -319,10 +325,18 @@ It checks duplicate phase/task/review comment IDs, phase links, and `Blocked by:
 references. Each task needs a substantive title, acceptance criteria, and test
 plan, and a nonempty Result. `Acceptance criteria:`, `Test plan:`, `Result:`,
 and `Blocked by:` may each appear only once per task.
-Checked tasks additionally need a substantive Result. Closure checks run with
+Checked tasks additionally need a substantive Result that does not start with
+`Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or `Blocked` as an unfinished
+state marker, even with notes appended. A marker needs punctuation, an en/em
+dash, or a hyphen with whitespace on at least one side, or the end of the record
+after optional whitespace; whitespace alone or
+an attached hyphen does not count. Other prose still needs evidence inspection.
+Earlier progress and failure history may follow
+the current evidence. Closure checks run with
 `--closing` or when the current phase is checked in `ROADMAP.md`. They require
 all current tasks checked, no `Needs revision` status, a `## Review` record
-(`None` is allowed), and a substantive `## Completion` record. Duplicate Review or Completion sections are errors;
+(`None` is allowed), and a substantive `## Completion` record; a bare `Not complete.`
+is a placeholder. Duplicate Review or Completion sections are errors;
 retain their history under a single heading. Review comment IDs are recognized across
 Review records, including duplicate sections. Other equivalent
 Markdown layouts need manual inspection rather than automatic migration.
