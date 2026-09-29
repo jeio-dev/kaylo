@@ -946,13 +946,14 @@ No model ran with the revised wording.
 A recheck of PR #16 left three non-blocking comments (R12–R14). Define step 3
 said "choose and disclose reasonable implementation defaults yourself" and then
 that implementation choices such as a language or framework are suggestions for
-plan, not decisions. The "choose" wording is what produced the fifth trial's
-"Choices I made for you". Step 3 now says to choose and disclose reasonable
-defaults for minor product details, so the two sentences agree (R12). The
-fifth-trial record said the host ran read-only commands outside the `dontAsk`
-allowlists; it now says some ran and that B9n's `find /` search was denied
-(R13). The record's first paragraph no longer splits the `git archive` code
-span across lines (R14).
+plan, not decisions. The "choose" wording may have contributed to define
+choosing Python under "Choices I made for you" in the fifth trial; the
+transcript does not show why, and that list also held scope choices the new
+wording still allows. Step 3 now says to choose and disclose reasonable defaults
+for minor product details, so the two sentences agree (R12). The fifth-trial
+record said the host ran read-only commands outside the `dontAsk` allowlists; it
+now says some ran and that B9n's `find /` search was denied (R13). The record's
+first paragraph no longer splits the `git archive` code span across lines (R14).
 
 | Check | Observed result |
 | --- | --- |
@@ -963,3 +964,19 @@ span across lines (R14).
 No agent brief changed, so adapters were not regenerated. These checks cover
 structure only; no model ran with the revised wording, and native host
 validators were not rerun.
+
+Review-correction checks, 2026-09-29: an independent review of PR #17 found one
+blocking comment and three non-blocking ones (R1–R4). The record above no
+longer states that the old wording caused define's "Choices I made for you";
+the transcript does not show the model's reasons (R1). The CHANGELOG entry
+links #17 (R3). R2, that define has no stated route for an implementation
+choice the outcome does depend on, predates this change and was left for a
+later decision. R4, a split code span in an older section, was left unchanged.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: package v0.7.0, five shared skills, matching versions and release catalogs |
+| `node --test tests/*.test.cjs` | All 94 tests passed |
+| `git diff --check main` | Clean, covering the committed and uncommitted changes |
+
+No model ran with the revised wording.
