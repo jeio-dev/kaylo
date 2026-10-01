@@ -21,7 +21,7 @@ Supply:
 - Acceptance criteria and test plan.
 - Earlier failed repair attempts and outcomes.
 
-Supply relevant decisions and interface contracts, rather than the full conversation. `Blocked by` sets order only; it does not authorize running tasks concurrently. Keep the assignment within the selected task or review comment; implementing, testing, and debugging it does not authorize the rest of the phase.
+Supply relevant decisions and interface contracts, rather than the full conversation. `Blocked by` sets order only; it does not authorize running tasks concurrently. Keep the assignment within the selected task or review comment; implementing, testing, and debugging it does not authorize the rest of the phase. In phase mode, prepare a separate packet for each task, and dispatch the next only after the current task is checked off and the structural plan check has passed.
 
 ## Workspace and execution
 
@@ -32,8 +32,8 @@ Supply relevant decisions and interface contracts, rather than the full conversa
 
 ## Return and continuation
 
-Request the compact report in [WORKERS.md](../../../WORKERS.md). Inspect the actual changes against the recorded starting state, including untracked additions, and the evidence before marking work complete.
+Request the compact report in [WORKERS.md](../../../WORKERS.md), naming the task or review comment ID; match a report to its task by that ID, since a host may label repeated runs of one worker identically. Inspect the actual changes against the recorded starting state, including untracked additions, and the evidence before marking work complete.
 
 Batch related corrections within the agreed scope and continue with the same worker when practical. Carry forward failed attempts; one correction request may contain several repair attempts and does not reset Kaylo's limit. Preserve the separate review and the recheck required for fixes to blocking comments.
 
-For interrupted or blocked work, record completed work, unfinished steps, the last failure, repair history, and the exact resume action in the task's `Result` and phase plan's `Next step`. Include a worker thread ID when the host exposes one and continuation needs it. A new checkpoint file is unnecessary. The guiding assistant owns these plan updates.
+For interrupted or blocked work, record completed work, unfinished steps, the last failure, repair history, and the exact resume action in the task's `Result` and phase plan's `Next step`. Include a worker thread ID when the host exposes one and continuation needs it; where a finished worker cannot be continued, give a new worker a packet carrying that record. A new checkpoint file is unnecessary. The guiding assistant owns these plan updates.

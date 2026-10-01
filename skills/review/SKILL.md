@@ -26,7 +26,7 @@ Read `ROADMAP.md` and follow its `Current:` link to the current phase plan; revi
 
 ## Review checks
 
-- **Plan:** requested outcome, reuse of existing capabilities, executable tasks, `Blocked by` lines naming real prerequisites listed above in the same phase, and meaningful test plans. Identify decisions a small-model builder would otherwise guess.
+- **Plan:** coverage of the requested outcome, reuse of existing capabilities, executable tasks with clear boundaries, `Blocked by` lines naming real prerequisites listed above in the same phase, observable acceptance criteria, and test plans that are meaningful and feasible. Identify decisions a small-model builder would otherwise guess; a missing consequential decision is blocking and keeps the plan from being ready. A passing structural plan check is not a plan review.
 - **Changes:** actual implementation and relevant callers, acceptance criteria, correctness, regressions, and applicable security, accessibility, and data handling. Check that the user can reach the intended behavior; passing tests alone do not establish this.
 - Identify duplicated capability, unnecessary dependencies, and speculative abstractions. Fewer lines alone do not justify changing readable, correct code.
 - Report observable failures or unmet requirements. Preferences and hypothetical future features are not blocking. No review comments is a valid result.
@@ -34,7 +34,7 @@ Read `ROADMAP.md` and follow its `Current:` link to the current phase plan; revi
 
 ## Review comments and plan updates
 
-- Record target, coverage, and limitations in the review section of the current phase plan.
+- Record target, coverage, who performed the review, and limitations in the review section of the current phase plan. For a direct plan review, record that it lacked fresh context.
 - Each review comment needs a file or task reference, consequence, smallest useful correction, a `blocking` or `non-blocking` label, and resolution: `open`, `fixed` with evidence, or `accepted by user` with the decision. Write the label first, then ` — `, then the resolution, as in `- R1: blocking — open`; put the other details in nested list items.
 - The guiding assistant assigns stable `R1`, `R2`, etc., restarting per phase. Never renumber or reuse IDs within a phase. Give older unnumbered comments an ID when needed; avoid duplicates.
 - Recheck a fix under its existing ID, recording evidence and outcome. Focus on the comment and affected behavior; widen review only for new evidence. Fixes to blocking comments require this recheck before closure.
@@ -50,6 +50,6 @@ State readiness, open blocking comments, and one next step from the routes below
 - Plan corrections → `/kaylo:plan`.
 - Implementation fixes → `/kaylo:build`.
 - Implementation ready → `/kaylo:close`.
-- Plan ready → obtain any missing agreement, then build.
+- Plan ready → obtain any missing agreement, then build. A phase the user wants built with `/kaylo:build phase` returns to `/kaylo:plan` instead, which records the user's `Phase build readiness:` confirmation; do not write that line here.
 
 When the current phase is open, update its `## Next step` to that step.
