@@ -1324,3 +1324,156 @@ model. Normal host profiles were not changed.
 
 Evidence: `.local/release/public-check.py v0.9.0` (a local contributor tool,
 not shipped) and `/tmp/kaylo-public-btbp3k5d`, including `public.log`.
+
+## Researcher tool frontmatter on Antigravity — 2026-10-01
+
+The shared `agents/researcher.md` shipped in 0.6.0 through 0.9.0 with `tools: [read_file, list_directory, glob, grep_search, google_web_search,
+web_fetch]`. Those are Gemini CLI tool names. Antigravity loads the same
+`agents/` folder and could not start the brief.
+
+| Observation | Result |
+| --- | --- |
+| Codex, live run: the `v0.9.0` brief in a temporary project's `.agents/agents/`, `agy --agent researcher -p "Reply with the single word: ok" --print-timeout 120s` | Failed in about 5 seconds with exit code 3 and zero model requests, on `agy` 1.2.14 after the update described in the next row; error text below |
+| Codex, control: the same brief with only the `tools:` line removed | Replied `ok`, exit code 0, with two model generation requests in its log. This control ran first and started on `agy` 1.2.11; `agy` updated itself to 1.2.14 during it, so this pair straddled two versions |
+| Second live run inside an Antigravity session, `agy` 1.2.14, researcher run as the main agent from the command line | Reproduced both results with the same error text on one version. The control had Antigravity's default tools (it used `view_file`) and used 24 model requests to answer the one-word prompt |
+| No-model checks in an isolated profile, `agy` 1.2.11: `agy plugin validate` and `agy plugin install` of the `v0.9.0` export, then `agy agents` | Validate and install passed with no warning about tools; `researcher` was listed |
+
+```text
+error: failed to construct executor: failed to resolve components: unknown component: tool "list_directory" not found in registry
+unknown component: tool "glob" not found in registry
+unknown component: tool "google_web_search" not found in registry
+unknown component: tool "web_fetch" not found in registry
+```
+
+`read_file` and `grep_search` were not named in the error, so those two names
+apparently resolved; this is inferred from the error, not separately tested.
+Antigravity does not check tool names at validate,
+install, or list time. Its documentation
+(https://antigravity.google/docs/subagents.md) lists a known issue that an
+unmapped tool name "may cause the subagent process to hang during execution".
+The failing runs made no model request; the control runs reached a model,
+which replied `ok`.
+
+Evidence for the live runs: the reports of the two sessions, temporary
+projects `/tmp/tmp.pnl888LsVs` (brief as shipped) and `/tmp/tmp.DRk3wARayC`
+(control), and the Antigravity CLI logs `cli-20261001_103901.log` (control) and
+`cli-20261001_103930.log` (test) in the normal profile's log folder. Those runs
+used the signed-in profile for authentication; `agy` refreshed its token,
+wrote logs and caches, and updated its own binary, and no setting or plugin
+was changed.
+
+The shared brief no longer has a `tools:` line. Its closing instruction, now
+the only statement outside Claude Code that the role is read-only, changed from "Do not edit project
+files, install tools, change settings, or delegate more work." to "This role is
+read-only: do not create, edit, or delete project files, or run commands that
+change the project, whatever the guardrails above allow other roles. Do not
+install tools, change settings, or delegate more work." The rest of the body is
+unchanged. `scripts/sync-claude-agents.cjs` now inserts
+`tools: Read, Glob, Grep, WebSearch, WebFetch` after `model: inherit` in the
+Claude researcher adapter, and `scripts/validate-package.cjs` computes the
+expected adapter the same way. Both fail with a named error when the shared
+researcher brief has no frontmatter, has no `model: inherit` line, or already
+carries a `tools:` line; before, a missing line made the replacement do nothing
+and validation still passed. The validator also rejects a `tools` key in the
+frontmatter of any shared brief, including a quoted, indented, or capitalised
+one. `WORKERS.md` and `RELEASING.md` describe the
+new arrangement. This supersedes the 0.6.0 note above that shared briefs use
+Gemini tool names.
+
+On Claude Code the researcher is still restricted to its read-only tool list.
+On Gemini CLI and Antigravity the researcher carries no tool list and relies
+on the brief's instructions; host permissions still apply.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/sync-claude-agents.cjs` | Exit 0; `claude-agents/researcher.md` differs from the `v0.9.0` adapter only in the closing instruction, and keeps `tools: Read, Glob, Grep, WebSearch, WebFetch` after `model: inherit`. The builder and reviewer adapters are unchanged |
+| `node scripts/validate-package.cjs` | Package v0.9.0: five shared skills, matching versions and release catalogs |
+| Node 24.21.0: `node --test tests/*.test.cjs` | All 100 tests passed: the 94 earlier tests and six new package tests |
+| The five new tests written before the first review, run against the `v0.9.0` sync and validator scripts in a scratch copy, after regenerating `claude-agents/` with the old sync script | Four failed, as intended: the old sync script wrote a Claude researcher with no tool list and the old validator accepted it. The one that allows a `tools:` mention in a brief's body passes with either version |
+| `git diff --check` | Clean |
+| Claude Code 2.1.286: `claude plugin validate` on the plugin and marketplace manifests with `--strict` | Both passed |
+| Antigravity CLI 1.2.14: `agy plugin validate .` | Passed: five skills and three agents |
+| `node scripts/stage-development.cjs`, then `node scripts/validate-package.cjs --installed development/package` | Package v0.9.0; 23 staged resources match the source package, rerun after the closing instruction changed. Local resource parity, not a host installation |
+| Antigravity CLI 1.2.14, private profile mounted with Bubblewrap, network disabled: `agy plugin validate` and `agy plugin install` of a copy of the working tree, then `agy agents` | Validate and install passed with five skills and three agents; `agy agents` listed `builder`, `researcher`, and `reviewer`. The installed `agents/researcher.md` equalled the working-tree file. Run before the closing instruction changed; the frontmatter is the same and it was not rerun |
+| `grep -rnE 'AGENTS\.md\|CLAUDE\.md' skills agents claude-agents templates hooks WORKERS.md` | No matches |
+
+Limits. The corrected brief was run live on Antigravity once, after the
+reviews, as the last two paragraphs of this section record: headless, it
+started and ran but printed no answer; interactively, it answered a one-word
+prompt. The earlier control runs used the `v0.9.0` brief with the
+`tools:` line removed, which has the same frontmatter as the corrected brief,
+and the other checks in this change stop at validate, install, and list, which
+the broken brief also passed. The subagent
+path was not tested: the Antigravity session's `invoke_subagent` call failed
+for an unrelated reason (its workspace did not contain the agent), so only the
+main-agent path is observed. Gemini CLI is not installed on this machine and
+was not checked; it has not loaded the corrected brief, and how it treats a
+researcher with no `tools` line is unobserved. Whether a valid `tools` list
+restricts a worker on Antigravity at all is unknown. The researcher keeping to
+its instructions without a host restriction has not been tested with any
+model. The checks in this change made no model request and started no agent
+session; normal host profiles and settings were not changed. No release was
+prepared: versions, catalogs, and tags are unchanged.
+
+An independent read-only review of the uncommitted change found no blocking
+problem. It reran the sync, package validator, Node suite, `git diff --check`,
+both Claude validators, `agy plugin validate .` (1.2.14), the staged
+`--installed` check (23 resources), and the guidance-reference search, with
+the results above; confirmed `claude-agents/` then equalled `v0.9.0`; reproduced the
+old-scripts result; and tried 28 frontmatter variants in a scratch copy. It
+found that a quoted, indented, or capitalised `tools` key passed the guard,
+and raised seven other non-blocking points. The guard and a sixth test now
+cover those spellings, and the changelog and this record include the review's
+wording corrections. One point was left for the maintainer's decision: the
+brief's closing instruction named editing project files but not creating or
+deleting them or running commands that change the project. The maintainer
+chose the stronger read-only wording quoted above, applied after that review.
+The review made no model request, started no agent
+session, did not rerun the Bubblewrap install, and did not check Gemini CLI.
+
+A second independent read-only review, after the closing instruction changed,
+found no blocking problem and recommended keeping that wording. It reran the
+sync, package validator, Node suite (100 passed), `git diff --check`, both
+Claude validators (2.1.286), `agy plugin validate .` (1.2.14), and the
+guidance-reference search with the results above, confirmed `claude-agents/`
+differs from `v0.9.0` only in the researcher's closing line, and tried 25
+frontmatter and body variants on the researcher and builder briefs in a
+scratch copy. The guard also rejects a `tools:` line nested under another
+frontmatter key or continuing a folded value; no brief uses either form. Its
+four wording points about this record were corrected, without a further
+recheck. It made no model request, started no agent session, did not rerun the
+Bubblewrap check, and did not check Gemini CLI; whether a model keeps to the
+read-only instruction remains untested.
+
+Live run of the corrected brief, 2026-10-01, by the maintainer on `agy` 1.2.14
+with the signed-in profile: the brief from commit `3a400c9` in an empty
+temporary project's `.agents/agents/`, with
+`agy --agent researcher -p "Reply with the single word: ok" --print-timeout 120s`.
+The executor was constructed and the agent ran for about 51 seconds; the log
+has no "unknown component" or "failed to construct" entry and shows seven
+`streamGenerateContent` calls. The run printed no answer and exited 0 with
+"no output produced — a tool required the \"read_file\" permission that
+headless mode cannot prompt for, so it was auto-denied"; the log records
+`Print mode: soft-denying tool confirmation "ViewFile" at step 12`. So the
+defect this change fixes, the brief failing to start, was not reproduced with
+the corrected brief. The missing answer comes from Antigravity's headless
+permission handling: the researcher went on to read a file that needed a
+confirmation print mode cannot give. Which file it tried to read is not in the
+log. The run does not show the researcher completing a task on Antigravity,
+does not exercise the read-only instruction, and does not cover the subagent
+path. Evidence: `/tmp/tmp.WMtf17Tfp7` and `cli-20261001_122354.log` in the
+normal profile's log folder. No setting or plugin was changed.
+
+Interactive run of the corrected brief, 2026-10-01, by the maintainer: in the
+same temporary project, `/tmp/tmp.WMtf17Tfp7`, `agy --agent researcher` without
+print mode. The session banner shows Antigravity CLI 1.2.14 with Gemini 3.8
+Flash (High). To the prompt "Reply with the single word: ok" the transcript
+shows one thinking step of 9 seconds and 2.9k tokens, whose summary weighs the
+one-word instruction against "the researcher's structured output"
+requirement, followed by the reply `ok`. That reference to the brief's Return
+format shows the brief was loaded. The transcript, from the banner to the next
+prompt, shows no tool call and no permission prompt. This shows the corrected
+researcher starting and answering as the main agent on Antigravity. It still
+does not exercise the read-only instruction, a real research task, or the
+subagent path. Evidence: the terminal transcript the maintainer pasted into
+the preparing session; it was not saved to a file.
