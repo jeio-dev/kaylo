@@ -26,7 +26,7 @@ Read `ROADMAP.md` and follow its `Current:` link to the current phase plan; revi
 
 ## Review checks
 
-- **Plan:** requested outcome, reuse of existing capabilities, executable tasks, `Blocked by` lines naming real prerequisites listed above in the same phase, and meaningful test plans. Identify decisions a small-model builder would otherwise guess.
+- **Plan:** coverage of the requested outcome, reuse of existing capabilities, executable tasks with clear boundaries, `Blocked by` lines naming real prerequisites listed above in the same phase, observable acceptance criteria, and test plans that are meaningful and feasible. Identify decisions a small-model builder would otherwise guess; a missing consequential decision is blocking and keeps the plan from being ready. A passing structural plan check is not a plan review.
 - **Changes:** actual implementation and relevant callers, acceptance criteria, correctness, regressions, and applicable security, accessibility, and data handling. Check that the user can reach the intended behavior; passing tests alone do not establish this.
 - Identify duplicated capability, unnecessary dependencies, and speculative abstractions. Fewer lines alone do not justify changing readable, correct code.
 - Report observable failures or unmet requirements. Preferences and hypothetical future features are not blocking. No review comments is a valid result.
@@ -50,6 +50,6 @@ State readiness, open blocking comments, and one next step from the routes below
 - Plan corrections → `/kaylo:plan`.
 - Implementation fixes → `/kaylo:build`.
 - Implementation ready → `/kaylo:close`.
-- Plan ready → obtain any missing agreement, then build.
+- Plan ready → obtain any missing agreement, then build. A phase the user wants built with `/kaylo:build phase` returns to `/kaylo:plan` instead, which records the user's `Phase build readiness:` confirmation; do not write that line here.
 
 When the current phase is open, update its `## Next step` to that step.

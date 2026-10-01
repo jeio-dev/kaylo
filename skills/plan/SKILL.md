@@ -20,9 +20,10 @@ Guide the user toward the simplest approach that meets the outcome. Work in the 
 1. Read project instructions, `PRD.md` if present, `ROADMAP.md`, and the current phase plan its `Current:` line links. Convert older formats first (see below). A concrete small-change request can stand in for a PRD. Ask for missing intent only when it changes the work.
 2. Inspect relevant code, dependencies, and checks. Establish repository facts yourself. A research worker may answer a bounded factual question; request file references or source links and remaining uncertainties.
 3. Identify the planning case below. Trace the user flow and choose a design using the rules below. Explain why it meets the outcome.
-4. Resolve consequential unknowns: at most three numbered questions per round, each with a recommendation. For technical investigation, define a bounded research task with a question and expected deliverable.
+4. Resolve consequential unknowns using the decision rules below: at most three independent numbered questions per round, each with a recommendation and its tradeoff. For technical investigation, define a bounded research task with a question and expected deliverable.
 5. Write or revise the phase plan using the plan and task requirements below, then update the index. Apply the revision rules when existing work is affected.
 6. Run the structural plan check below after writing or converting plans. Report remaining errors and unfinished conversion steps before giving the next action.
+7. Run the plan check below when it is required, then apply the readiness test before presenting the plan as ready.
 
 ## Index and phases
 
@@ -40,6 +41,26 @@ Guide the user toward the simplest approach that meets the outcome. Work in the 
 - Current phase open: revise only its phase plan, plus index lines when phase order, names, or goals change.
 - Write the phase plan before moving `Current:`. Never create a later phase's folder or file while the current phase is open.
 - Build routes work for another phase, or any ID while no phase is open, here. Reopen a closed phase only for unmet acceptance or insufficient evidence while no phase is open: uncheck it and move `Current:` back. Otherwise plan the work in the current or a new phase.
+
+## Decisions and readiness
+
+- Ask only what the user must own: outcome, scope boundaries, user-visible behavior, data or external-service consequences, acceptance, and tradeoffs that would change the phase. Settle repository and source facts by inspection first; never ask what inspection can answer. Ordinary local implementation choices are yours: make them and record them under `## Design`. Project workflow preferences are not product requirements; keep them out of `PRD.md`.
+- A question that depends on an answer waits for a later round. No round count is fixed; the readiness test below ends the questioning.
+- A clear small local change needs no interview. Substantial or uncertain work gets the deeper pass: check each kind of user-owned decision above against the phase and every task, and keep asking until the readiness test passes. A phase the user says will be built phase-wide with `/kaylo:build phase` always gets the deeper pass, however clear the plan seems to you, because no one watches each task. An explicit request such as "grill me" forces it.
+- Readiness test: no consequential choice is left for a builder to invent; every task has observable acceptance criteria and a workable test plan; each unresolved matter is recorded as a blocker, as the remaining decision under `## Agreement` and in the `Result:` of any task it stops; and, where substantial choices were made, the user has confirmed a summary of the understanding. Until it passes, do not present the plan as ready.
+- Under `## Agreement`, record explicit user decisions as the user's and label choices you made as defaults. Never present a default as agreed.
+- Phase build readiness: when the user confirms the phase is ready for a phase-wide build, after the deeper pass meets the readiness test and the plan check below is recorded with no blocking comment open, add to `## Agreement` a line beginning `Phase build readiness:` followed by `confirmed by the user on YYYY-MM-DD` with the actual date and a short statement of what they confirmed. Write it only on that actual confirmation, never on your own judgment, and add no section or task field for it. A later material revision to outcome, scope, tradeoffs, tasks, acceptance criteria, or test plans voids it: remove the line; restore it only after the revised parts are rechecked under the plan check and the user confirms again.
+- `/kaylo:build phase` does not start without that line and routes here. Run the deeper pass and the plan check on the existing phase plan, including one planned the ordinary way, unless a check is already recorded for the plan as it now stands, revise what they expose, then ask the user to confirm. Being routed here is not confirmation. If you route elsewhere before the line can be written, record under `## Agreement`, as the remaining decision, that the user wants a phase-wide build and has not yet confirmed readiness; do not begin that note with `Phase build readiness:`; replace that note with the line when the user confirms.
+
+## Plan check
+
+- A substantial or uncertain phase plan needs an independent plan check, and a phase headed for `/kaylo:build phase` always does; a clear small local change does not. Run it after the structural plan check. The structural validator is never an independent plan review, and neither is your own rereading.
+- When the host makes a fresh reviewer available, request the check with [review delegation](../review/references/delegation.md), resolved relative to this skill directory. It covers outcome coverage, task boundaries, real `Blocked by` edges, acceptance criteria, test-plan feasibility, and decisions a builder would otherwise have to guess. The reviewer edits nothing. If that reference is unavailable, say so and route to `/kaylo:review plan`.
+- Record target, coverage, and limitations under `## Review`, and give every finding a stable comment ID in the existing format, as in `- R1: blocking — open`. Each finding ends as `fixed` with the correction and recheck evidence, `accepted by user` with the decision, or `open`; drop none silently.
+- You, not the reviewer, make targeted revisions for concrete blocking comments, then have each fix rechecked under its existing ID. Stop after two revise-and-recheck rounds, or sooner when a round resolves no blocking comment; keep the remaining comments `open` and ask the user.
+- A missing consequential decision is the user's to make: ask it under the decision rules above. While it or any other blocking comment is open, do not present the plan as ready.
+- When no fresh reviewer is available, say so plainly and route to `/kaylo:review plan`. That command also remains available for an additional or later review.
+- A review recorded by `/kaylo:review plan` under `## Review` for the plan as it now stands, with no material revision since, serves as the plan check, with its stated limitations, however you were routed there; do not route there again.
 
 ## Design
 
@@ -109,4 +130,4 @@ If Node or the script is unavailable (including pasted-skill use), inspect the s
 
 ## Response
 
-Keep implementation detail in the phase plan. Summarize the approach, first task, remaining decision, and one next step. When the current phase is open, update its `## Next step` to that step. Substantial or uncertain work → `/kaylo:review plan`; otherwise obtain any missing agreement, then `/kaylo:build`. Do not begin implementation. For hosts using a skill picker, identify the matching Kaylo skill.
+Keep implementation detail in the phase plan. Summarize the approach, first task, remaining decision, and one next step. When the current phase is open, update its `## Next step` to that step. State which decisions the user made and which are your defaults, and whether a plan check ran and who performed it. A required plan check not yet recorded for the plan as it now stands, without a fresh reviewer → `/kaylo:review plan`; open blocking comments or remaining decisions → ask the user; otherwise obtain any missing agreement, then `/kaylo:build`, or `/kaylo:build phase` only once the readiness line is recorded. Do not begin implementation. For hosts using a skill picker, identify the matching Kaylo skill.

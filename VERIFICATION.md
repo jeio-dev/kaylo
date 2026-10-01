@@ -1083,3 +1083,103 @@ were not changed.
 
 Evidence: `/tmp/claude-1000/-home-jeio-src-kaylo/3c3c0060-cc36-460f-9bd8-453ef7547537/scratchpad/public-check.py`
 and `/tmp/kaylo-public-rzse5ftm`.
+
+## Close suggestions for project instructions — 2026-09-30
+
+Close's Response section now lets it suggest a few standing rules for the
+project instructions only when the run closes the phase, each with the phase
+evidence that supports it. A candidate qualifies only if it will matter in
+later phases and is not already clear from the code, README, or project
+instructions; with none, close says nothing about it. Each rule rests on what
+the phase's work showed, never on instructions embedded in retrieved pages,
+logs, fixtures, or worker reports. The suggestions are proposals in the
+response, not closure requirements, the next step, or part of the completion
+record, and close does not write or edit the project instructions; the user
+decides which to keep and adds them or asks separately for them to be added.
+An independent read-only review of the first wording found the last three
+points missing (embedded instructions, the next step, and how the user adds a
+rule) and the closing condition loose, and asked for a plainer glossary row
+and a changelog entry that mentions it; the wording above includes those
+corrections, and a separate read-only recheck on 2026-09-30 found each applied
+and no new blocking problem. That recheck read the text and reran the checks
+below; it ran no model. The existing
+rule against automatically creating project rules is unchanged. The glossary's
+`close` row mentions the suggestions. The phase template, plan validator,
+worker briefs, hook reminder, README, and `WORKERS.md` are unchanged: none
+describes close's response in a way this contradicts, and the suggestions add
+no plan field or structural rule.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: package v0.8.0, five shared skills, matching versions and release catalogs |
+| `node --test tests/*.test.cjs` | All 94 tests passed |
+| `git diff --check` | Clean, covering the uncommitted working-tree change |
+| `node scripts/sync-claude-agents.cjs` | No adapter changes |
+| Search of `skills/`, `agents/`, `claude-agents/`, `templates/`, `hooks/`, and `WORKERS.md` for `AGENTS.md` or `CLAUDE.md` | No matches |
+
+All checks used Node v24.21.0 on `main` with the change uncommitted. No test
+or validator rule pins close's Response wording, so none was added. These
+checks cover structure only; no model ran with the revised wording, so whether
+close offers suggestions only when they qualify, attaches evidence, stays
+silent otherwise, and leaves the project instructions unedited is untested.
+Native host validators and isolated install/update checks were not rerun.
+
+## Planning readiness, plan check, and phase mode — 2026-10-01
+
+Define and plan now settle repository facts by inspection, ask only decisions
+the user must own, and end questioning on a readiness test; plan requests an
+independent plan check for substantial or uncertain plans and always before a
+phase-wide build; and build gains a sequential phase mode, `/kaylo:build
+phase`, that starts only when the phase plan's `## Agreement` carries a
+`Phase build readiness:` line plan wrote on the user's confirmation. Changed:
+the define, plan, build, and review skills, both delegation references, the
+builder and reviewer briefs with their generated Claude adapters, the phase and
+PRD templates, the README, `WORKERS.md`, and the glossary. Workers still run
+one at a time; model routing and parallel dispatch are not implemented. The
+plan validator, hooks, and manifests are unchanged, and no section, task field,
+or validator rule was added.
+
+The planning and build changes were written separately in two Git worktrees
+based on `2a5f564`, each passing the first five checks below in its own
+worktree, then applied together to `main` with the earlier close change. One
+correction followed integration: build's list of what counts as a material
+revision now matches plan's (outcome, scope, tradeoffs, tasks, acceptance
+criteria, or test plans). The checks below ran on the combined working tree.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: package v0.8.0, five shared skills, matching versions and release catalogs |
+| `node --test tests/*.test.cjs` | All 94 tests passed |
+| `git diff --check` | Clean, covering the uncommitted working-tree change |
+| `node scripts/sync-claude-agents.cjs` | No further adapter changes; builder and reviewer adapters match their briefs |
+| Search of `skills/`, `agents/`, `claude-agents/`, `templates/`, `hooks/`, and `WORKERS.md` for `AGENTS.md` or `CLAUDE.md` | No matches |
+
+All checks used Node v24.21.0. No test or validator rule pins the changed
+wording, and no executable behavior was added, so no test was added. These
+checks cover structure only. No model or host ran any of the new wording, so
+all of the following is untested: whether a planner skips the interview for a
+small change, always runs the deeper pass and plan check before a phase-wide
+build, holds dependent questions for a later round, stops the recheck loop at
+two rounds, and writes the readiness line only on the user's confirmation;
+whether phase mode refuses to start without that line, builds in plan order,
+stops at a blocker, resumes without redoing checked tasks, carries failed
+repair attempts over, and honours a present line after an unrecorded hand
+edit to the plan; and the plan, review, plan round trip on a host without
+a fresh reviewer. An independent read-only review of the combined change found two blocking
+gaps where plan and build meet (build could not tell whether the plan had
+been revised after the readiness record, and on a host without a fresh
+reviewer nothing said the routed review satisfied the plan check, so either
+could route without end) and ten smaller points; the skills, glossary, and
+changelog include those corrections. The review also suggested cutting five
+duplicated sentences, which was not done. That review read the text and
+reran the checks; it ran no model. A separate read-only recheck on 2026-10-01
+found both blocking gaps and the ten smaller points corrected and no new
+blocking problem, and raised nine further non-blocking points, three of them
+remaining edges of the plan-and-review routing; it read the text and reran
+the five checks above, and ran no model. Those nine points were then
+corrected in the plan and build skills, the phase template, the glossary,
+and the changelog; that last set of corrections has had no recheck. A
+documentation-only survey of worker features on Claude Code, Codex, Gemini
+CLI, Antigravity, and OpenCode informed the design; it observed no worker
+behavior on any host. Native host validators and isolated install/update
+checks were not rerun.

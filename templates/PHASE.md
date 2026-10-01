@@ -14,7 +14,7 @@ Status: Current
 
 ## Agreement
 
-[What the user actually agreed to, or which decision remains.]
+[What the user actually agreed to, or which decision remains. Record the user's decisions as theirs and label choices you made as defaults. Ordinary single-task building needs nothing more. Only when the user has confirmed this phase ready for a phase-wide build, add a line beginning `Phase build readiness: confirmed by the user on YYYY-MM-DD`, with the actual date and a short statement of what they confirmed; remove it after a material revision; plan restores it only after a recheck and your new confirmation.]
 
 ## Tasks
 
