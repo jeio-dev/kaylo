@@ -2,23 +2,24 @@
 
 Build software with patient, practical guidance, using the AI tools you already have.
 
-Kaylo is an early `0.8.0` package; see [verification](VERIFICATION.md) for what has actually been checked.
+Kaylo is an early `0.9.0` package; see [verification](VERIFICATION.md) for what has actually been checked.
 
 ## Five commands
 
 | Command | What it helps you do | What you get |
 | --- | --- | --- |
 | `/kaylo:define` | Turn an idea into a clear product outcome | `PRD.md` (product requirements document) |
-| `/kaylo:plan` | Inspect the project and choose a simple approach | Ordered phases in `ROADMAP.md`; executable tasks in the current phase plan |
+| `/kaylo:plan` | Inspect the project, settle the decisions only you can make, and choose a simple approach | Ordered phases in `ROADMAP.md`; executable tasks in the current phase plan |
 | `/kaylo:build` | Implement and verify an agreed task | A working change and recorded evidence |
+| `/kaylo:build phase` | Build the current phase's remaining agreed tasks one at a time, after plan records phase build readiness | Each task verified and checked off, or one recorded blocker and resume action |
 | `/kaylo:review` | Get a second opinion on a plan or change | Review comments, labelled blocking or non-blocking, in the current phase plan |
 | `/kaylo:close` | Check the promised outcome and finish the phase | Phase checked off, usage guidance, and remaining limitations |
 
-Start with define, then plan. A concrete small change can start with plan. Review substantial or uncertain plans before building; review implementation before close. Revise through plan and build. Each response should explain what matters and give one clear next step.
+Start with define, then plan. A concrete small change can start with plan. Substantial or uncertain plans, and every plan headed for `/kaylo:build phase`, get a plan check before building. Plan requests an independent review when the host makes a fresh reviewer available; otherwise `/kaylo:review plan` may review directly and records that it lacked fresh context. Review implementation before close. Revise through plan and build. Each response should explain what matters and give one clear next step.
 
 The assistant investigates repository facts, recommends an approach, and asks a short numbered round only for consequential decisions. Tasks include acceptance criteria and a test plan with meaningful checks. Reuse passing checks unless relevant inputs changed. After two unsuccessful repairs of the same failure, preserve the work and recommend a different next action.
 
-Phase plans use `Status: Current` or `Needs revision: <reason>` to describe whether task instructions match the intended work; agreement and completion are separate. Clear local S tasks can use a compact record. Task and review comment IDs restart per phase; `02-R1` names another phase's review comment. Review comments keep stable IDs such as `R2`: build can select a task or an implementation review comment, and fixes to blocking comments receive a focused recheck before closure. Non-blocking comments do not block the agreed outcome.
+Phase plans use `Status: Current` or `Needs revision: <reason>` to describe whether task instructions match the intended work; agreement and completion are separate. A phase built with `/kaylo:build phase` also needs a `Phase build readiness:` line in `## Agreement`, which plan writes only on the user's confirmation; `/kaylo:build` and `/kaylo:build T1` do not. Clear local S tasks can use a compact record. Task and review comment IDs restart per phase; `02-R1` names another phase's review comment. Review comments keep stable IDs such as `R2`: build can select a task or an implementation review comment, and fixes to blocking comments receive a focused recheck before closure. Non-blocking comments do not block the agreed outcome.
 
 Completion records known limitations. A limitation is accepted only with the user's actual recorded decision. Uncertain verification leaves affected work open when unchanged inputs cannot be established and checks cannot run; stating that limit does not permit closure.
 
@@ -46,7 +47,7 @@ plan validator. The internal skill names remain `define`, `plan`, `build`,
 `review`, and `close`.
 
 Claude and Codex marketplaces select a tested release tag. The commands below
-use `v0.8.0`. For an
+use `v0.9.0`. For an
 unpublished checkout, use the development instructions below. See
 [release maintenance](RELEASING.md) for the publication process.
 
@@ -60,7 +61,7 @@ Send these as two separate prompts in Claude Code:
 ```
 
 In your target project, use `/kaylo:define`, `/kaylo:plan`, `/kaylo:build T1`,
-`/kaylo:build R2`, `/kaylo:review plan`, `/kaylo:review changes`, or `/kaylo:close`.
+`/kaylo:build R2`, `/kaylo:build phase`, `/kaylo:review plan`, `/kaylo:review changes`, or `/kaylo:close`.
 
 Update from your shell:
 
@@ -83,7 +84,7 @@ codex plugin add kaylo@kaylo
 
 Start a new session in your target project. Use `/skills` or the `$` skill picker
 and select `kaylo:define`, `kaylo:plan`, `kaylo:build`, `kaylo:review`, or
-`kaylo:close`, then supply your request, such as `Implement T1`. Some app surfaces
+`kaylo:close`, then supply your request, such as `Implement T1` or `Build the current phase`. Some app surfaces
 use `@` to select skills. Codex does not register Claude-style
 `/kaylo:<command>` slash commands through this package. Select the Kaylo entry
 to avoid collisions with other skills named `plan` or `build`.
@@ -103,7 +104,7 @@ optionally remove the catalog with `codex plugin marketplace remove kaylo`.
 Clone the full package at a released tag:
 
 ```sh
-git clone --branch v0.8.0 https://github.com/jeio-dev/kaylo.git kaylo
+git clone --branch v0.9.0 https://github.com/jeio-dev/kaylo.git kaylo
 ```
 
 In your target project's existing `opencode.json` or `opencode.jsonc`, add the
@@ -124,10 +125,10 @@ To update, fetch tags and check out the desired release in that clone:
 
 ```sh
 git -C /absolute/path/to/kaylo fetch --tags origin
-git -C /absolute/path/to/kaylo checkout --detach v0.8.0
+git -C /absolute/path/to/kaylo checkout --detach v0.9.0
 ```
 
-Replace `v0.8.0` with the newer release tag when updating. Preserve any local
+Replace `v0.9.0` with the newer release tag when updating. Preserve any local
 edits; do not force checkout. Restart the OpenCode session/server afterward.
 Remove the Kaylo path from the `skills` array to uninstall.
 
@@ -165,7 +166,7 @@ see [verification](VERIFICATION.md).
 Gemini has its own extension manifest and loads the shared `skills/` directory:
 
 ```sh
-gemini extensions install https://github.com/jeio-dev/kaylo --ref v0.8.0
+gemini extensions install https://github.com/jeio-dev/kaylo --ref v0.9.0
 gemini extensions list
 gemini skills list --all
 ```
@@ -180,10 +181,10 @@ uninstall and install again with the new tag:
 
 ```sh
 gemini extensions uninstall kaylo
-gemini extensions install https://github.com/jeio-dev/kaylo --ref v0.8.0
+gemini extensions install https://github.com/jeio-dev/kaylo --ref v0.9.0
 ```
 
-Replace `v0.8.0` with the newer tag and restart the session. Reapply any
+Replace `v0.9.0` with the newer tag and restart the session. Reapply any
 host-specific enable/disable scope preferences after reinstalling. For a
 local-directory install, `gemini extensions update kaylo` refreshes that source;
 check out the desired release in the source directory first.
@@ -351,7 +352,7 @@ See [guardrail trials](tests/GUARDRAIL-TRIALS.md) for behavioral scenarios.
 
 Claude and Codex can guide a project. Gemini/Antigravity can receive research work, and OpenCode with an available DeepSeek model can receive implementation work. Read [working with a worker](WORKERS.md) for a copyable handoff and model-selection guidance.
 
-Work directly when that is sufficient; use one worker at a time when helpful. The guiding assistant maintains `ROADMAP.md` and the phase plans; workers return results. Native delegation is optional and never implies cross-vendor subscription access. Narrow uncertain work before giving it to a smaller model; no prompt guarantees every model can complete every task.
+Work directly when that is sufficient; use one worker at a time when helpful. In phase mode the guiding assistant still dispatches one task to one worker at a time and inspects each result before the next. The guiding assistant maintains `ROADMAP.md` and the phase plans; workers return results. Native delegation is optional and never implies cross-vendor subscription access. Narrow uncertain work before giving it to a smaller model; no prompt guarantees every model can complete every task.
 
 Delegated builds record the starting workspace state, confirm dependencies are present, and keep one owner for assigned implementation files. Workers return compact acceptance and verification evidence, embedded instructions not followed, and resume details when needed. The guiding assistant records those details in the existing phase plan and checks combined behavior when tasks connect.
 
@@ -366,6 +367,6 @@ Delegated builds record the starting workspace state, confirm dependencies are p
 - `hooks/`: the optional reminder; no workflow runtime or persistent state.
 - `scripts/`: plan/package validators, the Claude agent adapter generator, and local development staging; `tests/`: validator fixtures and behavioral trial prompts.
 
-No custom installer, automatic model router, or terminal modifications. Releases use Git tags and native host commands; see [release maintenance](RELEASING.md). Validator fixtures check structure; behavioral trials do not guarantee model compliance. `0.8.0` is an early package version, not a release-readiness claim.
+No custom installer, automatic model router, or terminal modifications. Releases use Git tags and native host commands; see [release maintenance](RELEASING.md). Validator fixtures check structure; behavioral trials do not guarantee model compliance. `0.9.0` is an early package version, not a release-readiness claim.
 
 Native integration references: [Claude plugin layout](https://code.claude.com/docs/en/plugins-reference), [Claude agents](https://code.claude.com/docs/en/sub-agents), [Codex plugin packaging](https://developers.openai.com/plugins/build/plugins), [Codex skill invocation](https://developers.openai.com/codex/skills), [Codex hooks](https://developers.openai.com/codex/hooks), [OpenCode 2 skills](https://opencode.ai/v2/docs/skills), [Antigravity plugins](https://antigravity.google/docs/plugins), and [Gemini extensions](https://geminicli.com/docs/extensions/reference/). Host behavior and availability can vary by version; the verification record identifies the versions inspected here.

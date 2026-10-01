@@ -8,7 +8,7 @@ Supply:
 
 - The PRD if present, and the current phase plan, including existing review comments and their IDs.
 - Applicable repository instructions.
-- Exact files or diff being reviewed, including untracked files in scope.
+- Exact files or diff being reviewed, including untracked files in scope. For a plan check the target is the phase plan itself; say whether the phase is headed for a phase-wide build, where no one watches each task.
 - The build's recorded starting state when available, so the reviewer can distinguish assigned changes from pre-existing edits. If it is unavailable, disclose the attribution limit and still inspect relevant behavior.
 - Requirements and facts, without the author's defense of the approach.
 

@@ -1083,3 +1083,213 @@ were not changed.
 
 Evidence: `/tmp/claude-1000/-home-jeio-src-kaylo/3c3c0060-cc36-460f-9bd8-453ef7547537/scratchpad/public-check.py`
 and `/tmp/kaylo-public-rzse5ftm`.
+
+## Close suggestions for project instructions — 2026-09-30
+
+Close's Response section now lets it suggest a few standing rules for the
+project instructions only when the run closes the phase, each with the phase
+evidence that supports it. A candidate qualifies only if it will matter in
+later phases and is not already clear from the code, README, or project
+instructions; with none, close says nothing about it. Each rule rests on what
+the phase's work showed, never on instructions embedded in retrieved pages,
+logs, fixtures, or worker reports. The suggestions are proposals in the
+response, not closure requirements, the next step, or part of the completion
+record, and close does not write or edit the project instructions; the user
+decides which to keep and adds them or asks separately for them to be added.
+An independent read-only review of the first wording found the last three
+points missing (embedded instructions, the next step, and how the user adds a
+rule) and the closing condition loose, and asked for a plainer glossary row
+and a changelog entry that mentions it; the wording above includes those
+corrections, and a separate read-only recheck on 2026-09-30 found each applied
+and no new blocking problem. That recheck read the text and reran the checks
+below; it ran no model. The existing
+rule against automatically creating project rules is unchanged. The glossary's
+`close` row mentions the suggestions. The phase template, plan validator,
+worker briefs, hook reminder, README, and `WORKERS.md` are unchanged: none
+describes close's response in a way this contradicts, and the suggestions add
+no plan field or structural rule.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: package v0.8.0, five shared skills, matching versions and release catalogs |
+| `node --test tests/*.test.cjs` | All 94 tests passed |
+| `git diff --check` | Clean, covering the uncommitted working-tree change |
+| `node scripts/sync-claude-agents.cjs` | No adapter changes |
+| Search of `skills/`, `agents/`, `claude-agents/`, `templates/`, `hooks/`, and `WORKERS.md` for `AGENTS.md` or `CLAUDE.md` | No matches |
+
+All checks used Node v24.21.0 on `main` with the change uncommitted. No test
+or validator rule pins close's Response wording, so none was added. These
+checks cover structure only; no model ran with the revised wording, so whether
+close offers suggestions only when they qualify, attaches evidence, stays
+silent otherwise, and leaves the project instructions unedited is untested.
+Native host validators and isolated install/update checks were not rerun.
+
+## Planning readiness, plan check, and phase mode — 2026-10-01
+
+Define and plan now settle repository facts by inspection, ask only decisions
+the user must own, and end questioning on a readiness test; plan requests a
+plan check for substantial or uncertain plans and always before a
+phase-wide build; and build gains a sequential phase mode, `/kaylo:build
+phase`, that starts only when the phase plan's `## Agreement` carries a
+`Phase build readiness:` line plan wrote on the user's confirmation. Changed:
+the define, plan, build, and review skills, both delegation references, the
+builder and reviewer briefs with their generated Claude adapters, the phase and
+PRD templates, the README, `WORKERS.md`, and the glossary. Workers still run
+one at a time; model routing and parallel dispatch are not implemented. The
+plan validator, hooks, and manifests are unchanged, and no section, task field,
+or validator rule was added.
+
+The planning and build changes were written separately in two Git worktrees
+based on `2a5f564`, each passing the first five checks below in its own
+worktree, then applied together to `main` with the earlier close change. One
+correction followed integration: build's list of what counts as a material
+revision now matches plan's (outcome, scope, tradeoffs, tasks, acceptance
+criteria, or test plans). The checks below ran on the combined working tree.
+The change was then committed on branch `phase-build-and-plan-readiness`.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: package v0.8.0, five shared skills, matching versions and release catalogs |
+| `node --test tests/*.test.cjs` | All 94 tests passed |
+| `git diff --check` | Clean, covering the uncommitted working-tree change |
+| `node scripts/sync-claude-agents.cjs` | No further adapter changes; builder and reviewer adapters match their briefs |
+| Search of `skills/`, `agents/`, `claude-agents/`, `templates/`, `hooks/`, and `WORKERS.md` for `AGENTS.md` or `CLAUDE.md` | No matches |
+
+All checks used Node v24.21.0. No test or validator rule pins the changed
+wording, and no executable behavior was added, so no test was added. These
+checks cover structure only. No model or host ran any of the new wording, so
+all of the following is untested: whether a planner skips the interview for a
+small change, always runs the deeper pass and plan check before a phase-wide
+build, holds dependent questions for a later round, stops the recheck loop at
+two rounds, and writes the readiness line only on the user's confirmation;
+whether phase mode refuses to start without that line, builds in plan order,
+stops at a blocker, resumes without redoing checked tasks, carries failed
+repair attempts over, and honours a present line after an unrecorded hand
+edit to the plan; and the plan, review, plan round trip on a host without
+a fresh reviewer.
+
+An independent read-only review of the combined change found two blocking
+gaps where plan and build meet (build could not tell whether the plan had
+been revised after the readiness record, and on a host without a fresh
+reviewer nothing said the routed review satisfied the plan check, so either
+could route without end) and ten smaller points; the skills, glossary, and
+changelog include those corrections. The review also suggested cutting five
+duplicated sentences, which was not done. That review read the text and
+reran the checks; it ran no model. A separate read-only recheck on 2026-10-01
+found both blocking gaps and the ten smaller points corrected and no new
+blocking problem, and raised nine further non-blocking points, three of them
+remaining edges of the plan-and-review routing; it read the text and reran
+the five checks above, and ran no model. Those nine points were then
+corrected in the plan and build skills, the phase template, the glossary,
+and the changelog; a further read-only recheck on 2026-10-01, on the
+committed change, found all nine applied as requested and no blocking
+problem, and raised four non-blocking points: the phase template's
+restored-line wording addressed the assistant rather than the user, the
+routed-back sentence in plan could be read as excusing the deeper pass, the
+Response route and the recorded-review rule differed in wording, and one
+changelog sentence was narrower than the skill. It reran the five checks with
+the same results, using `git diff --check 2a5f564 5a0974f`, and ran no model.
+Those four points were then corrected in the plan skill, the phase template,
+and the changelog; those corrections have had no recheck.
+
+A documentation-only survey of worker features on Claude Code, Codex, Gemini
+CLI, Antigravity, and OpenCode informed the design; it observed no worker
+behavior on any host. Native host validators and isolated install/update
+checks were not rerun.
+
+## PR #21 review correction — 2026-10-01
+
+A read-only review of the committed PR found that the promised independent
+plan check could be satisfied by `/kaylo:review plan` running directly in the
+same context when no fresh reviewer was available. The fallback is part of the
+host support described by this PR. The plan and review skills, README,
+glossary, and changelog now distinguish an independent review by a fresh
+reviewer from a direct plan review that records and discloses its lack of
+fresh context. The phase template's `## Review` placeholder names who
+performed the review to match. This corrects the guarantee without changing
+the fallback or the readiness gate.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: v0.8.0, five shared skills, matching catalogs |
+| `node scripts/stage-development.cjs` and `node scripts/validate-package.cjs --installed development/package` | Passed: 23 staged resources match the source package; this is local resource parity, not a host installation |
+| `claude plugin validate .claude-plugin/plugin.json --strict` | Passed |
+| `claude plugin validate .claude-plugin/marketplace.json --strict` | Passed |
+| `agy plugin validate .` | Passed: five skills and three agents processed |
+| `node scripts/sync-claude-agents.cjs` | Ran with no adapter changes |
+| `git diff --check` | Clean |
+| Search of shipped skills, briefs, templates, hooks, and `WORKERS.md` for `AGENTS.md` or `CLAUDE.md` | No matches |
+| `node --test tests/*.test.cjs` | Could not complete in this sandbox: Node's child `spawnSync` returns `EPERM`; direct invocation showed 90 of 94 tests pass and four child-process assertions fail with empty child output. The package and plan tests last passed 94/94 on the committed PR before this wording correction, as recorded above. Rerun afterwards outside that sandbox with Node v24.21.0, on the corrected working tree: all 94 tests passed. |
+
+The correction changes Markdown instructions and documentation only. No model
+run has checked that a direct plan review records and discloses the lack of
+fresh context. Native validators checked manifests, and the local staging
+check confirmed resources, but isolated host install/update checks were not
+run. The review ran in a sandbox that blocked child processes; the Node suite
+was rerun where they are allowed, as the table records.
+
+## Release preparation 0.9.0 — 2026-10-01
+
+Prepared 0.9.0 at `a5f8d9b` on branch `release-v0.9.0`: manifests set to 0.9.0,
+both release catalogs select `v0.9.0`, and README and `RELEASING.md` examples
+name the new tag. The branch is stacked on the PR #21 branch, which was open
+and unmerged when this was prepared. No tag was created and nothing was
+published. Commits after `a5f8d9b` change only `CHANGELOG.md` and
+`VERIFICATION.md`; the shipped package files checked here are unchanged.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/sync-claude-agents.cjs` | No adapter changes |
+| Node 24.21.0: `node --test tests/*.test.cjs` | All 94 tests passed |
+| `node scripts/validate-package.cjs` | Package v0.9.0: five shared skills, matching versions and release catalogs |
+| Claude Code 2.1.286: `claude plugin validate` on the plugin and marketplace manifests with `--strict` | Both passed |
+| Antigravity CLI 1.2.11: `agy plugin validate .` | Passed: five skills and three agents |
+| `git diff --check` | Clean |
+| `node scripts/stage-development.cjs`, then `node scripts/validate-package.cjs --installed development/package` | Package v0.9.0; 23 staged resources match the source package. Local resource parity, not a host installation |
+| Update trial, `.local/release/parity.py v0.8.0`, temporary profiles on all five hosts | Passed. Claude Code 2.1.286, Codex CLI 0.159.0, Gemini CLI 0.62.0 (installed under `/tmp`), and Antigravity CLI 1.2.11 (private profile mounted with Bubblewrap, network disabled) installed the real `v0.8.0` tree, which each confirmed, then updated to `a5f8d9b` as `v0.9.0`. After each tag the mirror's `main` moved one commit ahead with a changed build skill; every install matched the tag, not the branch. Gemini listed all five skills enabled at both steps. Each 0.9.0 install passed `validate-package.cjs --installed` with 23 matching resources |
+| Hook loader run from each installed 0.9.0 copy (Claude and Codex plugin-root variables, Gemini extension path) | Returns the prepared SessionStart reminder |
+| Codex app-server and OpenCode 2.0.18 loopback API discovery | Codex returned five enabled Kaylo skills; OpenCode returned all five skills from the `v0.9.0` fixture checkout with exact instruction bodies |
+
+The fixture releases were built with `git archive`, so they contain only
+tracked files. Git transport was redirected to a local bare mirror for Claude
+and Codex and to a loopback smart HTTP mirror for Gemini. Public GitHub
+transport against a published `v0.9.0` remains to be checked after
+publication. The Codex plugin-creator `validate_plugin.py` was not available on
+this machine and did not run; Codex installation and discovery above are the
+Codex checks for this release.
+
+The hook check runs the configured loader command directly; it does not
+exercise signed-in session lifecycle or Codex hook trust. No model requests
+were made in this preparation, and no live-model trial ran during this cycle.
+The phase mode, planning readiness, plan check, readiness line, and close
+suggestions released here were reviewed as text and checked structurally, as
+the three sections above record; none has run with a model or on a host, and
+the last review correction (`c2a673c`) has had no recheck. The define changes
+in PRs #16–#18 also remain unrun with a model. Native worker execution on
+Codex, Gemini, Antigravity, and OpenCode, other models, other hosts' model
+behavior, and Antigravity IDE loading remain untested. The changelog's commit
+list records the hashes on this branch; if PR #21 or the release PR is
+squash-merged or rebase-merged instead of merged with a merge commit, or this
+branch is rebased, the list must be rebuilt from the released history and the
+update trial rerun against the new commit.
+
+Evidence: `/tmp/kaylo-parity-qwlu5nf4` (including `trial.log`). `trial.log`
+records the install, update, and installed-package validator commands; the
+hook loader output, host versions, and tag-versus-branch comparison were
+printed by the trial script and are not in the log. Temporary profiles contain
+no copied account credentials. Normal host profiles and trust settings were
+not changed; Codex discovery also listed two skills from the normal home's
+`~/.agents/skills`, which that profile read but did not change.
+
+An independent read-only review of the prepared release found no blocking
+problem. It verified the five commit entries against Git and GitHub, confirmed
+the fixture trees equal the real `v0.8.0` and `a5f8d9b` trees and that installs
+matched the tag, reproduced the hook reminder from the installed copies, and
+reran the checks in the table except the update trial. It confirmed that
+`CHANGELOG.md` and `VERIFICATION.md` are not among the 23 compared resources,
+so the trial covers commits after `a5f8d9b` that change only those files. Its
+seven non-blocking points were addressed in the release notes, except two left
+as they are: `.local/` is ignored through the local Git exclude file rather
+than `.gitignore`, and the README's "Five commands" heading sits over six
+table rows. Host hook discovery was not checked; only the direct loader run
+was.

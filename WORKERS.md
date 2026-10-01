@@ -14,7 +14,7 @@ From a skill's directory, a brief is at `../../agents/<role>.md`; resolve that p
 
 Claude and Codex can remain the guiding assistants. The user may choose Gemini or Antigravity for research, and OpenCode with an available DeepSeek model for building. These are user preferences, not measured guarantees of model quality or account access. Verify availability in the actual tool; do not substitute paid API calls automatically.
 
-Start with one worker at a time. If native subagents are unavailable, open the chosen tool in the same project and paste the brief and task. Finish that worker before another edits the same files. A manual handoff should include this packet:
+Start with one worker at a time. `/kaylo:build phase` keeps this rule: one task and one worker at a time, each with its own packet. Plan may hand the reviewer a plan check before any build; the reviewer returns comments and the guiding assistant revises the plan. If native subagents are unavailable, open the chosen tool in the same project and paste the brief and task. Finish that worker before another edits the same files. A manual handoff should include this packet:
 
 ```text
 Role: researcher / builder / reviewer
@@ -39,7 +39,7 @@ The guiding assistant maintains `ROADMAP.md` and the phase plans, and checks ret
 For a build, use this compact report; omit fields that do not apply, except `Embedded instructions not followed`, which is always included. Return it to the guiding assistant, who records evidence and resume information in the existing phase plan.
 
 ```text
-Task and workspace: [phase/task ID, path, starting state]
+Task and workspace: [task or review comment ID with its phase, path, starting state]
 Changes: [paths and resulting behavior; distinguish pre-existing edits]
 Acceptance criteria: [criteria met and criteria still unresolved]
 Verification: [commands, working directory, exit status when available, useful result; artifacts when needed]

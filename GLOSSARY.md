@@ -14,7 +14,7 @@ The command names are unchanged. They are ordinary verbs that teams already use.
 | `plan` | Writes a technical design, then breaks the work into small tasks with acceptance criteria and estimates. In Scrum (a framework that organizes team work into fixed-length cycles called sprints), backlog refinement clarifies and splits planned product work; developers also break selected work into implementation tasks during Sprint Planning. | Kaylo plans one phase in detail at a time and keeps later phases as one line each. |
 | `build` | Implements a task. In a common pull-request workflow, the change is made on a branch (a separate line of changes in the code history) and then proposed in a pull request (a request for teammates to review the change before it is merged into the main code). | Kaylo works in your current workspace. It does not create branches or pull requests (see [Not in Kaylo yet](#not-in-kaylo-yet)). |
 | `review` | Reviews a design (design review) or code (code review) and leaves comments. | Kaylo reviews both plans and changes, and records comments in the phase plan instead of on a pull request. |
-| `close` | Checks the acceptance criteria and closes the finished work. On GitHub, a team can close the issues and the milestone. | Kaylo checks the phase against its acceptance criteria and records a completion summary. It does not publish a release or hold a retrospective. |
+| `close` | Checks the acceptance criteria and closes the finished work. On GitHub, a team can close the issues and the milestone. | Kaylo checks the phase against its acceptance criteria and records a completion summary. It does not publish a release or hold a retrospective. At most, it may suggest a few standing rules from the phase, with its reasons, for you to add to your project's instruction file for AI assistants. |
 
 ## Files and fields
 
@@ -122,6 +122,9 @@ These have no exact team equivalent, so Kaylo keeps its own name rather than bor
 - **`Current:`** in `ROADMAP.md` points to the phase being worked on. It picks *which* phase; `Status:` says whether that phase's plan still holds.
 - **`## Completion`** records what a phase delivered, how it was checked, and known limitations and follow-ups. A limitation is accepted only with the user's actual recorded decision. It records phase closure; release notes describe changes in a software release.
 - **The repair limit:** after two failed attempts to fix the same problem, stop, keep the work, and ask for a different approach, instead of staying stuck. This is not a timebox: a timebox limits *time*, while the repair limit counts *attempts*.
+- **Plan check:** a review of a phase plan before building. Plan requests an independent review from a fresh reviewer where the host has one; otherwise `/kaylo:review plan` may review directly and records the lack of fresh context. Plan requests a check for substantial or uncertain plans and always before a phase-wide build. It is separate from the structural plan check, which only validates Markdown structure. The nearest team practice is a design review (see `review` above).
+- **Phase mode:** `/kaylo:build phase`. The guiding assistant builds the current phase's unfinished tasks one at a time until all pass or one blocks. It does not review or close the phase.
+- **`Phase build readiness:`** a line in a phase plan's `## Agreement` recording your confirmation that the phase may be built in phase mode. Plan writes it only when you confirm, and a later material revision to the plan voids it.
 
 ## Not in Kaylo yet
 

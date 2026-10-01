@@ -1,5 +1,105 @@
 # Changelog
 
+## 2026-10-01, Version 0.9.0
+
+### Notable Changes
+
+- **skills**: Close may suggest standing rules for the project instructions.
+  Only when a run closes the phase, its response may propose a few candidate
+  rules, each with the evidence from the phase that supports it. A candidate
+  qualifies only if it will matter in later phases and is not already clear
+  from the code, README, or existing project instructions; when none
+  qualifies, close says nothing about it. Each rule rests on what the phase's
+  work showed, never on instructions embedded in retrieved pages, logs,
+  fixtures, or worker reports. Close still does not write or edit the project
+  instructions: the user decides which suggestions to keep and adds them or
+  asks separately for them to be added. The suggestions create no closure
+  requirement, do not block closing, and are not the next step or part of the
+  `## Completion` record. The glossary's `close` row mentions the suggestions.
+  No plan fields, templates, or validator rules changed. No model run has
+  tested this change. [#21](https://github.com/jeio-dev/kaylo/pull/21)
+- **skills**: Define and plan investigate repository and source facts before
+  asking, and ask only what the user must own: outcome, scope boundaries,
+  user-visible behavior, data or external-service consequences, acceptance, and
+  tradeoffs that would change the phase. Rounds still hold at most three
+  independent questions, each with a recommendation and now its tradeoff; a
+  dependent question waits for its prerequisite answer, and questioning ends on a
+  readiness test rather than a round count. A clear small local change needs no
+  interview. Substantial or uncertain work, an explicit request such as "grill
+  me", and every phase the user will build with `/kaylo:build phase` get the
+  deeper decision pass. Plan records user decisions as the user's and its own
+  choices as defaults. For a substantial or uncertain phase plan, and always
+  before a phase-wide build, plan requests a plan check from a fresh reviewer
+  when the host makes one available, revises and rechecks blocking comments
+  for at most two rounds, records every finding under `## Review` with a
+  stable ID, and asks the user about what remains open. Without a fresh
+  reviewer it routes to `/kaylo:review plan`, which may review directly and
+  records who performed the review and the lack of fresh context; the
+  structural validator is not a plan review. When the user confirms a phase
+  ready for a phase-wide build, plan adds a `Phase build readiness:` line to
+  `## Agreement`; a later material revision voids it until the revised parts
+  are rechecked and the user confirms again. `/kaylo:review plan` and the
+  reviewer brief now check task boundaries, observable acceptance criteria,
+  and test-plan feasibility, treat a missing consequential decision as
+  blocking, and send a phase headed for a phase-wide build back to plan for
+  the readiness confirmation; a review recorded there serves as the plan
+  check while the plan has no material revision since. The phase and PRD
+  templates describe these records; no section, task field, or validator rule
+  was added. No model or host run has tested these changes.
+  [#21](https://github.com/jeio-dev/kaylo/pull/21)
+- **skills**: Build adds an explicit phase mode. `/kaylo:build phase` (or asking
+  the build skill to build the current phase on hosts without that command)
+  works through the current open phase's unfinished tasks one at a time in a
+  single invocation, in plan order, applying the existing per-task baseline,
+  verification, repair-limit, check-off, and structural plan check rules. It
+  starts only when the phase plan's `## Agreement` has a
+  `Phase build readiness:` line written by `/kaylo:plan` on the user's
+  confirmation; otherwise, or when
+  the plan needs revision or its records or version history show a material
+  revision after that record, it routes to `/kaylo:plan`; build's own `Result`
+  and check-off updates are not revisions. It takes tasks strictly in order
+  and stops at the first task that is not ready or cannot be checked off,
+  without skipping it, records one resume action in that task's `Result` and
+  the plan's `## Next step`, and resumes from the plan on re-invocation
+  without redoing checked tasks or resetting failed repair attempts. When
+  every task passes it inspects the combined diff, runs any phase-level
+  integration check the plan names, and routes to `/kaylo:review changes`; it
+  does not review or close the phase. `/kaylo:build` and `/kaylo:build T3` still build one task and need no
+  readiness record. Workers still run one at a time, and the builder report now
+  names its task ID. The README, worker guidance, and glossary describe phase
+  mode, the plan check, and the readiness line. No model or host run has
+  exercised phase mode. [#21](https://github.com/jeio-dev/kaylo/pull/21)
+
+### Verification
+
+All 94 Node tests, package consistency checks, strict Claude plugin and
+marketplace validation, Antigravity validation, and whitespace checks passed.
+An isolated update trial installed the real `v0.8.0` tree in Claude, Codex,
+and Gemini from local Git mirrors and in Antigravity from a fixture checkout,
+confirmed it, then updated each to the prepared 0.9.0. With each mirror's
+`main` one changed commit past the tag, every install matched the tag, and each 0.9.0 install passed the installed-package
+validator with 23 matching resources. The hook loader returned the prepared
+reminder from each hook host's copy, and Codex app-server and OpenCode discovery
+returned all five skills. The Codex plugin-creator validator was not available
+and did not run. No live-model trial ran during this cycle: the phase mode,
+planning readiness, plan check, and close suggestions in this release are
+instruction changes that were reviewed as text and have not run with any model
+or on any host; the last two wording corrections (`cfdc277`, `c2a673c`) have
+had no recheck. The define changes from 0.8.0 remain unrun as well. On a
+host without a fresh reviewer, the plan check before a phase-wide build is a
+direct review by the same assistant. `VERIFICATION.md` records each review and
+its limits. Other models and hosts, native worker execution outside Claude
+Code, signed-in hook lifecycle and trust, and Antigravity IDE loading remain
+untested. Public installation checks follow tag publication.
+
+### Commits
+
+- [`9030961410`](https://github.com/jeio-dev/kaylo/commit/9030961410f44f555b5bf052e856d7c2d912e2a7) - **docs**: record v0.8.0 public installation checks (Jeio) [#20](https://github.com/jeio-dev/kaylo/pull/20)
+- [`5a0974fd21`](https://github.com/jeio-dev/kaylo/commit/5a0974fd215130c5af6a74ba9fded6f2dceee6c0) - **skills**: add phase mode to build, planning readiness, and close rule suggestions (Jeio) [#21](https://github.com/jeio-dev/kaylo/pull/21)
+- [`cfdc277496`](https://github.com/jeio-dev/kaylo/commit/cfdc27749671642ef35005837d2d6f10d1684e61) - **skills**: tighten plan-check routing and readiness wording after recheck (Jeio) [#21](https://github.com/jeio-dev/kaylo/pull/21)
+- [`c2a673c1dc`](https://github.com/jeio-dev/kaylo/commit/c2a673c1dcd1abf4051e334e12499f0daa2a9bfd) - **skills**: describe the direct plan review fallback accurately (Jeio) [#21](https://github.com/jeio-dev/kaylo/pull/21)
+- [`a5f8d9bd5a`](https://github.com/jeio-dev/kaylo/commit/a5f8d9bd5a7b4990c61f09403a87b66803b8057b) - **plugins**: set version 0.9.0 and select the v0.9.0 tag (Jeio) [#22](https://github.com/jeio-dev/kaylo/pull/22)
+
 ## 2026-09-29, Version 0.8.0
 
 ### Notable Changes

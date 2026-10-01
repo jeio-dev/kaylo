@@ -14,7 +14,7 @@ Status: Current
 
 ## Agreement
 
-[What the user actually agreed to, or which decision remains.]
+[What the user actually agreed to, or which decision remains. Record the user's decisions as theirs and label choices you made as defaults. Ordinary single-task building needs nothing more. Only when the user has confirmed this phase ready for a phase-wide build, add a line beginning `Phase build readiness: confirmed by the user on YYYY-MM-DD`, with the actual date and a short statement of what they confirmed; remove it after a material revision; plan restores it only after a recheck and the user's new confirmation.]
 
 ## Tasks
 
@@ -29,7 +29,7 @@ Status: Current
 
 ## Review
 
-[Target, coverage, and limitations. Record None when there are no review comments; otherwise use stable IDs, with the label first and then ` — `, for example:]
+[Target, coverage, who performed the review, and limitations; a direct plan review records that it lacked fresh context. Record None when there are no review comments; otherwise use stable IDs, with the label first and then ` — `, for example:]
 
 - R1: [blocking / non-blocking] — [open / fixed / accepted by user]
   - Target and location: [Plan task or implementation file]
