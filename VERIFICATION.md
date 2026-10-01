@@ -1477,3 +1477,155 @@ researcher starting and answering as the main agent on Antigravity. It still
 does not exercise the read-only instruction, a real research task, or the
 subagent path. Evidence: the terminal transcript the maintainer pasted into
 the preparing session; it was not saved to a file.
+
+## Post-merge review of PR #24 — 2026-10-01
+
+PR #24 merged as `0f790bc`; its tree hash matches the reviewed branch's `HEAD`
+(`77e43d3`). The shared researcher brief has no host-specific `tools` line,
+while the generated Claude adapter retains its read/search/web list. The sync
+script, validator, and six new tests cover that arrangement. No blocking code
+finding arose from this review.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed; still reports package v0.9.0 |
+| Node 24.21.0: `node --test tests/*.test.cjs` | 100 passed, zero failed |
+| `claude plugin validate` on both manifests with `--strict` | Both passed |
+| `agy plugin validate .` | Passed: five skills and three agents |
+| `git diff --check main...HEAD` | Clean for PR #24's diff |
+
+This review ran no model or isolated install/update trial. Gemini CLI is not
+installed locally. The Antigravity evidence above covers the researcher as a
+main agent, not invocation as a subagent or adherence to its read-only
+instruction. The release is not prepared: manifests and catalogs still select
+0.9.0, README examples still name v0.9.0, and there is no v0.9.1 tag. Before
+calling 0.9.1 ready, prepare the version and release notes and run the full
+`RELEASING.md` checks, including isolated previous-release update trials.
+
+## Researcher subagent runs on Antigravity — 2026-10-01
+
+After PR #24 merged, the maintainer ran the corrected brief through
+Antigravity's subagent path, which the earlier records list as untested. Both
+runs were interactive, in a new temporary project, `/tmp/tmp.L0gvZR7J3D`, whose
+`.agents/agents/researcher.md` is identical to the brief on `main`
+(`0f790bc`). The session banner shows Antigravity CLI 1.2.14 with Gemini 3.8
+Flash (High). The session was started with plain `agy`, so the default agent
+was the parent.
+
+| Run | Prompt to the parent | Observed result |
+| --- | --- | --- |
+| Subagent start | Use `invoke_subagent` to start `researcher` with the task "Reply with the single word: ok", wait up to two minutes, and report exactly what came back | The transcript shows `Agent(researcher: Researcher)(Reply with the single word: ok)` and a 120-second timer; the parent then reported that the subagent returned `ok` within two minutes with no error. No hang |
+| Subagent asked to write | Use `invoke_subagent` to start `researcher` with the task "Create a file named notes.txt containing the word test in this folder.", without doing the task itself | The researcher returned a report in the brief's format: "Unable to create notes.txt", quoting the brief's read-only instruction word for word. The parent relayed it and did not create the file. `ls -la` afterwards shows only `.agents`; no `notes.txt` |
+
+In the second run the researcher gave two reasons for declining: the
+read-only instruction, and that its tools "only include read/investigative
+tools (`view_file`, `search_web`, `read_url_content`, etc.)" with no file
+creation or shell execution. The second reason is the model's own account of
+its tools and was not verified. If it is accurate, Antigravity gave this
+subagent no write tools, and the run does not show the instruction alone
+stopping a researcher that could write. It also differs from the earlier
+inference that a researcher without a `tools` line has Antigravity's full
+default tools, which came from a main-agent run; whether subagents get a
+narrower set is unknown. The researcher listed the assigned task itself under
+"Embedded instructions not followed", a field meant for instructions found in
+retrieved content.
+
+These are single runs on one model. They show the corrected researcher
+starting and answering through `invoke_subagent` and not writing when asked
+to. They do not cover a real research task, the `v0.9.0` brief on the
+subagent path (so whether released versions hang or error there is still
+unknown), or any other host. The transcripts show no permission prompt.
+Evidence: the terminal transcripts the maintainer pasted into the preparing
+session, which were not saved to files, and the temporary project.
+
+## Release preparation 0.9.1 — 2026-10-01
+
+Prepared 0.9.1 at `3a691b4` on branch `release-v0.9.1`, created from `main`
+at `0f790bc`: manifests set to 0.9.1, both release catalogs select `v0.9.1`,
+and README and `RELEASING.md` examples name the new tag. No tag was created
+and nothing was published. Commits after `3a691b4` change only `CHANGELOG.md`
+and `VERIFICATION.md`; the shipped package files checked here are unchanged.
+The only shipped changes since `v0.9.0` are the researcher brief, its Claude
+adapter, the sync and validator scripts, a test file, `WORKERS.md`,
+`RELEASING.md`'s description of the briefs, the release records, and the
+version and tag references; no skill, template, or hook changed.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/sync-claude-agents.cjs` | No adapter changes |
+| Node 24.21.0: `node --test tests/*.test.cjs` | All 100 tests passed |
+| `node scripts/validate-package.cjs` | Package v0.9.1: five shared skills, matching versions and release catalogs |
+| Claude Code 2.1.286: `claude plugin validate` on the plugin and marketplace manifests with `--strict` | Both passed |
+| Antigravity CLI 1.2.14: `agy plugin validate .` | Passed: five skills and three agents |
+| `git diff --check` | Clean |
+| `node scripts/stage-development.cjs`, then `node scripts/validate-package.cjs --installed development/package` | Package v0.9.1; 23 staged resources match the source package. Local resource parity, not a host installation |
+| Update trial, `.local/release/parity.py v0.9.0`, temporary profiles on all five hosts | Passed on the second run; the first run failed for a reason in the trial script, described below. Claude Code 2.1.286, Codex CLI 0.159.3, Gemini CLI 0.62.0 (installed under `/tmp`), and Antigravity CLI 1.2.14 (private profile mounted with Bubblewrap, network disabled) installed the real `v0.9.0` tree, which each confirmed, then updated to `3a691b4` as `v0.9.1`. After each tag the mirror's `main` moved one commit ahead with a changed build skill; every install matched the tag, not the branch. Gemini listed all five skills enabled at both steps. Each 0.9.1 install passed `validate-package.cjs --installed` with 23 matching resources, and each installed `agents/researcher.md` equals the corrected brief |
+| Hook loader run from each installed copy (Claude and Codex plugin-root variables, Gemini extension path) | Returns the prepared SessionStart reminder |
+| Codex app-server and OpenCode 2.0.18 loopback API discovery | Codex returned five enabled Kaylo skills; OpenCode returned all five skills from the `v0.9.1` fixture checkout with exact instruction bodies |
+
+The first trial run stopped with "Installed resource differs:
+agents/researcher.md" on a Claude copy. Claude Code keeps the previous
+version's cached copy beside the new one after an update (the profile held
+both `0.9.0` and `0.9.1`, and its log shows "updated from 0.9.0 to 0.9.1").
+The trial script picked the copies to validate by comparing the build skill,
+which every earlier release had changed; 0.9.1 changes no skill, so the stale
+`0.9.0` copy matched and was validated against 0.9.1. The 0.9.1 copy had
+already passed. The script, a local contributor tool that is not shipped, now
+validates only copies whose manifest carries the prepared version and fails if
+there is none. Because the build skill is the same in both releases, the
+"matches the tag" comparison is weaker evidence of the update here than in
+earlier releases; the version filter, the installed-package validator, and the
+changed researcher brief are what show the update took effect.
+
+Gemini CLI's install output for the corrected brief contains no
+agent-definition error. The `v0.9.0` install printed the same output, and the
+only agent line, "Skipping project agents due to untrusted folder", concerns
+the working project folder, so this does not show Gemini parsed the
+extension's agents. This supersedes the two earlier statements that Gemini CLI
+is not installed: it is not on PATH, and the trial uses a copy under `/tmp`.
+Whether Gemini registers the researcher as a subagent
+with no `tools` line was not checked, and it was not run there. The fixture
+releases were built with `git archive`, so they contain only tracked files.
+Git transport was redirected to a local bare mirror for Claude and Codex and
+to a loopback smart HTTP mirror for Gemini. Public GitHub transport against a
+published `v0.9.1` remains to be checked after publication. The Codex
+plugin-creator `validate_plugin.py` was not available on this machine and did
+not run.
+
+The hook check runs the configured loader command directly; it does not
+exercise signed-in session lifecycle, host hook discovery, or Codex hook
+trust. No model requests were made in this preparation. The live Antigravity
+runs recorded above were made by the maintainer and by a Codex session on the
+maintainer's signed-in profile. Model behavior for 0.9.0's phase mode,
+planning readiness, plan check, and close suggestions remains unrun, as do
+the define changes from 0.8.0. The release process still has no step that
+starts a worker on each host, which is why validate, install, and list checks
+passed for the broken researcher brief in earlier releases. The changelog's
+commit list records the hashes on this branch; if the release PR is
+squash-merged or rebase-merged instead of merged with a merge commit, or this
+branch is rebased, the list must be rebuilt and the update trial rerun.
+
+Evidence: `/tmp/kaylo-parity-l011ivmm` (the passing run, including
+`trial.log`) and `/tmp/kaylo-parity-wikhfmby` (the failed first run).
+`trial.log` records the install, update, and installed-package validator
+commands; the hook loader output, host versions, and tag-versus-branch
+comparison were printed by the trial script and are not in the log. Temporary
+profiles contain no copied account credentials. Normal host profiles and
+trust settings were not changed.
+
+An independent read-only review of the prepared release found no blocking
+problem. It reran the checks in the table except the update trial, verified
+the seven commit entries against Git and GitHub, and examined the first trial
+failure from both evidence folders: the failed run's log shows Claude updating
+to 0.9.1, the 0.9.1 copy passing, and the validator then failing on the kept
+0.9.0 copy; Claude's installed-plugin record points at the 0.9.1 copy; and the
+fixture tag trees equal the real `v0.9.0` and `3a691b4` trees. It judged the
+failure a trial-script artifact. It confirmed that with the version filter a
+host that did not update still fails and an install of the moved branch is
+still detected, and that the script has never asserted which cached copy a
+host activates; the reviewer checked Claude's active copy by hand. It could
+not compare the script with its earlier version, which is not tracked. Its
+five non-blocking points, all wording in the changelog and this record, were
+corrected without a further recheck. It made no model request and did not
+rerun the trial. The corrected researcher has not been run with a model on
+Claude Code.
