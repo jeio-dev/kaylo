@@ -42,7 +42,7 @@
   and test-plan feasibility, treat a missing consequential decision as
   blocking, and send a phase headed for a phase-wide build back to plan for
   the readiness confirmation; a review recorded there serves as the plan
-  check on a host without a fresh reviewer. The phase and PRD
+  check while the plan has no material revision since. The phase and PRD
   templates describe these records; no section, task field, or validator rule
   was added. No model or host run has tested these changes.
 - **skills**: Build adds an explicit phase mode. `/kaylo:build phase` (or asking
@@ -50,18 +50,19 @@
   works through the current open phase's unfinished tasks one at a time in a
   single invocation, in plan order, applying the existing per-task baseline,
   verification, repair-limit, check-off, and structural plan check rules. It
-  starts only when the phase plan's `## Agreement` has a `Phase build readiness:`
-  line written by `/kaylo:plan` on the user's confirmation; otherwise, or when
+  starts only when the phase plan's `## Agreement` has a
+  `Phase build readiness:` line written by `/kaylo:plan` on the user's
+  confirmation; otherwise, or when
   the plan needs revision or its records or version history show a material
   revision after that record, it routes to `/kaylo:plan`; build's own `Result`
   and check-off updates are not revisions. It takes tasks strictly in order
   and stops at the first task that is not ready or cannot be checked off,
   without skipping it, records one resume action in that task's `Result` and
-  the plan's `## Next step`, and resumes from the plan on re-invocation without redoing
-  checked tasks or resetting failed repair attempts. When every task passes it
-  inspects the combined diff, runs any phase-level integration check the plan
-  names, and routes to `/kaylo:review changes`; it does not review or close the
-  phase. `/kaylo:build` and `/kaylo:build T3` still build one task and need no
+  the plan's `## Next step`, and resumes from the plan on re-invocation
+  without redoing checked tasks or resetting failed repair attempts. When
+  every task passes it inspects the combined diff, runs any phase-level
+  integration check the plan names, and routes to `/kaylo:review changes`; it
+  does not review or close the phase. `/kaylo:build` and `/kaylo:build T3` still build one task and need no
   readiness record. Workers still run one at a time, and the builder report now
   names its task ID. The README, worker guidance, and glossary describe phase
   mode, the plan check, and the readiness line. No model or host run has
