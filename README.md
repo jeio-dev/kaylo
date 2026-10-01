@@ -9,16 +9,17 @@ Kaylo is an early `0.8.0` package; see [verification](VERIFICATION.md) for what 
 | Command | What it helps you do | What you get |
 | --- | --- | --- |
 | `/kaylo:define` | Turn an idea into a clear product outcome | `PRD.md` (product requirements document) |
-| `/kaylo:plan` | Inspect the project and choose a simple approach | Ordered phases in `ROADMAP.md`; executable tasks in the current phase plan |
+| `/kaylo:plan` | Inspect the project, settle the decisions only you can make, and choose a simple approach | Ordered phases in `ROADMAP.md`; executable tasks in the current phase plan |
 | `/kaylo:build` | Implement and verify an agreed task | A working change and recorded evidence |
+| `/kaylo:build phase` | Build the current phase's remaining agreed tasks one at a time, after plan records phase build readiness | Each task verified and checked off, or one recorded blocker and resume action |
 | `/kaylo:review` | Get a second opinion on a plan or change | Review comments, labelled blocking or non-blocking, in the current phase plan |
 | `/kaylo:close` | Check the promised outcome and finish the phase | Phase checked off, usage guidance, and remaining limitations |
 
-Start with define, then plan. A concrete small change can start with plan. Review substantial or uncertain plans before building; review implementation before close. Revise through plan and build. Each response should explain what matters and give one clear next step.
+Start with define, then plan. A concrete small change can start with plan. Substantial or uncertain plans, and every plan headed for `/kaylo:build phase`, get an independent plan check before building: plan requests it when the host makes a fresh reviewer available, and `/kaylo:review plan` covers it otherwise. Review implementation before close. Revise through plan and build. Each response should explain what matters and give one clear next step.
 
 The assistant investigates repository facts, recommends an approach, and asks a short numbered round only for consequential decisions. Tasks include acceptance criteria and a test plan with meaningful checks. Reuse passing checks unless relevant inputs changed. After two unsuccessful repairs of the same failure, preserve the work and recommend a different next action.
 
-Phase plans use `Status: Current` or `Needs revision: <reason>` to describe whether task instructions match the intended work; agreement and completion are separate. Clear local S tasks can use a compact record. Task and review comment IDs restart per phase; `02-R1` names another phase's review comment. Review comments keep stable IDs such as `R2`: build can select a task or an implementation review comment, and fixes to blocking comments receive a focused recheck before closure. Non-blocking comments do not block the agreed outcome.
+Phase plans use `Status: Current` or `Needs revision: <reason>` to describe whether task instructions match the intended work; agreement and completion are separate. A phase built with `/kaylo:build phase` also needs a `Phase build readiness:` line in `## Agreement`, which plan writes only on the user's confirmation; `/kaylo:build` and `/kaylo:build T1` do not. Clear local S tasks can use a compact record. Task and review comment IDs restart per phase; `02-R1` names another phase's review comment. Review comments keep stable IDs such as `R2`: build can select a task or an implementation review comment, and fixes to blocking comments receive a focused recheck before closure. Non-blocking comments do not block the agreed outcome.
 
 Completion records known limitations. A limitation is accepted only with the user's actual recorded decision. Uncertain verification leaves affected work open when unchanged inputs cannot be established and checks cannot run; stating that limit does not permit closure.
 
@@ -60,7 +61,7 @@ Send these as two separate prompts in Claude Code:
 ```
 
 In your target project, use `/kaylo:define`, `/kaylo:plan`, `/kaylo:build T1`,
-`/kaylo:build R2`, `/kaylo:review plan`, `/kaylo:review changes`, or `/kaylo:close`.
+`/kaylo:build R2`, `/kaylo:build phase`, `/kaylo:review plan`, `/kaylo:review changes`, or `/kaylo:close`.
 
 Update from your shell:
 
@@ -83,7 +84,7 @@ codex plugin add kaylo@kaylo
 
 Start a new session in your target project. Use `/skills` or the `$` skill picker
 and select `kaylo:define`, `kaylo:plan`, `kaylo:build`, `kaylo:review`, or
-`kaylo:close`, then supply your request, such as `Implement T1`. Some app surfaces
+`kaylo:close`, then supply your request, such as `Implement T1` or `Build the current phase`. Some app surfaces
 use `@` to select skills. Codex does not register Claude-style
 `/kaylo:<command>` slash commands through this package. Select the Kaylo entry
 to avoid collisions with other skills named `plan` or `build`.
@@ -351,7 +352,7 @@ See [guardrail trials](tests/GUARDRAIL-TRIALS.md) for behavioral scenarios.
 
 Claude and Codex can guide a project. Gemini/Antigravity can receive research work, and OpenCode with an available DeepSeek model can receive implementation work. Read [working with a worker](WORKERS.md) for a copyable handoff and model-selection guidance.
 
-Work directly when that is sufficient; use one worker at a time when helpful. The guiding assistant maintains `ROADMAP.md` and the phase plans; workers return results. Native delegation is optional and never implies cross-vendor subscription access. Narrow uncertain work before giving it to a smaller model; no prompt guarantees every model can complete every task.
+Work directly when that is sufficient; use one worker at a time when helpful. In phase mode the guiding assistant still dispatches one task to one worker at a time and inspects each result before the next. The guiding assistant maintains `ROADMAP.md` and the phase plans; workers return results. Native delegation is optional and never implies cross-vendor subscription access. Narrow uncertain work before giving it to a smaller model; no prompt guarantees every model can complete every task.
 
 Delegated builds record the starting workspace state, confirm dependencies are present, and keep one owner for assigned implementation files. Workers return compact acceptance and verification evidence, embedded instructions not followed, and resume details when needed. The guiding assistant records those details in the existing phase plan and checks combined behavior when tasks connect.
 

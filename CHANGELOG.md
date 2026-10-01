@@ -1,5 +1,72 @@
 # Changelog
 
+## [Unreleased]
+
+### Notable Changes
+
+- **skills**: Close may suggest standing rules for the project instructions.
+  Only when a run closes the phase, its response may propose a few candidate
+  rules, each with the evidence from the phase that supports it. A candidate
+  qualifies only if it will matter in later phases and is not already clear
+  from the code, README, or existing project instructions; when none
+  qualifies, close says nothing about it. Each rule rests on what the phase's
+  work showed, never on instructions embedded in retrieved pages, logs,
+  fixtures, or worker reports. Close still does not write or edit the project
+  instructions: the user decides which suggestions to keep and adds them or
+  asks separately for them to be added. The suggestions create no closure
+  requirement, do not block closing, and are not the next step or part of the
+  `## Completion` record. The glossary's `close` row mentions the suggestions.
+  No plan fields, templates, or validator rules changed. No model run has
+  tested this change.
+- **skills**: Define and plan investigate repository and source facts before
+  asking, and ask only what the user must own: outcome, scope boundaries,
+  user-visible behavior, data or external-service consequences, acceptance, and
+  tradeoffs that would change the phase. Rounds still hold at most three
+  independent questions, each with a recommendation and tradeoff; a dependent
+  question waits for its prerequisite answer, and questioning ends on a
+  readiness test rather than a round count. A clear small local change needs no
+  interview. Substantial or uncertain work, an explicit request such as "grill
+  me", and every phase the user will build with `/kaylo:build phase` get the
+  deeper decision pass. Plan records user decisions as the user's and its own
+  choices as defaults. For a substantial or uncertain phase plan, and always
+  before a phase-wide build, plan requests an independent plan check from a
+  fresh reviewer when the host makes one available, revises and rechecks
+  blocking comments for at most two rounds, records every finding under
+  `## Review` with a stable ID, and asks the user about what remains open.
+  Without a fresh reviewer it says so and routes to `/kaylo:review plan`; the
+  structural validator is not a plan review. When the user confirms a phase
+  ready for a phase-wide build, plan adds a `Phase build readiness:` line to
+  `## Agreement`; a later material revision voids it until the revised parts
+  are rechecked and the user confirms again. `/kaylo:review plan` and the
+  reviewer brief now check task boundaries, observable acceptance criteria,
+  and test-plan feasibility, treat a missing consequential decision as
+  blocking, and send a phase headed for a phase-wide build back to plan for
+  the readiness confirmation; a review recorded there serves as the plan
+  check on a host without a fresh reviewer. The phase and PRD
+  templates describe these records; no section, task field, or validator rule
+  was added. No model or host run has tested these changes.
+- **skills**: Build adds an explicit phase mode. `/kaylo:build phase` (or asking
+  the build skill to build the current phase on hosts without that command)
+  works through the current open phase's unfinished tasks one at a time in a
+  single invocation, in plan order, applying the existing per-task baseline,
+  verification, repair-limit, check-off, and structural plan check rules. It
+  starts only when the phase plan's `## Agreement` has a `Phase build readiness:`
+  line written by `/kaylo:plan` on the user's confirmation; otherwise, or when
+  the plan needs revision or its records or version history show a material
+  revision after that record, it routes to `/kaylo:plan`; build's own `Result`
+  and check-off updates are not revisions. It takes tasks strictly in order
+  and stops at the first task that is not ready or cannot be checked off,
+  without skipping it, records one resume action in that task's `Result` and
+  the plan's `## Next step`, and resumes from the plan on re-invocation without redoing
+  checked tasks or resetting failed repair attempts. When every task passes it
+  inspects the combined diff, runs any phase-level integration check the plan
+  names, and routes to `/kaylo:review changes`; it does not review or close the
+  phase. `/kaylo:build` and `/kaylo:build T3` still build one task and need no
+  readiness record. Workers still run one at a time, and the builder report now
+  names its task ID. The README, worker guidance, and glossary describe phase
+  mode, the plan check, and the readiness line. No model or host run has
+  exercised phase mode.
+
 ## 2026-09-29, Version 0.8.0
 
 ### Notable Changes

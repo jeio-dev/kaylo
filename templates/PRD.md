@@ -10,7 +10,7 @@
 
 ## Included
 
-- [Essential product capability]
+- [Essential product capability; label a detail you chose rather than the user as a default]
 
 ## Out of scope
 
@@ -18,7 +18,7 @@
 
 ## Constraints
 
-- [Existing stack, available tools/accounts, budget, or other applicable requirement; do not assume API or native subagent access]
+- [Existing stack, available tools/accounts, budget, or other applicable requirement; do not assume API or native subagent access. Workflow preferences, such as how a phase will be built or reviewed, do not belong in a PRD]
 
 ## Success criteria
 
