@@ -21,9 +21,10 @@
   tool list, `Read, Glob, Grep, WebSearch, WebFetch`, and gains the same
   wording. Adapter generation and the package
   validator now fail if the Claude tool list cannot be added, and the validator
-  rejects a `tools` line in any shared brief. The corrected brief has not been
-  run on Antigravity or loaded by Gemini CLI. No project files change; update
-  as usual and start a new session. Anyone who copied `agents/researcher.md`
+  rejects a `tools` line in any shared brief. In one live run on `agy` 1.2.14
+  the corrected brief started and ran, then ended without an answer when
+  headless mode denied a file read; Gemini CLI has not loaded it. No project
+  files change; update as usual and start a new session. Anyone who copied `agents/researcher.md`
   into a project's `.agents/agents/` should copy it again.
   [#24](https://github.com/jeio-dev/kaylo/pull/24)
 

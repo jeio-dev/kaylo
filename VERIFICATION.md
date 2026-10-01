@@ -1397,10 +1397,12 @@ on the brief's instructions; host permissions still apply.
 | Antigravity CLI 1.2.14, private profile mounted with Bubblewrap, network disabled: `agy plugin validate` and `agy plugin install` of a copy of the working tree, then `agy agents` | Validate and install passed with five skills and three agents; `agy agents` listed `builder`, `researcher`, and `reviewer`. The installed `agents/researcher.md` equalled the working-tree file. Run before the closing instruction changed; the frontmatter is the same and it was not rerun |
 | `grep -rnE 'AGENTS\.md\|CLAUDE\.md' skills agents claude-agents templates hooks WORKERS.md` | No matches |
 
-Limits. The corrected brief has not been run live on Antigravity: the control
-runs used the `v0.9.0` brief with the `tools:` line removed, which has the same
-frontmatter as the corrected brief, and the checks in this change stop at
-validate, install, and list, which the broken brief also passed. The subagent
+Limits. The corrected brief was run live on Antigravity once, after the
+reviews, as the last paragraph of this section records: it started and ran but
+printed no answer. The earlier control runs used the `v0.9.0` brief with the
+`tools:` line removed, which has the same frontmatter as the corrected brief,
+and the other checks in this change stop at validate, install, and list, which
+the broken brief also passed. The subagent
 path was not tested: the Antigravity session's `invoke_subagent` call failed
 for an unrelated reason (its workspace did not contain the agent), so only the
 main-agent path is observed. Gemini CLI is not installed on this machine and
@@ -1441,3 +1443,22 @@ four wording points about this record were corrected, without a further
 recheck. It made no model request, started no agent session, did not rerun the
 Bubblewrap check, and did not check Gemini CLI; whether a model keeps to the
 read-only instruction remains untested.
+
+Live run of the corrected brief, 2026-10-01, by the maintainer on `agy` 1.2.14
+with the signed-in profile: the brief from commit `3a400c9` in an empty
+temporary project's `.agents/agents/`, with
+`agy --agent researcher -p "Reply with the single word: ok" --print-timeout 120s`.
+The executor was constructed and the agent ran for about 51 seconds; the log
+has no "unknown component" or "failed to construct" entry and shows seven
+`streamGenerateContent` calls. The run printed no answer and exited 0 with
+"no output produced — a tool required the \"read_file\" permission that
+headless mode cannot prompt for, so it was auto-denied"; the log records
+`Print mode: soft-denying tool confirmation "ViewFile" at step 12`. So the
+defect this change fixes, the brief failing to start, was not reproduced with
+the corrected brief. The missing answer comes from Antigravity's headless
+permission handling: the researcher went on to read a file that needed a
+confirmation print mode cannot give. Which file it tried to read is not in the
+log. The run does not show the researcher completing a task on Antigravity,
+does not exercise the read-only instruction, and does not cover the subagent
+path. Evidence: `/tmp/tmp.WMtf17Tfp7` and `cli-20261001_122354.log` in the
+normal profile's log folder. No setting or plugin was changed.
