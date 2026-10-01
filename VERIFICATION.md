@@ -1629,3 +1629,36 @@ five non-blocking points, all wording in the changelog and this record, were
 corrected without a further recheck. It made no model request and did not
 rerun the trial. The corrected researcher has not been run with a model on
 Claude Code.
+
+## Public installation 0.9.1 — 2026-10-01
+
+After the `v0.9.1` tag (`cb70041`) was pushed, PR #25 was merged with a merge
+commit (`f8421e6`) and the GitHub release was published. Fresh temporary
+profiles then installed Kaylo from public GitHub with an empty Git
+configuration, so no Git URL was rewritten.
+
+| Host | Command path | Observed result |
+| --- | --- | --- |
+| Claude Code 2.1.286, temporary `CLAUDE_CONFIG_DIR` | `claude plugin marketplace add jeio-dev/kaylo`, `claude plugin install kaylo@kaylo` | Installed 0.9.1 |
+| Codex CLI 0.159.3, temporary `CODEX_HOME` | `codex plugin marketplace add jeio-dev/kaylo`, `codex plugin add kaylo@kaylo` | Installed 0.9.1 |
+| Gemini CLI 0.62.0, temporary `GEMINI_CLI_HOME` | `gemini extensions install https://github.com/jeio-dev/kaylo --ref v0.9.1` | Installed; skill listing shows all five skills enabled |
+| Antigravity CLI 1.2.14, private profile mounted with Bubblewrap | `git clone --branch v0.9.1` from GitHub, then `agy plugin install` with the network disabled | Installed five skills and three agents |
+
+Each installed package passed the tag's `validate-package.cjs --installed` with
+23 matching resources, reports version 0.9.1 in its manifests, has the tag's
+exact build skill, and contains no contributor `AGENTS.md`. Each installed
+`agents/researcher.md` equals the tag's corrected brief, with no `tools` line.
+The merge commit's tree is identical to the tag, and all seven commits listed
+in the changelog are reachable from `main`.
+
+Because `main` and `v0.9.1` have the same tree, these installs do not show
+that the catalogs select the tag rather than the default branch; the local
+update trial in the preparation record does. OpenCode loads a checkout directly
+and was not reinstalled. No model requests, hook trust, signed-in session
+lifecycle, or native worker execution were exercised in these installs, so the
+published researcher has not been run from an installed plugin on any host;
+the live Antigravity runs recorded above used the brief as a project agent.
+Normal host profiles were not changed.
+
+Evidence: `.local/release/public-check.py v0.9.1` (a local contributor tool,
+not shipped) and `/tmp/kaylo-public-naaovo5m`, including `public.log`.
