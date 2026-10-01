@@ -17,7 +17,7 @@
   requirement, do not block closing, and are not the next step or part of the
   `## Completion` record. The glossary's `close` row mentions the suggestions.
   No plan fields, templates, or validator rules changed. No model run has
-  tested this change.
+  tested this change. [#21](https://github.com/jeio-dev/kaylo/pull/21)
 - **skills**: Define and plan investigate repository and source facts before
   asking, and ask only what the user must own: outcome, scope boundaries,
   user-visible behavior, data or external-service consequences, acceptance, and
@@ -29,11 +29,12 @@
   me", and every phase the user will build with `/kaylo:build phase` get the
   deeper decision pass. Plan records user decisions as the user's and its own
   choices as defaults. For a substantial or uncertain phase plan, and always
-  before a phase-wide build, plan requests an independent plan check from a
-  fresh reviewer when the host makes one available, revises and rechecks
-  blocking comments for at most two rounds, records every finding under
-  `## Review` with a stable ID, and asks the user about what remains open.
-  Without a fresh reviewer it says so and routes to `/kaylo:review plan`; the
+  before a phase-wide build, plan requests a plan check from a fresh reviewer
+  when the host makes one available, revises and rechecks blocking comments
+  for at most two rounds, records every finding under `## Review` with a
+  stable ID, and asks the user about what remains open. Without a fresh
+  reviewer it routes to `/kaylo:review plan`, which may review directly and
+  records who performed the review and the lack of fresh context; the
   structural validator is not a plan review. When the user confirms a phase
   ready for a phase-wide build, plan adds a `Phase build readiness:` line to
   `## Agreement`; a later material revision voids it until the revised parts
@@ -45,6 +46,7 @@
   check while the plan has no material revision since. The phase and PRD
   templates describe these records; no section, task field, or validator rule
   was added. No model or host run has tested these changes.
+  [#21](https://github.com/jeio-dev/kaylo/pull/21)
 - **skills**: Build adds an explicit phase mode. `/kaylo:build phase` (or asking
   the build skill to build the current phase on hosts without that command)
   works through the current open phase's unfinished tasks one at a time in a
@@ -66,7 +68,7 @@
   readiness record. Workers still run one at a time, and the builder report now
   names its task ID. The README, worker guidance, and glossary describe phase
   mode, the plan check, and the readiness line. No model or host run has
-  exercised phase mode.
+  exercised phase mode. [#21](https://github.com/jeio-dev/kaylo/pull/21)
 
 ## 2026-09-29, Version 0.8.0
 

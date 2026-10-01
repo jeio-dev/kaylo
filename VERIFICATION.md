@@ -1127,8 +1127,8 @@ Native host validators and isolated install/update checks were not rerun.
 ## Planning readiness, plan check, and phase mode — 2026-10-01
 
 Define and plan now settle repository facts by inspection, ask only decisions
-the user must own, and end questioning on a readiness test; plan requests an
-independent plan check for substantial or uncertain plans and always before a
+the user must own, and end questioning on a readiness test; plan requests a
+plan check for substantial or uncertain plans and always before a
 phase-wide build; and build gains a sequential phase mode, `/kaylo:build
 phase`, that starts only when the phase plan's `## Agreement` carries a
 `Phase build readiness:` line plan wrote on the user's confirmation. Changed:
@@ -1196,3 +1196,34 @@ A documentation-only survey of worker features on Claude Code, Codex, Gemini
 CLI, Antigravity, and OpenCode informed the design; it observed no worker
 behavior on any host. Native host validators and isolated install/update
 checks were not rerun.
+
+## PR #21 review correction — 2026-10-01
+
+A read-only review of the committed PR found that the promised independent
+plan check could be satisfied by `/kaylo:review plan` running directly in the
+same context when no fresh reviewer was available. The fallback is part of the
+host support described by this PR. The plan and review skills, README,
+glossary, and changelog now distinguish an independent review by a fresh
+reviewer from a direct plan review that records and discloses its lack of
+fresh context. The phase template's `## Review` placeholder names who
+performed the review to match. This corrects the guarantee without changing
+the fallback or the readiness gate.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: v0.8.0, five shared skills, matching catalogs |
+| `node scripts/stage-development.cjs` and `node scripts/validate-package.cjs --installed development/package` | Passed: 23 staged resources match the source package; this is local resource parity, not a host installation |
+| `claude plugin validate .claude-plugin/plugin.json --strict` | Passed |
+| `claude plugin validate .claude-plugin/marketplace.json --strict` | Passed |
+| `agy plugin validate .` | Passed: five skills and three agents processed |
+| `node scripts/sync-claude-agents.cjs` | Ran with no adapter changes |
+| `git diff --check` | Clean |
+| Search of shipped skills, briefs, templates, hooks, and `WORKERS.md` for `AGENTS.md` or `CLAUDE.md` | No matches |
+| `node --test tests/*.test.cjs` | Could not complete in this sandbox: Node's child `spawnSync` returns `EPERM`; direct invocation showed 90 of 94 tests pass and four child-process assertions fail with empty child output. The package and plan tests last passed 94/94 on the committed PR before this wording correction, as recorded above. Rerun afterwards outside that sandbox with Node v24.21.0, on the corrected working tree: all 94 tests passed. |
+
+The correction changes Markdown instructions and documentation only. No model
+run has checked that a direct plan review records and discloses the lack of
+fresh context. Native validators checked manifests, and the local staging
+check confirmed resources, but isolated host install/update checks were not
+run. The review ran in a sandbox that blocked child processes; the Node suite
+was rerun where they are allowed, as the table records.

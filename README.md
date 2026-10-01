@@ -15,7 +15,7 @@ Kaylo is an early `0.8.0` package; see [verification](VERIFICATION.md) for what 
 | `/kaylo:review` | Get a second opinion on a plan or change | Review comments, labelled blocking or non-blocking, in the current phase plan |
 | `/kaylo:close` | Check the promised outcome and finish the phase | Phase checked off, usage guidance, and remaining limitations |
 
-Start with define, then plan. A concrete small change can start with plan. Substantial or uncertain plans, and every plan headed for `/kaylo:build phase`, get an independent plan check before building: plan requests it when the host makes a fresh reviewer available, and `/kaylo:review plan` covers it otherwise. Review implementation before close. Revise through plan and build. Each response should explain what matters and give one clear next step.
+Start with define, then plan. A concrete small change can start with plan. Substantial or uncertain plans, and every plan headed for `/kaylo:build phase`, get a plan check before building. Plan requests an independent review when the host makes a fresh reviewer available; otherwise `/kaylo:review plan` may review directly and records that it lacked fresh context. Review implementation before close. Revise through plan and build. Each response should explain what matters and give one clear next step.
 
 The assistant investigates repository facts, recommends an approach, and asks a short numbered round only for consequential decisions. Tasks include acceptance criteria and a test plan with meaningful checks. Reuse passing checks unless relevant inputs changed. After two unsuccessful repairs of the same failure, preserve the work and recommend a different next action.
 
