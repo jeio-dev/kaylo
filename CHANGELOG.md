@@ -98,7 +98,7 @@ untested. Public installation checks follow tag publication.
 - [`eaad8ff276`](https://github.com/jeio-dev/kaylo/commit/eaad8ff2768110037b3e9e9dda5637521c06c6c6) - **skills**: add phase mode to build, planning readiness, and close rule suggestions (Jeio) [#21](https://github.com/jeio-dev/kaylo/pull/21)
 - [`d8acfa783b`](https://github.com/jeio-dev/kaylo/commit/d8acfa783bf560c13f92c7a0385d86cfc8f05925) - **skills**: tighten plan-check routing and readiness wording after recheck (Jeio) [#21](https://github.com/jeio-dev/kaylo/pull/21)
 - [`155c995d02`](https://github.com/jeio-dev/kaylo/commit/155c995d02324aaf7d484adfba8622d0f0d6813f) - **skills**: describe the direct plan review fallback accurately (Jeio) [#21](https://github.com/jeio-dev/kaylo/pull/21)
-- [`9588a7618d`](https://github.com/jeio-dev/kaylo/commit/9588a7618d2ae3213e65369e2e7fcca7a565d163) - **plugins**: set version 0.9.0 and select the v0.9.0 tag (Jeio)
+- [`9588a7618d`](https://github.com/jeio-dev/kaylo/commit/9588a7618d2ae3213e65369e2e7fcca7a565d163) - **plugins**: set version 0.9.0 and select the v0.9.0 tag (Jeio) [#22](https://github.com/jeio-dev/kaylo/pull/22)
 
 ## 2026-09-29, Version 0.8.0
 
