@@ -2,8 +2,10 @@
 
 One release ships the shared `skills/`, `agents/`, `templates/`, `scripts/`, and
 `hooks/` directories to every host. Generated `claude-agents/` adapters keep
-worker bodies identical while translating Claude researcher tool names. Keep relative resource paths intact. Do not
-publish a skills-only subset or independently edit host copies.
+worker bodies identical and add Claude's read-only tool list to the researcher.
+Shared briefs carry no `tools` frontmatter, because tool names differ between
+hosts; the package validator rejects one. Keep relative resource paths intact.
+Do not publish a skills-only subset or independently edit host copies.
 
 ## Prepare a release
 
