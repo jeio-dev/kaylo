@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## 2026-10-01, Version 0.9.1
 
 ### Notable Changes
 
@@ -23,11 +23,55 @@
   validator now fail if the Claude tool list cannot be added, and the validator
   rejects a `tools` line in any shared brief. On `agy` 1.2.14 the corrected
   brief started in a headless run, which ended without an answer when headless
-  mode denied a file read, and answered a one-word prompt in an interactive
-  session; Gemini CLI has not loaded it. No project files change; update as
-  usual and start a new session. Anyone who copied `agents/researcher.md`
-  into a project's `.agents/agents/` should copy it again.
+  mode denied a file read, and answered a one-word prompt in interactive
+  sessions both as the main agent and as a subagent. Asked as a subagent to
+  create a file, it declined, citing the read-only instruction, and wrote
+  nothing. Gemini CLI installed the brief without an agent-definition error,
+  as it did the old one; the researcher has not been run there. No project
+  files change; update as usual and start a new session. Anyone who copied
+  `agents/researcher.md` into a project's `.agents/agents/` should copy it
+  again.
   [#24](https://github.com/jeio-dev/kaylo/pull/24)
+
+### Verification
+
+All 100 Node tests, package consistency checks, strict Claude plugin and
+marketplace validation, Antigravity validation, and whitespace checks passed.
+An isolated update trial installed the real `v0.9.0` tree in Claude, Codex,
+and Gemini from local Git mirrors and in Antigravity from a fixture checkout,
+confirmed it, then updated each to the prepared 0.9.1. With each mirror's
+`main` one changed commit past the tag, every install matched the tag, and
+each 0.9.1 install passed the installed-package validator with 23 matching
+resources, including the corrected researcher brief. The trial's first run
+failed because the trial script validated the 0.9.0 copy that Claude Code
+keeps after an update; the script now validates only copies carrying the
+prepared version, and the second run passed. Because no skill changed, the tag
+match alone does not show the update; the version, the validator, and the
+changed brief do. The hook loader returned
+the prepared reminder from each hook host's copy, and Codex app-server and
+OpenCode discovery returned all five skills. The Codex plugin-creator
+validator was not available and did not run. The researcher fix was observed
+live on Antigravity (`agy` 1.2.14): the v0.9.0 brief failed to start before
+any model request, and the corrected brief answered on Gemini 3.8 Flash as
+the main agent and as a subagent and declined a request to create a file.
+Those are single runs on one model; a real research task was not run, and the
+subagent's own account of having no write tools was not verified. The
+corrected researcher has not been run on Claude Code, Gemini CLI, Codex, or
+OpenCode. No model has yet run 0.9.0's phase mode,
+planning readiness, plan check, or close suggestions. `VERIFICATION.md`
+records each run and review with its limits. Signed-in hook lifecycle and
+trust and Antigravity IDE loading remain untested. Public installation checks
+follow tag publication.
+
+### Commits
+
+- [`4db8370a1c`](https://github.com/jeio-dev/kaylo/commit/4db8370a1cc0e1823b36598f07ca090776702dd5) - **docs**: record v0.9.0 public installation checks (Jeio) [#23](https://github.com/jeio-dev/kaylo/pull/23)
+- [`907b42183a`](https://github.com/jeio-dev/kaylo/commit/907b42183a4c442761cc22458ce351488f949c84) - **agents**: remove host tool names from the shared researcher brief (Jeio) [#24](https://github.com/jeio-dev/kaylo/pull/24)
+- [`e0568ed3d0`](https://github.com/jeio-dev/kaylo/commit/e0568ed3d0492c68074d29f9d29b93c4303547e9) - **docs**: link the researcher fix PR in the changelog (Jeio) [#24](https://github.com/jeio-dev/kaylo/pull/24)
+- [`a5240a5315`](https://github.com/jeio-dev/kaylo/commit/a5240a5315e2097e5b1a82c265194f7f4002e3d9) - **docs**: record the live Antigravity run of the corrected researcher brief (Jeio) [#24](https://github.com/jeio-dev/kaylo/pull/24)
+- [`328c9ff6b9`](https://github.com/jeio-dev/kaylo/commit/328c9ff6b944330a0e9b911f126c8492c7389b45) - **docs**: record the interactive Antigravity run of the corrected researcher brief (Jeio) [#24](https://github.com/jeio-dev/kaylo/pull/24)
+- [`21ead96645`](https://github.com/jeio-dev/kaylo/commit/21ead96645a6a23c85d78ba898e8b2da77870dbf) - **docs**: add the version and model to the interactive Antigravity run record (Jeio) [#24](https://github.com/jeio-dev/kaylo/pull/24)
+- [`51a024d321`](https://github.com/jeio-dev/kaylo/commit/51a024d32120b9ca0e079efcb8a4fe2f0e19e873) - **plugins**: set version 0.9.1 and select the v0.9.1 tag (Jeio)
 
 ## 2026-10-01, Version 0.9.0
 
