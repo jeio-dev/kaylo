@@ -1145,6 +1145,7 @@ worktree, then applied together to `main` with the earlier close change. One
 correction followed integration: build's list of what counts as a material
 revision now matches plan's (outcome, scope, tradeoffs, tasks, acceptance
 criteria, or test plans). The checks below ran on the combined working tree.
+The change was then committed on branch `phase-build-and-plan-readiness`.
 
 | Check | Observed result |
 | --- | --- |
@@ -1165,7 +1166,9 @@ whether phase mode refuses to start without that line, builds in plan order,
 stops at a blocker, resumes without redoing checked tasks, carries failed
 repair attempts over, and honours a present line after an unrecorded hand
 edit to the plan; and the plan, review, plan round trip on a host without
-a fresh reviewer. An independent read-only review of the combined change found two blocking
+a fresh reviewer.
+
+An independent read-only review of the combined change found two blocking
 gaps where plan and build meet (build could not tell whether the plan had
 been revised after the readiness record, and on a host without a fresh
 reviewer nothing said the routed review satisfied the plan check, so either
@@ -1178,8 +1181,18 @@ blocking problem, and raised nine further non-blocking points, three of them
 remaining edges of the plan-and-review routing; it read the text and reran
 the five checks above, and ran no model. Those nine points were then
 corrected in the plan and build skills, the phase template, the glossary,
-and the changelog; that last set of corrections has had no recheck. A
-documentation-only survey of worker features on Claude Code, Codex, Gemini
+and the changelog; a further read-only recheck on 2026-10-01, on the
+committed change, found all nine applied as requested and no blocking
+problem, and raised four non-blocking points: the phase template's
+restored-line wording addressed the assistant rather than the user, the
+routed-back sentence in plan could be read as excusing the deeper pass, the
+Response route and the recorded-review rule differed in wording, and one
+changelog sentence was narrower than the skill. It reran the five checks with
+the same results, using `git diff --check 2a5f564 5a0974f`, and ran no model.
+Those four points were then corrected in the plan skill, the phase template,
+and the changelog; those corrections have had no recheck.
+
+A documentation-only survey of worker features on Claude Code, Codex, Gemini
 CLI, Antigravity, and OpenCode informed the design; it observed no worker
 behavior on any host. Native host validators and isolated install/update
 checks were not rerun.
