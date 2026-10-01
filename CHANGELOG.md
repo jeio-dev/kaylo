@@ -1,5 +1,34 @@
 # Changelog
 
+## [Unreleased]
+
+### Notable Changes
+
+- **agents**: The researcher brief no longer names host tools. Its shared
+  frontmatter listed Gemini CLI tool names, and four of them (`list_directory`,
+  `glob`, `google_web_search`, and `web_fetch`) are not Antigravity tools, so
+  Antigravity could not start the researcher: the run ended with
+  `tool "list_directory" not found in registry` before any model request. This
+  was observed with the v0.9.0 brief on `agy` 1.2.14; the same frontmatter
+  shipped in 0.6.0 through 0.8.0. The shared brief no longer has a `tools`
+  line, and only the generated Claude adapter carries a tool list. On Gemini
+  CLI the researcher no longer carries a read-only tool list (Gemini's
+  enforcement of it was never tested here) and now relies on the brief's
+  instruction; the same holds on Antigravity. That instruction is stronger: the
+  brief now calls the role read-only and names creating, editing, and deleting
+  project files and running commands that change the project, whatever the
+  shared guardrails allow other roles. On Claude Code the researcher keeps its
+  tool list, `Read, Glob, Grep, WebSearch, WebFetch`, and gains the same
+  wording. Adapter generation and the package
+  validator now fail if the Claude tool list cannot be added, and the validator
+  rejects a `tools` line in any shared brief. On `agy` 1.2.14 the corrected
+  brief started in a headless run, which ended without an answer when headless
+  mode denied a file read, and answered a one-word prompt in an interactive
+  session; Gemini CLI has not loaded it. No project files change; update as
+  usual and start a new session. Anyone who copied `agents/researcher.md`
+  into a project's `.agents/agents/` should copy it again.
+  [#24](https://github.com/jeio-dev/kaylo/pull/24)
+
 ## 2026-10-01, Version 0.9.0
 
 ### Notable Changes

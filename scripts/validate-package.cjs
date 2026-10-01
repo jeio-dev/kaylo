@@ -22,6 +22,22 @@ function files(dir) {
     return entry.isDirectory() ? files(file) : [file];
   });
 }
+// Same adapter rule as scripts/sync-claude-agents.cjs; keep the two in step.
+// Host tool names differ, so the shared researcher brief carries no tools line.
+// Insert Claude's read-only list after the model line; never fall through silently.
+function claudeResearcher(text) {
+  const frontmatter = text.match(/^---\r?\n[\s\S]*?\r?\n---\r?\n/);
+  if (!frontmatter) throw new Error('agents/researcher.md has no frontmatter');
+  if (/^[ \t]*["']?tools["']?[ \t]*:/mi.test(frontmatter[0])) {
+    throw new Error('agents/researcher.md must not carry a tools line; the Claude adapter adds its own');
+  }
+  const anchor = /^model: inherit(\r?\n)/m;
+  if (!anchor.test(frontmatter[0])) {
+    throw new Error('agents/researcher.md frontmatter has no "model: inherit" line to place the Claude tools line after');
+  }
+  return frontmatter[0].replace(anchor, 'model: inherit$1tools: Read, Glob, Grep, WebSearch, WebFetch$1') +
+    text.slice(frontmatter[0].length);
+}
 try {
   const claude = read('.claude-plugin/plugin.json');
   const codex = read('.codex-plugin/plugin.json');
@@ -57,9 +73,14 @@ try {
   assert.deepEqual(claude.agents, ['builder', 'researcher', 'reviewer'].map(name => `./claude-agents/${name}.md`));
   for (const name of ['builder', 'researcher', 'reviewer']) {
     const shared = fs.readFileSync(path.join(root, 'agents', `${name}.md`), 'utf8');
-    const expected = name === 'researcher'
-      ? shared.replace(/^tools: .*$/m, 'tools: Read, Glob, Grep, WebSearch, WebFetch')
-      : shared;
+    // Frontmatter only: a brief's body may mention tools.
+    const frontmatter = shared.match(/^---\r?\n[\s\S]*?\r?\n---\r?\n/);
+    assert(frontmatter, `Shared brief has no frontmatter: agents/${name}.md`);
+    assert(!/^[ \t]*["']?tools["']?[ \t]*:/mi.test(frontmatter[0]),
+      `Shared brief agents/${name}.md must not set tools in its frontmatter: host tool names differ ` +
+      '(Gemini CLI, Antigravity, Claude), and a name one host does not know can stop the brief from starting. ' +
+      'Host-specific tool lists belong in generated adapters such as claude-agents/.');
+    const expected = name === 'researcher' ? claudeResearcher(shared) : shared;
     assert.equal(fs.readFileSync(path.join(root, 'claude-agents', `${name}.md`), 'utf8'), expected,
       `Claude agent adapter is stale: ${name}`);
   }
