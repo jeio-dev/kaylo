@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## 2026-10-01, Version 0.9.0
 
 ### Notable Changes
 
@@ -22,8 +22,8 @@
   asking, and ask only what the user must own: outcome, scope boundaries,
   user-visible behavior, data or external-service consequences, acceptance, and
   tradeoffs that would change the phase. Rounds still hold at most three
-  independent questions, each with a recommendation and tradeoff; a dependent
-  question waits for its prerequisite answer, and questioning ends on a
+  independent questions, each with a recommendation and now its tradeoff; a
+  dependent question waits for its prerequisite answer, and questioning ends on a
   readiness test rather than a round count. A clear small local change needs no
   interview. Substantial or uncertain work, an explicit request such as "grill
   me", and every phase the user will build with `/kaylo:build phase` get the
@@ -69,6 +69,36 @@
   names its task ID. The README, worker guidance, and glossary describe phase
   mode, the plan check, and the readiness line. No model or host run has
   exercised phase mode. [#21](https://github.com/jeio-dev/kaylo/pull/21)
+
+### Verification
+
+All 94 Node tests, package consistency checks, strict Claude plugin and
+marketplace validation, Antigravity validation, and whitespace checks passed.
+An isolated update trial installed the real `v0.8.0` tree in Claude, Codex,
+and Gemini from local Git mirrors and in Antigravity from a fixture checkout,
+confirmed it, then updated each to the prepared 0.9.0. With each mirror's
+`main` one changed commit past the tag, every install matched the tag, and each 0.9.0 install passed the installed-package
+validator with 23 matching resources. The hook loader returned the prepared
+reminder from each hook host's copy, and Codex app-server and OpenCode discovery
+returned all five skills. The Codex plugin-creator validator was not available
+and did not run. No live-model trial ran during this cycle: the phase mode,
+planning readiness, plan check, and close suggestions in this release are
+instruction changes that were reviewed as text and have not run with any model
+or on any host; the last two wording corrections (`cfdc277`, `c2a673c`) have
+had no recheck. The define changes from 0.8.0 remain unrun as well. On a
+host without a fresh reviewer, the plan check before a phase-wide build is a
+direct review by the same assistant. `VERIFICATION.md` records each review and
+its limits. Other models and hosts, native worker execution outside Claude
+Code, signed-in hook lifecycle and trust, and Antigravity IDE loading remain
+untested. Public installation checks follow tag publication.
+
+### Commits
+
+- [`9030961410`](https://github.com/jeio-dev/kaylo/commit/9030961410f44f555b5bf052e856d7c2d912e2a7) - **docs**: record v0.8.0 public installation checks (Jeio) [#20](https://github.com/jeio-dev/kaylo/pull/20)
+- [`5a0974fd21`](https://github.com/jeio-dev/kaylo/commit/5a0974fd215130c5af6a74ba9fded6f2dceee6c0) - **skills**: add phase mode to build, planning readiness, and close rule suggestions (Jeio) [#21](https://github.com/jeio-dev/kaylo/pull/21)
+- [`cfdc277496`](https://github.com/jeio-dev/kaylo/commit/cfdc27749671642ef35005837d2d6f10d1684e61) - **skills**: tighten plan-check routing and readiness wording after recheck (Jeio) [#21](https://github.com/jeio-dev/kaylo/pull/21)
+- [`c2a673c1dc`](https://github.com/jeio-dev/kaylo/commit/c2a673c1dcd1abf4051e334e12499f0daa2a9bfd) - **skills**: describe the direct plan review fallback accurately (Jeio) [#21](https://github.com/jeio-dev/kaylo/pull/21)
+- [`a5f8d9bd5a`](https://github.com/jeio-dev/kaylo/commit/a5f8d9bd5a7b4990c61f09403a87b66803b8057b) - **plugins**: set version 0.9.0 and select the v0.9.0 tag (Jeio)
 
 ## 2026-09-29, Version 0.8.0
 
