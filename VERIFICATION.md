@@ -1398,8 +1398,9 @@ on the brief's instructions; host permissions still apply.
 | `grep -rnE 'AGENTS\.md\|CLAUDE\.md' skills agents claude-agents templates hooks WORKERS.md` | No matches |
 
 Limits. The corrected brief was run live on Antigravity once, after the
-reviews, as the last paragraph of this section records: it started and ran but
-printed no answer. The earlier control runs used the `v0.9.0` brief with the
+reviews, as the last two paragraphs of this section record: headless, it
+started and ran but printed no answer; interactively, it answered a one-word
+prompt. The earlier control runs used the `v0.9.0` brief with the
 `tools:` line removed, which has the same frontmatter as the corrected brief,
 and the other checks in this change stop at validate, install, and list, which
 the broken brief also passed. The subagent
@@ -1462,3 +1463,17 @@ log. The run does not show the researcher completing a task on Antigravity,
 does not exercise the read-only instruction, and does not cover the subagent
 path. Evidence: `/tmp/tmp.WMtf17Tfp7` and `cli-20261001_122354.log` in the
 normal profile's log folder. No setting or plugin was changed.
+
+Interactive run of the corrected brief, 2026-10-01, by the maintainer: in the
+same temporary project, `agy --agent researcher` without print mode, then the
+prompt "Reply with the single word: ok". The transcript the maintainer pasted
+shows one thinking step of 9 seconds, whose summary weighs the one-word
+instruction against "the researcher's structured output requirement", followed
+by the reply `ok`. The summary's reference to the brief's Return format shows
+the brief was loaded. The pasted transcript shows no tool call and no
+permission prompt; whether any occurred outside what was pasted is not
+recorded, and the `agy` version of that session was not captured (1.2.14 was
+installed immediately afterwards). This shows the corrected researcher
+starting and answering as the main agent on Antigravity. It still does not
+exercise the read-only instruction, a real research task, or the subagent
+path.
