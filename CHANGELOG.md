@@ -25,6 +25,7 @@
   run on Antigravity or loaded by Gemini CLI. No project files change; update
   as usual and start a new session. Anyone who copied `agents/researcher.md`
   into a project's `.agents/agents/` should copy it again.
+  [#24](https://github.com/jeio-dev/kaylo/pull/24)
 
 ## 2026-10-01, Version 0.9.0
 
