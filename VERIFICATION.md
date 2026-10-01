@@ -1227,3 +1227,69 @@ fresh context. Native validators checked manifests, and the local staging
 check confirmed resources, but isolated host install/update checks were not
 run. The review ran in a sandbox that blocked child processes; the Node suite
 was rerun where they are allowed, as the table records.
+
+## Release preparation 0.9.0 — 2026-10-01
+
+Prepared 0.9.0 at `9588a76` on branch `release-v0.9.0`: manifests set to 0.9.0,
+both release catalogs select `v0.9.0`, and README and `RELEASING.md` examples
+name the new tag. The branch is stacked on the PR #21 branch, which was open
+and unmerged when this was prepared. No tag was created and nothing was
+published. Commits after `9588a76` change only `CHANGELOG.md` and
+`VERIFICATION.md`; the shipped package files checked here are unchanged.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/sync-claude-agents.cjs` | No adapter changes |
+| Node 24.21.0: `node --test tests/*.test.cjs` | All 94 tests passed |
+| `node scripts/validate-package.cjs` | Package v0.9.0: five shared skills, matching versions and release catalogs |
+| Claude Code 2.1.286: `claude plugin validate` on the plugin and marketplace manifests with `--strict` | Both passed |
+| Antigravity CLI 1.2.11: `agy plugin validate .` | Passed: five skills and three agents |
+| `git diff --check` | Clean |
+| `node scripts/stage-development.cjs`, then `node scripts/validate-package.cjs --installed development/package` | Package v0.9.0; 23 staged resources match the source package. Local resource parity, not a host installation |
+| Update trial, `.local/release/parity.py v0.8.0`, temporary profiles on all five hosts | Passed. Claude Code 2.1.286, Codex CLI 0.159.0, Gemini CLI 0.62.0 (installed under `/tmp`), and Antigravity CLI 1.2.11 (private profile mounted with Bubblewrap, network disabled) installed the real `v0.8.0` tree, which each confirmed, then updated to `9588a76` as `v0.9.0`. After each tag the mirror's `main` moved one commit ahead with a changed build skill; every install matched the tag, not the branch. Gemini listed all five skills enabled at both steps. Each 0.9.0 install passed `validate-package.cjs --installed` with 23 matching resources |
+| Hook loader run from each installed 0.9.0 copy (Claude and Codex plugin-root variables, Gemini extension path) | Returns the prepared SessionStart reminder |
+| Codex app-server and OpenCode 2.0.18 loopback API discovery | Codex returned five enabled Kaylo skills; OpenCode returned all five skills from the `v0.9.0` fixture checkout with exact instruction bodies |
+
+The fixture releases were built with `git archive`, so they contain only
+tracked files. Git transport was redirected to a local bare mirror for Claude
+and Codex and to a loopback smart HTTP mirror for Gemini. Public GitHub
+transport against a published `v0.9.0` remains to be checked after
+publication. The Codex plugin-creator `validate_plugin.py` was not available on
+this machine and did not run; Codex installation and discovery above are the
+Codex checks for this release.
+
+The hook check runs the configured loader command directly; it does not
+exercise signed-in session lifecycle or Codex hook trust. No model requests
+were made in this preparation, and no live-model trial ran during this cycle.
+The phase mode, planning readiness, plan check, readiness line, and close
+suggestions released here were reviewed as text and checked structurally, as
+the three sections above record; none has run with a model or on a host, and
+the last review correction (`155c995`) has had no recheck. The define changes
+in PRs #16–#18 also remain unrun with a model. Native worker execution on
+Codex, Gemini, Antigravity, and OpenCode, other models, other hosts' model
+behavior, and Antigravity IDE loading remain untested. The changelog's commit
+list records the hashes on this branch; if PR #21 or the release PR is
+squash-merged or rebase-merged instead of merged with a merge commit, or this
+branch is rebased, the list must be rebuilt from the released history and the
+update trial rerun against the new commit.
+
+Evidence: `/tmp/kaylo-parity-qwlu5nf4` (including `trial.log`). `trial.log`
+records the install, update, and installed-package validator commands; the
+hook loader output, host versions, and tag-versus-branch comparison were
+printed by the trial script and are not in the log. Temporary profiles contain
+no copied account credentials. Normal host profiles and trust settings were
+not changed; Codex discovery also listed two skills from the normal home's
+`~/.agents/skills`, which that profile read but did not change.
+
+An independent read-only review of the prepared release found no blocking
+problem. It verified the five commit entries against Git and GitHub, confirmed
+the fixture trees equal the real `v0.8.0` and `9588a76` trees and that installs
+matched the tag, reproduced the hook reminder from the installed copies, and
+reran the checks in the table except the update trial. It confirmed that
+`CHANGELOG.md` and `VERIFICATION.md` are not among the 23 compared resources,
+so the trial covers commits after `9588a76` that change only those files. Its
+seven non-blocking points were addressed in the release notes, except two left
+as they are: `.local/` is ignored through the local Git exclude file rather
+than `.gitignore`, and the README's "Five commands" heading sits over six
+table rows. Host hook discovery was not checked; only the direct loader run
+was.
