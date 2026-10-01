@@ -21,7 +21,7 @@
   tool list, `Read, Glob, Grep, WebSearch, WebFetch`, and gains the same
   wording. Adapter generation and the package
   validator now fail if the Claude tool list cannot be added, and the validator
-  rejects a `tools` line in any shared brief. On Antigravity the corrected
+  rejects a `tools` line in any shared brief. On `agy` 1.2.14 the corrected
   brief started in a headless run, which ended without an answer when headless
   mode denied a file read, and answered a one-word prompt in an interactive
   session; Gemini CLI has not loaded it. No project files change; update as

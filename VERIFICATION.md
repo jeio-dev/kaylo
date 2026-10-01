@@ -1465,15 +1465,15 @@ path. Evidence: `/tmp/tmp.WMtf17Tfp7` and `cli-20261001_122354.log` in the
 normal profile's log folder. No setting or plugin was changed.
 
 Interactive run of the corrected brief, 2026-10-01, by the maintainer: in the
-same temporary project, `agy --agent researcher` without print mode, then the
-prompt "Reply with the single word: ok". The transcript the maintainer pasted
-shows one thinking step of 9 seconds, whose summary weighs the one-word
-instruction against "the researcher's structured output requirement", followed
-by the reply `ok`. The summary's reference to the brief's Return format shows
-the brief was loaded. The pasted transcript shows no tool call and no
-permission prompt; whether any occurred outside what was pasted is not
-recorded, and the `agy` version of that session was not captured (1.2.14 was
-installed immediately afterwards). This shows the corrected researcher
-starting and answering as the main agent on Antigravity. It still does not
-exercise the read-only instruction, a real research task, or the subagent
-path.
+same temporary project, `/tmp/tmp.WMtf17Tfp7`, `agy --agent researcher` without
+print mode. The session banner shows Antigravity CLI 1.2.14 with Gemini 3.8
+Flash (High). To the prompt "Reply with the single word: ok" the transcript
+shows one thinking step of 9 seconds and 2.9k tokens, whose summary weighs the
+one-word instruction against "the researcher's structured output"
+requirement, followed by the reply `ok`. That reference to the brief's Return
+format shows the brief was loaded. The transcript, from the banner to the next
+prompt, shows no tool call and no permission prompt. This shows the corrected
+researcher starting and answering as the main agent on Antigravity. It still
+does not exercise the read-only instruction, a real research task, or the
+subagent path. Evidence: the terminal transcript the maintainer pasted into
+the preparing session; it was not saved to a file.
