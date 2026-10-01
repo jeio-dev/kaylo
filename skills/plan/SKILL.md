@@ -54,13 +54,13 @@ Guide the user toward the simplest approach that meets the outcome. Work in the 
 
 ## Plan check
 
-- A substantial or uncertain phase plan needs an independent plan check, and a phase headed for `/kaylo:build phase` always does; a clear small local change does not. Run it after the structural plan check. The structural validator is never an independent plan review, and neither is your own rereading.
+- A substantial or uncertain phase plan needs a plan check, and a phase headed for `/kaylo:build phase` always does; a clear small local change does not. Run it after the structural plan check. Request an independent review from a fresh reviewer when one is available. The structural validator and an informal reread do not count; a direct `/kaylo:review plan` applies the review checks and records their result.
 - When the host makes a fresh reviewer available, request the check with [review delegation](../review/references/delegation.md), resolved relative to this skill directory. It covers outcome coverage, task boundaries, real `Blocked by` edges, acceptance criteria, test-plan feasibility, and decisions a builder would otherwise have to guess. The reviewer edits nothing. If that reference is unavailable, say so and route to `/kaylo:review plan`.
 - Record target, coverage, and limitations under `## Review`, and give every finding a stable comment ID in the existing format, as in `- R1: blocking — open`. Each finding ends as `fixed` with the correction and recheck evidence, `accepted by user` with the decision, or `open`; drop none silently.
 - You, not the reviewer, make targeted revisions for concrete blocking comments, then have each fix rechecked under its existing ID. Stop after two revise-and-recheck rounds, or sooner when a round resolves no blocking comment; keep the remaining comments `open` and ask the user.
 - A missing consequential decision is the user's to make: ask it under the decision rules above. While it or any other blocking comment is open, do not present the plan as ready.
 - When no fresh reviewer is available, say so plainly and route to `/kaylo:review plan`. That command also remains available for an additional or later review.
-- A review recorded by `/kaylo:review plan` under `## Review` for the plan as it now stands, with no material revision since, serves as the plan check, with its stated limitations, however you were routed there; do not route there again.
+- A review recorded by `/kaylo:review plan` under `## Review` for the plan as it now stands, with no material revision since, serves as the plan check, however you were routed there; do not route there again. That review may be direct rather than independent when no fresh reviewer is available. Record who performed it and the lack of fresh context under `## Review`, and disclose that limit when presenting readiness.
 
 ## Design
 

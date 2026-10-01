@@ -34,7 +34,7 @@ Read `ROADMAP.md` and follow its `Current:` link to the current phase plan; revi
 
 ## Review comments and plan updates
 
-- Record target, coverage, and limitations in the review section of the current phase plan.
+- Record target, coverage, who performed the review, and limitations in the review section of the current phase plan. For a direct plan review, record that it lacked fresh context.
 - Each review comment needs a file or task reference, consequence, smallest useful correction, a `blocking` or `non-blocking` label, and resolution: `open`, `fixed` with evidence, or `accepted by user` with the decision. Write the label first, then ` — `, then the resolution, as in `- R1: blocking — open`; put the other details in nested list items.
 - The guiding assistant assigns stable `R1`, `R2`, etc., restarting per phase. Never renumber or reuse IDs within a phase. Give older unnumbered comments an ID when needed; avoid duplicates.
 - Recheck a fix under its existing ID, recording evidence and outcome. Focus on the comment and affected behavior; widen review only for new evidence. Fixes to blocking comments require this recheck before closure.

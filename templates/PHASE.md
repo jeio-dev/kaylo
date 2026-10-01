@@ -29,7 +29,7 @@ Status: Current
 
 ## Review
 
-[Target, coverage, and limitations. Record None when there are no review comments; otherwise use stable IDs, with the label first and then ` — `, for example:]
+[Target, coverage, who performed the review, and limitations; a direct plan review records that it lacked fresh context. Record None when there are no review comments; otherwise use stable IDs, with the label first and then ` — `, for example:]
 
 - R1: [blocking / non-blocking] — [open / fixed / accepted by user]
   - Target and location: [Plan task or implementation file]
