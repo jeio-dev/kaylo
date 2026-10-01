@@ -45,11 +45,11 @@ The reminder itself performs no project reads, writes, or asynchronous work.
 Publication requires the maintainer's authorization. Commit the reviewed package,
 create the immutable `v<version>` tag at that commit, and push the tag **before**
 advancing the public marketplace on the default branch. For example, after
-committing the prepared 0.9.0 package:
+committing the prepared 0.9.1 package:
 
 ```sh
-git tag -a v0.9.0 -m "Kaylo v0.9.0: <summary>"
-git push origin v0.9.0
+git tag -a v0.9.1 -m "Kaylo v0.9.1: <summary>"
+git push origin v0.9.1
 git push origin HEAD:main
 ```
 
