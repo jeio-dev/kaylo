@@ -71,7 +71,7 @@ follow tag publication.
 - [`e3e6ef349c`](https://github.com/jeio-dev/kaylo/commit/e3e6ef349ca0081c525b05cbdc149bff5dcb1e14) - **docs**: record the live Antigravity run of the corrected researcher brief (Jeio) [#24](https://github.com/jeio-dev/kaylo/pull/24)
 - [`7cde6f0fff`](https://github.com/jeio-dev/kaylo/commit/7cde6f0fff87a2eecd474832ca48f08f26c9b202) - **docs**: record the interactive Antigravity run of the corrected researcher brief (Jeio) [#24](https://github.com/jeio-dev/kaylo/pull/24)
 - [`49fd323384`](https://github.com/jeio-dev/kaylo/commit/49fd32338445761fcc43234df2549083bd273d74) - **docs**: add the version and model to the interactive Antigravity run record (Jeio) [#24](https://github.com/jeio-dev/kaylo/pull/24)
-- [`3a691b4b8d`](https://github.com/jeio-dev/kaylo/commit/3a691b4b8d8bd25fed4e3f25dd13812bc5fd9905) - **plugins**: set version 0.9.1 and select the v0.9.1 tag (Jeio)
+- [`3a691b4b8d`](https://github.com/jeio-dev/kaylo/commit/3a691b4b8d8bd25fed4e3f25dd13812bc5fd9905) - **plugins**: set version 0.9.1 and select the v0.9.1 tag (Jeio) [#25](https://github.com/jeio-dev/kaylo/pull/25)
 
 ## 2026-10-01, Version 0.9.0
 
