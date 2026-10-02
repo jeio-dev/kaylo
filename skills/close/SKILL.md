@@ -20,7 +20,7 @@ Help the user understand what is complete and how to use it. Work in the user's 
 1. Read project instructions, `PRD.md` if present, `ROADMAP.md`, and the current phase plan its `Current:` line links. Inspect changes and recorded results; the scope being closed is the current phase.
 2. Match each acceptance criterion to delivered behavior and actual verification. Check the whole user-facing journey. Apply the verification rules below.
 3. Confirm implementation review covers the delivered changes, including evidence and focused rechecks for fixes to blocking comments under their existing IDs.
-4. Apply the closure rules below. If the agreed outcome is met, record delivered behavior, verification, known limitations, and optional follow-ups in the phase plan's completion. Call a limitation accepted only when a recorded user decision names it, and cite that decision; list other limitations as known limitations without calling them accepted. Preserve history; follow-ups create no new closure requirements. Start no line of the record with `Status:`; every such line counts as the plan status.
+4. Apply the closure rules below. The agreed outcome is the phase's goal and scope, not only its tasks' acceptance criteria. If the agreed outcome is met, record delivered behavior, verification, known limitations, and optional follow-ups in the phase plan's completion. Call a limitation accepted only when a recorded user decision names it, and cite that decision; list other limitations as known limitations without calling them accepted. Preserve history; follow-ups create no new closure requirements. Start no line of the record with `Status:`; every such line counts as the plan status.
 5. Run the structural plan check below on that proposed completion record. Only after it passes (or documented manual inspection establishes equivalent structure), check the phase's line in `ROADMAP.md`. Leave `Current:` in place; the next `/kaylo:plan` moves it.
 6. When the last phase closes, also match `PRD.md` success criteria to delivered behavior. Unmet criteria → `/kaylo:plan`.
 7. Explain how to use the result: relevant page, action, or command, plus required setup only.
@@ -38,6 +38,7 @@ Help the user understand what is complete and how to use it. Work in the user's 
 
 - Current phase already checked `[x]` → report that no phase is open and route to `/kaylo:plan`.
 - Governing criteria affected by `Status: Needs revision` → `/kaylo:plan`. Do not close an unresolved outcome.
+- Every task passes but the phase's goal, as its phase plan and `ROADMAP.md` line state it, is not delivered → `/kaylo:plan`. Write no completion record, leave the phase unchecked, and say which part of the goal no task delivers. A user decision already recorded under `## Agreement` that narrowed the goal governs; a narrowing offered during close goes to `/kaylo:plan`. Listing the undelivered goal as a known limitation does not close the phase.
 - `Status: Current` means plan validity, not agreement, verification, or completion.
 - Older formats (listed under the structural plan check) are unsupported → `/kaylo:plan`. Report each with its replacement; do not convert them here.
 - Missing implementation review or recheck of a blocking comment → `/kaylo:review changes`; closure remains incomplete.
