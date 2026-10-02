@@ -34,6 +34,60 @@ Do not publish a skills-only subset or independently edit host copies.
    to a local mirror, move the mirror's default branch one changed commit past each
    release tag and confirm installs match the tag, not the branch. Check hook
    discovery and startup context separately from skill loading.
+6. Start all three installed workers on each host covered by the live start
+   check. Use a signed-in, isolated trial profile containing the prepared Kaylo
+   package and a temporary project with no project or user workers named
+   `builder`, `researcher`, or `reviewer`; verify the installed package root with
+   step 5 first. Run these commands from that project, substituting the trial
+   root used in step 5:
+
+   ```sh
+   trial_root=/absolute/path/to/temporary-trial
+   for role in builder researcher reviewer; do
+     CLAUDE_CONFIG_DIR="$trial_root/claude" claude --agent "kaylo:$role" \
+       -p 'Reply with the single word: ok. Do not use tools.' --output-format json \
+       --debug-file "$trial_root/claude-$role.debug" \
+       >"$trial_root/claude-$role.json" 2>"$trial_root/claude-$role.stderr"
+     printf 'Claude %s exit=%s\n' "$role" "$?"
+   done
+   for role in builder researcher reviewer; do
+     bwrap --die-with-parent --ro-bind / / --bind "$trial_root" "$trial_root" \
+       --bind "$trial_root/agy-profile" "$HOME/.gemini" \
+       agy --agent "$role" -p 'Reply with the single word: ok. Do not use tools.' \
+       --print-timeout 120s --output-format json \
+       --log-file "$trial_root/agy-$role.log" \
+       >"$trial_root/agy-$role.json" 2>"$trial_root/agy-$role.stderr"
+     printf 'Antigravity %s exit=%s\n' "$role" "$?"
+   done
+   rg -c '\[API REQUEST\] /v1/messages' "$trial_root"/claude-*.debug
+   rg -c 'streamGenerateContent\?alt=sse' "$trial_root"/agy-*.log
+   ```
+
+   The Antigravity trial profile must contain only the Kaylo plugin's workers,
+   since `agy --agent` uses an unqualified name. Confirm that `agy agents` in
+   this profile lists all three and that the project has no `.agents/agents/`
+   definitions. A pass requires the selected worker to reach at least one model
+   generation request without an executor-construction error; an answer and
+   exit code 0 provide additional evidence. An unknown agent, `failed to
+   construct executor`, an unknown tool, or a timeout fails the check. An empty
+   headless answer alone is inconclusive: a working Antigravity researcher
+   previously stopped at a file permission prompt without printing an answer.
+   The final two commands count request entries in Claude Code 2.1.286 debug
+   logs and Antigravity CLI 1.2.14 logs; if a host changes its log format,
+   inspect its new request records instead of treating zero matches as proof of
+   zero requests. Keep trial logs private because they may contain session
+   details. Inspect the session log and retry interactively if necessary. Record the
+   host and version, each worker, exit status, request count, output or error,
+   and whether the worker came from the installed package in `VERIFICATION.md`.
+   Each successful start makes at least one model request on the signed-in
+   account; six starts across these two hosts cost at least six requests, and
+   retries or tool use can increase the total. `--print-timeout` limits wait
+   time, not model charges. This checks startup as the main agent, not answer
+   quality or delegation through a parent. Gemini CLI documents extension
+   subagents, but its Kaylo worker selection and same-name collisions remain
+   unverified (#32), so record it as uncovered until an installed-extension
+   start check is established. Codex and OpenCode have no Kaylo-native worker
+   registration to start.
 
 All three hook-capable hosts discover `hooks/hooks.json`. Use exact startup
 and resume matchers and keep the shared loader's two root-resolution mechanisms.
