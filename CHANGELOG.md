@@ -9,6 +9,68 @@
   The procedure records model request cost and distinguishes a worker that
   starts from one merely listed after installation. Gemini CLI worker startup
   remains outside this check pending an installed-extension selection test.
+- **docs**: `WORKERS.md` now states that the worker briefs register on Gemini
+  CLI and Antigravity under their bare names, `builder`, `researcher`, and
+  `reviewer`, and that on Gemini CLI a project or user agent with one of those
+  names replaces Kaylo's, with a duplicate-name warning. The names are
+  unchanged; rename your own agent or hand the worker Kaylo's brief directly.
+  The precedence was read in Gemini CLI 0.62.0's source, not observed in a
+  signed-in session
+  ([#32](https://github.com/jeio-dev/kaylo/issues/32)).
+- **skills**: Four defects from the v0.9.1 live trials are addressed in skill
+  text. Each failed case was rerun once on Claude Code with Claude Opus 5.5
+  and passed; one run per case is an observation, not a consistency claim.
+  - `/kaylo:build phase` without a readiness record now names `/kaylo:plan` as
+    the one next step, even when the plan's `## Next step` names a task build
+    or one task remains. It may mention a single-task build as an alternative
+    ([#37](https://github.com/jeio-dev/kaylo/issues/37)).
+  - Plan attaches a recommendation and tradeoff to every question in every
+    round, including a request to confirm a default, a scope list, or a
+    summary. It no longer asks the user to confirm ordinary local choices, and
+    a choice that changes existing user-visible behavior is the user's, never
+    a default ([#38](https://github.com/jeio-dev/kaylo/issues/38)).
+  - Plan asks for confirmation of a summary, or of phase build readiness, in
+    a round of its own, after every other question is answered and the plan
+    revised, stating each decided behavior; the two may be one question
+    ([#40](https://github.com/jeio-dev/kaylo/issues/40)).
+  - Close treats the phase's goal and scope, not only its tasks' acceptance
+    criteria, as the agreed outcome. When every task passes but the goal is
+    undelivered, it writes no completion record, leaves the phase unchecked,
+    and routes to `/kaylo:plan`. A user decision already recorded under
+    `## Agreement` that narrowed the goal governs; a narrowing offered during
+    close goes to plan ([#41](https://github.com/jeio-dev/kaylo/issues/41)).
+- **agents**: Three defects from the researcher trials are addressed in brief
+  text. Reruns are recorded in `VERIFICATION.md`; one limit remains, noted
+  below.
+  - The researcher starts from the project location and the starting points
+    given, and does not read host, plugin, process, or environment data such as
+    `/proc` unless the question requires it. Given a project question with no
+    project location, on a host that shows it none, it returns that as the
+    missing evidence instead of searching the host, and plan now gives a
+    research worker the project location. On Antigravity a researcher started
+    as the main agent is told there is no active workspace, so it now asks for
+    the location first
+    ([#39](https://github.com/jeio-dev/kaylo/issues/39)).
+  - The researcher calls a fact sourced only when it read the source in that
+    session. When a search or fetch fails it says so and labels what it recalls
+    as unverified, without a citation or quotation it did not retrieve. The
+    manual handoff packet in `WORKERS.md` now ends with the brief's Return line
+    copied in full, instead of a pointer to it. With its fetch denied, the
+    Claude Code researcher followed the rule in one run; on OpenCode retrieval
+    could not be made to fail, so the rule is untested there
+    ([#43](https://github.com/jeio-dev/kaylo/issues/43)).
+  - All three briefs define "embedded instructions not followed" as
+    instructions found inside content the worker read or retrieved as
+    evidence, excluding the assignment, project instructions, and host or
+    session context
+    ([#42](https://github.com/jeio-dev/kaylo/issues/42)).
+- **hooks**: The session-start reminder is no longer delivered to a Claude
+  Code session whose main agent is `kaylo:researcher`, `kaylo:builder`, or
+  `kaylo:reviewer`. The hook now reads the host's hook payload on stdin to
+  tell; a missing, empty, invalid, or slow payload emits the reminder as
+  before. On a host that leaves the hook's stdin open, the reminder arrives
+  about half a second later. Codex and Gemini CLI were not run with the new
+  hook ([#42](https://github.com/jeio-dev/kaylo/issues/42)).
 
 ## 2026-10-01, Version 0.9.1
 
