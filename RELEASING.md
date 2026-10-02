@@ -92,7 +92,7 @@ Do not publish a skills-only subset or independently edit host copies.
 All three hook-capable hosts discover `hooks/hooks.json`. Use exact startup
 and resume matchers and keep the shared loader's two root-resolution mechanisms.
 Leave timeout unset: Claude/Codex use seconds, while Gemini uses milliseconds.
-The reminder itself performs no project reads, writes, or asynchronous work.
+The reminder itself performs no project reads or writes; it reads only the host's hook payload on stdin, for at most 500 ms.
 
 ## Publish the prepared release
 
