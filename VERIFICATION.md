@@ -1662,3 +1662,58 @@ Normal host profiles were not changed.
 
 Evidence: `.local/release/public-check.py v0.9.1` (a local contributor tool,
 not shipped) and `/tmp/kaylo-public-naaovo5m`, including `public.log`.
+
+## Installed worker start check — 2026-10-01
+
+The first run of the release step added for #27 used isolated, signed-in
+profiles copied from the previous v0.9.1 installation trial. The installed
+Claude and Antigravity package roots each passed
+`node scripts/validate-package.cjs --installed <package-root>` with 23 matching
+resources. The trial project had no agent definitions; the Antigravity profile
+had no same-name user agents and `agy agents` listed the plugin's three agents.
+Only existing subscription credentials were copied into the temporary profiles:
+Claude reported `claude.ai`, `firstParty`, and Pro; Antigravity used its existing
+OAuth token with no configured `modelProvider`. No API-key environment variable
+was supplied and no normal host setting was changed.
+
+| Host and version | Installed worker | Exit and response | Model requests |
+| --- | --- | --- | ---: |
+| Claude Code 2.1.286 | `kaylo:builder` | 0, `ok` | 1 |
+| Claude Code 2.1.286 | `kaylo:researcher` | 0, `ok` | 1 |
+| Claude Code 2.1.286 | `kaylo:reviewer` | 0, `ok` | 1 |
+| Antigravity CLI 1.2.14 | `builder` | 0, `SUCCESS`, `ok` | 2 |
+| Antigravity CLI 1.2.14 | `researcher` | 0, `SUCCESS`, `ok` | 2 |
+| Antigravity CLI 1.2.14 | `reviewer` | 0, `SUCCESS`, `ok` | 2 |
+
+Each Claude run used `claude --agent kaylo:<role> -p` with JSON output and a
+debug file; request counts are debug entries for `[API REQUEST] /v1/messages`.
+Each Antigravity run used `agy --agent <role> -p` in a Bubblewrap-mounted plugin
+profile, with JSON output and a log file; counts are
+`streamGenerateContent?alt=sse` URL entries. The commands and count method are
+in `RELEASING.md`. Claude reported `total_cost_usd` estimates of 0.149656,
+0.0060108, and 0.0976126 for builder, researcher, and reviewer, respectively;
+these are CLI estimates, not evidence of separate billing under the Pro sign-in.
+An initial Antigravity start without the OAuth token exited with
+`authentication required` and zero requests; it was an authentication setup
+failure, not a worker-start result.
+
+In a separate empty Antigravity project and isolated profile, the researcher
+brief from `git show v0.9.0:agents/researcher.md` failed with exit 3 and zero
+requests: `failed to construct executor` named the unknown tools
+`list_directory`, `glob`, `google_web_search`, and `web_fetch`. Replacing it
+with the current brief made the same command exit 0 with `SUCCESS`, `ok`, and
+two requests. This demonstrates the new step's fail and pass signals on
+Antigravity 1.2.14. It does not test a parent invoking a subagent, research
+answer quality, or the other hosts. Gemini CLI was excluded at the
+maintainer's direction; no signed-in Gemini host was supplied for this trial.
+Codex and OpenCode do not register Kaylo workers. Model identity was not
+captured for these six starts, so the observation is about startup, not a
+model comparison.
+
+Private evidence is under `/tmp/kaylo-worker-start-dnhcmjw7` (per-role JSON,
+stderr, and request logs, plus both regression runs). That temporary root also
+contains copied authentication files and must not be shipped or published. The
+package validator, 100 Node tests, both strict Claude manifest validators,
+`agy plugin validate .` (five skills and three agents), and `git diff --check`
+passed after the documentation change. No shipped brief, skill, manifest, or
+script changed.

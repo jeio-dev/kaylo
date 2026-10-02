@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+
+### Notable Changes
+
+- **docs**: Release preparation now includes live startup checks for the three
+  installed Kaylo workers in isolated Claude Code and Antigravity profiles.
+  The procedure records model request cost and distinguishes a worker that
+  starts from one merely listed after installation. Gemini CLI worker startup
+  remains outside this check pending an installed-extension selection test.
+
 ## 2026-10-01, Version 0.9.1
 
 ### Notable Changes
