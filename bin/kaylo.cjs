@@ -235,10 +235,11 @@ const installed = {
 };
 function verifyInstall(id, added) {
   const found = installed[id](added);
-  if (found.version !== undefined && found.version !== version) {
-    return `installed version is ${found.version}, expected ${version}`;
-  }
-  if (found.error) return found.error;
+  const mismatch = found.version !== undefined && found.version !== version
+    ? `installed version is ${found.version}, expected ${version}` : '';
+  // A missing active path is reported first, so a version mismatch cannot hide it.
+  if (found.error) return mismatch ? `${found.error}; ${mismatch}` : found.error;
+  if (mismatch) return mismatch;
   if (found.version === undefined) return `no version found in ${found.root}`;
   const differs = verifyFiles(found.root);
   return differs ? `installed files at ${found.root} do not match: ${differs}` : { root: found.root };

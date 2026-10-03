@@ -347,6 +347,19 @@ test('a missing active install path is "verification unavailable", even when a g
   assert.match(result.stdout, /Codex: failed: verification unavailable: Codex did not report its install path/);
 });
 
+test('a missing active install path is reported even when the listed version is also wrong', t => {
+  const ctx = setup(t, { hosts: ['claude', 'codex'] });
+  const entry = claudeEntry(ctx.roots.claude, '0.9.2');
+  delete entry.installPath;
+  ctx.scenario({ ...fresh(ctx), 'claude plugin list --json': [{ stdout: [] }, { stdout: [entry] }],
+    'codex plugin list --json': { stdout: codexList('0.9.2') },
+    'codex plugin add kaylo@kaylo --json': { stdout: { pluginId: 'kaylo@kaylo', version: '0.9.2' } } });
+  const result = ctx.run(['--all', '--yes']);
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, new RegExp(`Claude Code: failed: verification unavailable: Claude Code does not expose its active install path; installed version is 0\\.9\\.2, expected ${version.replace(/\./g, '\\.')}`));
+  assert.match(result.stdout, new RegExp(`Codex: failed: verification unavailable: Codex did not report its install path; installed version is 0\\.9\\.2, expected ${version.replace(/\./g, '\\.')}`));
+});
+
 test('Codex verification uses the installedPath from its own add output, never the cache directory', t => {
   const ctx = setup(t, { hosts: ['codex'] });
   const active = copy(path.join(ctx.home, '.codex', 'active-kaylo'), { alter: true });
