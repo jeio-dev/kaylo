@@ -1,20 +1,22 @@
 # Changelog
 
-## [Unreleased]
+## 2026-10-02, Version 0.9.2
 
 ### Notable Changes
 
 - **docs**: The README now states that Gemini CLI support is checked for
   installation and loading only: installing the extension, listing its
   skills, loading the worker briefs, and the session reminder hook firing
-  have been observed, all without a sign-in. No Kaylo skill or worker has been run with a Gemini model in Gemini
-  CLI, and Antigravity results are not evidence for it. The extension is
-  unchanged.
+  have been observed, all without a sign-in. No Kaylo skill or worker has
+  been run with a Gemini model in Gemini CLI, and Antigravity results are
+  not evidence for it. The extension is unchanged
+  ([#49](https://github.com/jeio-dev/kaylo/pull/49)).
 - **docs**: Release preparation now includes live startup checks for the three
   installed Kaylo workers in isolated Claude Code and Antigravity profiles.
   The procedure records model request cost and distinguishes a worker that
   starts from one merely listed after installation. Gemini CLI worker startup
-  remains outside this check pending an installed-extension selection test.
+  remains outside this check pending an installed-extension selection test
+  ([#44](https://github.com/jeio-dev/kaylo/pull/44)).
 - **docs**: `WORKERS.md` now states that the worker briefs register on Gemini
   CLI and Antigravity under their bare names, `builder`, `researcher`, and
   `reviewer`, and that on Gemini CLI a project or user agent with one of those
@@ -22,10 +24,12 @@
   unchanged; rename your own agent or hand the worker Kaylo's brief directly.
   The precedence was read in Gemini CLI 0.62.0's source, not observed in a
   signed-in session
-  ([#32](https://github.com/jeio-dev/kaylo/issues/32)).
+  ([#32](https://github.com/jeio-dev/kaylo/issues/32),
+  [#47](https://github.com/jeio-dev/kaylo/pull/47)).
 - **skills**: Four defects from the v0.9.1 live trials are addressed in skill
-  text. Each failed case was rerun once on Claude Code with Claude Opus 5.5
-  and passed; one run per case is an observation, not a consistency claim.
+  text ([#47](https://github.com/jeio-dev/kaylo/pull/47)). Each failed case
+  was rerun once on Claude Code with Claude Opus 5.5 and passed; one run per
+  case is an observation, not a consistency claim.
   - `/kaylo:build phase` without a readiness record now names `/kaylo:plan` as
     the one next step, even when the plan's `## Next step` names a task build
     or one task remains. It may mention a single-task build as an alternative
@@ -46,8 +50,9 @@
     `## Agreement` that narrowed the goal governs; a narrowing offered during
     close goes to plan ([#41](https://github.com/jeio-dev/kaylo/issues/41)).
 - **agents**: Three defects from the researcher trials are addressed in brief
-  text. Reruns are recorded in `VERIFICATION.md`; one limit remains, noted
-  below.
+  text. Reruns are recorded in `VERIFICATION.md`
+  ([#47](https://github.com/jeio-dev/kaylo/pull/47),
+  [#48](https://github.com/jeio-dev/kaylo/pull/48)).
   - The researcher starts from the project location and the starting points
     given, and does not read host, plugin, process, or environment data such as
     `/proc` unless the question requires it. Given a project question with no
@@ -61,9 +66,10 @@
     session. When a search or fetch fails it says so and labels what it recalls
     as unverified, without a citation or quotation it did not retrieve. The
     manual handoff packet in `WORKERS.md` now ends with the brief's Return line
-    copied in full, instead of a pointer to it. With its fetch denied, the
-    Claude Code researcher followed the rule in one run; on OpenCode retrieval
-    could not be made to fail, so the rule is untested there
+    copied in full, instead of a pointer to it. A Claude Code researcher
+    followed the rule when its fetch was denied, and an
+    OpenCode researcher reported a failed fetch of an unreachable page without
+    quoting it. Each was one run
     ([#43](https://github.com/jeio-dev/kaylo/issues/43)).
   - All three briefs define "embedded instructions not followed" as
     instructions found inside content the worker read or retrieved as
@@ -78,7 +84,45 @@
   stdin within about 10 ms, so the reminder is delivered there as before,
   without delay. Resuming a worker session on Claude Code without repeating
   `--agent` still delivers the reminder
-  ([#42](https://github.com/jeio-dev/kaylo/issues/42)).
+  ([#42](https://github.com/jeio-dev/kaylo/issues/42),
+  [#47](https://github.com/jeio-dev/kaylo/pull/47)).
+
+### Verification
+
+All 106 Node tests, package and staged-resource checks, strict Claude plugin
+and marketplace validation, Antigravity validation, and whitespace checks
+passed. An isolated v0.9.1 → v0.9.2 update trial confirmed tag selection and
+23 matching shared resources on Claude, Codex, Gemini CLI, and Antigravity;
+Codex and OpenCode discovered all five skills. The installed builder,
+researcher, and reviewer each started and answered on Claude Code and
+Antigravity. The first Claude attempt used an expired copied credential and
+made no model request; retrying in the isolated profile passed. These starts
+check registration, not instruction-following quality. The live-model trials
+of the skill and brief fixes are recorded in `VERIFICATION.md`; they are
+single observations. Gemini CLI model behavior, a signed-in Gemini worker
+start, and Antigravity IDE loading remain untested. Public installation
+checks follow tag publication.
+
+### Commits
+
+- [`f060fe4e67`](https://github.com/jeio-dev/kaylo/commit/f060fe4e6791fcc5c8b57991d17e17050b5906a1) - **plugins**: merge PR #25: Release v0.9.1 (Jeio) [#25](https://github.com/jeio-dev/kaylo/pull/25)
+- [`d60e66c07c`](https://github.com/jeio-dev/kaylo/commit/d60e66c07cdab07efcb2423cd7f8ac25bcadeded) - **docs**: record v0.9.1 public installation checks (Jeio) [#26](https://github.com/jeio-dev/kaylo/pull/26)
+- [`0c1643b932`](https://github.com/jeio-dev/kaylo/commit/0c1643b9323bbca0d98a84bc0dab15f1af4abd59) - **docs**: merge PR #26: record v0.9.1 public installation checks (Jeio) [#26](https://github.com/jeio-dev/kaylo/pull/26)
+- [`4d21c1eda9`](https://github.com/jeio-dev/kaylo/commit/4d21c1eda993e34054df36b3a2730092b9967f16) - **docs**: add a live worker start check to release preparation (Jeio) [#44](https://github.com/jeio-dev/kaylo/pull/44)
+- [`d5b5298775`](https://github.com/jeio-dev/kaylo/commit/d5b5298775f931a40ad514053597c1c4fed6b86c) - **docs**: record the researcher and v0.9.0 live-model trials (Jeio) [#45](https://github.com/jeio-dev/kaylo/pull/45)
+- [`d6b5b5ad35`](https://github.com/jeio-dev/kaylo/commit/d6b5b5ad353618bfbdeb1510863f5572297a56ce) - **docs**: merge PR #44: add a live worker start check to release preparation (Jeio) [#44](https://github.com/jeio-dev/kaylo/pull/44)
+- [`3be29ae68d`](https://github.com/jeio-dev/kaylo/commit/3be29ae68d278f64ea9b59d8cbba1b7efef71887) - **docs**: merge PR #45: record the researcher and v0.9.0 live-model trials (Jeio) [#45](https://github.com/jeio-dev/kaylo/pull/45)
+- [`c244dcf767`](https://github.com/jeio-dev/kaylo/commit/c244dcf767c27cb8f7a9ae471434308f4d14120a) - **docs**: finalize the researcher trial record for issue #28 (Jeio) [#46](https://github.com/jeio-dev/kaylo/pull/46)
+- [`0ee212fa8f`](https://github.com/jeio-dev/kaylo/commit/0ee212fa8f336e478b5527ef51edd3de63ef91dc) - **docs**: merge PR #46: finalize the researcher trial record for issue #28 (Jeio) [#46](https://github.com/jeio-dev/kaylo/pull/46)
+- [`e609921336`](https://github.com/jeio-dev/kaylo/commit/e60992133664aea89089d4d36194e69051d26987) - **skills**: fix phase-build routing, plan question rounds, and closing an undelivered goal (Jeio) [#47](https://github.com/jeio-dev/kaylo/pull/47)
+- [`0a5c31c6e1`](https://github.com/jeio-dev/kaylo/commit/0a5c31c6e15ac341dee56e67f636e53cbcd516e7) - **agents**: bound researcher scope and sourcing, define the embedded-instructions item (Jeio) [#47](https://github.com/jeio-dev/kaylo/pull/47)
+- [`887579b029`](https://github.com/jeio-dev/kaylo/commit/887579b029d83d216988773f660aac8e0d8eae5c) - **hooks**: skip the session reminder when a Kaylo worker is the main agent (Jeio) [#47](https://github.com/jeio-dev/kaylo/pull/47)
+- [`a3b823fd56`](https://github.com/jeio-dev/kaylo/commit/a3b823fd56fe82cdba2b93caca1c90552d385be0) - **docs**: record the live-trial defect fixes, reruns, and the Gemini brief registration check (Jeio) [#47](https://github.com/jeio-dev/kaylo/pull/47)
+- [`29f460b158`](https://github.com/jeio-dev/kaylo/commit/29f460b158d3b9ab955735471d3394dfddc1da94) - **skills**: merge PR #47: fix the live-trial defects #37–#43 and document the Gemini brief name collision (Jeio) [#47](https://github.com/jeio-dev/kaylo/pull/47)
+- [`69b7e9109e`](https://github.com/jeio-dev/kaylo/commit/69b7e9109e6a605a0a5ddfc7a9dcce06e011d2cf) - **docs**: record the post-merge trials of the #37 to #43 fixes (Jeio) [#48](https://github.com/jeio-dev/kaylo/pull/48)
+- [`129d1cf8f8`](https://github.com/jeio-dev/kaylo/commit/129d1cf8f8ebd0e2d5cd066b14e19b1263c81d0b) - **docs**: merge PR #48: record the post-merge trials of the #37–#43 fixes (Jeio) [#48](https://github.com/jeio-dev/kaylo/pull/48)
+- [`2acf2726be`](https://github.com/jeio-dev/kaylo/commit/2acf2726be540fdbc53ad79048351df669742cae) - **docs**: state that Gemini CLI support is checked for installation and loading only (Jeio) [#49](https://github.com/jeio-dev/kaylo/pull/49)
+- [`75b517a7d5`](https://github.com/jeio-dev/kaylo/commit/75b517a7d5e00335cb1d247e0f09924f6bac35f9) - **docs**: merge PR #49: state that Gemini CLI support is checked for installation and loading only (Jeio) [#49](https://github.com/jeio-dev/kaylo/pull/49)
 
 ## 2026-10-01, Version 0.9.1
 

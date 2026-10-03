@@ -2138,3 +2138,70 @@ none was attempted. The Codex manual handoff for #28 remains not run. Evidence
 is under `.local/trials/issue29-main-a/`, `.local/trials/issue29-main-b/`,
 `.local/trials/hook-hosts/`, and the later 2026-10-02 directories in
 `.local/trials/issue28/runs/`.
+
+## Release preparation 0.9.2 — 2026-10-02
+
+Prepared the v0.9.2 package on `release-v0.9.2` at `75be433`, based on
+`main` at `75b517a`. All three versioned host manifests say 0.9.2; both
+release marketplaces select `v0.9.2`; README and release command examples
+use the planned tag. No tag was created or pushed, and no GitHub release was
+published. The changelog lists the 18 actual commits reachable after
+`v0.9.1` and before the release bookkeeping commit, including merge commits;
+the hashes and authors came from Git history and the linked PRs were checked
+as merged on GitHub. The PR #25 and #26 `mergeCommit` values reported by
+GitHub differ from the local merge-wrapper hashes, so the list uses the
+commits actually reachable in this checkout.
+
+| Check | Observed result |
+| --- | --- |
+| Node 24.21.0: `node --test tests/*.test.cjs` | 106 tests passed |
+| `node scripts/sync-claude-agents.cjs` | Generated adapters already matched the shared briefs; no file changed |
+| `node scripts/validate-package.cjs` | Passed: five skills, matching 0.9.2 versions and release catalogs |
+| Claude Code 2.1.286: strict plugin and marketplace validation | Both passed |
+| Antigravity CLI 1.2.14: `agy plugin validate .` | Passed: five skills and three agents |
+| `git diff --check` | Clean |
+| `node scripts/stage-development.cjs`, then installed-package validation of `development/package` | 23 resources matched; this is local staging, not a host install |
+| Isolated update trial, `.local/release/parity.py v0.9.1` | Passed. Claude Code 2.1.286, Codex CLI 0.159.3, Gemini CLI 0.62.0, and Antigravity CLI 1.2.14 each installed real `v0.9.1`, then updated to the prepared v0.9.2 fixture. Every new install passed `validate-package.cjs --installed` with 23 matching resources. The mirror's `main` moved one changed commit after each release tag; installs matched the tag, not that branch. Gemini listed all five skills enabled at both steps |
+| Installed hook loader and skill discovery | Claude, Codex, and Gemini installed hook loaders returned the prepared reminder. Codex app-server returned five enabled skills; OpenCode 2.0.18 returned all five skills from the tag checkout with exact instruction bodies |
+
+The update trial used `git archive` from `75be433`, the version preparation
+commit. The fixture trees contain only tracked files. Git transport was
+redirected to a local bare mirror for Claude and Codex and to a loopback
+Git HTTP mirror for Gemini. Antigravity installed from a tagged checkout in
+a Bubblewrap profile with network disabled for the install. The trial made no
+model requests. The final changelog and this record are documentation added
+after that commit; the installed package resources they describe are
+unchanged. Public GitHub installation can be tested only after the tag exists.
+
+Installed worker start check from the same v0.9.2 trial: the Claude and
+Antigravity installed roots were each validated again with 23 matching
+resources. The trial project had no agent definitions; `agy agents` listed
+only `builder`, `researcher`, and `reviewer` from the installed plugin. An
+isolated Claude profile received a copy of the current signed-in Pro OAuth
+credential, and the isolated Antigravity profile used the OAuth credential
+from an earlier trial. Normal host profile files were not edited.
+
+| Host and version | Installed worker | Exit and answer | Model request log entries |
+| --- | --- | --- | ---: |
+| Claude Code 2.1.286 | `kaylo:builder` | 0, `ok` | 1 |
+| Claude Code 2.1.286 | `kaylo:researcher` | 0, `ok` | 1 |
+| Claude Code 2.1.286 | `kaylo:reviewer` | 0, `ok` | 1 |
+| Antigravity CLI 1.2.14 | `builder` | 0, `SUCCESS`, `ok` | 2 |
+| Antigravity CLI 1.2.14 | `researcher` | 0, `SUCCESS`, `ok` | 2 |
+| Antigravity CLI 1.2.14 | `reviewer` | 0, `SUCCESS`, `ok` | 2 |
+
+The first three Claude starts used an expired credential copied from the
+2026-10-01 trial. Each exited 1 with an OAuth authentication error and zero
+model requests. They were rerun with a current credential copied into the
+isolated profile, producing the passes above. Claude request counts are
+`[API REQUEST] /v1/messages` entries; Antigravity counts are
+`streamGenerateContent?alt=sse` entries, as described in `RELEASING.md`.
+These checks show that an installed worker can start as the main agent and
+reach a model; they do not show answer quality or parent-to-worker delegation.
+The earlier, narrower live-model trials of the skill and brief fixes are
+recorded above and consist of single observations. Gemini CLI worker starts,
+Gemini CLI model behavior, and Antigravity IDE loading remain untested.
+
+Evidence: `/tmp/kaylo-parity-8rz3mc_0`, including `trial.log`, installed
+package roots, per-role JSON results, and private request logs. This folder
+contains copied OAuth credentials and must not be shipped or published.
