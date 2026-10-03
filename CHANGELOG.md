@@ -9,9 +9,11 @@
   CLI, and Gemini CLI. It runs each host's own commands, pinned to the
   package's release tag, and then checks each install. A host passes only when
   it reports that version and the installed files match the package. Codex is
-  checked against the path its own `plugin add --json` reports, and no host is
-  checked against a cached copy. Without host flags, a terminal gets a picker;
-  `--dry-run` runs only read-only commands. OpenCode support follows separately
+  checked against the path its own `plugin add --json` reports, Gemini CLI
+  against the path its extension list names, and no host against a cached
+  copy. Without host flags, a terminal gets a picker; `--dry-run` runs only
+  read-only commands. Declining the confirmation, closing input, or pressing
+  Ctrl-C at a prompt changes nothing. OpenCode support follows separately
   (#60), as do `status` and drift warnings (#61). The package is not on npm
   yet; this was tried from a checkout against a local mirror, not public GitHub
   ([#59](https://github.com/jeio-dev/kaylo/issues/59)).
