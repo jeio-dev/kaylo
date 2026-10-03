@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## 2026-10-03, Version 0.9.3
 
 ### Notable Changes
 
@@ -25,8 +25,9 @@
   those tools needs the guiding assistant to do that step. `Bash` can still
   write files, so the reviewer's instruction to edit nothing during a plan
   check remains necessary. The builder remains unrestricted and the
-  researcher's adapter is unchanged. Reviewer behavior with this list,
-  including background subagents, has not been run with a model
+  researcher's adapter is unchanged. The installed reviewer started with a
+  model, but tool use and background subagent behavior with this list remain
+  untested
   ([#34](https://github.com/jeio-dev/kaylo/issues/34)).
 - **skills**: Plan now asks once for a project worker model preference when it
   expects workers for which Kaylo can select a model at dispatch. The versioned
@@ -45,7 +46,41 @@
 - **docs**: `VERIFICATION.md` opens with a current-status table per host
   (installation, session reminder, workers, and Kaylo runs with a model) and
   keeps the records from 0.9.0 onward. Records for 0.6.0 through 0.8.0 are
-  read from the `v0.9.2` tag. No shipped skill, brief, or script changed.
+  read from the `v0.9.2` tag. That documentation change did not modify shipped
+  skills, briefs, or scripts.
+
+### Verification
+
+The package validator, all 107 Node tests, strict Claude plugin and marketplace
+validation, Antigravity validation, staged-resource comparison, and whitespace
+checks passed. An isolated v0.9.2 → v0.9.3 update trial confirmed tag selection
+and 23 matching resources on Claude Code, Codex, Gemini CLI, and Antigravity;
+Codex and OpenCode discovered all five skills. Installed builder, researcher,
+and reviewer workers each started, reached a model, and answered on Claude Code
+and Antigravity. These starts check registration, not instruction-following
+quality. Earlier live trials of parallel phase builds are single observations;
+the reviewer tool restriction and model preference have not had a behavior
+trial. Public installation before the v0.9.3 tag exists, Gemini CLI model
+behavior and signed-in worker starts, and Antigravity IDE loading remain
+untested. Details and limits are in `VERIFICATION.md`.
+
+### Commits
+
+- [`fe93b855d2`](https://github.com/jeio-dev/kaylo/commit/fe93b855d2cb214e9b194bffc4cec484f98497cb) - **docs**: record v0.9.2 public installation checks (Jeio)
+- [`8858b9cd9e`](https://github.com/jeio-dev/kaylo/commit/8858b9cd9e2179cfedac931275315124abd58f46) - **docs**: trim the README and archive pre-0.9.0 verification records (Jeio) [#50](https://github.com/jeio-dev/kaylo/pull/50)
+- [`326be77108`](https://github.com/jeio-dev/kaylo/commit/326be77108d3f1d6da4816cef32367c8b1c9fdb0) - **docs**: separate v0.9.2 worker starts from model results and qualify the reminder skip (Jeio) [#50](https://github.com/jeio-dev/kaylo/pull/50)
+- [`0bd3771f52`](https://github.com/jeio-dev/kaylo/commit/0bd3771f52dddfabf2c7c58b9f83023e0f7f9957) - **docs**: merge PR #50: trim the README and archive pre-0.9.0 verification records (Jeio) [#50](https://github.com/jeio-dev/kaylo/pull/50)
+- [`5a33d23f5b`](https://github.com/jeio-dev/kaylo/commit/5a33d23f5bfbbee05d8b1808d3183d3f3f71e684) - **skills**: add a project worker model preference (Jeio) [#51](https://github.com/jeio-dev/kaylo/pull/51)
+- [`01c08001e1`](https://github.com/jeio-dev/kaylo/commit/01c08001e13bd091b0d52e97250c1ece09921072) - **skills**: merge PR #51: add a project worker model preference (Jeio) [#51](https://github.com/jeio-dev/kaylo/pull/51)
+- [`6ac6a6f439`](https://github.com/jeio-dev/kaylo/commit/6ac6a6f439862c0aa3405767f903e970863262d5) - **agents**: restrict Claude reviewer adapter tools (Jeio) [#52](https://github.com/jeio-dev/kaylo/pull/52)
+- [`baf099735c`](https://github.com/jeio-dev/kaylo/commit/baf099735cc616b3f21365fc14576af637183c6c) - **agents**: merge PR #52: restrict Claude reviewer adapter tools (Jeio) [#52](https://github.com/jeio-dev/kaylo/pull/52)
+- [`1014baadd1`](https://github.com/jeio-dev/kaylo/commit/1014baadd12c649e8783fc3d1a2d6c727c585140) - **skills**: add opt-in Claude parallel phase waves (Jeio) [#53](https://github.com/jeio-dev/kaylo/pull/53)
+- [`40bdd8588c`](https://github.com/jeio-dev/kaylo/commit/40bdd8588cdacb5b54beb3ad32748fafe6fa6044) - **skills**: merge pull request #53 from jeio-dev/issue-31-parallel-phase (Jeio) [#53](https://github.com/jeio-dev/kaylo/pull/53)
+- [`cf634a3802`](https://github.com/jeio-dev/kaylo/commit/cf634a3802b01e3f143d584136edf07d71020156) - **docs**: clarify worker registration across hosts (Jeio) [#54](https://github.com/jeio-dev/kaylo/pull/54)
+- [`8013c49a0b`](https://github.com/jeio-dev/kaylo/commit/8013c49a0be8cbde4572c869e2b318bba7bcf6d0) - **docs**: merge pull request #54 from jeio-dev/issue-33-worker-registration-docs (Jeio) [#54](https://github.com/jeio-dev/kaylo/pull/54)
+- [`3e1ebc4691`](https://github.com/jeio-dev/kaylo/commit/3e1ebc46914e990e8f739534e00b02de0bddabec) - **docs**: fix contributor ignores and README command table (Jeio) [#55](https://github.com/jeio-dev/kaylo/pull/55)
+- [`1096dc9400`](https://github.com/jeio-dev/kaylo/commit/1096dc9400db3ec78520bc45dd3874f8540d07d7) - **docs**: merge pull request #55 from jeio-dev/fix/issues-35-36-contributor-docs (Jeio) [#55](https://github.com/jeio-dev/kaylo/pull/55)
+- [`c22bcf9504`](https://github.com/jeio-dev/kaylo/commit/c22bcf95045072fba702ea571ef3413f30f4c3d4) - **plugins**: prepare v0.9.3 manifests and README (Jeio)
 
 ## 2026-10-02, Version 0.9.2
 
