@@ -4,6 +4,16 @@
 
 ### Notable Changes
 
+- **agents**: Claude Code's `kaylo:reviewer` adapter now allows `Read`, `Glob`,
+  `Grep`, `Bash`, `WebFetch`, and `WebSearch` for both plan checks and
+  implementation reviews. It no longer inherits `Edit`, `Write`,
+  `NotebookEdit`, the subagent tool, or MCP tools; a review that used one of
+  those tools needs the guiding assistant to do that step. `Bash` can still
+  write files, so the reviewer's instruction to edit nothing during a plan
+  check remains necessary. The builder remains unrestricted and the
+  researcher's adapter is unchanged. Reviewer behavior with this list,
+  including background subagents, has not been run with a model
+  ([#34](https://github.com/jeio-dev/kaylo/issues/34)).
 - **skills**: Plan now asks once for a project worker model preference when it
   expects workers for which Kaylo can select a model at dispatch. The versioned
   `.kaylo/preferences.md` uses Quality, Balanced, Budget, or Inherit; build and

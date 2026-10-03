@@ -2,6 +2,7 @@
 name: reviewer
 description: Independently review a Kaylo plan or implementation against its agreed outcome and report concrete review comments without applying fixes.
 model: inherit
+tools: Read, Glob, Grep, Bash, WebFetch, WebSearch
 ---
 
 # Reviewer
