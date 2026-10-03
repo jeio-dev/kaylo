@@ -159,7 +159,7 @@ const plans = {
     if (market && !pinned) {
       replaces.push(`marketplace kaylo (${market.repo || market.url || market.source}${market.ref ? ` at ${market.ref}` : ', unpinned'})`);
       // Removing a Claude marketplace also uninstalls its plugin.
-      steps.push({ args: ['plugin', 'marketplace', 'remove', 'kaylo'], removes: true });
+      steps.push({ args: ['plugin', 'marketplace', 'remove', 'kaylo'], removes: Boolean(installed) });
     }
     if (!pinned) steps.push({ args: ['plugin', 'marketplace', 'add', `${repo}@${tag}`] });
     // Removing a marketplace also uninstalls the plugin, so only a kept one can update.
@@ -176,7 +176,7 @@ const plans = {
     }
     // The marketplace list hides the pinned ref, so an existing one is always replaced.
     // Removing a Codex marketplace also unlists its plugin (#57 Q5).
-    const steps = market ? [{ args: ['plugin', 'marketplace', 'remove', 'kaylo'], removes: true }] : [];
+    const steps = market ? [{ args: ['plugin', 'marketplace', 'remove', 'kaylo'], removes: Boolean(codexInstall()) }] : [];
     steps.push({ args: ['plugin', 'marketplace', 'add', repo, '--ref', tag] });
     steps.push({ args: ['plugin', 'add', plugin, '--json'], capture: true });
     return { steps, replaces: market ? ['marketplace kaylo (its pinned ref is not shown)'] : [] };

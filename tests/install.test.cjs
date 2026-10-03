@@ -390,6 +390,7 @@ test('a replace that removed the previous install and then failed says so', t =>
   ctx.scenario({
     ...fresh(ctx),
     'claude plugin marketplace list --json': { stdout: [{ name: 'kaylo', source: 'github', repo: 'jeio-dev/kaylo', ref: 'v0.9.2' }] },
+    'claude plugin list --json': { stdout: [claudeEntry('/old', '0.9.2')] },
     [`claude plugin marketplace add jeio-dev/kaylo@${tag}`]: { status: 1 },
     'gemini extensions list': { stderr: geminiList(ctx.roots.gemini, '0.9.2') },
     // A declined consent prompt makes the install exit 1.
@@ -401,6 +402,16 @@ test('a replace that removed the previous install and then failed says so', t =>
   assert.match(result.stdout, /Gemini CLI: failed: gemini extensions install .* exited with 1; the previous Kaylo install was removed and not replaced/);
   ctx.scenario({ ...fresh(ctx), [`gemini extensions install https://github.com/jeio-dev/kaylo --ref ${tag}`]: { status: 1 } });
   assert.doesNotMatch(ctx.run(['--gemini', '--yes']).stdout, /removed and not replaced/);
+  // A marketplace without an installed plugin removes no Kaylo install.
+  ctx.scenario({
+    ...fresh(ctx),
+    'claude plugin marketplace list --json': { stdout: [{ name: 'kaylo', source: 'github', repo: 'jeio-dev/kaylo', ref: 'v0.9.2' }] },
+    'claude plugin list --json': { stdout: [] },
+    [`claude plugin marketplace add jeio-dev/kaylo@${tag}`]: { status: 1 }
+  });
+  const marketOnly = ctx.run(['--claude', '--yes']);
+  assert.match(marketOnly.stdout, /Claude Code: failed: claude plugin marketplace add .* exited with 1/);
+  assert.doesNotMatch(marketOnly.stdout, /removed and not replaced/);
 });
 
 // Runs main() with a fake terminal so the picker and prompts appear, then sends
