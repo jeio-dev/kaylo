@@ -40,12 +40,12 @@ Issue #58 adds `package.json` (name `kaylo`, version 0.9.3, `engines.node` `>=24
 | `package.json` version set to 9.9.9 | Validator failed with "package.json version must match the plugin manifests"; reverted |
 | `KAYLO_INVENTORY_REF=v0.9.3` with `HEAD` at `95336c2` | Refused: `HEAD` is not at `v0.9.3` |
 | `KAYLO_INVENTORY_REF=HEAD` with uncommitted changes | Refused: the working tree is not clean |
-| `KAYLO_INVENTORY_REF=HEAD` on the clean commit `75aee23` | Both tests passed: the `git archive` export packed to exactly its own files and validated |
+| `KAYLO_INVENTORY_REF=v9.9.9-trial`, an annotated trial tag at `a4d8d5f` in a throwaway clone | Both tests passed: the `git archive` export packed to exactly its own files and validated. With `tar` removed from `PATH`, the test failed with "tar is required" and left no archive behind |
 | Claude Code 2.1.288: `claude plugin validate .claude-plugin/plugin.json --strict` and marketplace validation | Both passed |
 | Antigravity CLI 1.2.14: `agy plugin validate .` | Passed: five skills and three agents; the root `package.json` did not disturb its loader |
 | `git diff --check` | Clean |
 
-These checks ran on Linux with GNU tar 1.35. The test calls `npm` and `tar` directly and has not run on Windows. Release mode passed with `HEAD` as the ref, which exercises the same `git archive` path; it has not yet run against a release tag that contains `package.json`, which first happens when 0.10.0 is published. Nothing was published to npm, the package name was not reserved, and no host install, model request, or worker run was performed.
+These checks ran on Linux with GNU tar 1.35. The test calls `npm` and `tar` directly and has not run on Windows. Release mode passed against a local trial tag that contains `package.json`; it has not yet run against a published release tag, which first happens with 0.10.0. Nothing was published to npm, the package name was not reserved, and no host install, model request, or worker run was performed.
 
 ## Public installation 0.9.3 — 2026-10-03
 
