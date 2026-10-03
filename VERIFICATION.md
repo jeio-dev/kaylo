@@ -25,6 +25,34 @@ consistency claim.
 Not established on any host: Antigravity IDE loading, models other than those
 named, and repeated runs of the same case.
 
+## Installer core — 2026-10-03
+
+Issue #59 adds `bin/kaylo.cjs`, the `bin` entry in `package.json`, a check in `scripts/validate-package.cjs` that each `bin` target exists, and `tests/install.test.cjs`. The installer covers Claude Code, Codex, Antigravity CLI, and Gemini CLI with `install`, `update`, and `uninstall`; OpenCode is #60, and `status` is #61.
+
+| Check | Observed result |
+| --- | --- |
+| Node 24.21.0: `node scripts/validate-package.cjs` | Passed |
+| `node --test tests/*.test.cjs` | 129 tests passed: 18 installer tests against stub host CLIs, a new missing-`bin`-target case, and both inventory tests with `bin/` in `files` |
+| npm 11.19.0: `npm pack --dry-run` | 46 files, including `bin/kaylo.cjs` (mode 755 in Git) |
+| `npx <checkout> --help` and `npx <checkout> --version`, with a trial `HOME` and npm cache | Usage printed and `0.9.3`; both exited 0 |
+| Claude Code 2.1.288: `claude plugin validate` on the plugin and marketplace manifests, `--strict` | Both passed |
+| Antigravity CLI 1.2.14: `agy plugin validate .` | Passed: five skills and three agents |
+| A real pseudo-terminal with a stub `gemini` | The picker showed undetected hosts as "not found on PATH" and refused them; after the confirmation, the host's own `[Y/n]` prompt received the typed answer |
+| `git diff --check` | Clean |
+
+The smoke trial reused the #57 isolation: `env -i`, with `HOME`, `CLAUDE_CONFIG_DIR`, `CODEX_HOME`, all four `XDG_*`, and `TMPDIR` under one trial root from the start, and no sign-in or model request. In a local bare mirror only, tag `v0.9.3` was created on a fixture commit of the candidate tree (`git archive` of the branch head); the mirror's `main` was one commit past it, with a marker in `skills/build/SKILL.md` and both catalogs' `ref` set to `main`. Claude Code and Codex reached the mirror through a trial `GIT_CONFIG_GLOBAL` `insteadOf` rewrite. Antigravity ran in Bubblewrap without network and with an empty directory bound over the real `~/.gemini`, through a trial `agy` wrapper on the trial `PATH`. `node bin/kaylo.cjs <command> --all --yes` ran from the checkout on a pseudo-terminal, and the harness answered each host `[Y/n]` prompt with `y`. Gemini CLI's workspace trust was given in advance through the trial `trustedFolders.json`.
+
+| Run | Observed result |
+| --- | --- |
+| `install --all --yes` | Exit 0. Commands: `claude plugin marketplace add jeio-dev/kaylo@v0.9.3`, `claude plugin install kaylo@kaylo`; `codex plugin marketplace add jeio-dev/kaylo --ref v0.9.3`, `codex plugin add kaylo@kaylo --json`; `agy plugin install <checkout>`; `gemini extensions install https://github.com/jeio-dev/kaylo --ref v0.9.3`. Every host was verified at 0.9.3 against the candidate tree, at the root named by `installPath`, the Codex `installedPath`, `~/.gemini/config/plugins/kaylo`, and `~/.gemini/extensions/kaylo`. No copy carried the `main` marker |
+| `update --all --yes` | Exit 0. Claude Code kept the pinned marketplace and ran only `claude plugin update kaylo@kaylo`, which reported 0.9.3 as already the latest. Codex removed and re-added its marketplace with `--ref v0.9.3`, then ran `plugin add --json`. Antigravity installed again, and Gemini CLI uninstalled and installed. All four were verified again; one copy remained in each Claude Code and Codex cache |
+| `uninstall --all --yes` | Exit 0. `claude plugin uninstall`, then `claude plugin marketplace remove`; `codex plugin remove`, then `codex plugin marketplace remove`; `agy plugin uninstall kaylo`; `gemini extensions uninstall kaylo`. Every host's list was empty afterwards. Claude Code left its `cache/kaylo/kaylo/0.9.3` directory on disk; Codex removed its cache copy |
+| Real-profile guard (`guard.sh` from #57) | The same 677 lines of config file and plugin-folder hashes before and after; the directory bound over the real `~/.gemini` stayed empty |
+
+Gemini CLI 0.62.0 could not reach the mirror through `insteadOf`. Its Git calls set `GIT_CONFIG_GLOBAL=/dev/null` and `GIT_CONFIG_NOSYSTEM=1` (observed in its bundled `getSafeGitEnv`, and in a probe that failed to resolve `github.com`). For a `github.com` URL, it first fetches the GitHub release for the ref from `api.github.com` and installs the release archive; it falls back to `git clone` only after a failure and a `[Y/n]` question. In the trial, Gemini CLI therefore ran in Bubblewrap without network, so the release fetch failed. The harness answered the fallback question, and a trial-only `git` wrapper first on Gemini's `PATH` rewrote the Kaylo URL to the mirror. The installer's command was unchanged. A public install of a published release takes the release-archive path, which this trial did not exercise; #57's "Git checkout" observation came from a non-GitHub URL. The first trial attempt found that Gemini CLI prints `gemini extensions list` on stderr. The installer read only stdout, so it missed the installed extension during `update` and `uninstall`. The installer now reads both streams for that list, a test covers both, and the second attempt above passed.
+
+These are checks on one Linux machine against a local mirror, for the host versions named. They do not show public GitHub or npm installs, Gemini CLI's release-archive path, other operating systems, or any model or worker behavior. The trial scripts, logs, and both attempts are in the contributor-local `.local/trials/issue59/`.
+
 ## npm package inventory — 2026-10-03
 
 Issue #58 adds `package.json` (name `kaylo`, version 0.9.3, `engines.node` `>=24`, no dependencies, scripts, or `bin`), a `package.json` name and version check in `scripts/validate-package.cjs`, `tests/package-inventory.test.cjs`, and the npm publish steps in `RELEASING.md`. The `files` list names `development/.agents/plugins/marketplace.json` exactly, because `development/` also holds the ignored staging copy; fully tracked folders stay directory entries. The named exception list is empty: the packed tarball matched the export file for file, including `.gitignore` and `.gitattributes`.
