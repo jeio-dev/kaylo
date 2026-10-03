@@ -1,5 +1,18 @@
 # Changelog
 
+## [Unreleased]
+
+### Notable Changes
+
+- **docs**: The README is shorter. Its validator rules now live only in the
+  glossary's validation rules, its workflow detail points to the glossary's
+  definitions, and notes for contributors moved to `RELEASING.md`. The
+  migration note for the pre-0.6.0 local Codex catalog is removed.
+- **docs**: `VERIFICATION.md` opens with a current-status table per host
+  (installation, session reminder, workers, and Kaylo runs with a model) and
+  keeps the records from 0.9.0 onward. Records for 0.6.0 through 0.8.0 are
+  read from the `v0.9.2` tag. No shipped skill, brief, or script changed.
+
 ## 2026-10-02, Version 0.9.2
 
 ### Notable Changes

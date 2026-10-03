@@ -15,15 +15,11 @@ Kaylo is an early `0.9.2` package; see [verification](VERIFICATION.md) for what 
 | `/kaylo:review` | Get a second opinion on a plan or change | Review comments, labelled blocking or non-blocking, in the current phase plan |
 | `/kaylo:close` | Check the promised outcome and finish the phase | Phase checked off, usage guidance, and remaining limitations |
 
-Start with define, then plan. A concrete small change can start with plan. Substantial or uncertain plans, and every plan headed for `/kaylo:build phase`, get a plan check before building. Plan requests an independent review when the host makes a fresh reviewer available; otherwise `/kaylo:review plan` may review directly and records that it lacked fresh context. Review implementation before close. Revise through plan and build. Each response should explain what matters and give one clear next step.
+Start with define, then plan. A concrete small change can start with plan. Substantial or uncertain plans, and every plan headed for `/kaylo:build phase`, get a plan check before building. Review implementation before close. Revise through plan and build. Each response should explain what matters and give one clear next step.
 
-The assistant investigates repository facts, recommends an approach, and asks a short numbered round only for consequential decisions. Tasks include acceptance criteria and a test plan with meaningful checks. Reuse passing checks unless relevant inputs changed. After two unsuccessful repairs of the same failure, preserve the work and recommend a different next action.
+The assistant investigates repository facts, recommends an approach, and asks a short numbered round only for consequential decisions. Tasks include acceptance criteria and a test plan with meaningful checks. After two unsuccessful repairs of the same failure, the assistant preserves the work and recommends a different next action. Unverified work stays open, and a known limitation is accepted only with your recorded decision.
 
-Phase plans use `Status: Current` or `Needs revision: <reason>` to describe whether task instructions match the intended work; agreement and completion are separate. A phase built with `/kaylo:build phase` also needs a `Phase build readiness:` line in `## Agreement`, which plan writes only on the user's confirmation; `/kaylo:build` and `/kaylo:build T1` do not. Clear local S tasks can use a compact record. Task and review comment IDs restart per phase; `02-R1` names another phase's review comment. Review comments keep stable IDs such as `R2`: build can select a task or an implementation review comment, and fixes to blocking comments receive a focused recheck before closure. Non-blocking comments do not block the agreed outcome.
-
-Completion records known limitations. A limitation is accepted only with the user's actual recorded decision. Uncertain verification leaves affected work open when unchanged inputs cannot be established and checks cannot run; stating that limit does not permit closure.
-
-Kaylo uses common software-team names for its files and fields: a PRD, a roadmap, acceptance criteria, and blocking or non-blocking review comments. The [glossary](GLOSSARY.md) explains each term, where Kaylo differs from common practice, and which team practices Kaylo does not cover yet.
+Kaylo uses common software-team names for its files and fields: a PRD, a roadmap, acceptance criteria, and blocking or non-blocking review comments. The [glossary](GLOSSARY.md) explains each term, Kaylo's own words such as `Status:`, the plan check, and phase build readiness, where Kaylo differs from common practice, and which team practices Kaylo does not cover yet.
 
 Simplicity means using existing capability, configuration, standard libraries, native features, and installed dependencies where sufficient. Keep requested behavior, readability, security, and accessibility. A short diff is not proof of a correct solution.
 
@@ -130,11 +126,7 @@ git -C /absolute/path/to/kaylo checkout --detach v0.9.2
 
 Replace `v0.9.2` with the newer release tag when updating. Preserve any local
 edits; do not force checkout. Restart the OpenCode session/server afterward.
-Remove the Kaylo path from the `skills` array to uninstall.
-
-OpenCode initializes its catalog after server startup. For a discovery check,
-wait until `GET /api/skill` includes all five IDs with paths into this checkout;
-an immediate empty response does not establish a failure. These instructions
+Remove the Kaylo path from the `skills` array to uninstall. These instructions
 use OpenCode 2; OpenCode 1 has a different configuration format.
 
 ### Antigravity
@@ -226,11 +218,7 @@ Codex, use `codex plugin remove kaylo@kaylo-local` followed by
 `codex plugin add kaylo@kaylo-local`. For Gemini, use
 `gemini extensions uninstall kaylo` followed by the local install command.
 
-The local Codex catalog is separate from the released catalog. When moving
-from the old checkout install to the GitHub install, remove
-`kaylo@kaylo-local` and its `kaylo-local` marketplace first to avoid duplicate
-skills. To keep developing with an old root-based `kaylo-local` catalog, remove
-that catalog and add the new `development/` path instead. Keep only one
+The local Codex catalog is separate from the released catalog. Keep only one
 installation of Kaylo enabled in each host.
 
 ### Any tool, without installing
@@ -261,17 +249,15 @@ records installation and loading only; see the Gemini CLI section above.
 
 ## Optional session reminder
 
-Claude, Codex, and Gemini discover `hooks/hooks.json`. Its exact startup/resume
-matchers work in all three hosts. The loader uses Claude/Codex's plugin-root
-environment variables or Gemini's extension-path substitution to run the same
-`hooks/session-start.cjs`. It does not read or write project files, track sessions,
-run tests, route models, or authorize implementation. OpenCode and Antigravity
-use the same skills without this optional adapter.
+Claude, Codex, and Gemini discover `hooks/hooks.json` and run the same
+`hooks/session-start.cjs` reminder at session startup and resume. It does not
+read or write project files, track sessions, run tests, route models, or
+authorize implementation. OpenCode and Antigravity use the same skills without
+this optional adapter.
 
 Node must be on the host's PATH. If Node is missing, the host may report a hook
 error; the skills remain usable. Missing script/load errors are quiet. The
-reminder never returns a blocking decision. Timeout is left at each host's native
-default because their APIs use different units. It is guidance, not enforcement.
+reminder never returns a blocking decision. It is guidance, not enforcement.
 
 Codex requires you to review and trust plugin hooks through `/hooks` before
 they run. Leaving the hook untrusted keeps the skills usable. To suppress the
@@ -305,50 +291,20 @@ node /absolute/path/to/kaylo/scripts/validate-plan.cjs /absolute/path/to/project
 Exit codes: `0` means supported structural checks passed; `1` means plan errors;
 `2` means invalid command usage. The validator does not edit files or execute
 Markdown, verification commands, hooks, or model calls. Plan runs it after writing
-or converting plans and reports remaining errors and unfinished conversion steps;
-the user must confirm a converted plan before it gets `Status: Current`. Build checks
-the task off as proposed completion, then runs the validator; a failure unchecks
-the task, with Result corrections handled within build and genuine plan errors
-routed to plan. Close writes the proposed completion record and runs
-`--closing` before checking the phase in the index. If the script/runtime is
-unavailable, the skills require manual inspection and disclosure of that limit.
+or converting plans, and you confirm a converted plan before it gets
+`Status: Current`. Build runs it after checking a task off and unchecks the task
+on failure. Close runs `--closing` before checking the phase off in
+`ROADMAP.md`. If the script/runtime is unavailable, the skills require manual
+inspection and disclosure of that limit.
 
-Supported Markdown uses exactly one `Current: [label](relative-file)` line in
-`ROADMAP.md`, matching exactly one phase checklist entry with a two-digit ID. The
-current phase plan needs `Status: Current` or `Status: Needs revision: <reason>`;
-every line starting with `Status:` is checked. Tasks use entries such as
-`- [ ] T1: title` with single-line `Acceptance criteria:`, `Test plan:`,
-`Result:`, and `Blocked by:` fields. `Blocked by:` is required and is `None` or
-comma-separated, distinct IDs of earlier tasks in the same phase. Horizontal whitespace around list markers and checkboxes and indentation are
-supported; recognizable malformed task, phase, and Current records produce errors
-rather than being skipped. Older formats are rejected with a diagnostic naming the
-replacement: `OBJECTIVE.md`, `PLAN.md` without `ROADMAP.md`, tasks inline in the
-index, `Complexity:`, `Depends on:`, `Acceptance:`, `Verify:`, and `blocker` or
-`optional` review labels. Examples in fenced code
-blocks and HTML comments are ignored. Links must resolve inside the project,
-including symlink targets. Linked phases cannot share the same file identity
-through symlink or hard-link aliases. All linked phase files are checked for
-readability; task and review comment contents are checked only in the current phase.
-
-It checks duplicate phase/task/review comment IDs, phase links, and `Blocked by:`
-references. Each task needs a substantive title, acceptance criteria, and test
-plan, and a nonempty Result. `Acceptance criteria:`, `Test plan:`, `Result:`,
-and `Blocked by:` may each appear only once per task.
-Checked tasks additionally need a substantive Result that does not start with
-`Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or `Blocked` as an unfinished
-state marker, even with notes appended. A marker needs punctuation, an en/em
-dash, or a hyphen with whitespace on at least one side, or the end of the record
-after optional whitespace; whitespace alone or
-an attached hyphen does not count. Other prose still needs evidence inspection.
-Earlier progress and failure history may follow
-the current evidence. Closure checks run with
-`--closing` or when the current phase is checked in `ROADMAP.md`. They require
-all current tasks checked, no `Needs revision` status, a `## Review` record
-(`None` is allowed), and a substantive `## Completion` record; a bare `Not complete.`
-is a placeholder. Duplicate Review or Completion sections are errors;
-retain their history under a single heading. Review comment IDs are recognized across
-Review records, including duplicate sections. Other equivalent
-Markdown layouts need manual inspection rather than automatic migration.
+It checks the `Current:` link in `ROADMAP.md`, phase and task entries, required
+task fields, unique IDs, and `Blocked by:` references. A checked task needs a
+substantive `Result:`, not an unfinished marker such as `TODO` or `Blocked`.
+Closure checks run with `--closing` or when the current phase is checked; they
+require every task checked, no `Needs revision` status, and `## Review` and
+`## Completion` records. Older Kaylo formats are rejected with a diagnostic
+naming the replacement. The glossary's
+[validation rules](GLOSSARY.md#validation-rules) give the exact contract.
 
 A pass does **not** establish authorization, truthful evidence, passing tests,
 resolved review comments, or correct software. Host permissions and required CI
