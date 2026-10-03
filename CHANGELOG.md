@@ -4,6 +4,11 @@
 
 ### Notable Changes
 
+- **docs**: Worker registration guidance now distinguishes Claude Code's
+  `kaylo:` names from the bare names observed on Antigravity and in Gemini
+  CLI's agent loader. The delegation references tell readers to confirm that
+  a bare name resolves to Kaylo's brief; Codex and OpenCode continue to use
+  the brief as a manual handoff ([#33](https://github.com/jeio-dev/kaylo/issues/33)).
 - **skills**: An explicit parallel phase request on Claude Code can dispatch up
   to two ready builder tasks together when their files and mutable check
   resources are disjoint. Plain `/kaylo:build phase` and other hosts remain
