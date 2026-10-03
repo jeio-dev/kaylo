@@ -10,8 +10,9 @@ Do not publish a skills-only subset or independently edit host copies.
 ## Prepare a release
 
 1. Set the same semantic version in `.claude-plugin/plugin.json`,
-   `.codex-plugin/plugin.json`, and `gemini-extension.json`. Antigravity's root
-   manifest has no version field; its installed checkout tag identifies the release.
+   `.codex-plugin/plugin.json`, `gemini-extension.json`, and the npm
+   `package.json`. Antigravity's root manifest has no version field; its
+   installed checkout tag identifies the release.
 2. Set the plugin source `ref` in both `.claude-plugin/marketplace.json` and
    `.agents/plugins/marketplace.json` to `v<version>`. Catalogs on the default
    branch select released tags rather than development commits. Leave the
@@ -116,6 +117,24 @@ protected. Make the tag reachable before merging the catalog change. Never move
 an existing release tag. Publish a GitHub release with its changelog and verification
 limits, then test both marketplace installs against the public repository in
 fresh temporary profiles. These steps are maintainer commands, not a Kaylo installer.
+
+Publish the npm package `kaylo` only after the tag is pushed, so `kaylo@<version>`
+never exists without tag `v<version>`. npm packs whatever folder it runs in, so
+publish from a `git archive` export of the tag, never from the working tree.
+With `HEAD` at the tag and a clean working tree:
+
+```sh
+tag=v0.10.0  # the release tag just pushed
+KAYLO_INVENTORY_REF="$tag" node --test tests/package-inventory.test.cjs
+export_dir="$(mktemp -d)"
+git archive "$tag" | tar -x -C "$export_dir"
+(cd "$export_dir" && npm publish)
+```
+
+The inventory test refuses when `HEAD` is not at the tag or the tree is dirty,
+then proves the packed tarball holds exactly the tag's files and passes package
+validation. Publishing to npm requires the maintainer's authorization and their
+own `npm login`.
 
 Record public installation results and verification limits with each release.
 Keep historical fixture checks distinct from checks against the published tag.

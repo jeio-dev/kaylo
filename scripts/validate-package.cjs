@@ -55,6 +55,10 @@ try {
   }
   // Antigravity's schema has no version field; its checkout tag is the version.
   for (const manifest of [codex, gemini]) assert.equal(manifest.version, claude.version);
+  // The npm package carries the same release as the host manifests.
+  const npm = read('package.json');
+  assert.equal(npm.name, 'kaylo', 'package.json name must be kaylo');
+  assert.equal(npm.version, claude.version, 'package.json version must match the plugin manifests');
   const tag = `v${claude.version}`;
   const cc = read('.claude-plugin/marketplace.json');
   const cx = read('.agents/plugins/marketplace.json');

@@ -25,6 +25,29 @@ consistency claim.
 Not established on any host: Antigravity IDE loading, models other than those
 named, and repeated runs of the same case.
 
+## npm package inventory — 2026-10-03
+
+Issue #58 adds `package.json` (name `kaylo`, version 0.9.3, `engines.node` `>=24`, no dependencies, scripts, or `bin`), a `package.json` name and version check in `scripts/validate-package.cjs`, `tests/package-inventory.test.cjs`, and the npm publish steps in `RELEASING.md`. The `files` list names `development/.agents/plugins/marketplace.json` exactly, because `development/` also holds the ignored staging copy; fully tracked folders stay directory entries. The named exception list is empty: the packed tarball matched the export file for file, including `.gitignore` and `.gitattributes`.
+
+| Check | Observed result |
+| --- | --- |
+| Node 24.21.0: `node scripts/validate-package.cjs` | Passed: five skills, matching 0.9.3 versions and release catalogs |
+| `node --test tests/*.test.cjs` | 110 tests passed, including both inventory tests in default mode and the new version-drift case |
+| npm 11.19.0: `npm pack --dry-run` | 44 files, `kaylo-0.9.3.tgz`; the list equals `git ls-files` plus the two new untracked files |
+| Same dry run with `development/package/` staged, a copied `AGENTS.md`, and a `.local/` file present | None of the three appeared among the 44 listed files |
+| Inventory tests with an existing `development/package/` holding a sentinel file | At `5d32a78` both tests passed but staging rebuilt the folder and deleted the sentinel (found in review). After the fix, the test stages only when the folder is absent: the sentinel survived, and when the folder was absent the test created and removed it |
+| `tests/` removed from `files` | Inventory test failed, naming the five missing `tests/` files; reverted |
+| Git-ignored `skills/__pycache__/x.pyc` added | Working-tree guard failed, naming that path; the inventory test also failed because the export excludes it; removed |
+| `package.json` version set to 9.9.9 | Validator failed with "package.json version must match the plugin manifests"; reverted |
+| `KAYLO_INVENTORY_REF=v0.9.3` with `HEAD` at `95336c2` | Refused: `HEAD` is not at `v0.9.3` |
+| `KAYLO_INVENTORY_REF=HEAD` with uncommitted changes | Refused: the working tree is not clean |
+| `KAYLO_INVENTORY_REF=v9.9.9-trial`, an annotated trial tag at `a4d8d5f` in a throwaway clone | Both tests passed: the `git archive` export packed to exactly its own files and validated. With `tar` removed from `PATH`, the test failed with "tar is required" and left no archive behind |
+| Claude Code 2.1.288: `claude plugin validate .claude-plugin/plugin.json --strict` and marketplace validation | Both passed |
+| Antigravity CLI 1.2.14: `agy plugin validate .` | Passed: five skills and three agents; the root `package.json` did not disturb its loader |
+| `git diff --check` | Clean |
+
+These checks ran on Linux with GNU tar 1.35. The test calls `npm` and `tar` directly and has not run on Windows. Release mode passed against a local trial tag that contains `package.json`; it has not yet run against a published release tag, which first happens with 0.10.0. Nothing was published to npm, the package name was not reserved, and no host install, model request, or worker run was performed.
+
 ## Public installation 0.9.3 — 2026-10-03
 
 The immutable `v0.9.3` tag was pushed at `cd61da4` before `main` advanced to the same commit. The GitHub release was published with title `2026-10-03, Version 0.9.3` and the matching changelog entry as its body. The tag's checkout contains no contributor `AGENTS.md`.
