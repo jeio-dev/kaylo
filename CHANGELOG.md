@@ -100,8 +100,10 @@ made no model request; retrying in the isolated profile passed. These starts
 check registration, not instruction-following quality. The live-model trials
 of the skill and brief fixes are recorded in `VERIFICATION.md`; they are
 single observations. Gemini CLI model behavior, a signed-in Gemini worker
-start, and Antigravity IDE loading remain untested. Public installation
-checks follow tag publication.
+start, and Antigravity IDE loading remain untested. After publication, fresh
+public GitHub installs on Claude, Codex, Gemini CLI, and Antigravity each
+matched the v0.9.2 tag and all 23 shared resources; that check made no model
+requests.
 
 ### Commits
 

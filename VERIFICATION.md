@@ -2205,3 +2205,33 @@ Gemini CLI model behavior, and Antigravity IDE loading remain untested.
 Evidence: `/tmp/kaylo-parity-8rz3mc_0`, including `trial.log`, installed
 package roots, per-role JSON results, and private request logs. This folder
 contains copied OAuth credentials and must not be shipped or published.
+
+## Public installation 0.9.2 — 2026-10-02
+
+The immutable `v0.9.2` tag was pushed at `514ecf1` before `main` advanced to
+the same commit. The GitHub release was published with title
+`2026-10-02, Version 0.9.2` and the changelog entry as its body. The tag's
+checkout contains no contributor `AGENTS.md`.
+
+Fresh temporary profiles ran `.local/release/public-check.py v0.9.2` against
+public GitHub, with no Git URL rewriting or copied account credentials:
+
+| Host | Public install path | Observed result |
+| --- | --- | --- |
+| Claude Code 2.1.286 | `claude plugin marketplace add jeio-dev/kaylo`, then `claude plugin install kaylo@kaylo` | Installed 0.9.2; 23 resources match the tag |
+| Codex CLI 0.159.3 | `codex plugin marketplace add jeio-dev/kaylo`, then `codex plugin add kaylo@kaylo` | Installed 0.9.2; 23 resources match the tag |
+| Gemini CLI 0.62.0 | `gemini extensions install https://github.com/jeio-dev/kaylo --ref v0.9.2 --consent` | Installed 0.9.2; all five skills enabled; 23 resources match the tag |
+| Antigravity CLI 1.2.14 | Public `git clone --branch v0.9.2`, then `agy plugin install` in a Bubblewrap profile | Installed 0.9.2; 23 resources match the tag |
+
+The tag checkout resolved to the published `514ecf1` commit. The script used
+the tag's own `validate-package.cjs --installed` on every install and
+rejected contributor guidance in the installed package. Antigravity's install
+ran with network disabled after the clone. Normal host profiles and settings
+were not changed. This check establishes public transport, tag selection,
+skill listing on Gemini, and package resource parity. It made no model
+requests and did not recheck OpenCode discovery, hook trust or lifecycle,
+worker behavior, Gemini CLI model behavior, or Antigravity IDE loading.
+
+Evidence: `/tmp/kaylo-public-u06kq79g/public.log` and the temporary
+installed roots under that directory. The earlier isolated update and worker
+start checks remain separate above.
