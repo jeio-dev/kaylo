@@ -16,10 +16,10 @@ consistency claim.
 
 | Host | Installation and update | Session reminder | Kaylo workers | Kaylo run with a model |
 | --- | --- | --- | --- | --- |
-| Claude Code 2.1.286 | Public install of v0.9.2; isolated update from v0.9.1 | Delivered at startup and resume; skipped when a Kaylo worker is the main agent | All three installed workers started and reached a model | All five skills and the three workers with Claude Opus 5.5; one builder run with Claude Haiku 4.5 |
+| Claude Code 2.1.286 | Public install of v0.9.2; isolated update from v0.9.1 | Delivered at startup and resume. Skipped when the hook payload names a Kaylo worker as `agent_type`, observed when a worker was started or resumed with `--agent`; a worker resumed with `-c` alone still received it | v0.9.2: all three installed workers started and reached a model; which model was not recorded | All five skills with Claude Opus 5.5, from 0.7.0 through the 0.9.2 fixes. Workers with a recorded model: builder with Opus 5.5 and with Claude Haiku 4.5, and reviewer with Opus 5.5 (`334f574`, before 0.8.0); researcher with Opus 5.5 (v0.9.1 and the 0.9.2 fixes) |
 | Codex CLI 0.159.3 | Public install of v0.9.2; isolated update from v0.9.1; five skills discovered | Fired at startup and resume after the hooks were trusted | None registered; the manual handoff was not run | Not run |
-| OpenCode 2.0.18 | Five skills discovered from the prepared v0.9.2 checkout | No adapter | None registered; researcher run with a pasted brief | Researcher only, with DeepSeek v4 flash |
-| Antigravity CLI 1.2.14 | Public install of v0.9.2; isolated update from v0.9.1 | No adapter | All three installed workers started and reached a model; researcher also run as a subagent | Researcher only, with Gemini 3.8 Flash (High) |
+| OpenCode 2.0.18 | Five skills discovered from the prepared v0.9.2 checkout | No adapter | None registered; researcher run with a pasted brief | Researcher only, with DeepSeek v4 flash (v0.9.1 and the 0.9.2 fixes) |
+| Antigravity CLI 1.2.14 | Public install of v0.9.2; isolated update from v0.9.1 | No adapter | v0.9.2: all three installed workers started and reached a model; which model was not recorded. Researcher also run as a subagent | Researcher only, with Gemini 3.8 Flash (High) (v0.9.1 and the 0.9.2 fixes) |
 | Gemini CLI 0.62.0 | Public install of v0.9.2; isolated update from v0.9.1; five skills listed | Fired at startup without a sign-in; whether its context reaches a model is unknown | The CLI's agent loader returned all three briefs; no signed-in listing or start | Not run |
 
 Not established on any host: Antigravity IDE loading, models other than those
