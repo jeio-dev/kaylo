@@ -4,6 +4,12 @@
 
 ### Notable Changes
 
+- **docs**: The README now states that Gemini CLI support is checked for
+  installation and loading only: installing the extension, listing its
+  skills, loading the worker briefs, and the session reminder hook firing
+  have been observed, all without a sign-in. No Kaylo skill or worker has been run with a Gemini model in Gemini
+  CLI, and Antigravity results are not evidence for it. The extension is
+  unchanged.
 - **docs**: Release preparation now includes live startup checks for the three
   installed Kaylo workers in isolated Claude Code and Antigravity profiles.
   The procedure records model request cost and distinguishes a worker that
