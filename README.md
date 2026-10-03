@@ -176,6 +176,13 @@ Start a new session in your target project. Ask it to activate the Kaylo
 These are bare skill names, so avoid another source defining the same names.
 Gemini may ask for consent when activating a skill and reading its resources.
 
+Support on Gemini CLI is checked for installation and loading only. Installing
+the extension, listing its skills, loading the worker briefs, and the session
+reminder hook firing have been observed, all without a sign-in. No Kaylo skill or worker
+has been run with a Gemini model in Gemini CLI, so its model behavior there is
+untested. Antigravity uses Gemini models but is a separate host; its results
+are not evidence for Gemini CLI.
+
 A tag-pinned installation stays on that tag. To move to a newer release,
 uninstall and install again with the new tag:
 
@@ -249,7 +256,8 @@ with manual plan inspection when the validator and supporting files are absent.
 Skill loading and identical resources establish package parity. They do not
 guarantee identical model behavior, invocation UI, permissions, or native
 worker delegation. The three worker briefs remain readable in every full
-package; native agent registration depends on the host.
+package; native agent registration depends on the host. Gemini CLI's column
+records installation and loading only; see the Gemini CLI section above.
 
 ## Optional session reminder
 
@@ -350,7 +358,7 @@ See [guardrail trials](tests/GUARDRAIL-TRIALS.md) for behavioral scenarios.
 
 ## Workers and budgets
 
-Claude and Codex can guide a project. Gemini/Antigravity can receive research work, and OpenCode with an available DeepSeek model can receive implementation work. Read [working with a worker](WORKERS.md) for a copyable handoff and model-selection guidance.
+Claude and Codex can guide a project. Antigravity can receive research work; Gemini CLI loads the same briefs, but no worker has been run there, and OpenCode with an available DeepSeek model can receive implementation work. Read [working with a worker](WORKERS.md) for a copyable handoff and model-selection guidance.
 
 Work directly when that is sufficient; use one worker at a time when helpful. In phase mode the guiding assistant still dispatches one task to one worker at a time and inspects each result before the next. The guiding assistant maintains `ROADMAP.md` and the phase plans; workers return results. Native delegation is optional and never implies cross-vendor subscription access. Narrow uncertain work before giving it to a smaller model; no prompt guarantees every model can complete every task.
 
