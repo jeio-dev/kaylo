@@ -4,6 +4,12 @@
 
 ### Notable Changes
 
+- **skills**: An explicit parallel phase request on Claude Code can dispatch up
+  to two ready builder tasks together when their files and mutable check
+  resources are disjoint. Plain `/kaylo:build phase` and other hosts remain
+  sequential. The guiding assistant records each task's baseline and model
+  selection, inspects changes by path, runs shared checks, and keeps partial
+  failures recoverable ([#31](https://github.com/jeio-dev/kaylo/issues/31)).
 - **agents**: Claude Code's `kaylo:reviewer` adapter now allows `Read`, `Glob`,
   `Grep`, `Bash`, `WebFetch`, and `WebSearch` for both plan checks and
   implementation reviews. It no longer inherits `Edit`, `Write`,

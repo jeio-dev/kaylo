@@ -16,7 +16,7 @@ consistency claim.
 
 | Host | Installation and update | Session reminder | Kaylo workers | Kaylo run with a model |
 | --- | --- | --- | --- | --- |
-| Claude Code 2.1.286 | Public install of v0.9.2; isolated update from v0.9.1 | Delivered at startup and resume. Skipped when the hook payload names a Kaylo worker as `agent_type`, observed when a worker was started or resumed with `--agent`; a worker resumed with `-c` alone still received it | v0.9.2: all three installed workers started and reached a model; which model was not recorded. Unreleased reviewer tool list passed structural checks only | All five skills with Claude Opus 5.5, from 0.7.0 through the 0.9.2 fixes. Workers with a recorded model: builder with Opus 5.5 and with Claude Haiku 4.5, and reviewer with Opus 5.5 (`334f574`, before 0.8.0); researcher with Opus 5.5 (v0.9.1 and the 0.9.2 fixes). Unreleased reviewer list has not run with a model |
+| Claude Code 2.1.286 | Public install of v0.9.2; isolated update from v0.9.1 | Delivered at startup and resume. Skipped when the hook payload names a Kaylo worker as `agent_type`, observed when a worker was started or resumed with `--agent`; a worker resumed with `-c` alone still received it | v0.9.2: all three installed workers started and reached a model; which model was not recorded. Unreleased issue #31: two builder workers completed independent tasks concurrently in a temporary project; their actual model was not exposed. Unreleased reviewer tool list passed structural checks only | All five skills with Claude Opus 5.5, from 0.7.0 through the 0.9.2 fixes. Workers with a recorded model: builder with Opus 5.5 and with Claude Haiku 4.5, and reviewer with Opus 5.5 (`334f574`, before 0.8.0); researcher with Opus 5.5 (v0.9.1 and the 0.9.2 fixes). Unreleased issue #31 phase and build trials used an Opus 5.5 guiding session; worker model identity was not observed. Unreleased reviewer list has not run with a model |
 | Codex CLI 0.159.3 | Public install of v0.9.2; isolated update from v0.9.1; five skills discovered | Fired at startup and resume after the hooks were trusted | None registered; the manual handoff was not run | Not run |
 | OpenCode 2.0.18 | Five skills discovered from the prepared v0.9.2 checkout | No adapter | None registered; researcher run with a pasted brief | Researcher only, with DeepSeek v4 flash (v0.9.1 and the 0.9.2 fixes) |
 | Antigravity CLI 1.2.14 | Public install of v0.9.2; isolated update from v0.9.1 | No adapter | v0.9.2: all three installed workers started and reached a model; which model was not recorded. Researcher also run as a subagent | Researcher only, with Gemini 3.8 Flash (High) (v0.9.1 and the 0.9.2 fixes) |
@@ -24,6 +24,36 @@ consistency claim.
 
 Not established on any host: Antigravity IDE loading, models other than those
 named, and repeated runs of the same case.
+
+## Parallel phase dispatch — 2026-10-03
+
+Issue #31's maintainer decisions authorize Claude Code only, a two-worker cap, disjoint ownership in one directory, and parallel dispatch only when requested for that invocation. The changed build skill and delegation reference form waves from ready tasks, require separate model checks and baselines, inspect each result by path, and keep the guiding assistant in charge of the shared plan and combined checks. No scheduler, new plan field, validator rule, or worker brief was added. The Claude adapter generation was unchanged.
+
+Live trials used Claude Code 2.1.286 with a Claude Opus 5.5 guiding session, a temporary Claude profile, and eight throwaway Git projects inside a Bubblewrap sandbox. The normal credential and `~/.claude.json` were mounted read-only; the trial profile and projects were writable only inside the fixture. Each session used `claude --permission-mode manual --setting-sources project --strict-mcp-config --model claude-opus-5-5 --ax-screen-reader --plugin-dir /home/jeio/tools/kaylo`; the plugin directory was a trial snapshot of this checkout's changed build skill and delegation reference. The operator approved individual workspace, read, edit, and check prompts; no permission-skipping flag was passed. The projects used small text-file tasks, `test -f` or `rg -q` focused checks, and `node scripts/validate-plan.cjs` for the shared plan. The relevant request for each case was `Use /kaylo:build phase ... in parallel`, plain `Use /kaylo:build phase`, `Use /kaylo:build`, or `Use /kaylo:build T3`.
+
+| Case | Observed result |
+| --- | --- |
+| Independent T1 and T2, explicit parallel request | Two `kaylo:builder` background agents ran together. T1 made only `alpha.txt`; T2 made only `beta.txt`. The guiding session checked both files and tests, then checked off both tasks and passed the plan validator. No worker wrote the phase plan or collided with the other's file. Repeated after a final clarification to the skill's wave timing; the same outcome was observed. |
+| Overlapping T1 and T2 | Both tasks owned `shared.txt`; Claude Code selected one-task waves. T2 started only after T1's change and plan check were accepted. Final file retained both additions in order. |
+| Dependent T2 blocked by T1 | T1 created `source.txt` and was accepted first. T2 then read that file and created identical `derived.txt`; `cmp` and the plan validator passed. No prerequisite commit was made. |
+| T1 success, T2 blocked, T3 later | Two workers ran in the first wave. T1's `good.txt` was kept and checked off. T2 could not read the intentionally absent input, created nothing, and remained unchecked with a concrete resume action. T3 remained `Not started`; the plan validator passed. |
+| Plain `/kaylo:build phase` | T1 and T2 ran sequentially, each accepted and structurally checked before the next. Both were checked off and routed to review. |
+| Bare `/kaylo:build` | Only first ready T1 was built and checked off; T2 remained open. |
+| `/kaylo:build T3` | Only T3 was built and checked off; T1 and T2 remained open. |
+
+These are one run per case, with one repeat of the independent case, in tiny fixtures; they are not consistency evidence for larger projects, ambiguous ownership, mutable shared services, simultaneous user edits, or model routing under a tiered preference. The guiding model was shown as Opus 5.5; the host did not expose the actual model of each subagent, so no worker-model identity or tier selection is claimed. Claude Code's shared directory does not enforce the ownership rule; the guiding assistant detected changes after workers returned. Other hosts were not rerun for issue #31 and retain the sequential instructions. Gemini CLI remained unavailable for a signed-in model trial. No isolated install or update of the unreleased package was run, and the trial did not exercise the unreleased reviewer tool list.
+
+| Structural check | Observed result |
+| --- | --- |
+| `node scripts/sync-claude-agents.cjs` | Passed; generated adapters unchanged |
+| `node scripts/validate-package.cjs` | Passed: package v0.9.2, five shared skills, matching versions and release catalogs |
+| `node --test tests/*.test.cjs` | 107 tests passed |
+| `claude plugin validate .claude-plugin/plugin.json --strict` | Passed |
+| `claude plugin validate .claude-plugin/marketplace.json --strict` | Passed |
+| `agy plugin validate .` | Passed: five skills and three agents processed |
+| `git diff --check` | Clean on the final working diff |
+
+These structural checks establish resource consistency and manifest validity, not worker behavior; the seven live cases above provide the separate model observations. Public installation of this unreleased change remains untested.
 
 ## Claude reviewer adapter tool list — 2026-10-02
 
