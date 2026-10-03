@@ -1,0 +1,38 @@
+{
+  "name": "kaylo",
+  "version": "0.9.3",
+  "description": "Patient development guidance: define, plan, build, review, and close.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeio-dev/kaylo.git"
+  },
+  "homepage": "https://github.com/jeio-dev/kaylo#readme",
+  "engines": {
+    "node": ">=24"
+  },
+  "files": [
+    ".agents/",
+    ".claude-plugin/",
+    ".codex-plugin/",
+    ".gitattributes",
+    ".gitignore",
+    "CHANGELOG.md",
+    "GLOSSARY.md",
+    "LICENSE",
+    "README.md",
+    "RELEASING.md",
+    "VERIFICATION.md",
+    "WORKERS.md",
+    "agents/",
+    "claude-agents/",
+    "development/.agents/plugins/marketplace.json",
+    "gemini-extension.json",
+    "hooks/",
+    "plugin.json",
+    "scripts/",
+    "skills/",
+    "templates/",
+    "tests/"
+  ]
+}

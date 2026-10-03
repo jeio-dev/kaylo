@@ -34,6 +34,13 @@ test('version drift between hosts is rejected', t => {
   edit(dir, 'gemini-extension.json', value => { value.version = '99.0.0'; });
   assert.equal(check(dir).status, 1);
 });
+test('npm package version drift from the plugin manifests is rejected', t => {
+  const dir = fixture(t);
+  edit(dir, 'package.json', value => { value.version = '99.0.0'; });
+  const result = check(dir);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /package\.json version must match the plugin manifests/);
+});
 test('development branch cannot accidentally become a published plugin source', t => {
   const dir = fixture(t);
   edit(dir, '.agents/plugins/marketplace.json', value => { value.plugins[0].source.ref = 'main'; });
