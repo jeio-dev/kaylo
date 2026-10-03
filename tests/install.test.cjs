@@ -92,7 +92,7 @@ function fresh(ctx) {
     'codex plugin list --json': { stdout: codexList() },
     'codex plugin add kaylo@kaylo --json': { stdout: { pluginId: 'kaylo@kaylo', version, installedPath: ctx.roots.codex } },
     'agy plugin list': { stdout: { imports: [] } },
-    'gemini extensions list': { stdout: 'No extensions installed.\n' }
+    'gemini extensions list': { stderr: 'No extensions installed.\n' }
   };
 }
 const byHost = (log, host) => log.filter(line => line.startsWith(`${host} `));
@@ -134,7 +134,7 @@ test('update replaces a differently pinned Claude marketplace, any Codex marketp
     'claude plugin list --json': [{ stdout: [claudeEntry('/old', '0.9.2')] }, { stdout: [claudeEntry(ctx.roots.claude)] }],
     'codex plugin marketplace list --json': { stdout: { marketplaces: [{ name: 'kaylo', root: '/x' }] } },
     'agy plugin list': { stdout: { imports: [{ name: 'kaylo' }] } },
-    'gemini extensions list': [{ stdout: geminiList('0.9.2') }]
+    'gemini extensions list': [{ stderr: geminiList('0.9.2') }]
   });
   const result = ctx.run(['update', '--all', '--yes']);
   assert.equal(result.status, 0, result.stdout + result.stderr);
@@ -187,7 +187,7 @@ test('uninstall removes what is listed and checks that Kaylo is gone', t => {
     'codex plugin marketplace list --json': [{ stdout: { marketplaces: [{ name: 'kaylo' }] } }, { stdout: { marketplaces: [] } }],
     'codex plugin list --json': [{ stdout: codexList() }, { stdout: { installed: [], available: [] } }],
     'agy plugin list': [{ stdout: { imports: [{ name: 'kaylo' }] } }, { stdout: { imports: [] } }],
-    'gemini extensions list': [{ stdout: geminiList() }, { stdout: 'No extensions installed.\n' }]
+    'gemini extensions list': [{ stderr: geminiList() }, { stderr: 'No extensions installed.\n' }]
   });
   const result = ctx.run(['uninstall', '--all', '--yes']);
   assert.equal(result.status, 0, result.stdout + result.stderr);
@@ -197,9 +197,17 @@ test('uninstall removes what is listed and checks that Kaylo is gone', t => {
   assert.match(result.stdout, /Gemini CLI: removed/);
 });
 
+test('a Gemini extension list on stdout is read as well as one on stderr', t => {
+  const ctx = setup(t, { hosts: ['gemini'] });
+  ctx.scenario({ 'gemini extensions list': { stdout: geminiList('0.9.2') } });
+  const result = ctx.run(['update', '--gemini', '--dry-run']);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.match(result.stdout, /\$ gemini extensions uninstall kaylo/);
+});
+
 test('uninstall fails a host whose list still shows Kaylo', t => {
   const ctx = setup(t, { hosts: ['gemini'] });
-  ctx.scenario({ 'gemini extensions list': { stdout: geminiList() } });
+  ctx.scenario({ 'gemini extensions list': { stderr: geminiList() } });
   const result = ctx.run(['uninstall', '--gemini', '--yes']);
   assert.equal(result.status, 1);
   assert.match(result.stdout, /Gemini CLI: failed: Kaylo is still listed after uninstall/);
@@ -210,7 +218,7 @@ test('--dry-run runs only read-only commands', t => {
     const ctx = setup(t);
     ctx.scenario({ ...fresh(ctx), 'claude plugin marketplace list --json': { stdout: [{ name: 'kaylo', source: 'github', repo: 'x/y' }] },
       'codex plugin marketplace list --json': { stdout: { marketplaces: [{ name: 'kaylo' }] } },
-      'gemini extensions list': { stdout: geminiList('0.9.2') }, 'agy plugin list': { stdout: { imports: [{ name: 'kaylo' }] } } });
+      'gemini extensions list': { stderr: geminiList('0.9.2') }, 'agy plugin list': { stdout: { imports: [{ name: 'kaylo' }] } } });
     const result = ctx.run([command, '--all', '--dry-run']);
     assert.equal(result.status, 0, result.stdout + result.stderr);
     assert.deepEqual(result.mutations, []);

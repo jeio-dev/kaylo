@@ -60,14 +60,15 @@ function detect(env = process.env) {
   })).map(host => host.id));
 }
 
-// Read-only host commands: output is captured and nothing is changed.
-function read(bin, args) {
+// Read-only host commands: output is captured and nothing is changed. JSON readers
+// use stdout only, because hosts print warnings on stderr.
+function read(bin, args, { stderr = false } = {}) {
   const result = spawnSync(bin, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
   if (result.error) throw new Error(`${display(bin, args)} could not run: ${result.error.message}`);
   if (result.status !== 0) {
     throw new Error(`${display(bin, args)} exited with ${result.status}: ${lastLine(result.stderr || result.stdout)}`);
   }
-  return result.stdout;
+  return stderr ? `${result.stdout}\n${result.stderr}` : result.stdout;
 }
 function json(text, label) {
   const trimmed = text.trim();
@@ -113,7 +114,8 @@ function agyListed() {
     return /^\W*kaylo\b/m.test(output);
   }
 }
-const geminiListed = () => /^\W*kaylo \(/m.test(read('gemini', ['extensions', 'list']));
+// Gemini CLI 0.62.0 prints its extension list on stderr.
+const geminiListed = () => /^\W*kaylo \(/m.test(read('gemini', ['extensions', 'list'], { stderr: true }));
 // Antigravity's plugin.json has no version, so read the copy's Claude manifest.
 function manifestVersion(dir, file) {
   try {
