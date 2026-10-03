@@ -59,6 +59,11 @@ try {
   const npm = read('package.json');
   assert.equal(npm.name, 'kaylo', 'package.json name must be kaylo');
   assert.equal(npm.version, claude.version, 'package.json version must match the plugin manifests');
+  // Tracking is the inventory test's job; this also runs in the Git-less extracted package.
+  const bins = typeof npm.bin === 'string' ? { [npm.name]: npm.bin } : npm.bin || {};
+  for (const [name, target] of Object.entries(bins)) {
+    assert(fs.existsSync(path.join(root, target)), `package.json bin "${name}" target is missing: ${target}`);
+  }
   const tag = `v${claude.version}`;
   const cc = read('.claude-plugin/marketplace.json');
   const cx = read('.agents/plugins/marketplace.json');
