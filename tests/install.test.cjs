@@ -57,7 +57,6 @@ function setup(t, { hosts = ['claude', 'codex', 'agy', 'gemini'] } = {}) {
   fs.mkdirSync(home);
   for (const host of hosts) fs.writeFileSync(path.join(bin, host), stub, { mode: 0o755 });
   const env = { PATH: bin, HOME: home, KAYLO_STUB_LOG: path.join(dir, 'log'), KAYLO_STUB_SCENARIO: path.join(dir, 'scenario.json') };
-  fs.writeFileSync(env.KAYLO_STUB_LOG, '');
   const ctx = {
     dir, home, env,
     roots: {
@@ -66,8 +65,11 @@ function setup(t, { hosts = ['claude', 'codex', 'agy', 'gemini'] } = {}) {
       agy: path.join(home, '.gemini', 'config', 'plugins', 'kaylo'),
       gemini: path.join(home, '.gemini', 'extensions', 'kaylo')
     },
+    // A new scenario also resets the stub log and response counters.
     scenario(value) {
       fs.writeFileSync(env.KAYLO_STUB_SCENARIO, JSON.stringify(value));
+      fs.writeFileSync(env.KAYLO_STUB_LOG, '');
+      fs.rmSync(`${env.KAYLO_STUB_SCENARIO}.counts`, { force: true });
     },
     run(args, input = '') {
       const result = spawnSync(process.execPath, [kaylo, ...args], { env, input, encoding: 'utf8', cwd: dir });
@@ -81,7 +83,9 @@ function setup(t, { hosts = ['claude', 'codex', 'agy', 'gemini'] } = {}) {
 }
 const claudeEntry = (root, as = version) => ({ id: 'kaylo@kaylo', version: as, scope: 'user', enabled: true, installPath: root });
 const codexList = (as = version) => ({ installed: [{ pluginId: 'kaylo@kaylo', name: 'kaylo', version: as, installed: true }], available: [] });
-const geminiList = (as = version) => `✓ kaylo (${as})\n Path: somewhere\n Ref: v${as}\n`;
+// Observed shape (Gemini CLI 0.62.0, on stderr); another extension comes first.
+const geminiList = (root, as = version) => `✓ other-extension (1.0.0)\n Path: /elsewhere/other\n\n` +
+  `✓ kaylo (${as})\n ID: 4590\n Path: ${root}\n Ref: v${as}\n Enabled (User): true\n`;
 // Nothing installed before; every host installs and reports this release.
 function fresh(ctx) {
   for (const id of ['claude', 'codex', 'agy', 'gemini']) copy(ctx.roots[id]);
@@ -92,7 +96,7 @@ function fresh(ctx) {
     'codex plugin list --json': { stdout: codexList() },
     'codex plugin add kaylo@kaylo --json': { stdout: { pluginId: 'kaylo@kaylo', version, installedPath: ctx.roots.codex } },
     'agy plugin list': { stdout: { imports: [] } },
-    'gemini extensions list': { stderr: 'No extensions installed.\n' }
+    'gemini extensions list': [{ stderr: 'No extensions installed.\n' }, { stderr: geminiList(ctx.roots.gemini) }]
   };
 }
 const byHost = (log, host) => log.filter(line => line.startsWith(`${host} `));
@@ -134,7 +138,7 @@ test('update replaces a differently pinned Claude marketplace, any Codex marketp
     'claude plugin list --json': [{ stdout: [claudeEntry('/old', '0.9.2')] }, { stdout: [claudeEntry(ctx.roots.claude)] }],
     'codex plugin marketplace list --json': { stdout: { marketplaces: [{ name: 'kaylo', root: '/x' }] } },
     'agy plugin list': { stdout: { imports: [{ name: 'kaylo' }] } },
-    'gemini extensions list': [{ stderr: geminiList('0.9.2') }]
+    'gemini extensions list': [{ stderr: geminiList(ctx.roots.gemini, '0.9.2') }, { stderr: geminiList(ctx.roots.gemini) }]
   });
   const result = ctx.run(['update', '--all', '--yes']);
   assert.equal(result.status, 0, result.stdout + result.stderr);
@@ -143,9 +147,11 @@ test('update replaces a differently pinned Claude marketplace, any Codex marketp
     `claude plugin marketplace add jeio-dev/kaylo@${tag}`, 'claude plugin install kaylo@kaylo']);
   assert.deepEqual(byHost(result.mutations, 'codex'), ['codex plugin marketplace remove kaylo',
     `codex plugin marketplace add jeio-dev/kaylo --ref ${tag}`, 'codex plugin add kaylo@kaylo --json']);
+  assert.deepEqual(byHost(result.mutations, 'agy'), [`agy plugin install ${repo}`]);
   assert.deepEqual(byHost(result.mutations, 'gemini'), ['gemini extensions uninstall kaylo',
     `gemini extensions install https://github.com/jeio-dev/kaylo --ref ${tag}`]);
   assert.match(result.stdout, /replaces existing marketplace kaylo \(jeio-dev\/kaylo at v0\.9\.2\)/);
+  assert.match(result.stdout, /replaces existing plugin kaylo/);
   assert.match(result.stdout, /replaces existing extension kaylo/);
 });
 
@@ -158,8 +164,6 @@ test('an existing Claude marketplace with the pinned source is kept', t => {
   assert.equal(result.status, 0, result.stdout + result.stderr);
   assert.deepEqual(result.mutations, ['claude plugin update kaylo@kaylo']);
   // Kept but not yet installed: install, still without touching the marketplace.
-  fs.writeFileSync(ctx.env.KAYLO_STUB_LOG, '');
-  fs.rmSync(`${ctx.env.KAYLO_STUB_SCENARIO}.counts`);
   ctx.scenario({ ...fresh(ctx), 'claude plugin marketplace list --json': pinned });
   result = ctx.run(['--claude', '--yes']);
   assert.equal(result.status, 0, result.stdout + result.stderr);
@@ -187,7 +191,7 @@ test('uninstall removes what is listed and checks that Kaylo is gone', t => {
     'codex plugin marketplace list --json': [{ stdout: { marketplaces: [{ name: 'kaylo' }] } }, { stdout: { marketplaces: [] } }],
     'codex plugin list --json': [{ stdout: codexList() }, { stdout: { installed: [], available: [] } }],
     'agy plugin list': [{ stdout: { imports: [{ name: 'kaylo' }] } }, { stdout: { imports: [] } }],
-    'gemini extensions list': [{ stderr: geminiList() }, { stderr: 'No extensions installed.\n' }]
+    'gemini extensions list': [{ stderr: geminiList(ctx.roots.gemini) }, { stderr: 'No extensions installed.\n' }]
   });
   const result = ctx.run(['uninstall', '--all', '--yes']);
   assert.equal(result.status, 0, result.stdout + result.stderr);
@@ -197,9 +201,22 @@ test('uninstall removes what is listed and checks that Kaylo is gone', t => {
   assert.match(result.stdout, /Gemini CLI: removed/);
 });
 
+test('uninstall with partial state runs only the steps for what is listed', t => {
+  const ctx = setup(t, { hosts: ['claude', 'codex'] });
+  ctx.scenario({
+    'claude plugin marketplace list --json': [{ stdout: [{ name: 'kaylo' }] }, { stdout: [] }],
+    'claude plugin list --json': { stdout: [] },
+    'codex plugin marketplace list --json': { stdout: { marketplaces: [] } },
+    'codex plugin list --json': [{ stdout: codexList() }, { stdout: { installed: [], available: [] } }]
+  });
+  const result = ctx.run(['uninstall', '--all', '--yes']);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.deepEqual(result.mutations, ['claude plugin marketplace remove kaylo', 'codex plugin remove kaylo@kaylo']);
+});
+
 test('a Gemini extension list on stdout is read as well as one on stderr', t => {
   const ctx = setup(t, { hosts: ['gemini'] });
-  ctx.scenario({ 'gemini extensions list': { stdout: geminiList('0.9.2') } });
+  ctx.scenario({ 'gemini extensions list': { stdout: geminiList('/x', '0.9.2') } });
   const result = ctx.run(['update', '--gemini', '--dry-run']);
   assert.equal(result.status, 0, result.stdout + result.stderr);
   assert.match(result.stdout, /\$ gemini extensions uninstall kaylo/);
@@ -207,7 +224,7 @@ test('a Gemini extension list on stdout is read as well as one on stderr', t => 
 
 test('uninstall fails a host whose list still shows Kaylo', t => {
   const ctx = setup(t, { hosts: ['gemini'] });
-  ctx.scenario({ 'gemini extensions list': { stderr: geminiList() } });
+  ctx.scenario({ 'gemini extensions list': { stderr: geminiList(ctx.roots.gemini) } });
   const result = ctx.run(['uninstall', '--gemini', '--yes']);
   assert.equal(result.status, 1);
   assert.match(result.stdout, /Gemini CLI: failed: Kaylo is still listed after uninstall/);
@@ -218,7 +235,7 @@ test('--dry-run runs only read-only commands', t => {
     const ctx = setup(t);
     ctx.scenario({ ...fresh(ctx), 'claude plugin marketplace list --json': { stdout: [{ name: 'kaylo', source: 'github', repo: 'x/y' }] },
       'codex plugin marketplace list --json': { stdout: { marketplaces: [{ name: 'kaylo' }] } },
-      'gemini extensions list': { stderr: geminiList('0.9.2') }, 'agy plugin list': { stdout: { imports: [{ name: 'kaylo' }] } } });
+      'gemini extensions list': { stderr: geminiList(ctx.roots.gemini, '0.9.2') }, 'agy plugin list': { stdout: { imports: [{ name: 'kaylo' }] } } });
     const result = ctx.run([command, '--all', '--dry-run']);
     assert.equal(result.status, 0, result.stdout + result.stderr);
     assert.deepEqual(result.mutations, []);
@@ -280,6 +297,7 @@ test('without --yes the plan is confirmed first; any answer but yes changes noth
   assert.equal(result.status, 1);
   assert.match(result.stdout, /Proceed\? \[y\/N\]/);
   assert.deepEqual(result.mutations, []);
+  ctx.scenario(fresh(ctx));
   result = ctx.run(['--gemini'], 'y\n');
   assert.equal(result.status, 0, result.stdout + result.stderr);
   assert.deepEqual(result.mutations, [`gemini extensions install https://github.com/jeio-dev/kaylo --ref ${tag}`]);
@@ -337,4 +355,104 @@ test('Codex verification uses the installedPath from its own add output, never t
   const result = ctx.run(['--codex', '--yes']);
   assert.equal(result.status, 1);
   assert.match(result.stdout, new RegExp(`Codex: failed: installed files at ${active} do not match`));
+});
+
+test('the JSON reader tolerates notices before and after the JSON', () => {
+  const { json } = require(kaylo);
+  assert.deepEqual(json('{"a":1}', 'x'), { a: 1 });
+  assert.deepEqual(json('Notice: cloning\n{"a":{"b":[1]}}\nDone.\n', 'x'), { a: { b: [1] } });
+  assert.deepEqual(json('[warn] stale cache\n[{"id":"kaylo@kaylo"}]\n', 'x'), [{ id: 'kaylo@kaylo' }]);
+  assert.deepEqual(json('{"a":1} trailing text', 'x'), { a: 1 });
+  assert.throws(() => json('no json here', 'host list'), /host list did not print JSON/);
+});
+
+test('the Gemini root comes from the Path line of its list, not from HOME', t => {
+  const ctx = setup(t, { hosts: ['gemini'] });
+  const moved = copy(path.join(ctx.home, 'gemini-cli-home', '.gemini', 'extensions', 'kaylo'));
+  ctx.scenario({ 'gemini extensions list': [{ stderr: 'No extensions installed.\n' }, { stderr: geminiList(moved) }] });
+  copy(ctx.roots.gemini, { alter: true });
+  const result = ctx.run(['--gemini', '--yes']);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.match(result.stdout, new RegExp(`Gemini CLI: ${tag}, files verified at ${moved}`));
+});
+
+test('a Gemini list without a Path line is "verification unavailable"', t => {
+  const ctx = setup(t, { hosts: ['gemini'] });
+  copy(ctx.roots.gemini);
+  ctx.scenario({ 'gemini extensions list': [{ stderr: 'No extensions installed.\n' }, { stderr: `✓ kaylo (${version})\n Ref: ${tag}\n` }] });
+  const result = ctx.run(['--gemini', '--yes']);
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, /Gemini CLI: failed: verification unavailable: Gemini CLI does not expose its active install path/);
+});
+
+test('a replace that removed the previous install and then failed says so', t => {
+  const ctx = setup(t, { hosts: ['claude', 'gemini'] });
+  ctx.scenario({
+    ...fresh(ctx),
+    'claude plugin marketplace list --json': { stdout: [{ name: 'kaylo', source: 'github', repo: 'jeio-dev/kaylo', ref: 'v0.9.2' }] },
+    [`claude plugin marketplace add jeio-dev/kaylo@${tag}`]: { status: 1 },
+    'gemini extensions list': { stderr: geminiList(ctx.roots.gemini, '0.9.2') },
+    // A declined consent prompt makes the install exit 1.
+    [`gemini extensions install https://github.com/jeio-dev/kaylo --ref ${tag}`]: { status: 1 }
+  });
+  const result = ctx.run(['update', '--all', '--yes']);
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, /Claude Code: failed: claude plugin marketplace add .* exited with 1; the previous Kaylo install was removed and not replaced/);
+  assert.match(result.stdout, /Gemini CLI: failed: gemini extensions install .* exited with 1; the previous Kaylo install was removed and not replaced/);
+  ctx.scenario({ ...fresh(ctx), [`gemini extensions install https://github.com/jeio-dev/kaylo --ref ${tag}`]: { status: 1 } });
+  assert.doesNotMatch(ctx.run(['--gemini', '--yes']).stdout, /removed and not replaced/);
+});
+
+// Runs main() with a fake terminal so the picker and prompts appear, then sends
+// Ctrl-C or closes input at the named prompt.
+function ttyRun(ctx, args, prompt, send) {
+  const script = path.join(ctx.dir, 'tty.cjs');
+  fs.writeFileSync(script, `'use strict';
+const { PassThrough } = require('node:stream');
+const { main } = require(${JSON.stringify(kaylo)});
+const input = new PassThrough();
+const output = new PassThrough();
+input.isTTY = output.isTTY = true;
+let shown = '';
+output.on('data', chunk => {
+  process.stdout.write(chunk);
+  shown += chunk;
+  if (shown.includes(${JSON.stringify(prompt)})) {
+    shown = '';
+    setImmediate(() => ${send === 'ctrl-c' ? "input.write('\\x03')" : 'input.end()'});
+  }
+});
+main(${JSON.stringify(args)}, { input, output, error: process.stderr }).then(code => { process.exitCode = code; });
+`);
+  const result = spawnSync(process.execPath, [script], { env: ctx.env, encoding: 'utf8', cwd: ctx.dir, timeout: 20000 });
+  result.mutations = fs.readFileSync(ctx.env.KAYLO_STUB_LOG, 'utf8').split('\n').filter(Boolean).map(line => JSON.parse(line))
+    .filter(line => !readOnly.has(line));
+  return result;
+}
+
+test('closed input or Ctrl-C at the picker aborts with no change, with or without --yes', t => {
+  for (const [args, send, code] of [[[], 'eof', 1], [['--yes'], 'eof', 1], [['--yes'], 'ctrl-c', 130], [[], 'ctrl-c', 130]]) {
+    const ctx = setup(t);
+    ctx.scenario(fresh(ctx));
+    const result = ttyRun(ctx, args, 'press Enter to continue', send);
+    assert.equal(result.status, code, `${args} ${send}: ${result.stdout}${result.stderr}`);
+    assert.match(result.stdout, /Nothing was changed\./);
+    assert.deepEqual(result.mutations, []);
+  }
+});
+
+test('closed input or Ctrl-C at the confirmation aborts with no change', t => {
+  for (const [send, code] of [['eof', 1], ['ctrl-c', 130]]) {
+    const ctx = setup(t);
+    ctx.scenario(fresh(ctx));
+    const result = ttyRun(ctx, ['--gemini'], 'Proceed? [y/N]', send);
+    assert.equal(result.status, code, result.stdout + result.stderr);
+    assert.match(result.stdout, /Nothing was changed\./);
+    assert.deepEqual(result.mutations, []);
+  }
+  const ctx = setup(t, { hosts: ['gemini'] });
+  ctx.scenario(fresh(ctx));
+  const result = ctx.run(['--gemini']);
+  assert.equal(result.status, 1);
+  assert.deepEqual(result.mutations, []);
 });

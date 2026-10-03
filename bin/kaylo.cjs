@@ -70,17 +70,18 @@ function read(bin, args, { stderr = false } = {}) {
   }
   return stderr ? `${result.stdout}\n${result.stderr}` : result.stdout;
 }
+// Hosts may print notices around their JSON. Try each line that opens an object or
+// array, up to the last matching closer.
 function json(text, label) {
-  const trimmed = text.trim();
-  try {
-    return JSON.parse(trimmed);
-  } catch {
-    const start = trimmed.search(/^[[{]/m);
+  const starts = [0, ...[...text.matchAll(/^[ \t]*[[{]/gm)].map(match => match.index)];
+  for (const start of starts) {
+    const body = text.slice(start).trim();
+    const end = body.lastIndexOf(body[0] === '[' ? ']' : '}');
     try {
-      if (start >= 0) return JSON.parse(trimmed.slice(start));
+      return JSON.parse(end >= 0 ? body.slice(0, end + 1) : body);
     } catch {}
-    throw new Error(`${label} did not print JSON`);
   }
+  throw new Error(`${label} did not print JSON`);
 }
 const lastLine = text => (text || '').trim().split('\n').pop() || 'no output';
 const quote = arg => /^[\w@%+=:,./-]+$/.test(arg) ? arg : `'${arg.replace(/'/g, `'\\''`)}'`;
@@ -104,8 +105,8 @@ function codexInstall() {
   const list = json(read('codex', ['plugin', 'list', '--json']), 'codex plugin list --json');
   return (list.installed || []).find(entry => entry.pluginId === plugin && entry.installed !== false);
 }
+// Antigravity CLI 1.2.14 names no home override; its plugin root is fixed under HOME (#57 Q2).
 const agyRoot = () => path.join(home(), '.gemini', 'config', 'plugins', 'kaylo');
-const geminiRoot = () => path.join(home(), '.gemini', 'extensions', 'kaylo');
 function agyListed() {
   const output = read('agy', ['plugin', 'list']);
   try {
@@ -114,8 +115,19 @@ function agyListed() {
     return /^\W*kaylo\b/m.test(output);
   }
 }
-// Gemini CLI 0.62.0 prints its extension list on stderr.
-const geminiListed = () => /^\W*kaylo \(/m.test(read('gemini', ['extensions', 'list'], { stderr: true }));
+// Gemini CLI 0.62.0 prints its extension list on stderr. The list is the active
+// install record: a `kaylo (version)` header and its `Path:` line. Gemini's home can
+// move with GEMINI_CLI_HOME, so the root is never derived from HOME.
+function geminiInstall() {
+  const lines = read('gemini', ['extensions', 'list'], { stderr: true }).split('\n');
+  const header = /^\W*([\w.-]+) \(([^)]*)\)\s*$/;
+  const start = lines.findIndex(line => header.exec(line)?.[1] === 'kaylo');
+  if (start < 0) return undefined;
+  const next = lines.findIndex((line, index) => index > start && header.test(line));
+  const block = lines.slice(start + 1, next < 0 ? undefined : next);
+  const found = block.map(line => /^\s*Path:\s*(.+?)\s*$/.exec(line)).find(Boolean);
+  return { version: header.exec(lines[start])[2], root: found && found[1] };
+}
 // Antigravity's plugin.json has no version, so read the copy's Claude manifest.
 function manifestVersion(dir, file) {
   try {
@@ -146,7 +158,8 @@ const plans = {
     const replaces = [];
     if (market && !pinned) {
       replaces.push(`marketplace kaylo (${market.repo || market.url || market.source}${market.ref ? ` at ${market.ref}` : ', unpinned'})`);
-      steps.push({ args: ['plugin', 'marketplace', 'remove', 'kaylo'] });
+      // Removing a Claude marketplace also uninstalls its plugin.
+      steps.push({ args: ['plugin', 'marketplace', 'remove', 'kaylo'], removes: true });
     }
     if (!pinned) steps.push({ args: ['plugin', 'marketplace', 'add', `${repo}@${tag}`] });
     // Removing a marketplace also uninstalls the plugin, so only a kept one can update.
@@ -162,7 +175,8 @@ const plans = {
       };
     }
     // The marketplace list hides the pinned ref, so an existing one is always replaced.
-    const steps = market ? [{ args: ['plugin', 'marketplace', 'remove', 'kaylo'] }] : [];
+    // Removing a Codex marketplace also unlists its plugin (#57 Q5).
+    const steps = market ? [{ args: ['plugin', 'marketplace', 'remove', 'kaylo'], removes: true }] : [];
     steps.push({ args: ['plugin', 'marketplace', 'add', repo, '--ref', tag] });
     steps.push({ args: ['plugin', 'add', plugin, '--json'], capture: true });
     return { steps, replaces: market ? ['marketplace kaylo (its pinned ref is not shown)'] : [] };
@@ -177,14 +191,13 @@ const plans = {
     };
   },
   gemini(command) {
-    const listed = geminiListed();
-    const uninstall = { args: ['extensions', 'uninstall', 'kaylo'] };
+    const listed = geminiInstall();
+    const uninstall = { args: ['extensions', 'uninstall', 'kaylo'], removes: true };
     if (command === 'uninstall') return { steps: listed ? [uninstall] : [] };
-    const current = manifestVersion(geminiRoot(), 'gemini-extension.json');
     return {
       steps: [...listed ? [uninstall] : [],
         { args: ['extensions', 'install', `https://github.com/${repo}`, '--ref', tag] }],
-      replaces: listed ? [`extension kaylo (${current ? `v${current}` : 'version unknown'})`] : []
+      replaces: listed ? [`extension kaylo (${listed.version ? `v${listed.version}` : 'version unknown'})`] : []
     };
   }
 };
@@ -213,9 +226,11 @@ const installed = {
     return { version: manifestVersion(dir, '.claude-plugin/plugin.json'), root: dir };
   },
   gemini() {
-    const dir = geminiRoot();
-    if (!fs.existsSync(dir)) return { error: `no installed copy at ${dir}` };
-    return { version: manifestVersion(dir, 'gemini-extension.json'), root: dir };
+    const entry = geminiInstall();
+    if (!entry) return { error: 'kaylo is not listed after install' };
+    if (!entry.root) return { error: 'verification unavailable: Gemini CLI does not expose its active install path' };
+    if (!fs.existsSync(entry.root)) return { error: `no installed copy at ${entry.root}` };
+    return { version: manifestVersion(entry.root, 'gemini-extension.json'), root: entry.root };
   }
 };
 function verifyInstall(id, added) {
@@ -232,19 +247,31 @@ const removed = {
   claude: () => !claudeInstall() && !claudeMarketplace(),
   codex: () => !codexInstall() && !codexMarketplace(),
   agy: () => !agyListed(),
-  gemini: () => !geminiListed()
+  gemini: () => !geminiInstall()
 };
 
-// Buffered line reader: answers typed or pasted ahead of a prompt are kept, and
-// closed input answers ''.
+// Closed input or Ctrl-C at a prompt aborts the run before any change.
+class Aborted extends Error {
+  constructor(code) {
+    super(code === 130 ? 'Interrupted.' : 'Input closed.');
+    this.code = code;
+  }
+}
+// Buffered line reader: answers typed or pasted ahead of a prompt are kept.
 function prompter(input, output) {
   const rl = readline.createInterface({ input, output, terminal: Boolean(input.isTTY && output.isTTY) });
   const lines = rl[Symbol.asyncIterator]();
+  let interrupted = false;
+  rl.on('SIGINT', () => {
+    interrupted = true;
+    rl.close();
+  });
   return {
     async ask(question) {
       output.write(question);
       const next = await lines.next();
-      return next.done ? '' : next.value;
+      if (next.done) throw new Aborted(interrupted ? 130 : 1);
+      return next.value;
     },
     close: () => rl.close()
   };
@@ -336,6 +363,7 @@ async function main(argv, io = { input: process.stdin, output: process.stdout, e
       if (item.failed) continue;
       out(`\n${item.host.name}`);
       let added;
+      let removedPrevious = false;
       for (const step of item.steps) {
         out(`$ ${display(item.host.bin, step.args)}`);
         const result = spawnSync(item.host.bin, step.args, step.capture ?
@@ -343,8 +371,10 @@ async function main(argv, io = { input: process.stdin, output: process.stdout, e
         if (step.capture && result.stdout) io.output.write(result.stdout);
         if (result.error || result.status !== 0) {
           item.failed = `${display(item.host.bin, step.args)} ${result.error ? `could not run: ${result.error.message}` : `exited with ${result.status}`}`;
+          if (removedPrevious && command !== 'uninstall') item.failed += '; the previous Kaylo install was removed and not replaced';
           break;
         }
+        if (step.removes) removedPrevious = true;
         if (step.capture) added = result.stdout;
       }
       if (item.failed) continue;
@@ -373,13 +403,17 @@ async function main(argv, io = { input: process.stdin, output: process.stdout, e
       out('Start a new session.');
     }
     return done.length === work.length ? 0 : 1;
+  } catch (error) {
+    if (!(error instanceof Aborted)) throw error;
+    out(`\n${error.message} Nothing was changed.`);
+    return error.code;
   } finally {
     if (reader) reader.close();
   }
 }
 
 module.exports = {
-  hosts, version, tag, parse, detect, prompter, pick, main, manifestVersion, verifyFiles,
-  claudeInstall, claudeMarketplace, codexInstall, codexMarketplace, agyRoot, geminiRoot
+  hosts, version, tag, parse, detect, prompter, pick, main, json, manifestVersion, verifyFiles,
+  claudeInstall, claudeMarketplace, codexInstall, codexMarketplace, agyRoot, geminiInstall
 };
 if (require.main === module) main(process.argv.slice(2)).then(code => { process.exitCode = code; });
