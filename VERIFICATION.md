@@ -35,6 +35,7 @@ Issue #58 adds `package.json` (name `kaylo`, version 0.9.3, `engines.node` `>=24
 | `node --test tests/*.test.cjs` | 110 tests passed, including both inventory tests in default mode and the new version-drift case |
 | npm 11.19.0: `npm pack --dry-run` | 44 files, `kaylo-0.9.3.tgz`; the list equals `git ls-files` plus the two new untracked files |
 | Same dry run with `development/package/` staged, a copied `AGENTS.md`, and a `.local/` file present | None of the three appeared among the 44 listed files |
+| Inventory tests with an existing `development/package/` holding a sentinel file | At `5d32a78` both tests passed but staging rebuilt the folder and deleted the sentinel (found in review). After the fix, the test stages only when the folder is absent: the sentinel survived, and when the folder was absent the test created and removed it |
 | `tests/` removed from `files` | Inventory test failed, naming the five missing `tests/` files; reverted |
 | Git-ignored `skills/__pycache__/x.pyc` added | Working-tree guard failed, naming that path; the inventory test also failed because the export excludes it; removed |
 | `package.json` version set to 9.9.9 | Validator failed with "package.json version must match the plugin manifests"; reverted |

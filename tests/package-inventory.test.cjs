@@ -72,9 +72,12 @@ test('the packed npm package holds exactly the exported Git files and validates'
 test('the npm files list admits nothing Git ignores in the working tree', t => {
   const staging = path.join(repo, 'development', 'package');
   const staged = fs.existsSync(staging);
-  // Stage the ignored local copy so the guard sees it; remove it only if this test made it.
-  run(process.execPath, [path.join(repo, 'scripts/stage-development.cjs')]);
-  if (!staged) t.after(() => fs.rmSync(staging, { recursive: true, force: true }));
+  // The guard must see the ignored local copy. Stage it only when absent, because staging
+  // rebuilds the folder, and remove it only if this test made it.
+  if (!staged) {
+    t.after(() => fs.rmSync(staging, { recursive: true, force: true }));
+    run(process.execPath, [path.join(repo, 'scripts/stage-development.cjs')]);
+  }
   const files = JSON.parse(run('npm', ['pack', '--dry-run', '--json'], { cwd: repo }).stdout)[0].files
     .map(file => file.path);
   const ignored = spawnSync('git', ['check-ignore', '--stdin'], { cwd: repo, encoding: 'utf8', input: files.join('\n') });
