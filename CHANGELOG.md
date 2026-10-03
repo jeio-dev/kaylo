@@ -61,10 +61,12 @@ and Antigravity. These starts check registration, not instruction-following
 quality. After publication, fresh public GitHub installs on Claude, Codex,
 Gemini CLI, and Antigravity each matched the v0.9.3 tag and all 23 shared
 resources; that check made no model requests. Earlier live trials of parallel
-phase builds are single observations; the reviewer tool restriction and model
-preference have not had a behavior trial. Gemini CLI model behavior and
-signed-in worker starts, and Antigravity IDE loading remain untested. Details
-and limits are in `VERIFICATION.md`.
+phase builds are single observations. OpenCode 2.0.18 also discovered all five
+skills with exact instruction bodies from a public v0.9.3 checkout; no model
+was run for that check. The reviewer tool restriction and model preference
+have not had a behavior trial. Gemini CLI model behavior and signed-in worker
+starts, and Antigravity IDE loading remain untested. Details and limits are in
+`VERIFICATION.md`.
 
 ### Commits
 
