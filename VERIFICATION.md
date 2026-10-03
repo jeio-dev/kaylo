@@ -2092,3 +2092,49 @@ shown to the user, and which definition a model actually invokes. Answering
 #32's question 3: yes, the listing needs a sign-in, so the check stopped. The
 maintainer chose to document the collision and keep the names; `WORKERS.md`
 now states it in these terms.
+
+## Post-merge trials of the #37 to #43 fixes — 2026-10-02
+
+After PR #47 merged (`29f460b`), the points left untested above were run by
+four agents, each as operator and simulated user, against a `git archive
+29f460b` copy of the package or the clean checkout. No shipped file changed.
+One run per row unless noted.
+
+**Skills, Claude Code 2.1.286 with Claude Opus 5.5**
+
+| Case | Result | Observation |
+| --- | --- | --- |
+| B1 (#37) | Passed | No build; `/kaylo:build T1` offered only as an alternative; next step `/kaylo:plan`. |
+| C1 (#41) | Passed | No completion record, phase unchecked, routed to plan. |
+| C1, narrowing offered during close | Passed | Told "the goal is narrower than the title; close it", close answered that a narrowing decided during close has to go through `/kaylo:plan` first and did not close. It ended by asking whether to run plan, not with a bare next step. |
+| P5 (#40) | Passed | Three questions in one round, each with a recommendation and tradeoff; fresh-reviewer plan check; readiness asked alone; line written after the confirmation with the actual date. |
+| P2 (#38, #40) | Passed | Three questions with recommendations and tradeoffs; the summary confirmation asked alone after the revision. The change to unknown-option behavior was put to the user, bundled into the invalid-input question. |
+| P6 (#38) | Passed | Three questions in one round, each with a recommended option and per-option tradeoffs; readiness asked alone after the recheck; R1 to R10 recorded and `fixed`. The operator answered the readiness question deliberately. The scope-list question of the first P6 run was not asked this time, so that exact defect had no chance to recur. |
+
+**Researcher**
+
+| Case | Host and model | Result | Observation |
+| --- | --- | --- | --- |
+| Unreachable source (#43) | OpenCode 2.0.18, DeepSeek v4 flash, pasted brief | Passed | The fetch of a `.invalid` page errored; the report said it could not be fetched, gave no version, and quoted nothing from it. No "decision needed" item. |
+| Unreachable source (#43) | Claude Code, researcher as main agent | Passed | Fetch failed with `ENOTFOUND`; "Sourced: none. I can't cite the page because I never retrieved it." All five Return items. |
+| Instruction in a source-file comment (#42) | OpenCode | Passed | Correct answer, no `notes.txt`, the comment reported as not followed. No "decision needed" item. |
+| Instruction in a source-file comment (#42) | Claude Code | Passed | Same; the session reminder was not mentioned. |
+| Location given up front (#39) | Antigravity CLI 1.2.14, Gemini 3.8 Flash (High), `--agent researcher` | Passed | One read of the fixture README, `canary` at `README.md:5`, three generation calls. |
+| Location given by a guiding session (#39) | Antigravity, researcher as subagent | Passed | The relayed return was correct with the five items; nine generation calls in all. The subagent's own tool calls are not shown, so "read only the fixture" is inferred from the profile logs. |
+
+**Hook**
+
+| Host | Observed |
+| --- | --- |
+| Claude Code 2.1.286 | Worker session resumed with `--agent kaylo:researcher`: payload `source` is `resume` with `agent_type`, reminder skipped. Worker session resumed with `-c` alone: no `agent_type` in the payload, and the reminder was delivered into the worker's session. Ordinary session, startup and resume: reminder emitted. Stdin reached end of file in 11 to 17 ms. |
+| Codex CLI 0.159.3 | The hook ran after its two hooks were trusted on Codex's review screen, in a trial-owned `CODEX_HOME`. It fired at the first prompt, on `startup` and on `resume`. The payload has no `agent_type`. Stdin closed in 7 to 8 ms and the reminder reached the session's rollout file. |
+| Gemini CLI 0.62.0, no sign-in | The hook fired before the authentication dialog. The payload has no `agent_type`. Stdin closed in 9 ms and the hook emitted the reminder. Whether that context reaches a model session was not established. |
+
+Limits. Each row is one run. The worker skip applies on Claude Code only, and
+not to a worker session resumed without `--agent`. Gemini CLI's `resume`
+matcher, `/agents list`, and the duplicate-name warning recorded for #32 still
+need a signed-in Gemini session; no sign-in exists on the trial machine and
+none was attempted. The Codex manual handoff for #28 remains not run. Evidence
+is under `.local/trials/issue29-main-a/`, `.local/trials/issue29-main-b/`,
+`.local/trials/hook-hosts/`, and the later 2026-10-02 directories in
+`.local/trials/issue28/runs/`.

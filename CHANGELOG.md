@@ -68,9 +68,11 @@
   Code session whose main agent is `kaylo:researcher`, `kaylo:builder`, or
   `kaylo:reviewer`. The hook now reads the host's hook payload on stdin to
   tell; a missing, empty, invalid, or slow payload emits the reminder as
-  before. On a host that leaves the hook's stdin open, the reminder arrives
-  about half a second later. Codex and Gemini CLI were not run with the new
-  hook ([#42](https://github.com/jeio-dev/kaylo/issues/42)).
+  before. Codex CLI and Gemini CLI send no agent name and close the hook's
+  stdin within about 10 ms, so the reminder is delivered there as before,
+  without delay. Resuming a worker session on Claude Code without repeating
+  `--agent` still delivers the reminder
+  ([#42](https://github.com/jeio-dev/kaylo/issues/42)).
 
 ## 2026-10-01, Version 0.9.1
 
