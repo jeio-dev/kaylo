@@ -8,8 +8,9 @@
   `kaylo` package, with the same version as the plugin manifests. Its `files`
   list matches the files Git tracks, and a new inventory test proves the packed
   tarball holds exactly those files and passes package validation. Nothing is
-  published to npm yet, and the package has no installer command; Git-based
-  installs now also contain `package.json`, which hosts ignore
+  published to npm yet, and the package has no installer command. Git-based
+  installs now also contain `package.json`; the Claude Code and Antigravity
+  validators accept it, but no host install was tested
   ([#58](https://github.com/jeio-dev/kaylo/issues/58)).
 
 ## 2026-10-03, Version 0.9.3

@@ -32,14 +32,14 @@ function list(dir, base = dir) {
     return entry.isDirectory() ? list(file, base) : [path.relative(base, file).split(path.sep).join('/')];
   }).sort();
 }
-function exportPackage(target) {
+function exportPackage(target, scratch) {
   if (ref) {
     const head = run('git', ['rev-parse', 'HEAD'], { cwd: repo }).stdout.trim();
     const tagged = run('git', ['rev-parse', '--verify', `${ref}^{commit}`], { cwd: repo }).stdout.trim();
     assert.equal(head, tagged, `Release mode needs HEAD at ${ref}; HEAD is ${head}`);
     assert.equal(run('git', ['status', '--porcelain'], { cwd: repo }).stdout, '',
       'Release mode needs a clean working tree');
-    const archive = `${target}.tar`;
+    const archive = path.join(scratch, 'export.tar');
     run('git', ['archive', '--format=tar', '-o', archive, ref], { cwd: repo });
     run('tar', ['-xf', archive, '-C', target]);
     fs.rmSync(archive);
@@ -58,7 +58,7 @@ test('the packed npm package holds exactly the exported Git files and validates'
   const exported = temp(t, 'export');
   const packs = temp(t, 'pack');
   const extracted = temp(t, 'extract');
-  exportPackage(exported);
+  exportPackage(exported, packs);
   const packed = JSON.parse(run('npm', ['pack', '--json', '--pack-destination', packs], { cwd: exported }).stdout);
   run('tar', ['-xzf', path.join(packs, packed[0].filename), '-C', extracted]);
   const root = path.join(extracted, 'package');
