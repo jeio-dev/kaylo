@@ -58,11 +58,13 @@ and 23 matching resources on Claude Code, Codex, Gemini CLI, and Antigravity;
 Codex and OpenCode discovered all five skills. Installed builder, researcher,
 and reviewer workers each started, reached a model, and answered on Claude Code
 and Antigravity. These starts check registration, not instruction-following
-quality. Earlier live trials of parallel phase builds are single observations;
-the reviewer tool restriction and model preference have not had a behavior
-trial. Public installation before the v0.9.3 tag exists, Gemini CLI model
-behavior and signed-in worker starts, and Antigravity IDE loading remain
-untested. Details and limits are in `VERIFICATION.md`.
+quality. After publication, fresh public GitHub installs on Claude, Codex,
+Gemini CLI, and Antigravity each matched the v0.9.3 tag and all 23 shared
+resources; that check made no model requests. Earlier live trials of parallel
+phase builds are single observations; the reviewer tool restriction and model
+preference have not had a behavior trial. Gemini CLI model behavior and
+signed-in worker starts, and Antigravity IDE loading remain untested. Details
+and limits are in `VERIFICATION.md`.
 
 ### Commits
 

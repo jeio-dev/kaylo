@@ -8,7 +8,7 @@ through 0.8.0 (2026-09-27 to 2026-09-29) are in the
 (`git show v0.9.2:VERIFICATION.md`); records from the first draft through 0.5.2
 are in `git show v0.6.0:VERIFICATION.md`.
 
-## Current status — 0.9.2 and prepared 0.9.3
+## Current status — 0.9.3
 
 A summary of the records below and the archived ones. Every live-model result
 is one run per case, or a few, on the host and model named; none is a
@@ -16,18 +16,33 @@ consistency claim.
 
 | Host | Installation and update | Session reminder | Kaylo workers | Kaylo run with a model |
 | --- | --- | --- | --- | --- |
-| Claude Code 2.1.286 | Public install of v0.9.2; isolated updates from v0.9.1 to v0.9.2 and from v0.9.2 to prepared v0.9.3 | Delivered at startup and resume. Skipped when the hook payload names a Kaylo worker as `agent_type`, observed when a worker was started or resumed with `--agent`; a worker resumed with `-c` alone still received it | v0.9.2 and prepared v0.9.3: all three installed workers started and reached a model; actual models were not recorded. Issue #31: two builder workers completed independent tasks concurrently in a temporary project; their actual models were not exposed. The new reviewer tool list passed structural and startup checks, but no tool-use trial | All five skills with Claude Opus 5.5, from 0.7.0 through the 0.9.2 fixes. Workers with a recorded model: builder with Opus 5.5 and with Claude Haiku 4.5, and reviewer with Opus 5.5 (`334f574`, before 0.8.0); researcher with Opus 5.5 (v0.9.1 and the 0.9.2 fixes). Issue #31 phase and build trials used an Opus 5.5 guiding session; worker model identity was not observed |
-| Codex CLI 0.159.3 / 0.160.0 | Public install of v0.9.2 on 0.159.3; isolated update to prepared v0.9.3 and five skills discovered on 0.160.0 | Fired at startup and resume after the hooks were trusted | None registered; the manual handoff was not run | Not run |
+| Claude Code 2.1.286 | Public install of v0.9.3; isolated update from v0.9.2 | Delivered at startup and resume. Skipped when the hook payload names a Kaylo worker as `agent_type`, observed when a worker was started or resumed with `--agent`; a worker resumed with `-c` alone still received it | Prepared v0.9.3: all three installed workers started and reached a model; actual models were not recorded. Issue #31: two builder workers completed independent tasks concurrently in a temporary project; their actual models were not exposed. The new reviewer tool list passed structural and startup checks, but no tool-use trial | All five skills with Claude Opus 5.5, from 0.7.0 through the 0.9.2 fixes. Workers with a recorded model: builder with Opus 5.5 and with Claude Haiku 4.5, and reviewer with Opus 5.5 (`334f574`, before 0.8.0); researcher with Opus 5.5 (v0.9.1 and the 0.9.2 fixes). Issue #31 phase and build trials used an Opus 5.5 guiding session; worker model identity was not observed |
+| Codex CLI 0.160.0 | Public install of v0.9.3; isolated update from v0.9.2; five skills discovered | Fired at startup and resume after the hooks were trusted | None registered; the manual handoff was not run | Not run |
 | OpenCode 2.0.18 | Five skills discovered from the prepared v0.9.3 checkout | No adapter | None registered; researcher run with a pasted brief | Researcher only, with DeepSeek v4 flash (v0.9.1 and the 0.9.2 fixes) |
-| Antigravity CLI 1.2.14 | Public install of v0.9.2; isolated update to prepared v0.9.3 | No adapter | v0.9.2 and prepared v0.9.3: all three installed workers started and reached a model; actual models were not recorded. Researcher also ran as a subagent in an earlier trial | Researcher only, with Gemini 3.8 Flash (High) (v0.9.1 and the 0.9.2 fixes) |
-| Gemini CLI 0.62.0 | Public install of v0.9.2; isolated update to prepared v0.9.3; five skills listed | Fired at startup without a sign-in; whether its context reaches a model is unknown | The CLI's agent loader returned all three briefs; no signed-in listing or start | Not run |
+| Antigravity CLI 1.2.14 | Public install of v0.9.3; isolated update from v0.9.2 | No adapter | Prepared v0.9.3: all three installed workers started and reached a model; actual models were not recorded. Researcher also ran as a subagent in an earlier trial | Researcher only, with Gemini 3.8 Flash (High) (v0.9.1 and the 0.9.2 fixes) |
+| Gemini CLI 0.62.0 | Public install of v0.9.3; isolated update from v0.9.2; five skills listed | Fired at startup without a sign-in; whether its context reaches a model is unknown | The CLI's agent loader returned all three briefs; no signed-in listing or start | Not run |
 
 Not established on any host: Antigravity IDE loading, models other than those
 named, and repeated runs of the same case.
 
+## Public installation 0.9.3 — 2026-10-03
+
+The immutable `v0.9.3` tag was pushed at `cd61da4` before `main` advanced to the same commit. The GitHub release was published with title `2026-10-03, Version 0.9.3` and the matching changelog entry as its body. The tag's checkout contains no contributor `AGENTS.md`.
+
+Fresh temporary profiles ran `.local/release/public-check.py v0.9.3` against public GitHub, with no Git URL rewriting or copied account credentials:
+
+| Host | Public install path | Observed result |
+| --- | --- | --- |
+| Claude Code 2.1.286 | `claude plugin marketplace add jeio-dev/kaylo`, then `claude plugin install kaylo@kaylo` | Installed 0.9.3; 23 resources match the tag |
+| Codex CLI 0.160.0 | `codex plugin marketplace add jeio-dev/kaylo`, then `codex plugin add kaylo@kaylo` | Installed 0.9.3; 23 resources match the tag |
+| Gemini CLI 0.62.0 | `gemini extensions install https://github.com/jeio-dev/kaylo --ref v0.9.3 --consent` | Installed 0.9.3; all five skills enabled; 23 resources match the tag |
+| Antigravity CLI 1.2.14 | Public `git clone --branch v0.9.3`, then `agy plugin install` in a Bubblewrap profile | Installed 0.9.3; 23 resources match the tag |
+
+The public check compared the build skill and every validated resource against the tag at `cd61da4b1c5bfbf8e8f9da01a5358676966f9147`. No model requests were made. It establishes public install and resource parity, not model behavior, hook delivery in a live session, or worker selection. Private evidence is in `/tmp/kaylo-public-rfcbdrfn`.
+
 ## Release preparation 0.9.3 — 2026-10-03
 
-The version preparation commit `c22bcf9` sets version 0.9.3 in the Claude, Codex, and Gemini manifests, selects `v0.9.3` in both marketplace catalogs, and updates README install examples. The generated Claude adapters were unchanged after `node scripts/sync-claude-agents.cjs`. The release changelog lists reachable commits since `v0.9.2`; the release documentation commit itself is excluded because recording its own hash would change it. The v0.9.3 tag and public GitHub release do not yet exist.
+The version preparation commit `c22bcf9` sets version 0.9.3 in the Claude, Codex, and Gemini manifests, selects `v0.9.3` in both marketplace catalogs, and updates README install examples. The generated Claude adapters were unchanged after `node scripts/sync-claude-agents.cjs`. The release changelog lists reachable commits since `v0.9.2`; the release documentation commit itself is excluded because recording its own hash would change it. At preparation time, the v0.9.3 tag and public GitHub release did not yet exist.
 
 | Check | Observed result |
 | --- | --- |
@@ -40,7 +55,7 @@ The version preparation commit `c22bcf9` sets version 0.9.3 in the Claude, Codex
 | Isolated update trial, `.local/release/parity.py v0.9.2` | Passed on Claude Code 2.1.286, Codex CLI 0.160.0, Gemini CLI 0.62.0, and Antigravity CLI 1.2.14. All four installed the real v0.9.2 fixture, then updated to prepared v0.9.3; each new install matched the tag fixture rather than the changed default branch and passed installed-package validation with 23 matching resources. Gemini listed all five skills at both steps |
 | Installed hook loader and skill discovery | Claude, Codex, and Gemini hook loaders returned the prepared reminder. Codex app-server returned five enabled skills; OpenCode 2.0.18 returned all five skills from the prepared tag checkout with exact instruction bodies |
 
-The update trial used `git archive` at `c22bcf9`, so it included only tracked files. Git transport used local mirrors and isolated profiles; Antigravity installed in a Bubblewrap profile. The trial made no model requests. Public installation awaits the immutable tag. The final changelog and this verification record were added after the fixture commit; no skill, brief, hook, or other shared package resource changed afterward.
+The update trial used `git archive` at `c22bcf9`, so it included only tracked files. Git transport used local mirrors and isolated profiles; Antigravity installed in a Bubblewrap profile. The trial made no model requests. Public installation was checked after the immutable tag was published, as recorded above. The final changelog and this verification record were added after the fixture commit; no skill, brief, hook, or other shared package resource changed afterward.
 
 The installed Claude and Antigravity package roots each passed installed-package validation before worker starts. The temporary project had no project or user agents named `builder`, `researcher`, or `reviewer`; `agy agents` listed those three from the plugin. Current subscription credentials were copied into isolated trial profiles without changing normal host settings. An older copied Claude credential failed authentication with zero model requests; retrying with a current credential produced the results below.
 
@@ -53,7 +68,7 @@ The installed Claude and Antigravity package roots each passed installed-package
 | Antigravity CLI 1.2.14 | `researcher` | 0, `SUCCESS`, `ok` | 2 |
 | Antigravity CLI 1.2.14 | `reviewer` | 0, `SUCCESS`, `ok` | 2 |
 
-Request counts come from Claude debug entries for `[API REQUEST] /v1/messages` and Antigravity log entries for `streamGenerateContent?alt=sse`. These six starts show that installed workers can reach a model as the main agent. They do not establish instruction-following quality, parent delegation, reviewer tool use, model preference routing, or repeated reliability. Gemini CLI worker starts and model behavior, public v0.9.3 installation, and Antigravity IDE loading remain untested. Private trial evidence is in `/tmp/kaylo-parity-lfnu9ox4`; it contains copied credentials and must not be shipped or published.
+Request counts come from Claude debug entries for `[API REQUEST] /v1/messages` and Antigravity log entries for `streamGenerateContent?alt=sse`. These six starts show that installed workers can reach a model as the main agent. They do not establish instruction-following quality, parent delegation, reviewer tool use, model preference routing, or repeated reliability. Gemini CLI worker starts and model behavior and Antigravity IDE loading remain untested. Private trial evidence is in `/tmp/kaylo-parity-lfnu9ox4`; it contains copied credentials and must not be shipped or published.
 
 ## Contributor ignores and command table — 2026-10-03
 
