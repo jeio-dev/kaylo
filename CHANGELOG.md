@@ -4,6 +4,16 @@
 
 ### Notable Changes
 
+- **skills**: Plan now asks once for a project worker model preference when it
+  expects workers for which Kaylo can select a model at dispatch. The versioned
+  `.kaylo/preferences.md` uses Quality, Balanced, Budget, or Inherit; build and
+  review use Inherit when the file is absent or invalid and never ask during a
+  build. Delegation records the tier recommendation, resolved model when known,
+  and fallbacks; an unavailable tier requires a user choice before dispatch.
+  Packaged Gemini CLI and Antigravity workers remain at Inherit and do not
+  trigger the preference question.
+  Host model selection with this preference has not been observed in a live
+  trial.
 - **docs**: The README is shorter. Its validator rules now live only in the
   glossary's validation rules, its workflow detail points to the glossary's
   definitions, and notes for contributors moved to `RELEASING.md`. The

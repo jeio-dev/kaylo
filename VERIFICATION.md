@@ -25,6 +25,26 @@ consistency claim.
 Not established on any host: Antigravity IDE loading, models other than those
 named, and repeated runs of the same case.
 
+## Project worker model preference — 2026-10-02
+
+Plan's instructions now ask once for `.kaylo/preferences.md` when workers are expected and Kaylo can apply a model choice at dispatch. The file has `Format: 1` and a `Worker models:` choice of Inherit, Quality, Balanced, or Budget. Build and review read it without asking; missing, unsupported, or unknown values use Inherit. The tier table and delegation references specify recommendations, raised tiers, visible fallbacks, and per-dispatch records. An unavailable or unverified required tier stops dispatch for a user choice; Inherit is never a silent fallback from a valid tiered preference. The package adds no template, parser, worker brief, or host model setting. Gemini CLI and Antigravity packaged workers remain at Inherit and do not trigger plan's preference question. These are instructions and documentation, not observed model behavior.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/sync-claude-agents.cjs` | Passed; generated adapters unchanged |
+| `node scripts/validate-package.cjs` | Passed: package v0.9.2, five shared skills, matching versions and release catalogs |
+| `node --test tests/*.test.cjs` | 106 tests passed |
+| `claude plugin validate .claude-plugin/plugin.json --strict` | Passed |
+| `claude plugin validate .claude-plugin/marketplace.json --strict` | Passed |
+| `agy plugin validate .` | Passed: five skills and three agents processed |
+| `git diff --check` | Clean |
+| Relative links in the three edited skill/reference files | All targets exist |
+| Search of shipped skills, briefs, templates, hooks, and `WORKERS.md` for local contributor-instruction filenames | No matches |
+
+The checks used Node v24.21.0 on the uncommitted checkout. Claude Code and Antigravity were checked only through their native validators; no isolated installation, update, or live worker dispatch ran. Codex, OpenCode, and Gemini CLI were not checked this time. No model request ran, so host selection, fallback behavior, whether plan asks at the intended time, and the per-dispatch record remain unobserved.
+
+A read-only review of the first draft found that falling back to an inherited model could put an L build or consequential review below its required tier, and that definition-level model controls could make plan ask on Gemini CLI or Antigravity even though Kaylo cannot apply a per-dispatch choice there. The wording now requires an established model at or above the tier or a user choice before dispatch, and limits plan's question to dispatches where Kaylo can apply the answer. A text recheck covered Budget L with and without Strong availability, consequential review after a tier raise, missing preferences, and packaged Gemini CLI and Antigravity workers. It found no remaining path in the instructions that silently falls back from a valid tiered preference or asks solely because a packaged definition has a model field. This is a review of written instructions, not a model-run observation.
+
 ## Close suggestions for project instructions — 2026-09-30
 
 Close's Response section now lets it suggest a few standing rules for the
