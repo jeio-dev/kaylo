@@ -18,12 +18,52 @@ consistency claim.
 | --- | --- | --- | --- | --- |
 | Claude Code 2.1.286 | Public install of v0.9.3; isolated update from v0.9.2 | Delivered at startup and resume. Skipped when the hook payload names a Kaylo worker as `agent_type`, observed when a worker was started or resumed with `--agent`; a worker resumed with `-c` alone still received it | Prepared v0.9.3: all three installed workers started and reached a model; actual models were not recorded. Issue #31: two builder workers completed independent tasks concurrently in a temporary project; their actual models were not exposed. The new reviewer tool list passed structural and startup checks, but no tool-use trial | All five skills with Claude Opus 5.5, from 0.7.0 through the 0.9.2 fixes. Workers with a recorded model: builder with Opus 5.5 and with Claude Haiku 4.5, and reviewer with Opus 5.5 (`334f574`, before 0.8.0); researcher with Opus 5.5 (v0.9.1 and the 0.9.2 fixes). Issue #31 phase and build trials used an Opus 5.5 guiding session; worker model identity was not observed |
 | Codex CLI 0.160.0 | Public install of v0.9.3; isolated update from v0.9.2; five skills discovered | Fired at startup and resume after the hooks were trusted | None registered; the manual handoff was not run | Not run |
-| OpenCode 2.0.18 | Public v0.9.3 checkout: five skills discovered with exact instruction bodies and 23 matching resources | No adapter | None registered; researcher run with a pasted brief | Researcher only, with DeepSeek v4 flash (v0.9.1 and the 0.9.2 fixes); no v0.9.3 model run |
+| OpenCode 2.0.18 | Public v0.9.3 checkout: five skills discovered with exact instruction bodies and 23 matching resources. Issue #60 installer candidate: isolated global-config install and uninstall passed; five skills loaded from the versioned copy | No adapter | None registered; researcher run with a pasted brief | Researcher only, with DeepSeek v4 flash (v0.9.1 and the 0.9.2 fixes); no v0.9.3 model run |
 | Antigravity CLI 1.2.14 | Public install of v0.9.3; isolated update from v0.9.2 | No adapter | Prepared v0.9.3: all three installed workers started and reached a model; actual models were not recorded. Researcher also ran as a subagent in an earlier trial | Researcher only, with Gemini 3.8 Flash (High) (v0.9.1 and the 0.9.2 fixes) |
 | Gemini CLI 0.62.0 | Public install of v0.9.3; isolated update from v0.9.2; five skills listed | Fired at startup without a sign-in; whether its context reaches a model is unknown | The CLI's agent loader returned all three briefs; no signed-in listing or start | Not run |
 
 Not established on any host: Antigravity IDE loading, models other than those
 named, and repeated runs of the same case.
+
+## OpenCode installer — 2026-10-03
+
+Issue #60 adds OpenCode 2 detection, `--opencode` and `--all` selection, a full
+versioned package copy under `XDG_DATA_HOME` (or `~/.local/share`), and a minimal
+edit to the global config under `XDG_CONFIG_HOME` (or `~/.config`). The installer
+compares every staged package file byte for byte with its source and runs
+`scripts/validate-package.cjs --installed` before replacing a copy. The JSONC
+editor handles comments and trailing commas, keeps a backup of the prior file,
+and refuses ambiguous or malformed configs. Tests exercise rollback after
+staging and config failures, stale-directory cleanup, and restoration or refusal
+after an interrupted same-version replacement.
+
+| Check | Observed result |
+| --- | --- |
+| Node 24.21.0: `node scripts/validate-package.cjs` | Passed |
+| `node --test tests/*.test.cjs` | 153 tests passed, including OpenCode config fixtures and installer rollback and recovery cases |
+| npm 11.19.0: `npm pack --dry-run --json` | Passed; 48 files. The installed copy from the first trial had the same 48 relative paths as npm's package inventory |
+| Claude Code 2.1.288: strict plugin and marketplace manifest validators | Both passed |
+| Antigravity CLI 1.2.14: `agy plugin validate .` | Passed: five skills and three agents |
+| `git diff --check` | Clean |
+| OpenCode 2.0.18: isolated live smoke trial | `install --opencode --yes` exited 0. `opencode serve` and authenticated `GET /api/skill` listed define, plan, build, review, and close with paths under the trial's `data/kaylo/v0.9.3/skills`. `uninstall --opencode --yes` exited 0 and restored the seeded JSONC file byte for byte; the trial's `data/kaylo/` was removed |
+| Real-profile guard | Hashes of the one file under the real `~/.config/opencode/` matched before and after the successful trial |
+
+The smoke trial used a fresh temporary `HOME`, `XDG_CONFIG_HOME`,
+`XDG_DATA_HOME`, `XDG_STATE_HOME`, `XDG_CACHE_HOME`, and `TMPDIR`, with its
+project outside the real home. The seeded global `opencode.jsonc` had comments,
+a trailing comma, and an existing non-Kaylo skills entry. The first trial's API
+polls received HTTP 401 because they omitted the local server's Basic auth; a
+fresh trial with a trial-only password and authenticated polls passed. Neither
+trial signed in or made a model request. Evidence is in temporary trial folders
+under `/tmp/kaylo-issue60-*`; server logs can contain the trial password.
+
+Crash limit: if a process stops between moving `vV/` to `.previous-*` and
+putting the staged copy at `vV/`, OpenCode may temporarily lack a working copy.
+The next install, update, or uninstall restores it when exactly one previous
+directory has the referenced version; otherwise it refuses without deleting
+anything. The tests simulate these states, not a real process crash. Checks ran
+on one Linux machine against the uncommitted checkout; public npm installation,
+other operating systems, and model or worker behavior were not checked.
 
 ## Installer core — 2026-10-03
 

@@ -480,3 +480,174 @@ test('closed input or Ctrl-C at the confirmation aborts with no change', t => {
   assert.equal(result.status, 1);
   assert.deepEqual(result.mutations, []);
 });
+
+function openSetup(t) {
+  const ctx = setup(t, { hosts: ['opencode'] });
+  ctx.env.XDG_CONFIG_HOME = path.join(ctx.home, 'xdg-config');
+  ctx.env.XDG_DATA_HOME = path.join(ctx.home, 'xdg-data');
+  ctx.env.XDG_CACHE_HOME = path.join(ctx.home, 'xdg-cache');
+  ctx.env.XDG_STATE_HOME = path.join(ctx.home, 'xdg-state');
+  const configDir = path.join(ctx.env.XDG_CONFIG_HOME, 'opencode');
+  const configFile = path.join(configDir, 'opencode.jsonc');
+  const data = path.join(ctx.env.XDG_DATA_HOME, 'kaylo');
+  const target = path.join(data, tag);
+  const skill = path.join(target, 'skills');
+  fs.mkdirSync(configDir, { recursive: true });
+  return { ...ctx, configDir, configFile, data, target, skill,
+    seed(content) { fs.writeFileSync(configFile, content); },
+    run(args, input = '') {
+      const result = spawnSync(process.execPath, [kaylo, ...args], { env: ctx.env, input, encoding: 'utf8', cwd: ctx.dir });
+      return result;
+    }
+  };
+}
+const openEntry = skill => `{\n  // keep\n  "skills": ["/other", ${JSON.stringify(skill)}],\n  "other": "https://x/*still a string*/"\n}\n`;
+
+test('OpenCode is detected by --all and its dry run leaves the profile untouched', t => {
+  const ctx = openSetup(t);
+  const seed = '{"skills": ["/other"]}';
+  ctx.seed(seed);
+  const dry = ctx.run(['install', '--all', '--yes', '--dry-run']);
+  assert.equal(dry.status, 0, dry.stdout + dry.stderr);
+  assert.match(dry.stdout, /OpenCode/);
+  assert.equal(fs.readFileSync(ctx.configFile, 'utf8'), seed);
+  assert(!fs.existsSync(ctx.data));
+  const installed = ctx.run(['install', '--all', '--yes']);
+  assert.equal(installed.status, 0, installed.stdout + installed.stderr);
+  assert(fs.existsSync(ctx.target));
+});
+
+test('OpenCode install, update and uninstall use XDG locations and restore seeded config', t => {
+  const ctx = openSetup(t);
+  const seed = '{\n  // keep\n  "skills": ["/other",],\n  "other": true\n}\n';
+  ctx.seed(seed);
+  let result = ctx.run(['install', '--opencode', '--yes']);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert(fs.existsSync(path.join(ctx.target, 'skills', 'build', 'SKILL.md')));
+  assert.equal(JSON.parse(fs.readFileSync(path.join(ctx.target, '.claude-plugin', 'plugin.json'))).version, version);
+  assert(fs.readFileSync(ctx.configFile, 'utf8').includes(ctx.skill));
+  result = ctx.run(['update', '--opencode', '--yes']);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  result = ctx.run(['uninstall', '--opencode', '--yes']);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.equal(fs.readFileSync(ctx.configFile, 'utf8'), seed);
+  assert(!fs.existsSync(ctx.data));
+});
+
+test('OpenCode validation failure removes staging and preserves current copy and config', t => {
+  const ctx = openSetup(t);
+  fs.mkdirSync(ctx.target, { recursive: true });
+  copy(ctx.target);
+  const marker = path.join(ctx.target, 'marker');
+  fs.writeFileSync(marker, 'old');
+  const seed = openEntry(ctx.skill);
+  ctx.seed(seed);
+  // The preload changes the validator result only in the installer process.
+  const preload = path.join(ctx.dir, 'fail-validator.cjs');
+  fs.writeFileSync(preload, `const cp = require('node:child_process'); const old = cp.spawnSync; cp.spawnSync = function(bin,args,opts) { if (String(args?.[0] || '').endsWith('validate-package.cjs')) return {status:1,stderr:'staged copy rejected'}; return old.apply(this,arguments); };`);
+  ctx.env.NODE_OPTIONS = `--require=${preload}`;
+  const result = ctx.run(['install', '--opencode', '--yes']);
+  assert.equal(result.status, 1, result.stdout + result.stderr);
+  assert.equal(fs.readFileSync(marker, 'utf8'), 'old');
+  assert.equal(fs.readFileSync(ctx.configFile, 'utf8'), seed);
+  assert.deepEqual(fs.readdirSync(ctx.data).filter(name => name.startsWith('.staging-')), []);
+});
+
+test('OpenCode config failure rolls back fresh, same-version and update copies', t => {
+  for (const kind of ['fresh', 'same', 'update']) {
+    const ctx = openSetup(t);
+    const prior = path.join(ctx.data, 'v0.9.2');
+    if (kind === 'same') { fs.mkdirSync(ctx.target, { recursive: true }); copy(ctx.target); fs.writeFileSync(path.join(ctx.target, 'marker'), 'old'); }
+    if (kind === 'update') { fs.mkdirSync(prior, { recursive: true }); copy(prior, { as: '0.9.2' }); fs.writeFileSync(path.join(prior, 'marker'), 'old'); }
+    const seed = kind === 'fresh' ? '{}' : openEntry(kind === 'update' ? path.join(prior, 'skills') : ctx.skill);
+    ctx.seed(seed);
+    const preload = path.join(ctx.dir, 'fail-config.cjs');
+    fs.writeFileSync(preload, `const cfg = require(${JSON.stringify(path.join(repo, 'bin', 'opencode-config.cjs'))}); cfg.changeConfig = () => { throw new Error('injected config failure'); };`);
+    ctx.env.NODE_OPTIONS = `--require=${preload}`;
+    const result = ctx.run([kind === 'update' ? 'update' : 'install', '--opencode', '--yes']);
+    assert.equal(result.status, 1, `${kind}: ${result.stdout}${result.stderr}`);
+    assert.equal(fs.readFileSync(ctx.configFile, 'utf8'), seed);
+    assert.equal(fs.existsSync(ctx.target), kind === 'same');
+    if (kind === 'same') assert.equal(fs.readFileSync(path.join(ctx.target, 'marker'), 'utf8'), 'old');
+    if (kind === 'update') assert.equal(fs.readFileSync(path.join(prior, 'marker'), 'utf8'), 'old');
+    assert.deepEqual(fs.readdirSync(ctx.data).filter(name => name.startsWith('.staging-') || name.startsWith('.previous-')), []);
+  }
+});
+
+test('OpenCode post-edit verification failure restores the prior config and copy', t => {
+  const ctx = openSetup(t);
+  fs.mkdirSync(ctx.target, { recursive: true });
+  copy(ctx.target);
+  fs.writeFileSync(path.join(ctx.target, 'marker'), 'old');
+  const seed = openEntry(ctx.skill);
+  ctx.seed(seed);
+  const preload = path.join(ctx.dir, 'break-after-config.cjs');
+  fs.writeFileSync(preload, `const fs = require('node:fs'); const path = require('node:path'); const cfg = require(${JSON.stringify(path.join(repo, 'bin', 'opencode-config.cjs'))}); const original = cfg.changeConfig; cfg.changeConfig = (...args) => { const result = original(...args); fs.writeFileSync(path.join(${JSON.stringify(ctx.target)}, '.claude-plugin', 'plugin.json'), '{"version":"wrong"}'); return result; };`);
+  ctx.env.NODE_OPTIONS = `--require=${preload}`;
+  const result = ctx.run(['install', '--opencode', '--yes']);
+  assert.equal(result.status, 1, result.stdout + result.stderr);
+  assert.equal(fs.readFileSync(ctx.configFile, 'utf8'), seed);
+  assert.equal(fs.readFileSync(path.join(ctx.target, 'marker'), 'utf8'), 'old');
+});
+
+test('OpenCode recovers a referenced copy before install, update and uninstall', t => {
+  for (const command of ['install', 'update', 'uninstall']) {
+    const ctx = openSetup(t);
+    const previous = path.join(ctx.data, '.previous-crashed');
+    fs.mkdirSync(previous, { recursive: true });
+    copy(previous);
+    ctx.seed(openEntry(ctx.skill));
+    fs.mkdirSync(path.join(ctx.data, '.staging-old'));
+    const result = ctx.run([command, '--opencode', '--yes']);
+    assert.equal(result.status, 0, `${command}: ${result.stdout}${result.stderr}`);
+    if (command === 'uninstall') assert(!fs.existsSync(ctx.data));
+    else {
+      assert(fs.existsSync(ctx.target));
+      assert.deepEqual(fs.readdirSync(ctx.data).filter(name => name.startsWith('.staging-') || name.startsWith('.previous-')), []);
+    }
+  }
+});
+
+test('OpenCode recovery refusal deletes nothing when previous copies are ambiguous or wrong', t => {
+  for (const kind of ['two', 'wrong']) {
+    const ctx = openSetup(t);
+    fs.mkdirSync(ctx.data, { recursive: true });
+    const first = path.join(ctx.data, '.previous-one');
+    fs.mkdirSync(first);
+    copy(first, { as: kind === 'wrong' ? '0.9.2' : version });
+    if (kind === 'two') { const second = path.join(ctx.data, '.previous-two'); fs.mkdirSync(second); copy(second); }
+    fs.mkdirSync(path.join(ctx.data, '.staging-leftover'));
+    const seed = openEntry(ctx.skill);
+    ctx.seed(seed);
+    const before = fs.readdirSync(ctx.data).sort();
+    const result = ctx.run(['install', '--opencode', '--yes']);
+    assert.equal(result.status, 1, result.stdout + result.stderr);
+    assert.deepEqual(fs.readdirSync(ctx.data).sort(), before);
+    assert.equal(fs.readFileSync(ctx.configFile, 'utf8'), seed);
+  }
+});
+
+test('OpenCode removes stale staging and previous directories when referenced copy exists', t => {
+  const ctx = openSetup(t);
+  fs.mkdirSync(ctx.target, { recursive: true });
+  copy(ctx.target);
+  ctx.seed(openEntry(ctx.skill));
+  fs.mkdirSync(path.join(ctx.data, '.staging-old'));
+  fs.mkdirSync(path.join(ctx.data, '.previous-old'));
+  const result = ctx.run(['install', '--opencode', '--yes']);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.deepEqual(fs.readdirSync(ctx.data).filter(name => name.startsWith('.staging-') || name.startsWith('.previous-')), []);
+});
+
+test('OpenCode update deletes old version only after the new config entry is verified', t => {
+  const ctx = openSetup(t);
+  const old = path.join(ctx.data, 'v0.9.2');
+  fs.mkdirSync(old, { recursive: true });
+  copy(old, { as: '0.9.2' });
+  ctx.seed(openEntry(path.join(old, 'skills')));
+  const result = ctx.run(['update', '--opencode', '--yes']);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert(!fs.existsSync(old));
+  assert(fs.existsSync(ctx.target));
+  assert(fs.readFileSync(ctx.configFile, 'utf8').includes(ctx.skill));
+});
