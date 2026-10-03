@@ -41,6 +41,13 @@ test('npm package version drift from the plugin manifests is rejected', t => {
   assert.equal(result.status, 1);
   assert.match(result.stderr, /package\.json version must match the plugin manifests/);
 });
+test('a missing npm bin target is rejected', t => {
+  const dir = fixture(t);
+  fs.rmSync(path.join(dir, 'bin/kaylo.cjs'));
+  const result = check(dir);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /package\.json bin "kaylo" target is missing: bin\/kaylo\.cjs/);
+});
 test('development branch cannot accidentally become a published plugin source', t => {
   const dir = fixture(t);
   edit(dir, '.agents/plugins/marketplace.json', value => { value.plugins[0].source.ref = 'main'; });
