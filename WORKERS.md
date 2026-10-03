@@ -6,13 +6,40 @@ On Gemini CLI and Antigravity the briefs register under their bare names, `build
 
 From a skill's directory, a brief is at `../../agents/<role>.md`; resolve that path against the directory containing `SKILL.md`, not the project being built. If only pasted instructions are available and the brief is needed, supply its location or body.
 
-| Role | Model choice | Work |
-| --- | --- | --- |
-| [Researcher](agents/researcher.md) | An available model suited to the sources and context size | Answer a bounded question with evidence |
-| [Builder](agents/builder.md), S task | An economical model able to follow an existing pattern | Clear local edits and focused checks |
-| [Builder](agents/builder.md), M task | A capable coding model | Bounded features and bugs that need reasoning |
-| [Builder](agents/builder.md), L task | A stronger reasoning model, or split the task first | Uncertain or cross-cutting changes |
-| [Reviewer](agents/reviewer.md) | A model capable of assessing the task's risk | Independently inspect a plan or implementation |
+| Role | Work |
+| --- | --- |
+| [Researcher](agents/researcher.md) | Answer a bounded codebase or external question with evidence |
+| [Builder](agents/builder.md) | Make the agreed S, M, or L task's edits and run focused checks |
+| [Reviewer](agents/reviewer.md) | Independently inspect a plan or implementation |
+
+## Project worker model preference
+
+When plan expects workers for which Kaylo can apply a model choice at dispatch, plan asks once which worker model preference to use. A model field on an installed worker definition alone does not meet this condition: plan does not ask for Kaylo's packaged Gemini CLI or Antigravity workers, which remain at Inherit. Plan writes the answer in the user's project at `.kaylo/preferences.md`, separate from `PRD.md` and phase plans. The file is versioned with the project, and the user can edit it later:
+
+```text
+Format: 1
+Worker models: Inherit
+```
+
+`Worker models:` accepts exactly `Inherit`, `Quality`, `Balanced`, or `Budget`. The skills read the file; no validator parses it. A missing file, a format other than `Format: 1`, or a missing or unknown value means Inherit; say which occurred. Build and review never ask for a preference. Inherit uses the host's normal worker model behavior, including when no file exists, so existing projects continue without a routing change.
+
+For Quality, Balanced, or Budget on a host that can select a worker model, use this table as a recommendation. Inherit skips the table and keeps the host's normal worker model choice. Light, Medium, and Strong are relative capability tiers, not model names or promises of availability. The planner row is guidance for a future user choice, not permission to change the invoking session's model.
+
+| Work | Quality | Balanced | Budget |
+| --- | --- | --- | --- |
+| Codebase explorer (read-only researcher) | Medium | Light | Light |
+| External researcher | Strong | Medium | Light |
+| Planner (invoking assistant) | Strong | Strong | Medium |
+| Builder, S task | Medium | Light | Light |
+| Builder, M task | Strong | Medium | Medium |
+| Builder, L task | Strong | Strong | Strong |
+| Plan checker | Medium | Medium | Light |
+| Implementation reviewer | Strong | Medium | Medium |
+| Difficult debugger | Strong | Strong | Strong |
+
+The task's consequence, uncertainty, large context, failed verification, or S/M/L estimate can raise a worker above the table's tier. Do not silently assign a consequential review below the tier it needs; Budget never lowers an L build below Strong. Keep the researcher, builder, and reviewer briefs for every tier. For Quality, Balanced, or Budget, select an available model whose capability meets or exceeds the required tier within the user's host, provider, and account. If availability or capability cannot be established, the required tier is unavailable, or the host cannot apply the choice to this dispatch, use Inherit only after stopping for the user's choice; explain the tier that cannot be met and that the inherited model may be weaker or unknown. The user may choose Inherit, another available host or model, or direct work. Record that decision and any fallback before dispatch. Never silently fall back to an inherited/default model, switch providers, accounts, paid APIs, or host settings. With no valid preference, Inherit still applies without a new question.
+
+For each dispatch, record the preference, table tier and any reason it was raised (or no tier for Inherit), the requested worker setting, the model the host actually used when known, and any fallback. Use the existing task `Result:` for a build, `## Review` for a reviewer, and the phase plan's research notes or the response for research without a plan. A recommendation is not proof of the model that ran; if the host does not reveal it, record that it was not observed.
 
 Claude and Codex can remain the guiding assistants. The user may choose Gemini or Antigravity for research, and OpenCode with an available DeepSeek model for building. These are user preferences, not measured guarantees of model quality or account access. Verify availability in the actual tool; do not substitute paid API calls automatically.
 
@@ -33,6 +60,7 @@ Previous attempts: [failed repairs and evidence, or None]
 Existing review comments: [IDs, labels, corrections and recheck evidence relevant to this task, or None]
 Workspace baseline: [starting changes and relevant original content, or clean commit; confirm dependencies are present]
 Contracts: [relevant interfaces and decisions, or None]
+Worker model: [preference; tier or no tier for Inherit; requested setting and any fallback]
 Return: [the worker brief's Return line, copied here in full; for a build, also the compact report fields below]
 ```
 
@@ -56,6 +84,6 @@ If a model cannot complete the task, diagnose the failure. Narrow the task or re
 
 After two unsuccessful repairs of the same unresolved failure, another correction requires material new evidence, an actual change to the blocking condition, or explicit user authorization. Record the reason and outcome and stop again if unresolved; changing the session, task ID, or worker alone does not permit another attempt.
 
-Select a model through the chosen host's model picker before handing over work. In Claude, `/model` sets the guiding session's model and these agents inherit it. In Codex CLI, `/model` or `--model` selects the main model; a native worker may have separate host-controlled settings. Passing a brief does not change those settings. Do not infer worker availability or model identity from a subscription name. If a cheaper worker is unavailable, continue directly when capable or provide the packet for a manual handoff.
+Use a per-worker model control only when Kaylo can apply it to the worker being dispatched and the user's preference authorizes it. Claude Code documents per-worker selection; `/model` changes the guiding session instead. Codex documents per-worker selection but Kaylo does not register native Codex workers. OpenCode documents per-worker selection but Kaylo ships no OpenCode agents. Kaylo's Gemini CLI and Antigravity worker definitions remain at Inherit: their documented definition-level model controls do not provide this package a per-dispatch preference without adding briefs. These are documented capabilities, not observed routing behavior. Passing a brief does not change model settings, and a subscription name does not establish worker availability or identity. If selection is unavailable, follow the tier fallback rule above; with Inherit, work directly when capable or provide a packet for a manual handoff.
 
 Only Claude Code restricts the researcher's tools: its adapter allows reading, searching, and web lookup, and nothing else. On other hosts the researcher has whatever tools the host provides and relies on the brief's instruction that the role is read-only. Brief instructions constrain a worker's actions, but are not a security boundary; the host's permissions still apply. The reviewer can run a focused check, which may create ordinary test artifacts. No account limits, model prices, or automatic cross-vendor routing are assumed.

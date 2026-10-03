@@ -4,8 +4,11 @@ Read this only when using a worker or preparing a manual handoff.
 
 ## Choose the worker
 
-- Recommend an available model suited to the task's estimate, uncertainty, and consequence: S may use an economical worker; M needs a capable builder; L needs a strong model or smaller tasks.
+- Read `.kaylo/preferences.md` in the user's project and use [worker model guidance](../../../WORKERS.md) to recommend a tier for this task when the preference is Quality, Balanced, or Budget. Missing, unsupported, or unknown preferences mean Inherit: keep the host's normal worker model choice and say which case applies. Never ask for a preference during build, including phase mode.
+- For Inherit, keep the host's normal model choice and the existing task suitability advice: S may use an economical worker; M needs a capable builder; L needs a strong model or smaller tasks. For a tiered preference, use the table and raise the required tier for consequential work, large context, uncertainty, or failed verification; Budget never lowers an L build below Strong.
 - Do not assume a model, subscription-backed subagent, or paid API is available. Use host-native controls without silently changing providers or account settings.
+- For Quality, Balanced, or Budget, dispatch only when an available model can be established at the required tier or higher. If availability or capability is unknown, the tier is unavailable, or the host cannot select it for this dispatch, stop for a user choice before using Inherit or another model; explain any unknown or weaker inherited model. No valid preference means Inherit without a new question.
+- Record the preference, recommended tier or no tier for Inherit, requested worker setting, model observed when known, and any fallback in the task's existing `Result:` line for each dispatch; include the reason for a raised tier. A worker report is not evidence of the model selected by the host.
 - If delegation is unavailable, work directly when capable or prepare a handoff for the user's chosen tool.
 - Run one worker at a time.
 
