@@ -14,7 +14,7 @@ Read this only when using a worker or preparing a manual handoff.
 
 ## Prepare the handoff
 
-Use [the builder brief](../../../agents/builder.md), resolved relative to this reference file, not the user's project. Hosts listing `kaylo:builder` provide its native brief. For a manual handoff, read and paste the brief's body. If the necessary brief is missing, ask for its location or content; do not invent it.
+Use [the builder brief](../../../agents/builder.md), resolved relative to this reference file, not the user's project. Observed registration: Claude Code lists Kaylo's native brief as `kaylo:builder`, Antigravity lists it as `builder`, and Gemini CLI's agent loader returns it as `builder`. Check that a bare name resolves to Kaylo's brief before using it, as described in [WORKERS.md](../../../WORKERS.md). For a manual handoff, read and paste the brief's body. If the necessary brief is missing, ask for its location or content; do not invent it.
 
 Supply:
 

@@ -25,6 +25,22 @@ consistency claim.
 Not established on any host: Antigravity IDE loading, models other than those
 named, and repeated runs of the same case.
 
+## Worker registration documentation — 2026-10-03
+
+Issue #33 updates `WORKERS.md`, the README host table, and the build and review delegation references to match the existing registration evidence. Claude Code's prefixed names and Antigravity's bare names were observed in installed worker checks; Gemini CLI 0.62.0's installed-extension agent loader returned the bare names. Codex and OpenCode have no packaged native agent definitions. The delegation references instruct the guiding assistant to confirm that a bare name resolves to Kaylo's brief before using it. No host behavior, brief, adapter, or manifest changed.
+
+| Structural check | Observed result |
+| --- | --- |
+| `node scripts/sync-claude-agents.cjs` | Passed; generated adapters unchanged |
+| `node scripts/validate-package.cjs` | Passed: package v0.9.2, five shared skills, matching versions and release catalogs |
+| `node --test tests/*.test.cjs` | 107 tests passed |
+| `claude plugin validate .claude-plugin/plugin.json --strict` | Passed |
+| `claude plugin validate .claude-plugin/marketplace.json --strict` | Passed |
+| `agy plugin validate .` | Passed: five skills and three agents processed |
+| `git diff --check` | Clean |
+
+The checks used Node v24.21.0, Claude Code 2.1.286, and Antigravity CLI 1.2.14 on this checkout. They establish package structure and native manifest validity, not worker selection or model behavior. No model request, new host trial, isolated install, or update ran for this documentation change. Gemini CLI's signed-in agent list and worker start remain unobserved; Antigravity builder and reviewer were not invoked as subagents by a parent, and its duplicate-name behavior remains untested.
+
 ## Parallel phase dispatch — 2026-10-03
 
 Issue #31's maintainer decisions authorize Claude Code only, a two-worker cap, disjoint ownership in one directory, and parallel dispatch only when requested for that invocation. The changed build skill and delegation reference form waves from ready tasks, require separate model checks and baselines, inspect each result by path, and keep the guiding assistant in charge of the shared plan and combined checks. No scheduler, new plan field, validator rule, or worker brief was added. The Claude adapter generation was unchanged.

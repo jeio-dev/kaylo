@@ -237,6 +237,7 @@ with manual plan inspection when the validator and supporting files are absent.
 | --- | --- | --- | --- | --- | --- |
 | Five shared skills and workflow | Yes | Yes | Yes | Yes | Yes |
 | Templates, briefs, references, validator | Full package | Full package | Full checkout | Full package | Full package |
+| Worker registration | Observed: `kaylo:<role>` | None (documented) | None (documented) | Observed: bare `<role>` | Observed in agent loader: bare `<role>`; no signed-in start |
 | Project state | `PRD.md`, `ROADMAP.md`, `.kaylo/phases/` | Same | Same | Same | Same |
 | Optional session reminder | Native hook | Native hook, requires trust | No adapter | No adapter | Native hook |
 | Update source | Released catalog | Released catalog | Release checkout | Release checkout + reinstall | Release tag + reinstall |
