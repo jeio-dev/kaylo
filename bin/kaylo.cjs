@@ -145,10 +145,18 @@ function runOpenCode(command) {
   openRecover();
   const data = openData();
   const current = openState();
+  // Once the config edit commits, a failed recursive deletion may already have
+  // removed part of an old copy. Report the committed config state with deferred
+  // cleanup rather than claiming the transaction was rolled back.
+  const cleanupWarnings = [];
+  const removeAfterCommit = dir => {
+    try { fs.rmSync(dir, { recursive: true, force: true }); }
+    catch (error) { cleanupWarnings.push(`could not remove ${dir}: ${error.code || 'error'}: ${error.message}`); }
+  };
   if (command === 'uninstall') {
     openConfig.changeConfig(openDir(), path.dirname(data), 'uninstall');
-    fs.rmSync(data, { recursive: true, force: true });
-    return { removed: Boolean(current.entry) };
+    removeAfterCommit(data);
+    return { removed: Boolean(current.entry), cleanupWarnings };
   }
   const staged = path.join(data, `.staging-${process.pid}-${Math.random().toString(16).slice(2)}`);
   const target = path.join(data, tag);
@@ -186,13 +194,15 @@ function runOpenCode(command) {
     fs.rmSync(staged, { recursive: true, force: true });
     throw error;
   }
-  if (previous) fs.rmSync(previous, { recursive: true, force: true });
+  if (previous) removeAfterCommit(previous);
   if (command === 'update') {
-    for (const name of fs.readdirSync(data)) {
-      if (/^v[^/]+$/.test(name) && name !== tag) fs.rmSync(path.join(data, name), { recursive: true, force: true });
-    }
+    try {
+      for (const name of fs.readdirSync(data)) {
+        if (/^v[^/]+$/.test(name) && name !== tag) removeAfterCommit(path.join(data, name));
+      }
+    } catch (error) { cleanupWarnings.push(`could not list old copies in ${data}: ${error.code || 'error'}: ${error.message}`); }
   }
-  return { root: target };
+  return { root: target, cleanupWarnings };
 }
 function claudeMarketplace() {
   return json(read('claude', ['plugin', 'marketplace', 'list', '--json']), 'claude plugin marketplace list --json')
@@ -480,6 +490,7 @@ async function main(argv, io = { input: process.stdin, output: process.stdout, e
           const result = runOpenCode(command);
           item.root = result.root;
           item.removed = result.removed;
+          item.cleanupWarnings = result.cleanupWarnings;
         } catch (error) { item.failed = openFailure(error.message); }
         continue;
       }
@@ -516,6 +527,9 @@ async function main(argv, io = { input: process.stdin, output: process.stdout, e
       if (item.failed) out(`  ${item.host.name}: failed: ${item.failed}`);
       else if (command === 'uninstall') out(`  ${item.host.name}: ${item.host.id === 'opencode' ? (item.removed ? 'removed' : 'not installed') : (item.steps.length ? 'removed' : 'not installed')}`);
       else out(`  ${item.host.name}: ${tag}, files verified at ${item.root}`);
+      if (item.cleanupWarnings?.length) {
+        for (const warning of item.cleanupWarnings) out(`    cleanup pending: ${warning}`);
+      }
     }
     const done = work.filter(item => !item.failed);
     if (command !== 'uninstall' && done.length) {

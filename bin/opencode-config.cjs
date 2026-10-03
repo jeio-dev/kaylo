@@ -90,8 +90,13 @@ function scan(source) {
 function configFile(dir) {
   const json = path.join(dir, 'opencode.json');
   const jsonc = path.join(dir, 'opencode.jsonc');
-  if (fs.existsSync(json) && fs.existsSync(jsonc)) throw new ConfigError('both opencode.json and opencode.jsonc exist');
-  return fs.existsSync(jsonc) ? jsonc : json;
+  // lstat also sees dangling links, which must never be treated as an absent config.
+  const exists = file => {
+    try { fs.lstatSync(file); return true; }
+    catch (error) { if (error.code === 'ENOENT') return false; throw error; }
+  };
+  if (exists(json) && exists(jsonc)) throw new ConfigError('both opencode.json and opencode.jsonc exist');
+  return exists(jsonc) ? jsonc : json;
 }
 function kayloElements(parsed, dataDir) {
   const base = path.resolve(dataDir, 'kaylo');
@@ -100,7 +105,11 @@ function kayloElements(parsed, dataDir) {
 }
 function readConfig(dir, dataDir) {
   const file = configFile(dir);
-  const exists = fs.existsSync(file);
+  let stat;
+  try { stat = fs.lstatSync(file); }
+  catch (error) { if (error.code !== 'ENOENT') throw error; }
+  if (stat?.isSymbolicLink()) throw new ConfigError('global config is a symlink');
+  const exists = Boolean(stat);
   const source = exists ? fs.readFileSync(file, 'utf8') : null;
   const parsed = exists ? scan(source) : null;
   const entries = parsed ? kayloElements(parsed, dataDir) : [];

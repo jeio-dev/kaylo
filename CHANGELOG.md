@@ -9,7 +9,10 @@
   directory, then edits the global JSON or JSONC config while preserving its
   comments and other settings. Updates keep the referenced copy until the new
   one is verified; an interrupted same-version replacement is recovered on the
-  next mutating run. Uninstall removes the Kaylo skills entry and its copy.
+  next mutating run. Symlinked global configs are refused. If removal of an old
+  copy fails after the config edit commits, the installer reports the active
+  state and warns that cleanup is pending. Uninstall removes the Kaylo skills
+  entry and its copy when deletion succeeds.
   OpenCode 1 and per-project config are outside this installer path
   ([#60](https://github.com/jeio-dev/kaylo/issues/60)).
 - **tools**: A new `kaylo` command (`bin/kaylo.cjs`, the npm package's `bin`)

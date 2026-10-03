@@ -33,14 +33,20 @@ edit to the global config under `XDG_CONFIG_HOME` (or `~/.config`). The installe
 compares every staged package file byte for byte with its source and runs
 `scripts/validate-package.cjs --installed` before replacing a copy. The JSONC
 editor handles comments and trailing commas, keeps a backup of the prior file,
-and refuses ambiguous or malformed configs. Tests exercise rollback after
-staging and config failures, stale-directory cleanup, and restoration or refusal
-after an interrupted same-version replacement.
+and refuses ambiguous, malformed, or symlinked configs. Tests exercise rollback
+after staging and config failures, stale-directory cleanup, and restoration or
+refusal after an interrupted same-version replacement. Review of PR #66 found
+that a cleanup error after the config commit had been reported as an install
+failure despite the new copy being active. Post-commit removal errors now keep
+the verified active state and report `cleanup pending`; a later update or
+uninstall can retry cleanup. The same review found that renaming the config temp
+file over a symlink replaced the link. The editor now refuses that config before
+any mutation.
 
 | Check | Observed result |
 | --- | --- |
 | Node 24.21.0: `node scripts/validate-package.cjs` | Passed |
-| `node --test tests/*.test.cjs` | 153 tests passed, including OpenCode config fixtures and installer rollback and recovery cases |
+| `node --test tests/*.test.cjs` | 157 tests passed, including OpenCode config fixtures, installer rollback and recovery cases, injected cleanup `EACCES`, and symlink refusals |
 | npm 11.19.0: `npm pack --dry-run --json` | Passed; 48 files. The installed copy from the first trial had the same 48 relative paths as npm's package inventory |
 | Claude Code 2.1.288: strict plugin and marketplace manifest validators | Both passed |
 | Antigravity CLI 1.2.14: `agy plugin validate .` | Passed: five skills and three agents |
@@ -56,6 +62,13 @@ polls received HTTP 401 because they omitted the local server's Basic auth; a
 fresh trial with a trial-only password and authenticated polls passed. Neither
 trial signed in or made a model request. Evidence is in temporary trial folders
 under `/tmp/kaylo-issue60-*`; server logs can contain the trial password.
+
+The PR #66 regression tests inject `EACCES` while deleting an old version after
+update and while deleting the data directory after uninstall. Both commands
+exit 0 with `cleanup pending` and report the committed config state accurately;
+the old data remains for a later retry. A symlinked global config and a dangling
+symlink are refused with the link and target unchanged. These are simulated
+filesystem failures; no real permission change was made to a host profile.
 
 Crash limit: if a process stops between moving `vV/` to `.previous-*` and
 putting the staged copy at `vV/`, OpenCode may temporarily lack a working copy.

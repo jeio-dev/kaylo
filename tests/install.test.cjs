@@ -651,3 +651,63 @@ test('OpenCode update deletes old version only after the new config entry is ver
   assert(fs.existsSync(ctx.target));
   assert(fs.readFileSync(ctx.configFile, 'utf8').includes(ctx.skill));
 });
+
+test('OpenCode update reports committed install with cleanup pending after EACCES', t => {
+  const ctx = openSetup(t);
+  const old = path.join(ctx.data, 'v0.9.2');
+  fs.mkdirSync(old, { recursive: true });
+  copy(old, { as: '0.9.2' });
+  ctx.seed(openEntry(path.join(old, 'skills')));
+  const preload = path.join(ctx.dir, 'deny-old-cleanup.cjs');
+  fs.writeFileSync(preload, `const fs = require('node:fs'); const original = fs.rmSync; fs.rmSync = function(file, options) { if (file === ${JSON.stringify(old)}) { const error = new Error('permission denied'); error.code = 'EACCES'; throw error; } return original.apply(this, arguments); };`);
+  ctx.env.NODE_OPTIONS = `--require=${preload}`;
+  const result = ctx.run(['update', '--opencode', '--yes']);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.match(result.stdout, /OpenCode: v0\.9\.3, files verified/);
+  assert.match(result.stdout, /cleanup pending: .*EACCES|cleanup pending: .*permission denied/);
+  assert.doesNotMatch(result.stdout, /OpenCode: failed|OpenCode: not installed/);
+  assert(fs.existsSync(old));
+  assert(fs.existsSync(ctx.target));
+  assert(fs.readFileSync(ctx.configFile, 'utf8').includes(ctx.skill));
+  delete ctx.env.NODE_OPTIONS;
+  const retry = ctx.run(['update', '--opencode', '--yes']);
+  assert.equal(retry.status, 0, retry.stdout + retry.stderr);
+  assert(!fs.existsSync(old));
+});
+
+test('OpenCode uninstall reports removed with cleanup pending after EACCES', t => {
+  const ctx = openSetup(t);
+  fs.mkdirSync(ctx.target, { recursive: true });
+  copy(ctx.target);
+  const seed = openEntry(ctx.skill);
+  ctx.seed(seed);
+  const preload = path.join(ctx.dir, 'deny-data-cleanup.cjs');
+  fs.writeFileSync(preload, `const fs = require('node:fs'); const original = fs.rmSync; fs.rmSync = function(file, options) { if (file === ${JSON.stringify(ctx.data)}) { const error = new Error('permission denied'); error.code = 'EACCES'; throw error; } return original.apply(this, arguments); };`);
+  ctx.env.NODE_OPTIONS = `--require=${preload}`;
+  const result = ctx.run(['uninstall', '--opencode', '--yes']);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.match(result.stdout, /OpenCode: removed/);
+  assert.match(result.stdout, /cleanup pending: .*permission denied/);
+  assert.doesNotMatch(result.stdout, /OpenCode: failed|OpenCode: not installed/);
+  assert(fs.existsSync(ctx.data));
+  assert(!fs.readFileSync(ctx.configFile, 'utf8').includes(ctx.skill));
+  delete ctx.env.NODE_OPTIONS;
+  const retry = ctx.run(['uninstall', '--opencode', '--yes']);
+  assert.equal(retry.status, 0, retry.stdout + retry.stderr);
+  assert(!fs.existsSync(ctx.data));
+});
+
+test('OpenCode refuses a symlinked config before changing its target or data', t => {
+  const ctx = openSetup(t);
+  const target = path.join(ctx.home, 'dotfiles', 'opencode.jsonc');
+  fs.mkdirSync(path.dirname(target));
+  const seed = '{"skills": ["/other"]}\n';
+  fs.writeFileSync(target, seed);
+  fs.symlinkSync(target, ctx.configFile);
+  const result = ctx.run(['install', '--opencode', '--yes']);
+  assert.equal(result.status, 1, result.stdout + result.stderr);
+  assert.match(result.stdout, /global config is a symlink/);
+  assert(fs.lstatSync(ctx.configFile).isSymbolicLink());
+  assert.equal(fs.readFileSync(target, 'utf8'), seed);
+  assert(!fs.existsSync(ctx.data));
+});

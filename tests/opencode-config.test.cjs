@@ -98,3 +98,18 @@ test('uninstall removes sole Kaylo entry and leaves skills key', t => {
   config.changeConfig(f.dir, f.data, 'uninstall');
   assert.equal(f.read(), '{"skills": []}');
 });
+
+test('symlinked and dangling global configs are refused without replacing the link', t => {
+  for (const dangling of [false, true]) {
+    const f = fixture(t, null);
+    const target = path.join(f.dir, '..', `dotfiles-${dangling}.jsonc`);
+    const original = '{"skills": ["/other"]}\n';
+    if (!dangling) fs.writeFileSync(target, original);
+    fs.symlinkSync(target, f.file);
+    assert.throws(() => config.readConfig(f.dir, f.data), /symlink/);
+    assert.throws(() => config.changeConfig(f.dir, f.data, 'install', f.skill), /symlink/);
+    assert(fs.lstatSync(f.file).isSymbolicLink());
+    if (!dangling) assert.equal(fs.readFileSync(target, 'utf8'), original);
+    assert(!fs.existsSync(path.join(f.dir, 'opencode.json')));
+  }
+});
