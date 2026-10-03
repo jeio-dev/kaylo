@@ -25,6 +25,23 @@ consistency claim.
 Not established on any host: Antigravity IDE loading, models other than those
 named, and repeated runs of the same case.
 
+## Contributor ignores and command table — 2026-10-03
+
+Issues #35 and #36 follow the maintainer decisions recorded in their issue comments. `.gitignore` now excludes the root `.local/` and `.claude/worktrees/` directories. The README's "Five commands" table has five skill rows, and the paragraph below it retains phase mode's readiness, sequential task, verification, and blocker behavior. The heading and its anchor are unchanged. No changelog entry was added for #35 because it changes no shipped behavior; the README change is recorded under Unreleased.
+
+| Check | Observed result |
+| --- | --- |
+| `git check-ignore -v .local .claude/worktrees/x` | Both paths reported `.gitignore` as the source |
+| `node scripts/sync-claude-agents.cjs` | Passed; generated adapters unchanged |
+| `node scripts/validate-package.cjs` | Passed: package v0.9.2, five shared skills, matching versions and release catalogs |
+| `node --test tests/*.test.cjs` | 107 tests passed |
+| `claude plugin validate .claude-plugin/plugin.json --strict` | Passed |
+| `claude plugin validate .claude-plugin/marketplace.json --strict` | Passed |
+| `agy plugin validate .` | Passed: five skills and three agents processed |
+| `git diff --check` | Clean |
+
+These are local Git, documentation, package structure, and native manifest checks. No isolated host install, model request, or worker run was performed for these changes.
+
 ## Worker registration documentation — 2026-10-03
 
 Issue #33 updates `WORKERS.md`, the README host table, and the build and review delegation references to match the existing registration evidence. Claude Code's prefixed names and Antigravity's bare names were observed in installed worker checks; Gemini CLI 0.62.0's installed-extension agent loader returned the bare names. Codex and OpenCode have no packaged native agent definitions. The delegation references instruct the guiding assistant to confirm that a bare name resolves to Kaylo's brief before using it. No host behavior, brief, adapter, or manifest changed.

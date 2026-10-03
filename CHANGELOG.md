@@ -4,6 +4,9 @@
 
 ### Notable Changes
 
+- **docs**: The README's “Five commands” table now lists the five shipped
+  skills, with `/kaylo:build phase` explained below it as a build mode
+  ([#36](https://github.com/jeio-dev/kaylo/issues/36)).
 - **docs**: Worker registration guidance now distinguishes Claude Code's
   `kaylo:` names from the bare names observed on Antigravity and in Gemini
   CLI's agent loader. The delegation references tell readers to confirm that

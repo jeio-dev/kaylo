@@ -1,6 +1,9 @@
 __pycache__/
 .DS_Store
 development/package/
+# Local contributor files and agent worktrees; keep out of Git-based user installs.
+/.local/
+/.claude/worktrees/
 # Local contributor guidance; keep out of Git-based user installs.
 /AGENT.md
 /AGENTS.md
