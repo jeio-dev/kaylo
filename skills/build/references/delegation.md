@@ -10,7 +10,7 @@ Read this only when using a worker or preparing a manual handoff.
 - For Quality, Balanced, or Budget, dispatch only when an available model can be established at the required tier or higher. If availability or capability is unknown, the tier is unavailable, or the host cannot select it for this dispatch, stop for a user choice before using Inherit or another model; explain any unknown or weaker inherited model. No valid preference means Inherit without a new question.
 - Record the preference, recommended tier or no tier for Inherit, requested worker setting, model observed when known, and any fallback in the task's existing `Result:` line for each dispatch; include the reason for a raised tier. A worker report is not evidence of the model selected by the host.
 - If delegation is unavailable, work directly when capable or prepare a handoff for the user's chosen tool.
-- Run one worker at a time.
+- Run one worker at a time except for an explicit parallel phase request on Claude Code under the Phase mode wave procedure in [build](../SKILL.md); never run more than two workers in a wave.
 
 ## Prepare the handoff
 
@@ -24,7 +24,7 @@ Supply:
 - Acceptance criteria and test plan.
 - Earlier failed repair attempts and outcomes.
 
-Supply relevant decisions and interface contracts, rather than the full conversation. `Blocked by` sets order only; it does not authorize running tasks concurrently. Keep the assignment within the selected task or review comment; implementing, testing, and debugging it does not authorize the rest of the phase. In phase mode, prepare a separate packet for each task, and dispatch the next only after the current task is checked off and the structural plan check has passed.
+Supply relevant decisions and interface contracts, rather than the full conversation. `Blocked by` sets order only; it does not authorize running tasks concurrently without the Phase mode ownership check. Keep the assignment within the selected task or review comment; implementing, testing, and debugging it does not authorize the rest of the phase. In phase mode, prepare a separate packet for each task; outside an approved parallel wave, dispatch the next only after the current task is checked off and the structural plan check has passed. For a wave, name each worker's planned files and focused checks; keep shared checks with the guiding assistant.
 
 ## Workspace and execution
 
