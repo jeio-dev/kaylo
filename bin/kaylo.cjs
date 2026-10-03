@@ -100,6 +100,7 @@ function openVersion() {
 }
 function openFailure(reason) { return openConfig.manualMessage(reason, openDir(), openSkills()); }
 function openRecover() {
+  const cleanupWarnings = [];
   const state = openState();
   const current = openConfig.entryVersion(state, path.dirname(openData()));
   const data = openData();
@@ -115,9 +116,13 @@ function openRecover() {
     fs.renameSync(path.join(data, previous[0]), current.root);
   }
   for (const name of fs.readdirSync(data)) {
-    if (name.startsWith('.staging-') || name.startsWith('.previous-'))
-      fs.rmSync(path.join(data, name), { recursive: true, force: true });
+    if (name.startsWith('.staging-') || name.startsWith('.previous-')) {
+      const dir = path.join(data, name);
+      try { fs.rmSync(dir, { recursive: true, force: true }); }
+      catch (error) { cleanupWarnings.push({ dir, reason: `${error.code || 'error'}: ${error.message}` }); }
+    }
   }
+  return cleanupWarnings;
 }
 function openCopy(staging) {
   fs.mkdirSync(staging);
@@ -142,21 +147,24 @@ function openCopy(staging) {
     throw new Error('staging copy differs from the package');
 }
 function runOpenCode(command) {
-  openRecover();
+  const cleanupWarnings = openRecover();
   const data = openData();
   const current = openState();
   // Once the config edit commits, a failed recursive deletion may already have
   // removed part of an old copy. Report the committed config state with deferred
   // cleanup rather than claiming the transaction was rolled back.
-  const cleanupWarnings = [];
   const removeAfterCommit = dir => {
     try { fs.rmSync(dir, { recursive: true, force: true }); }
-    catch (error) { cleanupWarnings.push(`could not remove ${dir}: ${error.code || 'error'}: ${error.message}`); }
+    catch (error) { cleanupWarnings.push({ dir, reason: `${error.code || 'error'}: ${error.message}` }); }
   };
+  const pendingCleanup = () => cleanupWarnings.filter(({ dir }) => {
+    try { fs.lstatSync(dir); return true; }
+    catch (error) { return error.code !== 'ENOENT'; }
+  }).map(({ dir, reason }) => `could not remove ${dir}: ${reason}`);
   if (command === 'uninstall') {
     openConfig.changeConfig(openDir(), path.dirname(data), 'uninstall');
     removeAfterCommit(data);
-    return { removed: Boolean(current.entry), cleanupWarnings };
+    return { removed: Boolean(current.entry), cleanupWarnings: pendingCleanup() };
   }
   const staged = path.join(data, `.staging-${process.pid}-${Math.random().toString(16).slice(2)}`);
   const target = path.join(data, tag);
@@ -200,9 +208,9 @@ function runOpenCode(command) {
       for (const name of fs.readdirSync(data)) {
         if (/^v[^/]+$/.test(name) && name !== tag) removeAfterCommit(path.join(data, name));
       }
-    } catch (error) { cleanupWarnings.push(`could not list old copies in ${data}: ${error.code || 'error'}: ${error.message}`); }
+    } catch (error) { cleanupWarnings.push({ dir: data, reason: `could not list old copies: ${error.code || 'error'}: ${error.message}` }); }
   }
-  return { root: target, cleanupWarnings };
+  return { root: target, cleanupWarnings: pendingCleanup() };
 }
 function claudeMarketplace() {
   return json(read('claude', ['plugin', 'marketplace', 'list', '--json']), 'claude plugin marketplace list --json')

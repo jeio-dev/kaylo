@@ -41,12 +41,15 @@ failure despite the new copy being active. Post-commit removal errors now keep
 the verified active state and report `cleanup pending`; a later update or
 uninstall can retry cleanup. The same review found that renaming the config temp
 file over a symlink replaced the link. The editor now refuses that config before
-any mutation.
+any mutation. Follow-up review found that a repeated deletion error for a
+leftover `.previous-*` directory stopped the next run before its config edit;
+startup cleanup now defers that removal when the referenced copy exists and
+reports it only while the leftover still exists.
 
 | Check | Observed result |
 | --- | --- |
 | Node 24.21.0: `node scripts/validate-package.cjs` | Passed |
-| `node --test tests/*.test.cjs` | 157 tests passed, including OpenCode config fixtures, installer rollback and recovery cases, injected cleanup `EACCES`, and symlink refusals |
+| `node --test tests/*.test.cjs` | 158 tests passed, including OpenCode config fixtures, installer rollback and recovery cases, injected cleanup `EACCES`, and symlink refusals |
 | npm 11.19.0: `npm pack --dry-run --json` | Passed; 48 files. The installed copy from the first trial had the same 48 relative paths as npm's package inventory |
 | Claude Code 2.1.288: strict plugin and marketplace manifest validators | Both passed |
 | Antigravity CLI 1.2.14: `agy plugin validate .` | Passed: five skills and three agents |
@@ -69,6 +72,10 @@ exit 0 with `cleanup pending` and report the committed config state accurately;
 the old data remains for a later retry. A symlinked global config and a dangling
 symlink are refused with the link and target unchanged. These are simulated
 filesystem failures; no real permission change was made to a host profile.
+Another regression test keeps `.previous-*` cleanup blocked across a successful
+same-version install and a later uninstall. Uninstall now removes the config
+entry, reports the actual active state and pending data cleanup, and a retry
+after the injected error is removed deletes the leftover data.
 
 Crash limit: if a process stops between moving `vV/` to `.previous-*` and
 putting the staged copy at `vV/`, OpenCode may temporarily lack a working copy.

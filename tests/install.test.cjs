@@ -697,6 +697,35 @@ test('OpenCode uninstall reports removed with cleanup pending after EACCES', t =
   assert(!fs.existsSync(ctx.data));
 });
 
+test('OpenCode uninstall proceeds when a previous cleanup remains blocked', t => {
+  const ctx = openSetup(t);
+  fs.mkdirSync(ctx.target, { recursive: true });
+  copy(ctx.target);
+  ctx.seed(openEntry(ctx.skill));
+  const preload = path.join(ctx.dir, 'deny-previous-cleanup.cjs');
+  fs.writeFileSync(preload, `const fs = require('node:fs'); const path = require('node:path'); const original = fs.rmSync; fs.rmSync = function(file, options) { if (file === ${JSON.stringify(ctx.data)} || path.basename(file).startsWith('.previous-')) { const error = new Error('permission denied'); error.code = 'EACCES'; throw error; } return original.apply(this, arguments); };`);
+  ctx.env.NODE_OPTIONS = `--require=${preload}`;
+  const install = ctx.run(['install', '--opencode', '--yes']);
+  assert.equal(install.status, 0, install.stdout + install.stderr);
+  assert.match(install.stdout, /cleanup pending: .*\.previous-/);
+  assert(fs.readFileSync(ctx.configFile, 'utf8').includes(ctx.skill));
+  assert(fs.existsSync(ctx.target));
+  assert.equal(fs.readdirSync(ctx.data).filter(name => name.startsWith('.previous-')).length, 1);
+
+  const uninstall = ctx.run(['uninstall', '--opencode', '--yes']);
+  assert.equal(uninstall.status, 0, uninstall.stdout + uninstall.stderr);
+  assert.match(uninstall.stdout, /OpenCode: removed/);
+  assert.match(uninstall.stdout, /cleanup pending: .*EACCES/);
+  assert.doesNotMatch(uninstall.stdout, /OpenCode: failed|OpenCode: not installed/);
+  assert(!fs.readFileSync(ctx.configFile, 'utf8').includes(ctx.skill));
+  assert(fs.existsSync(ctx.target));
+
+  delete ctx.env.NODE_OPTIONS;
+  const retry = ctx.run(['uninstall', '--opencode', '--yes']);
+  assert.equal(retry.status, 0, retry.stdout + retry.stderr);
+  assert(!fs.existsSync(ctx.data));
+});
+
 test('OpenCode refuses a symlinked config before changing its target or data', t => {
   const ctx = openSetup(t);
   const target = path.join(ctx.home, 'dotfiles', 'opencode.jsonc');

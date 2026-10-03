@@ -11,7 +11,8 @@
   one is verified; an interrupted same-version replacement is recovered on the
   next mutating run. Symlinked global configs are refused. If removal of an old
   copy fails after the config edit commits, the installer reports the active
-  state and warns that cleanup is pending. Uninstall removes the Kaylo skills
+  state and warns that cleanup is pending. A later run can proceed while that
+  old copy remains blocked. Uninstall removes the Kaylo skills
   entry and its copy when deletion succeeds.
   OpenCode 1 and per-project config are outside this installer path
   ([#60](https://github.com/jeio-dev/kaylo/issues/60)).
