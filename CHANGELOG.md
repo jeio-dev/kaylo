@@ -4,6 +4,18 @@
 
 ### Notable Changes
 
+- **tools**: The `kaylo` installer now supports OpenCode 2 through `--opencode`
+  and `--all`. It copies and verifies the full package in a versioned data
+  directory, then edits the global JSON or JSONC config while preserving its
+  comments and other settings. Updates keep the referenced copy until the new
+  one is verified; an interrupted same-version replacement is recovered on the
+  next mutating run. Symlinked global configs are refused. If removal of an old
+  copy fails after the config edit commits, the installer reports the active
+  state and warns that cleanup is pending. A later run can proceed while that
+  old copy remains blocked. Uninstall removes the Kaylo skills
+  entry and its copy when deletion succeeds.
+  OpenCode 1 and per-project config are outside this installer path
+  ([#60](https://github.com/jeio-dev/kaylo/issues/60)).
 - **tools**: A new `kaylo` command (`bin/kaylo.cjs`, the npm package's `bin`)
   installs, updates, and uninstalls Kaylo on Claude Code, Codex, Antigravity
   CLI, and Gemini CLI. It runs each host's own commands, pinned to the
@@ -13,8 +25,8 @@
   against the path its extension list names, and no host against a cached
   copy. Without host flags, a terminal gets a picker; `--dry-run` runs only
   read-only commands. Declining the confirmation, closing input, or pressing
-  Ctrl-C at a prompt changes nothing. OpenCode support follows separately
-  (#60), as do `status` and drift warnings (#61). The package is not on npm
+  Ctrl-C at a prompt changes nothing. `status` and drift warnings follow in
+  #61. The package is not on npm
   yet; this was tried from a checkout against a local mirror, not public GitHub
   ([#59](https://github.com/jeio-dev/kaylo/issues/59)).
 - **tools**: The repository now carries an npm `package.json` for the planned

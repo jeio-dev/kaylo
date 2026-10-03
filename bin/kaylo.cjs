@@ -1,14 +1,13 @@
 #!/usr/bin/env node
 'use strict';
 
-// Thin installer: runs each host's native Kaylo commands pinned to this package's
-// release, then verifies the installed files with this package's validator.
-// It copies no Kaylo files itself and keeps no receipt or other state.
+// Runs native host commands, or installs OpenCode's verified package copy.
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const readline = require('node:readline');
 const { spawnSync } = require('node:child_process');
+const openConfig = require('./opencode-config.cjs');
 const root = path.resolve(__dirname, '..');
 const version = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).version;
 const tag = `v${version}`;
@@ -18,13 +17,14 @@ const hosts = [
   { id: 'claude', name: 'Claude Code', bin: 'claude', invoke: '/kaylo:build' },
   { id: 'codex', name: 'Codex', bin: 'codex', invoke: '$ → kaylo:build' },
   { id: 'agy', name: 'Antigravity', bin: 'agy', invoke: 'load build by name' },
-  { id: 'gemini', name: 'Gemini CLI', bin: 'gemini', invoke: 'load build by name' }
+  { id: 'gemini', name: 'Gemini CLI', bin: 'gemini', invoke: 'load build by name' },
+  { id: 'opencode', name: 'OpenCode', bin: 'opencode', invoke: 'load build by name' }
 ];
-const usage = `Usage: kaylo [install|update|uninstall] [--claude] [--codex] [--agy] [--gemini] [--all] [--yes] [--dry-run]
+const usage = `Usage: kaylo [install|update|uninstall] [--claude] [--codex] [--agy] [--gemini] [--opencode] [--all] [--yes] [--dry-run]
        kaylo --help | --version
 
-Installs Kaylo ${tag} through each selected host's own commands, pinned to ${tag},
-then verifies the installed files. Without host flags, a terminal shows a picker.
+Installs Kaylo ${tag} through native host commands or a verified OpenCode copy.
+Without host flags, a terminal shows a picker.
   --all       every supported host found on PATH
   --yes       skip Kaylo's own confirmation (host prompts still appear)
   --dry-run   print the plan using read-only commands; change nothing`;
@@ -89,6 +89,129 @@ const display = (bin, args) => [bin, ...args].map(quote).join(' ');
 
 // Version and root readers, shared with `status` later (#61).
 const home = () => os.homedir();
+const openData = () => path.join(process.env.XDG_DATA_HOME || path.join(home(), '.local', 'share'), 'kaylo');
+const openDir = () => path.join(process.env.XDG_CONFIG_HOME || path.join(home(), '.config'), 'opencode');
+const openSkills = () => path.join(openData(), tag, 'skills');
+function openState() { return openConfig.readConfig(openDir(), path.dirname(openData())); }
+function openVersion() {
+  const entry = openConfig.entryVersion(openState(), path.dirname(openData()));
+  return entry && { ...entry, configuredVersion: entry.version,
+    version: manifestVersion(entry.root, '.claude-plugin/plugin.json') };
+}
+function openFailure(reason) { return openConfig.manualMessage(reason, openDir(), openSkills()); }
+function openRecover() {
+  const cleanupWarnings = [];
+  const state = openState();
+  const current = openConfig.entryVersion(state, path.dirname(openData()));
+  const data = openData();
+  if (!fs.existsSync(data)) {
+    if (current) throw new Error(`referenced copy is missing: ${current.root}`);
+    fs.mkdirSync(data, { recursive: true });
+  }
+  const previous = fs.readdirSync(data).filter(name => name.startsWith('.previous-'));
+  if (current && (!fs.existsSync(current.root) || !fs.statSync(current.root).isDirectory())) {
+    if (fs.existsSync(current.root)) throw new Error(`referenced copy is not a directory: ${current.root}`);
+    if (previous.length !== 1 || manifestVersion(path.join(data, previous[0]), '.claude-plugin/plugin.json') !== current.version)
+      throw new Error(`referenced copy is missing and cannot be recovered: ${current.root}`);
+    fs.renameSync(path.join(data, previous[0]), current.root);
+  }
+  for (const name of fs.readdirSync(data)) {
+    if (name.startsWith('.staging-') || name.startsWith('.previous-')) {
+      const dir = path.join(data, name);
+      try { fs.rmSync(dir, { recursive: true, force: true }); }
+      catch (error) { cleanupWarnings.push({ dir, reason: `${error.code || 'error'}: ${error.message}` }); }
+    }
+  }
+  return cleanupWarnings;
+}
+function openCopy(staging) {
+  fs.mkdirSync(staging);
+  const entries = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).files;
+  for (const relative of ['package.json', ...entries]) {
+    const source = path.join(root, relative);
+    if (!fs.existsSync(source)) throw new Error(`package entry is missing: ${relative}`);
+    const target = path.join(staging, relative);
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.cpSync(source, target, { recursive: true });
+  }
+  function files(dir, relative) {
+    const entry = fs.lstatSync(path.join(dir, relative));
+    if (entry.isSymbolicLink()) throw new Error(`package entry is a symlink: ${relative}`);
+    return entry.isDirectory() ? fs.readdirSync(path.join(dir, relative)).flatMap(name =>
+      files(dir, path.join(relative, name))) : [relative];
+  }
+  const sourceFiles = ['package.json', ...entries.flatMap(relative => files(root, relative))].sort();
+  const stagedFiles = fs.readdirSync(staging).flatMap(name => files(staging, name)).sort();
+  if (JSON.stringify(sourceFiles) !== JSON.stringify(stagedFiles) ||
+      sourceFiles.some(relative => !fs.readFileSync(path.join(root, relative)).equals(fs.readFileSync(path.join(staging, relative)))))
+    throw new Error('staging copy differs from the package');
+}
+function runOpenCode(command) {
+  const cleanupWarnings = openRecover();
+  const data = openData();
+  const current = openState();
+  // Once the config edit commits, a failed recursive deletion may already have
+  // removed part of an old copy. Report the committed config state with deferred
+  // cleanup rather than claiming the transaction was rolled back.
+  const removeAfterCommit = dir => {
+    try { fs.rmSync(dir, { recursive: true, force: true }); }
+    catch (error) { cleanupWarnings.push({ dir, reason: `${error.code || 'error'}: ${error.message}` }); }
+  };
+  const pendingCleanup = () => cleanupWarnings.filter(({ dir }) => {
+    try { fs.lstatSync(dir); return true; }
+    catch (error) { return error.code !== 'ENOENT'; }
+  }).map(({ dir, reason }) => `could not remove ${dir}: ${reason}`);
+  if (command === 'uninstall') {
+    openConfig.changeConfig(openDir(), path.dirname(data), 'uninstall');
+    removeAfterCommit(data);
+    return { removed: Boolean(current.entry), cleanupWarnings: pendingCleanup() };
+  }
+  const staged = path.join(data, `.staging-${process.pid}-${Math.random().toString(16).slice(2)}`);
+  const target = path.join(data, tag);
+  let previous;
+  let placed = false;
+  let configChanged = false;
+  try {
+    openCopy(staged);
+    const invalid = verifyFiles(staged);
+    if (invalid) throw new Error(`staging verification failed: ${invalid}`);
+    if (fs.existsSync(target)) {
+      previous = path.join(data, `.previous-${process.pid}-${Math.random().toString(16).slice(2)}`);
+      fs.renameSync(target, previous);
+    }
+    fs.renameSync(staged, target);
+    placed = true;
+    if (verifyFiles(target)) throw new Error('installed copy verification failed');
+    openConfig.changeConfig(openDir(), path.dirname(data), 'install', openSkills());
+    configChanged = true;
+    const entry = openVersion();
+    if (!entry || entry.version !== version || entry.root !== target || entry.configuredVersion !== version ||
+        openState().entry?.value !== openSkills())
+      throw new Error('post-install verification failed');
+  } catch (error) {
+    if (configChanged) {
+      const file = current.file;
+      if (current.exists) {
+        const restore = `${file}.kaylo-restore-${process.pid}`;
+        fs.writeFileSync(restore, current.source, { mode: fs.statSync(file).mode });
+        fs.renameSync(restore, file);
+      } else fs.rmSync(file, { force: true });
+    }
+    if (placed) fs.rmSync(target, { recursive: true, force: true });
+    if (previous) fs.renameSync(previous, target);
+    fs.rmSync(staged, { recursive: true, force: true });
+    throw error;
+  }
+  if (previous) removeAfterCommit(previous);
+  if (command === 'update') {
+    try {
+      for (const name of fs.readdirSync(data)) {
+        if (/^v[^/]+$/.test(name) && name !== tag) removeAfterCommit(path.join(data, name));
+      }
+    } catch (error) { cleanupWarnings.push({ dir: data, reason: `could not list old copies: ${error.code || 'error'}: ${error.message}` }); }
+  }
+  return { root: target, cleanupWarnings: pendingCleanup() };
+}
 function claudeMarketplace() {
   return json(read('claude', ['plugin', 'marketplace', 'list', '--json']), 'claude plugin marketplace list --json')
     .find(entry => entry.name === 'kaylo');
@@ -199,6 +322,12 @@ const plans = {
         { args: ['extensions', 'install', `https://github.com/${repo}`, '--ref', tag] }],
       replaces: listed ? [`extension kaylo (${listed.version ? `v${listed.version}` : 'version unknown'})`] : []
     };
+  },
+  opencode(command) {
+    const current = openVersion();
+    return { steps: [{ description: command === 'uninstall' ? `remove Kaylo from ${openDir()} and delete ${openData()}` :
+      `copy package to ${path.join(openData(), tag)}, verify it, and edit ${openDir()}` }],
+    replaces: current && command !== 'uninstall' ? [`OpenCode copy ${current.version ? `v${current.version}` : '(version unknown)'}`] : [] };
   }
 };
 
@@ -322,11 +451,11 @@ async function main(argv, io = { input: process.stdin, output: process.stdout, e
     else if (options.hosts.size) selected = hosts.filter(host => options.hosts.has(host.id)).map(host => host.id);
     else if (interactive) selected = await pick(found, ask, io.output);
     else {
-      fail(`Choose hosts with --claude, --codex, --agy, --gemini, or --all when not running in a terminal.\n\n${usage}`);
+      fail(`Choose hosts with --claude, --codex, --agy, --gemini, --opencode, or --all when not running in a terminal.\n\n${usage}`);
       return 2;
     }
     if (!selected.length) {
-      fail(found.size ? 'No host selected; nothing to do.' : 'No supported host (claude, codex, agy, gemini) is found on PATH.');
+      fail(found.size ? 'No host selected; nothing to do.' : 'No supported host (claude, codex, agy, gemini, opencode) is found on PATH.');
       return 1;
     }
     const command = options.command;
@@ -335,7 +464,8 @@ async function main(argv, io = { input: process.stdin, output: process.stdout, e
       try {
         return { host, ...plans[id](command) };
       } catch (error) {
-        return { host, steps: [], failed: `could not read the current install: ${error.message}` };
+        return { host, steps: [], failed: id === 'opencode' ? openFailure(error.message) :
+          `could not read the current install: ${error.message}` };
       }
     });
     out(`Kaylo ${tag} ${command} plan:`);
@@ -344,7 +474,7 @@ async function main(argv, io = { input: process.stdin, output: process.stdout, e
       if (item.failed) out(`  cannot plan: ${item.failed}`);
       for (const replaced of item.replaces || []) out(`  replaces existing ${replaced}`);
       if (!item.failed && !item.steps.length) out('  Kaylo is not installed; nothing to remove.');
-      for (const step of item.steps) out(`  $ ${display(item.host.bin, step.args)}`);
+      for (const step of item.steps) out(step.description ? `  ${step.description}` : `  $ ${display(item.host.bin, step.args)}`);
       if (!item.failed && command !== 'uninstall') out(`  then verify version ${version} and the installed files`);
     }
     if (options.dryRun) {
@@ -363,6 +493,15 @@ async function main(argv, io = { input: process.stdin, output: process.stdout, e
     for (const item of work) {
       if (item.failed) continue;
       out(`\n${item.host.name}`);
+      if (item.host.id === 'opencode') {
+        try {
+          const result = runOpenCode(command);
+          item.root = result.root;
+          item.removed = result.removed;
+          item.cleanupWarnings = result.cleanupWarnings;
+        } catch (error) { item.failed = openFailure(error.message); }
+        continue;
+      }
       let added;
       let removedPrevious = false;
       for (const step of item.steps) {
@@ -394,14 +533,18 @@ async function main(argv, io = { input: process.stdin, output: process.stdout, e
     out('\nSummary:');
     for (const item of work) {
       if (item.failed) out(`  ${item.host.name}: failed: ${item.failed}`);
-      else if (command === 'uninstall') out(`  ${item.host.name}: ${item.steps.length ? 'removed' : 'not installed'}`);
+      else if (command === 'uninstall') out(`  ${item.host.name}: ${item.host.id === 'opencode' ? (item.removed ? 'removed' : 'not installed') : (item.steps.length ? 'removed' : 'not installed')}`);
       else out(`  ${item.host.name}: ${tag}, files verified at ${item.root}`);
+      if (item.cleanupWarnings?.length) {
+        for (const warning of item.cleanupWarnings) out(`    cleanup pending: ${warning}`);
+      }
     }
     const done = work.filter(item => !item.failed);
     if (command !== 'uninstall' && done.length) {
       out('\nUse Kaylo:');
       for (const item of done) out(`  ${item.host.name}: ${item.host.invoke}`);
       out('Start a new session.');
+      if (done.some(item => item.host.id === 'opencode')) out('For OpenCode, you can also restart the server.');
     }
     return done.length === work.length ? 0 : 1;
   } catch (error) {
@@ -415,6 +558,7 @@ async function main(argv, io = { input: process.stdin, output: process.stdout, e
 
 module.exports = {
   hosts, version, tag, parse, detect, prompter, pick, main, json, manifestVersion, verifyFiles,
-  claudeInstall, claudeMarketplace, codexInstall, codexMarketplace, agyRoot, geminiInstall
+  claudeInstall, claudeMarketplace, codexInstall, codexMarketplace, agyRoot, geminiInstall,
+  openVersion, openData, openDir
 };
 if (require.main === module) main(process.argv.slice(2)).then(code => { process.exitCode = code; });
