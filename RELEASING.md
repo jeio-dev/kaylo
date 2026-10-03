@@ -18,7 +18,8 @@ Do not publish a skills-only subset or independently edit host copies.
    `development/` catalog pointing at its generated `./package`. Run
    `node scripts/stage-development.cjs` before testing local Codex installs.
 3. After editing a shared worker brief, run `node scripts/sync-claude-agents.cjs`.
-   Update README version/tag examples, the changelog, and verification evidence.
+   Update README version/tag examples, the changelog, and verification evidence,
+   including the current status table at the top of `VERIFICATION.md`.
    Record unavailable hosts and distinguish file/discovery parity from model behavior.
 4. Run `node scripts/validate-package.cjs`,
    `node --test tests/*.test.cjs`,
@@ -27,7 +28,10 @@ Do not publish a skills-only subset or independently edit host copies.
    `agy plugin validate .`, and `git diff --check`.
 5. In temporary profiles, install the previous release in Claude, Codex,
    Antigravity, and Gemini, confirm it, then update each to the prepared release,
-   and load the checkout in OpenCode 2. Confirm all five skills are discovered.
+   and load the checkout in OpenCode 2. Confirm all five skills are discovered;
+   OpenCode builds its catalog after server startup, so wait until
+   `GET /api/skill` lists all five IDs with paths into the checkout rather than
+   treating an immediate empty response as a failure.
    Run `node scripts/validate-package.cjs --installed <package-root>` against
    each installed package; it compares every shared resource and `WORKERS.md` and
    rejects leftover files in the shared folders. When Git transport is redirected

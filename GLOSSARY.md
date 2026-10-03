@@ -201,3 +201,13 @@ Structural checks:
 - `Blocked by:` is `None` or comma-separated, distinct IDs of earlier tasks in the same phase.
 - `Acceptance criteria:`, `Test plan:`, `Result:`, and `Blocked by:` each appear at most once per task. `## Review` and `## Completion` each appear at most once. Review comment IDs (`R1`) are unique.
 - Closure (`--closing`, or a checked current phase) requires every task checked, no `Status: Needs revision`, a record under `## Review` (`None` is allowed), and a substantive record under `## Completion`. A bare `Not complete` (case-insensitive, with an optional period or exclamation mark) is a placeholder; an open phase may retain it before closure.
+
+Parsing:
+
+- Every line starting with `Status:` is checked. Task fields are single-line.
+- Horizontal whitespace around list markers and checkboxes, and indentation, are supported. Recognizable but malformed task, phase, and `Current:` records produce errors rather than being skipped.
+- Examples in fenced code blocks and HTML comments are ignored.
+- Links must resolve inside the project, including symbolic link targets.
+- Every linked phase file is checked for readability; task and review comment contents are checked only in the current phase.
+- Duplicate `## Review` or `## Completion` sections are errors; keep their history under a single heading. Review comment IDs are recognized across Review records, including duplicate sections.
+- Other equivalent Markdown layouts need manual inspection rather than automatic migration.
