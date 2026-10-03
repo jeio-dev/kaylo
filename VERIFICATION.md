@@ -8,7 +8,7 @@ through 0.8.0 (2026-09-27 to 2026-09-29) are in the
 (`git show v0.9.2:VERIFICATION.md`); records from the first draft through 0.5.2
 are in `git show v0.6.0:VERIFICATION.md`.
 
-## Current status — 0.9.2
+## Current status — 0.9.2 and Unreleased
 
 A summary of the records below and the archived ones. Every live-model result
 is one run per case, or a few, on the host and model named; none is a
@@ -16,7 +16,7 @@ consistency claim.
 
 | Host | Installation and update | Session reminder | Kaylo workers | Kaylo run with a model |
 | --- | --- | --- | --- | --- |
-| Claude Code 2.1.286 | Public install of v0.9.2; isolated update from v0.9.1 | Delivered at startup and resume. Skipped when the hook payload names a Kaylo worker as `agent_type`, observed when a worker was started or resumed with `--agent`; a worker resumed with `-c` alone still received it | v0.9.2: all three installed workers started and reached a model; which model was not recorded | All five skills with Claude Opus 5.5, from 0.7.0 through the 0.9.2 fixes. Workers with a recorded model: builder with Opus 5.5 and with Claude Haiku 4.5, and reviewer with Opus 5.5 (`334f574`, before 0.8.0); researcher with Opus 5.5 (v0.9.1 and the 0.9.2 fixes) |
+| Claude Code 2.1.286 | Public install of v0.9.2; isolated update from v0.9.1 | Delivered at startup and resume. Skipped when the hook payload names a Kaylo worker as `agent_type`, observed when a worker was started or resumed with `--agent`; a worker resumed with `-c` alone still received it | v0.9.2: all three installed workers started and reached a model; which model was not recorded. Unreleased reviewer tool list passed structural checks only | All five skills with Claude Opus 5.5, from 0.7.0 through the 0.9.2 fixes. Workers with a recorded model: builder with Opus 5.5 and with Claude Haiku 4.5, and reviewer with Opus 5.5 (`334f574`, before 0.8.0); researcher with Opus 5.5 (v0.9.1 and the 0.9.2 fixes). Unreleased reviewer list has not run with a model |
 | Codex CLI 0.159.3 | Public install of v0.9.2; isolated update from v0.9.1; five skills discovered | Fired at startup and resume after the hooks were trusted | None registered; the manual handoff was not run | Not run |
 | OpenCode 2.0.18 | Five skills discovered from the prepared v0.9.2 checkout | No adapter | None registered; researcher run with a pasted brief | Researcher only, with DeepSeek v4 flash (v0.9.1 and the 0.9.2 fixes) |
 | Antigravity CLI 1.2.14 | Public install of v0.9.2; isolated update from v0.9.1 | No adapter | v0.9.2: all three installed workers started and reached a model; which model was not recorded. Researcher also run as a subagent | Researcher only, with Gemini 3.8 Flash (High) (v0.9.1 and the 0.9.2 fixes) |
@@ -24,6 +24,22 @@ consistency claim.
 
 Not established on any host: Antigravity IDE loading, models other than those
 named, and repeated runs of the same case.
+
+## Claude reviewer adapter tool list — 2026-10-02
+
+The maintainer chose one Claude reviewer adapter for plan checks and implementation reviews, with `Read, Glob, Grep, Bash, WebFetch, WebSearch`; the builder remains unrestricted. Generation adds that line after `model: inherit`. The package validator compares the whole adapter against the generated result, and tests reject a missing or different reviewer list. The researcher adapter is byte-identical to the prior version, and the reviewer differs only by that line. These checks establish package structure and resource parity, not tool use by a model.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/sync-claude-agents.cjs` | Passed; reviewer line generated, researcher and builder adapters unchanged |
+| `node scripts/validate-package.cjs` | Passed: package v0.9.2, five shared skills, matching versions and release catalogs |
+| `node --test tests/*.test.cjs` | 107 tests passed |
+| `claude plugin validate .claude-plugin/plugin.json --strict` | Passed |
+| `claude plugin validate .claude-plugin/marketplace.json --strict` | Passed |
+| `agy plugin validate .` | Passed: five skills and three agents processed |
+| `git diff --check` | Clean on the final working diff |
+
+The checks used Node v24.21.0, Claude Code 2.1.286, and Antigravity CLI 1.2.14 on the uncommitted checkout. Native validators checked manifests and package loading only. No isolated install, update, model request, or live reviewer dispatch ran. The reviewer list's effect in Claude Code, its interaction with background subagents, and behavior during plan checks and implementation reviews remain unobserved. `Bash` can write files, so the list does not establish that a plan check is read-only.
 
 ## Project worker model preference — 2026-10-02
 

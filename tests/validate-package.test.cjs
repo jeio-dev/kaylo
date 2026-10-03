@@ -76,21 +76,27 @@ test('stale generated worker instructions are rejected', t => {
   assert.equal(generation.status, 0);
   assert.equal(check(dir).status, 0);
 });
-test('generated Claude researcher keeps its read-only tool list and other adapters stay exact', t => {
+test('generated Claude adapters have their assigned tool lists and preserve shared bodies', t => {
   const dir = fixture(t);
   fs.rmSync(path.join(dir, 'claude-agents'), { recursive: true });
   const generation = spawnSync(process.execPath, [path.join(dir, 'scripts/sync-claude-agents.cjs')]);
   assert.equal(generation.status, 0);
-  const shared = fs.readFileSync(path.join(dir, 'agents/researcher.md'), 'utf8');
-  const adapter = fs.readFileSync(path.join(dir, 'claude-agents/researcher.md'), 'utf8');
-  assert.doesNotMatch(shared.split('\n---\n')[0], /^tools\s*:/m);
-  assert.match(adapter, /^---\nname: researcher\ndescription: [^\n]+\nmodel: inherit\ntools: Read, Glob, Grep, WebSearch, WebFetch\n---\n/);
-  assert.equal(adapter.replace('tools: Read, Glob, Grep, WebSearch, WebFetch\n', ''), shared);
-  for (const name of ['builder', 'reviewer']) {
-    assert.equal(fs.readFileSync(path.join(dir, 'claude-agents', `${name}.md`), 'utf8'),
-      fs.readFileSync(path.join(dir, 'agents', `${name}.md`), 'utf8'));
+  const lists = {
+    researcher: 'Read, Glob, Grep, WebSearch, WebFetch',
+    reviewer: 'Read, Glob, Grep, Bash, WebFetch, WebSearch'
+  };
+  for (const name of ['builder', 'researcher', 'reviewer']) {
+    const shared = fs.readFileSync(path.join(dir, 'agents', `${name}.md`), 'utf8');
+    const adapter = fs.readFileSync(path.join(dir, 'claude-agents', `${name}.md`), 'utf8');
+    assert.doesNotMatch(shared.split('\n---\n')[0], /^tools\s*:/m);
+    if (lists[name]) {
+      assert.match(adapter, new RegExp(`^---\\nname: ${name}\\ndescription: [^\\n]+\\nmodel: inherit\\ntools: ${lists[name]}\\n---\\n`));
+      assert.equal(adapter.replace(`tools: ${lists[name]}\n`, ''), shared);
+    } else {
+      assert.equal(adapter, shared);
+    }
+    assert.equal(adapter, fs.readFileSync(path.join(repo, 'claude-agents', `${name}.md`), 'utf8'));
   }
-  assert.equal(adapter, fs.readFileSync(path.join(repo, 'claude-agents/researcher.md'), 'utf8'));
   assert.equal(check(dir).status, 0);
 });
 test('a tools line in any shared brief frontmatter is rejected', t => {
@@ -122,7 +128,7 @@ test('a quoted, indented, or capitalised tools key in shared frontmatter is reje
 test('a tools mention in a shared brief body is allowed', t => {
   const dir = fixture(t);
   fs.appendFileSync(path.join(dir, 'agents/reviewer.md'), '\ntools: mentioned in the body only\n');
-  fs.copyFileSync(path.join(dir, 'agents/reviewer.md'), path.join(dir, 'claude-agents/reviewer.md'));
+  assert.equal(spawnSync(process.execPath, [path.join(dir, 'scripts/sync-claude-agents.cjs')]).status, 0);
   assert.equal(check(dir).status, 0);
 });
 test('a stale or unrestricted Claude researcher adapter is rejected', t => {
@@ -145,25 +151,46 @@ test('a stale or unrestricted Claude researcher adapter is rejected', t => {
   fs.writeFileSync(target, original);
   assert.equal(check(dir).status, 0);
 });
-test('adapter generation fails loudly instead of dropping the Claude tool list', t => {
+test('a stale or differently restricted Claude reviewer adapter is rejected', t => {
   const dir = fixture(t);
-  const source = path.join(dir, 'agents/researcher.md');
-  const target = path.join(dir, 'claude-agents/researcher.md');
-  const original = fs.readFileSync(source, 'utf8');
-  const adapter = fs.readFileSync(target, 'utf8');
-  const sync = () => spawnSync(process.execPath, [path.join(dir, 'scripts/sync-claude-agents.cjs')], { encoding: 'utf8' });
-  fs.writeFileSync(source, original.replace('model: inherit\n', 'model: inherit\ntools: [read_file]\n'));
-  const carried = sync();
-  assert.notEqual(carried.status, 0);
-  assert.match(carried.stderr, /must not carry a tools line/);
-  fs.writeFileSync(source, original.replace('model: inherit\n', ''));
-  const missing = sync();
-  assert.notEqual(missing.status, 0);
-  assert.match(missing.stderr, /no "model: inherit" line/);
-  const invalid = check(dir);
-  assert.equal(invalid.status, 1);
-  assert.match(invalid.stderr, /no "model: inherit" line/);
-  assert.equal(fs.readFileSync(target, 'utf8'), adapter);
+  const target = path.join(dir, 'claude-agents/reviewer.md');
+  const original = fs.readFileSync(target, 'utf8');
+  const variants = [
+    fs.readFileSync(path.join(dir, 'agents/reviewer.md'), 'utf8'),
+    original.replace('tools: Read, Glob, Grep, Bash, WebFetch, WebSearch', 'tools: Read, Glob, Grep, Bash, WebFetch, WebSearch, Edit'),
+    original.replace('tools: Read, Glob, Grep, Bash, WebFetch, WebSearch', 'tools: Read, Glob, Grep, WebFetch, WebSearch')
+  ];
+  for (const variant of variants) {
+    assert.notEqual(variant, original);
+    fs.writeFileSync(target, variant);
+    const result = check(dir);
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /Claude agent adapter is stale: reviewer/);
+  }
+  fs.writeFileSync(target, original);
+  assert.equal(check(dir).status, 0);
+});
+test('adapter generation fails loudly instead of dropping Claude tool lists', t => {
+  for (const name of ['researcher', 'reviewer']) {
+    const dir = fixture(t);
+    const source = path.join(dir, 'agents', `${name}.md`);
+    const target = path.join(dir, 'claude-agents', `${name}.md`);
+    const original = fs.readFileSync(source, 'utf8');
+    const adapter = fs.readFileSync(target, 'utf8');
+    const sync = () => spawnSync(process.execPath, [path.join(dir, 'scripts/sync-claude-agents.cjs')], { encoding: 'utf8' });
+    fs.writeFileSync(source, original.replace('model: inherit\n', 'model: inherit\ntools: [read_file]\n'));
+    const carried = sync();
+    assert.notEqual(carried.status, 0);
+    assert.match(carried.stderr, /must not carry a tools line/);
+    fs.writeFileSync(source, original.replace('model: inherit\n', ''));
+    const missing = sync();
+    assert.notEqual(missing.status, 0);
+    assert.match(missing.stderr, /no "model: inherit" line/);
+    const invalid = check(dir);
+    assert.equal(invalid.status, 1);
+    assert.match(invalid.stderr, /no "model: inherit" line/);
+    assert.equal(fs.readFileSync(target, 'utf8'), adapter);
+  }
 });
 test('invalid CLI usage returns 2', () => {
   assert.equal(check(repo, ['--installed']).status, 2);
