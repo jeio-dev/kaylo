@@ -128,23 +128,32 @@ function openRecover() {
 function openCopy(staging) {
   fs.mkdirSync(staging);
   const entries = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).files;
+  // npm's extraction (pacote) renames a packed .gitignore to .npmignore, so a
+  // listed .gitignore is read from there and staged under its packed name.
+  const packaged = relative => {
+    const file = path.join(root, relative);
+    const renamed = path.join(path.dirname(file), '.npmignore');
+    return path.basename(relative) === '.gitignore' && !fs.existsSync(file) && fs.existsSync(renamed) &&
+      !entries.includes(path.relative(root, renamed)) ? renamed : file;
+  };
   for (const relative of ['package.json', ...entries]) {
-    const source = path.join(root, relative);
+    const source = packaged(relative);
     if (!fs.existsSync(source)) throw new Error(`package entry is missing: ${relative}`);
     const target = path.join(staging, relative);
     fs.mkdirSync(path.dirname(target), { recursive: true });
     fs.cpSync(source, target, { recursive: true });
   }
-  function files(dir, relative) {
-    const entry = fs.lstatSync(path.join(dir, relative));
+  function files(resolve, relative) {
+    const entry = fs.lstatSync(resolve(relative));
     if (entry.isSymbolicLink()) throw new Error(`package entry is a symlink: ${relative}`);
-    return entry.isDirectory() ? fs.readdirSync(path.join(dir, relative)).flatMap(name =>
-      files(dir, path.join(relative, name))) : [relative];
+    return entry.isDirectory() ? fs.readdirSync(resolve(relative)).flatMap(name =>
+      files(resolve, path.join(relative, name))) : [relative];
   }
-  const sourceFiles = ['package.json', ...entries.flatMap(relative => files(root, relative))].sort();
-  const stagedFiles = fs.readdirSync(staging).flatMap(name => files(staging, name)).sort();
+  const staged = relative => path.join(staging, relative);
+  const sourceFiles = ['package.json', ...entries.flatMap(relative => files(packaged, relative))].sort();
+  const stagedFiles = fs.readdirSync(staging).flatMap(name => files(staged, name)).sort();
   if (JSON.stringify(sourceFiles) !== JSON.stringify(stagedFiles) ||
-      sourceFiles.some(relative => !fs.readFileSync(path.join(root, relative)).equals(fs.readFileSync(path.join(staging, relative)))))
+      sourceFiles.some(relative => !fs.readFileSync(packaged(relative)).equals(fs.readFileSync(staged(relative)))))
     throw new Error('staging copy differs from the package');
 }
 function runOpenCode(command) {

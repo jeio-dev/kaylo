@@ -141,6 +141,8 @@ Keep historical fixture checks distinct from checks against the published tag.
 
 ## How users update
 
+- Installer: run `npx kaylo@latest update`, select the hosts to update, and
+  start a new session afterward. `--all` selects every detected host.
 - Claude: refresh the `kaylo` catalog, then update `kaylo@kaylo`. Auto-update is
   optional and host-managed.
 - Codex: upgrade the `kaylo` catalog, then add `kaylo@kaylo` again to refresh its

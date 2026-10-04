@@ -35,16 +35,44 @@ Plan details one phase at a time; later phases stay one line in `ROADMAP.md` unt
 
 ## Install and use Kaylo
 
-Run Kaylo in the project you want to build. Every host uses the same five skill
-files and supporting resources. Installation includes the full package; copying
-only `SKILL.md` loses templates, worker briefs, delegation references, and the
-plan validator. The internal skill names remain `define`, `plan`, `build`,
-`review`, and `close`.
+From your project directory, use the `kaylo` npm installer:
+
+```sh
+npx kaylo                  # install
+npx kaylo@latest update    # update to the latest release
+npx kaylo status           # show installed versions and file checks
+npx kaylo uninstall        # remove Kaylo
+```
+
+These commands need Node.js 24 or newer on `PATH`. In a terminal, install,
+update, and uninstall offer a host picker. Use `--claude`, `--codex`, `--agy`,
+`--gemini`, or `--opencode` to choose hosts, or `--all` to select every detected
+host. `--yes` skips Kaylo's confirmation but still leaves native host prompts
+in place; `--dry-run` shows the plan without changing an install.
+
+The installer runs each host's native commands, pinned to its own release. For
+OpenCode, it makes one verified package copy and adds one entry to the global
+config. After install or update, it checks the installed version and files on
+every selected host. Codex `status` reports its listed version without a file
+comparison because its read-only listing does not expose the active path.
+Start a new host session after installing or updating.
+
+The packed-tarball flow was observed on one Linux (WSL2) machine with isolated
+profiles and a local release mirror. Public npm installation awaits the 0.10.0
+release. No Kaylo skill or worker has been run with a Gemini model in Gemini
+CLI; its model behavior remains untested. See [verification](VERIFICATION.md).
+
+Every host uses the same five skill files and supporting resources.
+Installation includes the full package; copying only `SKILL.md` loses
+templates, worker briefs, delegation references, and the plan validator. The
+internal skill names remain `define`, `plan`, `build`, `review`, and `close`.
 
 Claude and Codex marketplaces select a tested release tag. The commands below
-use `v0.9.3`. For an
-unpublished checkout, use the development instructions below. See
-[release maintenance](RELEASING.md) for the publication process.
+use `v0.9.3`. The per-host sections give the native operations the installer
+runs as manual commands; the installer pins sources to its own release, while
+these manual catalog examples use the catalog's released ref. For an
+unpublished checkout, use the development instructions below. See [release
+maintenance](RELEASING.md) for the publication process.
 
 ### Claude Code
 
@@ -331,6 +359,10 @@ Delegated builds record the starting workspace state, confirm dependencies are p
 - `hooks/`: the optional reminder; no workflow runtime or persistent state.
 - `scripts/`: plan/package validators, the Claude agent adapter generator, and local development staging; `tests/`: validator fixtures and behavioral trial prompts.
 
-No custom installer, automatic model router, or terminal modifications. Releases use Git tags and native host commands; see [release maintenance](RELEASING.md). Validator fixtures check structure; behavioral trials do not guarantee model compliance. `0.9.3` is an early package version, not a release-readiness claim.
+The installer runs native host commands, with one verified package copy and one
+global config entry for OpenCode. It adds no model router or terminal
+modification. Releases use Git tags; see [release maintenance](RELEASING.md).
+Validator fixtures check structure; behavioral trials do not guarantee model
+compliance. `0.9.3` is an early package version, not a release-readiness claim.
 
 Native integration references: [Claude plugin layout](https://code.claude.com/docs/en/plugins-reference), [Claude agents](https://code.claude.com/docs/en/sub-agents), [Codex plugin packaging](https://developers.openai.com/plugins/build/plugins), [Codex skill invocation](https://developers.openai.com/codex/skills), [Codex hooks](https://developers.openai.com/codex/hooks), [OpenCode 2 skills](https://opencode.ai/v2/docs/skills), [Antigravity plugins](https://antigravity.google/docs/plugins), and [Gemini extensions](https://geminicli.com/docs/extensions/reference/). Host behavior and availability can vary by version; the verification record identifies the versions inspected here.
