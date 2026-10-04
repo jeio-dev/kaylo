@@ -706,7 +706,7 @@ test('OpenCode update reports committed install with cleanup pending after EACCE
   ctx.env.NODE_OPTIONS = `--require=${preload}`;
   const result = ctx.run(['update', '--opencode', '--yes']);
   assert.equal(result.status, 0, result.stdout + result.stderr);
-  assert.match(result.stdout, /OpenCode: v0\.9\.3, files verified/);
+  assert.match(result.stdout, new RegExp(`OpenCode: v${version.replace(/\./g, '\\.')}, files verified`));
   assert.match(result.stdout, /cleanup pending: .*EACCES|cleanup pending: .*permission denied/);
   assert.doesNotMatch(result.stdout, /OpenCode: failed|OpenCode: not installed/);
   assert(fs.existsSync(old));
