@@ -4,6 +4,11 @@
 
 ### Notable Changes
 
+- **tools**: The OpenCode installer now completes from an npm-installed
+  package, such as `npx kaylo`. npm renames the packed `.gitignore` to
+  `.npmignore` when it unpacks a package; the installer now stages that file
+  under its packed name, so the OpenCode copy still matches the tarball
+  ([#68](https://github.com/jeio-dev/kaylo/issues/68)).
 - **tools**: `kaylo status` reports each host's installed version and, where
   its active path is available, compares installed files with this package.
   Codex reports its listed version without a file comparison. Install and

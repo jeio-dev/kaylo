@@ -25,6 +25,30 @@ consistency claim.
 Not established on any host: Antigravity IDE loading, models other than those
 named, and repeated runs of the same case.
 
+## npm-installed OpenCode copy fix — 2026-10-04
+
+Bug [#68](https://github.com/jeio-dev/kaylo/issues/68): npm 11.19.0's tarball
+extraction (pacote) renames a packed `.gitignore` to `.npmignore` unless the
+package already has `.npmignore`. Reproduced on Node 24.21.0 by `npm install`
+of a local `npm pack` tarball: the tarball held `package/.gitignore`, the
+installed directory held `.npmignore`. `openCopy()` now reads a listed
+`.gitignore` from that sibling `.npmignore` when only the renamed file exists,
+stages it as `.gitignore`, and compares bytes against the same source. A new
+package-inventory test installs the packed export with `npm install --offline`
+into a temporary project, runs that installed `bin/kaylo.cjs install --opencode
+--yes` against a stub `opencode` and temporary `HOME` and `XDG_*`, and requires
+the OpenCode copy to match the unpacked tarball's file list and bytes. With the
+installer change stashed, the test failed with `package entry is missing:
+.gitignore`; with it, the test passed. An isolated `npx --yes --package
+file:<tarball> kaylo install --opencode --yes` of a fresh 0.9.3 working-tree
+pack (stub `opencode`; temporary `HOME`, `XDG_*`, `TMPDIR`, and npm cache)
+installed the copy and wrote the config entry; the copy's `.gitignore` matched
+the tarball byte for byte while the `_npx` directory still held `.npmignore`.
+`node scripts/validate-package.cjs`, `node --test tests/*.test.cjs` (166 pass),
+and `git diff --check` passed. Native manifest validators were not rerun because
+no manifest changed. No real OpenCode, other host, or model ran; #62's
+remaining runs are still pending.
+
 ## Status and version drift preflight — 2026-10-03
 
 Issue #61 adds plain-text `kaylo status` for all five hosts and version drift
