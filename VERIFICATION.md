@@ -8,7 +8,7 @@ through 0.8.0 (2026-09-27 to 2026-09-29) are in the
 (`git show v0.9.2:VERIFICATION.md`); records from the first draft through 0.5.2
 are in `git show v0.6.0:VERIFICATION.md`.
 
-## Current status — 0.9.3
+## Current status — 0.10.0
 
 A summary of the records below and the archived ones. Every live-model result
 is one run per case, or a few, on the host and model named; none is a
@@ -16,14 +16,89 @@ consistency claim.
 
 | Host | Installation and update | Session reminder | Kaylo workers | Kaylo run with a model |
 | --- | --- | --- | --- | --- |
-| Claude Code 2.1.286 | Public install of v0.9.3; isolated update from v0.9.2 | Delivered at startup and resume. Skipped when the hook payload names a Kaylo worker as `agent_type`, observed when a worker was started or resumed with `--agent`; a worker resumed with `-c` alone still received it | Prepared v0.9.3: all three installed workers started and reached a model; actual models were not recorded. Issue #31: two builder workers completed independent tasks concurrently in a temporary project; their actual models were not exposed. The new reviewer tool list passed structural and startup checks, but no tool-use trial | All five skills with Claude Opus 5.5, from 0.7.0 through the 0.9.2 fixes. Workers with a recorded model: builder with Opus 5.5 and with Claude Haiku 4.5, and reviewer with Opus 5.5 (`334f574`, before 0.8.0); researcher with Opus 5.5 (v0.9.1 and the 0.9.2 fixes). Issue #31 phase and build trials used an Opus 5.5 guiding session; worker model identity was not observed |
-| Codex CLI 0.160.0 | Public install of v0.9.3; isolated update from v0.9.2; five skills discovered | Fired at startup and resume after the hooks were trusted | None registered; the manual handoff was not run | Not run |
-| OpenCode 2.0.18 | Public v0.9.3 checkout: five skills discovered with exact instruction bodies and 23 matching resources. Issue #60 installer candidate: isolated global-config install and uninstall passed; five skills loaded from the versioned copy | No adapter | None registered; researcher run with a pasted brief | Researcher only, with DeepSeek v4 flash (v0.9.1 and the 0.9.2 fixes); no v0.9.3 model run |
-| Antigravity CLI 1.2.14 | Public install of v0.9.3; isolated update from v0.9.2 | No adapter | Prepared v0.9.3: all three installed workers started and reached a model; actual models were not recorded. Researcher also ran as a subagent in an earlier trial | Researcher only, with Gemini 3.8 Flash (High) (v0.9.1 and the 0.9.2 fixes) |
-| Gemini CLI 0.62.0 | Public install of v0.9.3; isolated update from v0.9.2; five skills listed | Fired at startup without a sign-in; whether its context reaches a model is unknown | The CLI's agent loader returned all three briefs; no signed-in listing or start | Not run |
+| Claude Code 2.1.286 | Public install of v0.9.3. Prepared v0.10.0 on 2.1.289: `npx kaylo` update from native v0.9.3 against a local mirror, plus #62 fresh install, status, and uninstall; public 0.10.0 not yet checked | Delivered at startup and resume. Skipped when the hook payload names a Kaylo worker as `agent_type`, observed when a worker was started or resumed with `--agent`; a worker resumed with `-c` alone still received it | Prepared v0.9.3: all three installed workers started and reached a model; actual models were not recorded. Issue #31: two builder workers completed independent tasks concurrently in a temporary project; their actual models were not exposed. The new reviewer tool list passed structural and startup checks, but no tool-use trial | All five skills with Claude Opus 5.5, from 0.7.0 through the 0.9.2 fixes. Workers with a recorded model: builder with Opus 5.5 and with Claude Haiku 4.5, and reviewer with Opus 5.5 (`334f574`, before 0.8.0); researcher with Opus 5.5 (v0.9.1 and the 0.9.2 fixes). Issue #31 phase and build trials used an Opus 5.5 guiding session; worker model identity was not observed |
+| Codex CLI 0.160.0 | Public install of v0.9.3; five skills discovered. Prepared v0.10.0: `npx kaylo` update from native v0.9.3 against a local mirror, plus #62 fresh install, status, and uninstall; `status` reports `files not verified` by design; public 0.10.0 not yet checked | Fired at startup and resume after the hooks were trusted | None registered; the manual handoff was not run | Not run |
+| OpenCode 2.0.18 | Public v0.9.3 checkout: five skills discovered with exact instruction bodies and 23 matching resources. Prepared v0.10.0: `npx kaylo` update from a v0.9.3 copy in the versioned data directory; five skills loaded from the new copy; #62 fresh install, status, uninstall, and config refusal; public 0.10.0 not yet checked | No adapter | None registered; researcher run with a pasted brief | Researcher only, with DeepSeek v4 flash (v0.9.1 and the 0.9.2 fixes); no v0.9.3 model run |
+| Antigravity CLI 1.2.14 | Public install of v0.9.3. Prepared v0.10.0: `npx kaylo` update from native v0.9.3 (installed from the npm package directory), plus #62 fresh install, status, and uninstall; public 0.10.0 not yet checked | No adapter | Prepared v0.9.3: all three installed workers started and reached a model; actual models were not recorded. Researcher also ran as a subagent in an earlier trial | Researcher only, with Gemini 3.8 Flash (High) (v0.9.1 and the 0.9.2 fixes) |
+| Gemini CLI 0.62.0 | Public install of v0.9.3; five skills listed. Prepared v0.10.0: `npx kaylo` update from public v0.9.3; the v0.10.0 install used Git clone from a local mirror after the release-archive request failed offline; public 0.10.0 archive path not yet checked | Fired at startup without a sign-in; whether its context reaches a model is unknown | The CLI's agent loader returned all three briefs; no signed-in listing or start | Not run |
 
 Not established on any host: Antigravity IDE loading, models other than those
 named, and repeated runs of the same case.
+
+## v0.10.0 release preparation — 2026-10-04
+
+The release tree is merged `main` (`91d0cff`) plus release preparation only:
+version 0.10.0 in the three host manifests and `package.json`, `v0.10.0` in
+both release catalog refs, 0.10.0 in README version/tag mentions, and one
+test that had expected the literal version 0.9.3 in OpenCode's cleanup-pending
+summary. That test now reads the version from `package.json`; with only the
+version bumped, it was the single failure. Shared skills, briefs, Claude
+adapters, hooks, and templates are byte-identical to v0.9.3.
+
+| Check | Result |
+| --- | --- |
+| Node 24.21.0: `node scripts/validate-package.cjs` | Passed: five skills, matching 0.10.0 versions and release catalogs |
+| `node --test tests/*.test.cjs`, `TMPDIR` outside the checkout | 166 tests, 166 pass |
+| Claude Code 2.1.289: `claude plugin validate` of `plugin.json` and `marketplace.json`, `--strict` | Both passed |
+| Antigravity CLI 1.2.14: `agy plugin validate .` | Passed |
+| npm 11.19.0: `npm pack --dry-run --json` | `kaylo-0.10.0.tgz`, 48 entries |
+| `git diff --check` | Passed |
+
+**Update trial on the release tree.** This repeats #62 run 4 with a tarball
+packed from `git archive` of the release working tree (a `git stash create`
+snapshot, `b850a61`), rather than #62's temporary candidate commit. The
+released commit `dd8dc6a` differs from that snapshot only in one README
+paragraph, reworded after the trial (see below); no file the installer reads
+or verifies behaves differently, and the checks in the table above were rerun
+on the final tree.
+A local bare mirror held the real v0.9.3 tree, the release tree as `v0.10.0`,
+and a `main` commit past the tag with a marker in the build skill. Isolation
+matched #62: `env -i` with `HOME`, `CLAUDE_CONFIG_DIR`, `CODEX_HOME`, four
+`XDG_*` directories, `TMPDIR`, and npm cache under one trial root; a trial
+`GIT_CONFIG_GLOBAL` `insteadOf` rewrite; Antigravity and Gemini CLI in
+Bubblewrap with an empty directory bound over the real `~/.gemini`; host
+prompts answered on a pseudo-terminal. Hosts: Claude Code 2.1.289, Codex CLI
+0.160.0, Antigravity CLI 1.2.14, Gemini CLI 0.62.0, and OpenCode 2.0.18, with
+Node 24.21.0 and npm 11.19.0, on one Linux (WSL2) machine. No sign-in or model
+request ran.
+
+| Step | Observed result |
+| --- | --- |
+| Native v0.9.3 installs | Claude Code `marketplace add jeio-dev/kaylo@v0.9.3` and `plugin install`; Codex `marketplace add --ref v0.9.3` and `plugin add`; Antigravity `plugin install` of the v0.9.3 export; Gemini CLI `extensions install --ref v0.9.3` from public GitHub, whose install metadata recorded `type: "github-release"` and `releaseTag: "v0.9.3"`; OpenCode a mirror v0.9.3 checkout at `<XDG_DATA_HOME>/kaylo/v0.9.3` referenced from a seeded global `opencode.jsonc` with a comment and another setting. All five roots passed the v0.9.3 validator with 23 matching resources. `status` showed all five at v0.9.3 (Codex `files not verified`, the others `files not compared`) |
+| `npx --package file:<tarball> kaylo update --all --yes` | Exit 0. Claude Code: `marketplace remove`, `marketplace add jeio-dev/kaylo@v0.10.0`, `plugin install`. Codex: `marketplace remove`, `marketplace add --ref v0.10.0`, `plugin add --json`. Antigravity: `plugin install` of the npx package directory. Gemini CLI: `extensions uninstall`, then `extensions install --ref v0.10.0`; with networking unshared the release-API request failed and Gemini installed by Git clone from the mirror after its `[Y/n]` prompt (install metadata `type: "git"`, `ref: "v0.10.0"`). OpenCode: new versioned copy, config entry changed to `v0.10.0/skills` with the comment and `theme` preserved, old v0.9.3 copy removed. All five reported `v0.10.0, files verified` |
+| Independent check | `node <release tree>/scripts/validate-package.cjs --installed <root>` passed on all five roots with 23 matching resources; no root carried the mirror `main` marker |
+| `status` afterwards | Claude Code, Antigravity, Gemini CLI, and OpenCode `v0.10.0 (files verified)`; Codex `v0.10.0 (files not verified)` |
+| OpenCode discovery | `opencode serve` in Bubblewrap, with empty directories over the real `~/.claude` and `~/.agents`; authenticated `GET /api/skill` listed define, plan, build, review, and close from `<XDG_DATA_HOME>/kaylo/v0.10.0/`, plus two built-in skills |
+
+This run exercised Claude Code's remove, add, and install sequence for a
+differently pinned marketplace on the real host; #59 had covered it only with
+stub hosts. Claude Code left its `cache/kaylo/kaylo/0.9.3` directory on disk;
+Codex kept only the 0.10.0 cache copy. A first attempt placed the OpenCode
+v0.9.3 checkout outside the versioned data directory, so the installer
+reported OpenCode as not installed and performed a fresh install; that harness
+error was corrected and the whole trial rerun on a fresh profile with the
+results above. No real-profile hash inventory was taken in this run, because a
+Claude Code session was active; the installer commands used only the trial
+profiles.
+
+**Not rerun for 0.10.0.** The live worker starts in release step 6 were
+skipped by the maintainer's decision: the worker briefs and Claude adapters
+are byte-identical to v0.9.3, whose installed builder, researcher, and
+reviewer started and reached a model on Claude Code and Antigravity. No Kaylo
+skill or worker ran with a model for 0.10.0. Public `npx kaylo`, npm registry,
+GitHub marketplace, and Gemini release-archive installs of 0.10.0 await
+publication. Other operating systems and newer host versions remain untested.
+Trial scripts and logs are under the ignored `.local/trials/release-0.10.0/`.
+
+**Tag recreated before publication.** Tag `v0.10.0` was first pushed at
+`a0420d5`. Review of PR #70 found that the README's install paragraph said
+public npm installation "awaits the 0.10.0 release", which would be stale in
+the published package. Because npm publishes from `git archive` of the tag,
+the maintainer chose to fix the paragraph inside the release: the two
+preparation commits were rebuilt with the README wording describing the
+pre-release checks instead, and the tag was deleted and recreated at the new
+head before any npm publish, GitHub release, or merge to `main` referenced it.
+The earlier `983b26d` and `a0420d5` commits are not in the released history.
 
 ## Packed-tarball end-to-end trial resumed — 2026-10-04
 
