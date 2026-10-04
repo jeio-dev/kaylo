@@ -4,6 +4,11 @@
 
 ### Notable Changes
 
+- **docs**: The README now leads with `npx kaylo` install, update, status, and
+  uninstall commands while retaining native per-host instructions. It names
+  the packed-tarball trial's observed platform and the remaining Gemini CLI
+  model and public npm limits. The release guide lists the installer update
+  command first ([#62](https://github.com/jeio-dev/kaylo/issues/62)).
 - **tools**: The OpenCode installer now completes from an npm-installed
   package, such as `npx kaylo`. npm renames the packed `.gitignore` to
   `.npmignore` when it unpacks a package; the installer now stages that file

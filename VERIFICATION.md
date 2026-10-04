@@ -25,6 +25,92 @@ consistency claim.
 Not established on any host: Antigravity IDE loading, models other than those
 named, and repeated runs of the same case.
 
+## Packed-tarball end-to-end trial resumed — 2026-10-04
+
+Issue #62 resumed after the #68 fix below (now local commit `3b38bee`). A
+temporary Git commit under the ignored trial root combined the merged
+`a3992b6` tree with the #68 installer change, its regression test, and
+existing working-tree notes. A
+`git archive` of that temporary commit received only the release preparation
+changes: version 0.10.0 in three host manifests and `package.json`, `v0.10.0`
+in both release catalog refs, and 0.10.0 in README version/tag mentions. The
+candidate passed `node scripts/validate-package.cjs` and `npm pack` produced
+a 48-entry tarball. A local mirror held the real v0.9.3 tree, this candidate
+as `v0.10.0`, and a `main` commit past the tag with a changed build skill. No
+release tag was created in the source repository and nothing was published.
+The trial used Node 24.21.0, npm 11.19.0, Claude Code 2.1.289, Codex CLI
+0.160.0, Antigravity CLI 1.2.14, Gemini CLI 0.62.0, and OpenCode 2.0.18 on
+one Linux (WSL2) machine.
+
+| Run | Observed result |
+| --- | --- |
+| 1. Fresh `npx --package file:<tarball> kaylo install --all --yes` | Exit 0. All five hosts reported v0.10.0 and passed the installer's file check. Independent `node <candidate>/scripts/validate-package.cjs --installed <root>` passed on every reported root with 23 matching resources each. No copy carried the mirror `main` marker. Authenticated OpenCode `GET /api/skill` listed define, plan, build, review, and close with paths into the global `data/kaylo/v0.10.0/` copy |
+| 2. `status` | Claude, Antigravity, Gemini, and OpenCode showed `v0.10.0 (files verified)`; Codex showed `v0.10.0 (files not verified)` because its read-only list gives no active path |
+| 3. `uninstall --all --yes` | Exit 0; all five showed `not installed` afterward. The seeded OpenCode `opencode.jsonc` was byte-identical to its pre-install state |
+| 4. Update from native v0.9.3 | Claude and Codex used pinned native marketplace commands; Antigravity installed the v0.9.3 export; OpenCode used a v0.9.3 mirror checkout under the versioned global data directory and a global config entry. Gemini installed v0.9.3 from public GitHub: its install metadata said `type: "github-release"`, `releaseTag: "v0.9.3"`, and its listed path passed the v0.9.3 validator. Every previous root passed the v0.9.3 validator. `update --all --yes` exited 0; all five passed the installer's v0.10.0 file check and the independent candidate validator. None used mirror `main`; OpenCode removed its old v0.9.3 data copy. Status then showed four verified hosts and Codex not verified |
+| 5. Mixed versions | With only Codex v0.9.3 installed natively, `install --claude --yes` warned that Codex would stay on v0.9.3. Exit 0; status showed Claude `v0.10.0 (files verified)` and Codex `v0.9.3 (files not verified)` |
+| 6. OpenCode refusal | With both global `opencode.json` and `opencode.jsonc` present, `install --opencode --yes` exited 1 and reported OpenCode not installed because both files exist. SHA-256 hashes of both config files matched before and after |
+
+All profiles used isolated `HOME`, `CLAUDE_CONFIG_DIR`, `CODEX_HOME`, four
+`XDG_*` directories, `TMPDIR`, and npm cache under the trial root. Antigravity
+and Gemini ran in Bubblewrap with an empty directory bound over the real
+`~/.gemini`; a trial-only Git wrapper let Gemini's 0.10.0 fallback clone reach
+the mirror without changing the installer's command. Host and npm confirmation
+prompts were answered on a pseudo-terminal. No model request or sign-in ran.
+The first OpenCode API query also discovered other skills while walking upward
+from the trial project under the maintainer's home; it read the real skill
+directories. A repeat API query ran the server in Bubblewrap with empty
+directories bound over the real `~/.claude` and `~/.agents`. It listed all five
+Kaylo skills from the versioned copy and two built-in skills. No normal host
+profile was modified by either query.
+The public v0.9.3 Gemini archive path was observed, but v0.10.0's archive path
+cannot be checked until publication. OpenCode global and project `skills`
+arrays combined in #57's observed 2.0.18 trial, consistent with its docs;
+no contradictory Q3 finding needs a README warning. Other operating systems,
+newer host versions, and public 0.10.0 npm/GitHub installs remain untested.
+
+SHA-256 inventories before and after covered all regular files under the real
+`~/.claude/`, `~/.codex/`, `~/.gemini/`, `~/.config/opencode/`, and `~/.npm/`
+(14,753 paths). Claude, Gemini, OpenCode, and npm files matched. Nine Codex
+files changed in this active session: its session log, SQLite state/log journal
+files, and `models_cache.json`. The full real-profile hash acceptance criterion
+therefore did **not** pass. No install command used the real host profiles.
+For Antigravity and Gemini, Bubblewrap made the real filesystem read-only and
+bound a trial directory over the real `~/.gemini`. The real Gemini hash match
+is therefore enforced by the sandbox; it does not independently show whether
+either host attempted to write there. The resumed run did not record the
+shadow directory's post-run contents.
+
+The maintainer then repeated run 1 from an ordinary terminal with no Claude,
+Codex, Antigravity, Gemini, or OpenCode process running, using the same
+candidate tarball and a fresh isolated profile. A seeded OpenCode
+`opencode.jsonc` was present. `npx --package file:<tarball> kaylo install --all
+--yes` exited 0. All five hosts reported v0.10.0 with files verified, Codex
+included, because install verifies its `installedPath`. The before and after
+SHA-256 inventories covered the same five real directories plus
+`~/.claude.json`, `~/.agents/`,
+and the real `~/.local/share/kaylo/` OpenCode copy location (absent both
+times), 14,753 lines each, and matched exactly. The Bubblewrap shadow bound
+over the real `~/.gemini` was empty afterward, so neither Antigravity nor
+Gemini attempted to write there. The whole-profile hash criterion therefore
+passed when no host session was active. This rerun covered only the fresh
+install; runs 2–6 were not repeated in that terminal.
+
+The install log and both matching inventories have the prefix
+`cleanhash-20261004055847` under `.local/trials/issue62/`. The seven `extra`
+lines, including the absent OpenCode copy, also matched. Trial fixtures and
+logs remain ignored under that directory.
+
+After the README and release-guide edits, the current checkout's package
+validator passed, `node --test tests/*.test.cjs` passed all 166 tests,
+`npm pack --dry-run --json` listed 48 entries, both Claude strict manifest
+validators passed, `agy plugin validate .` passed, and `git diff --check`
+passed. The first Node-suite attempt set `TMPDIR` inside the repository, so
+fixture tests that copy the repository failed with a self-copy error. The
+complete suite passed when rerun with `TMPDIR` outside the checkout. These
+checks and the trial show package structure, host install and resource parity,
+not model or worker behavior.
+
 ## npm-installed OpenCode copy fix — 2026-10-04
 
 Bug [#68](https://github.com/jeio-dev/kaylo/issues/68): npm 11.19.0's tarball
@@ -48,6 +134,52 @@ the tarball byte for byte while the `_npx` directory still held `.npmignore`.
 and `git diff --check` passed. Native manifest validators were not rerun because
 no manifest changed. No real OpenCode, other host, or model ran; #62's
 remaining runs are still pending.
+
+## Packed-tarball end-to-end trial stopped — 2026-10-04
+
+Issue #62's first fresh-install run stopped on [bug #68](https://github.com/jeio-dev/kaylo/issues/68).
+The candidate came from `git archive` of merged commit `a3992b6`; only the
+release version fields, both catalog refs, and README version mentions were
+changed in the export to 0.10.0. Its package validator passed. A local mirror
+held the real v0.9.3 tree and the candidate as tag `v0.10.0`, with `main` one
+changed commit past the candidate. `npm pack` produced `kaylo-0.10.0.tgz` with
+48 entries. An isolated `npx --package file:<tarball> kaylo install --all --yes`
+selected that tarball and answered npm and host confirmation prompts on a
+pseudo-terminal. This spelling is equivalent to invoking the packed package's
+`kaylo` binary; no package was published.
+
+| Host | Version | Fresh-install observation |
+| --- | --- | --- |
+| Claude Code | 2.1.289 | Installed v0.10.0 from the mirror tag; installer verified its active copy |
+| Codex CLI | 0.160.0 | Not attempted: the trial harness omitted the redirected `CODEX_HOME` directory, so its preflight failed. This is a harness error, not a Codex installer result |
+| Antigravity CLI | 1.2.14 | Installed v0.10.0 from the packed npx directory; installer verified its copy |
+| Gemini CLI | 0.62.0 | Installed v0.10.0 from the mirror tag after its release-API request failed and it offered Git clone; installer verified its listed copy |
+| OpenCode | 2.0.18 | Failed before config edit: `package entry is missing: .gitignore` |
+
+The tarball contains `.gitignore`, but npm's unpacked `_npx` directory contains
+the same bytes as `.npmignore` and has no `.gitignore`. OpenCode's `openCopy()`
+requires the literal `.gitignore` entry from `package.json.files`, so the packed
+package cannot complete `install --all`. The OpenCode authenticated skill API,
+independent installed validators, status, uninstall, update, mixed-version,
+and refusal runs (the remaining parts of #62) were **not run** after this
+installer defect. No model or worker was started. The trial used isolated
+`HOME`, all four `XDG_*`, `CLAUDE_CONFIG_DIR`, `CODEX_HOME`, `TMPDIR`, and npm
+cache. Antigravity and Gemini ran with Bubblewrap binding an empty directory
+over the real `~/.gemini`; Gemini's trial-only Git wrapper reached the mirror.
+
+Before and after, SHA-256 inventories covered all regular files under the real
+`~/.claude/`, `~/.codex/`, `~/.gemini/`, `~/.config/opencode/`, and `~/.npm/`
+(14,742 paths). The Claude, Gemini, OpenCode, and npm inventories matched.
+Ten Codex files changed: the active session log, state and log SQLite files
+and their journals, and `models_cache.json`. Thus whole-profile hashes did
+**not** match; these are live Codex session files, and no trial command used
+the real `CODEX_HOME`. This does not establish the acceptance criterion that
+all real-profile hashes match. Trial fixtures and logs remain local under
+`.local/trials/issue62/`. These observations cover one Linux (WSL2) machine,
+the named host versions, and package installation and file checks only. The
+current checkout's `node scripts/validate-package.cjs` and `git diff --check`
+passed after this documentation entry; the Node suite and native manifest
+validators were not rerun because no release or pull request was prepared.
 
 ## Status and version drift preflight — 2026-10-03
 
