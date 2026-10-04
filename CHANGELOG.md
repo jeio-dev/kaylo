@@ -77,10 +77,15 @@ real-profile hash check showed a fresh install wrote nothing to the normal host
 profiles. These checks ran on one Linux (WSL2) machine without sign-in or model
 requests; Gemini CLI reached the mirror by Git clone after its release-archive
 request failed offline. Live worker starts were not rerun because the briefs
-and adapters are byte-identical to v0.9.3. Public `npx kaylo`, npm registry,
-GitHub marketplace, and Gemini release-archive installs of 0.10.0, other
-operating systems, Gemini CLI model behavior, and Antigravity IDE loading
-remain untested. Details and limits are in `VERIFICATION.md`.
+and adapters are byte-identical to v0.9.3. After publication, the npm
+tarball matched the tag file for file. In fresh profiles against public GitHub
+and npm, native installs on Claude Code, Codex, Gemini CLI, and Antigravity,
+a fresh `npx kaylo@0.10.0 --all`, and `npx kaylo@latest update` from public
+v0.9.3 installs each put 0.10.0 on every host with all 23 shared resources
+matching the tag. Gemini CLI installed from the GitHub release archive, and
+OpenCode listed all five skills from the new copy; no model requests were
+made. Other operating systems, Gemini CLI model behavior, and Antigravity IDE
+loading remain untested. Details and limits are in `VERIFICATION.md`.
 
 ### Commits
 

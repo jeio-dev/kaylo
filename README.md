@@ -59,9 +59,9 @@ Start a new host session after installing or updating.
 
 Before the 0.10.0 release, the installer was checked from a packed tarball on
 one Linux (WSL2) machine, with isolated profiles and a local release mirror;
-those checks did not include installing from the public npm registry. No Kaylo
-skill or worker has been run with a Gemini model in Gemini CLI; its model
-behavior remains untested. See [verification](VERIFICATION.md).
+after publication, fresh installs and an update from v0.9.3 were also checked
+against the public npm registry and GitHub. No Kaylo skill or worker has been
+run with a Gemini model in Gemini CLI; its model behavior remains untested. See [verification](VERIFICATION.md).
 
 Every host uses the same five skill files and supporting resources.
 Installation includes the full package; copying only `SKILL.md` loses
