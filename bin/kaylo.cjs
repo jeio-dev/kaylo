@@ -20,10 +20,11 @@ const hosts = [
   { id: 'gemini', name: 'Gemini CLI', bin: 'gemini', invoke: 'load build by name' },
   { id: 'opencode', name: 'OpenCode', bin: 'opencode', invoke: 'load build by name' }
 ];
-const usage = `Usage: kaylo [install|update|uninstall] [--claude] [--codex] [--agy] [--gemini] [--opencode] [--all] [--yes] [--dry-run]
+const usage = `Usage: kaylo [install|update|uninstall|status] [--claude] [--codex] [--agy] [--gemini] [--opencode] [--all] [--yes] [--dry-run]
        kaylo --help | --version
 
 Installs Kaylo ${tag} through native host commands or a verified OpenCode copy.
+Status reports each supported host's installed version and file state.
 Without host flags, a terminal shows a picker.
   --all       every supported host found on PATH
   --yes       skip Kaylo's own confirmation (host prompts still appear)
@@ -34,7 +35,7 @@ function parse(argv) {
   const options = { command: 'install', hosts: new Set(), all: false, yes: false, dryRun: false };
   let command;
   for (const arg of argv) {
-    if (['install', 'update', 'uninstall'].includes(arg) && !command) command = options.command = arg;
+    if (['install', 'update', 'uninstall', 'status'].includes(arg) && !command) command = options.command = arg;
     else if (arg === '--help' || arg === '-h') options.help = true;
     else if (arg === '--version') options.version = true;
     else if (arg === '--all') options.all = true;
@@ -265,6 +266,64 @@ function verifyFiles(dir) {
   return result.status === 0 ? null : lastLine(result.stderr || result.stdout);
 }
 
+// Status reads active install records. Codex exposes a version but no active
+// path in its read-only list, so its files cannot be compared here.
+function hostStatus(id) {
+  let entry;
+  if (id === 'claude') {
+    entry = claudeInstall();
+    if (!entry) return { state: 'not installed' };
+    entry = { version: entry.version, root: entry.installPath };
+  } else if (id === 'codex') {
+    entry = codexInstall();
+    if (!entry) return { state: 'not installed' };
+    return entry.version ? { version: entry.version, state: `v${entry.version} (files not verified)` } :
+      { state: 'version unknown' };
+  } else if (id === 'agy') {
+    if (!agyListed()) return { state: 'not installed' };
+    entry = { root: agyRoot() };
+    entry.version = manifestVersion(entry.root, '.claude-plugin/plugin.json');
+  } else if (id === 'gemini') {
+    const listed = geminiInstall();
+    if (!listed) return { state: 'not installed' };
+    entry = { root: listed.root, version: listed.root && manifestVersion(listed.root, 'gemini-extension.json') };
+  } else {
+    try { entry = openVersion(); }
+    catch (error) { entry = { state: `version unknown (${error.message})` }; }
+    if (!entry) entry = { state: 'not installed' };
+  }
+  let result;
+  if (entry.state) result = entry;
+  else if (!entry.root || !entry.version || !fs.existsSync(entry.root) || !fs.statSync(entry.root).isDirectory())
+    result = { state: 'version unknown' };
+  else if (entry.version !== version) result = { version: entry.version, state: `v${entry.version} (files not compared)` };
+  else result = { version: entry.version, state: `v${entry.version} (files ${verifyFiles(entry.root) ? 'differ' : 'verified'})` };
+  if (id === 'opencode' && fs.existsSync(openData())) {
+    const leftovers = fs.readdirSync(openData()).filter(name =>
+      name.startsWith('.previous-') || name.startsWith('.staging-')).sort();
+    for (const name of leftovers) result.state += `; cleanup pending: ${path.join(openData(), name)}`;
+  }
+  return result;
+}
+function statuses(found) {
+  return hosts.map(host => ({ host, ...found.has(host.id) ? hostStatus(host.id) : { state: 'not found on PATH' } }));
+}
+function newerVersion(candidate) {
+  const parts = value => /^\d+\.\d+\.\d+$/.test(value) ? value.split('.').map(BigInt) : null;
+  const available = parts(candidate);
+  const current = parts(version);
+  if (!available || !current) return false;
+  for (let index = 0; index < 3; index++) {
+    if (available[index] !== current[index]) return available[index] > current[index];
+  }
+  return false;
+}
+async function latestVersion(fetcher) {
+  const response = await fetcher('https://registry.npmjs.org/kaylo/latest', { signal: AbortSignal.timeout(5000) });
+  if (!response.ok) throw new Error(`npm returned ${response.status}`);
+  return (await response.json()).version;
+}
+
 // Each plan uses only read-only commands. A step is { args, capture }.
 const plans = {
   claude(command) {
@@ -437,14 +496,24 @@ async function main(argv, io = { input: process.stdin, output: process.stdout, e
   if (options.help) return out(usage), 0;
   if (options.version) return out(version), 0;
   const found = detect();
+  if (options.command === 'status') {
+    try {
+      for (const item of statuses(found)) out(`${item.host.name}: ${item.state}`);
+      return 0;
+    } catch (error) {
+      fail(`Could not read Kaylo status: ${error.message}`);
+      return 1;
+    }
+  }
   const missing = hosts.filter(host => options.hosts.has(host.id) && !found.has(host.id));
   if (missing.length) {
     fail(missing.map(host => `${host.name} was requested with --${host.id}, but \`${host.bin}\` is not found on PATH.`).join('\n'));
     return 2;
   }
-  const interactive = Boolean(io.input.isTTY && io.output.isTTY);
+  const interactive = io.interactive ?? Boolean(io.input.isTTY && io.output.isTTY);
   let reader;
-  const ask = question => (reader || (reader = prompter(io.input, io.output))).ask(question);
+  const ask = question => io.prompt ? io.prompt(question) :
+    (reader || (reader = prompter(io.input, io.output))).ask(question);
   try {
     let selected;
     if (options.all) selected = hosts.filter(host => found.has(host.id)).map(host => host.id);
@@ -459,7 +528,7 @@ async function main(argv, io = { input: process.stdin, output: process.stdout, e
       return 1;
     }
     const command = options.command;
-    const work = selected.map(id => {
+    const planFor = id => {
       const host = hosts.find(entry => entry.id === id);
       try {
         return { host, ...plans[id](command) };
@@ -467,7 +536,43 @@ async function main(argv, io = { input: process.stdin, output: process.stdout, e
         return { host, steps: [], failed: id === 'opencode' ? openFailure(error.message) :
           `could not read the current install: ${error.message}` };
       }
-    });
+    };
+    const work = selected.map(planFor);
+    if (command !== 'uninstall') {
+      let current;
+      try { current = statuses(found); }
+      catch (error) {
+        fail(`Could not check Kaylo versions: ${error.message}`);
+        return 1;
+      }
+      const drifted = current.filter(item => found.has(item.host.id) && !selected.includes(item.host.id) &&
+        !item.state.startsWith('not installed'));
+      for (const item of drifted) {
+        out(`${item.host.name} has Kaylo ${item.version ? `v${item.version}` : '(version unknown)'} and will stay on it; this run installs ${tag}.`);
+      }
+      if (drifted.length && interactive && !options.yes && !options.dryRun) {
+        const answer = (await ask('Add these hosts to this run? [y/N] ')).trim().toLowerCase();
+        if (['y', 'yes'].includes(answer)) {
+          for (const item of drifted) {
+            selected.push(item.host.id);
+            work.push(planFor(item.host.id));
+          }
+        }
+      }
+      let latest;
+      try { latest = await latestVersion(io.fetch || globalThis.fetch); }
+      catch { out('Could not check npm for a newer Kaylo.'); }
+      if (newerVersion(latest)) {
+        out(`kaylo v${latest} is available; this is ${tag}. Run npx kaylo@latest.`);
+        if (interactive && !options.yes && !options.dryRun) {
+          const answer = (await ask('Continue with this version? [y/N] ')).trim().toLowerCase();
+          if (!['y', 'yes'].includes(answer)) {
+            out('Nothing was changed.');
+            return 1;
+          }
+        }
+      }
+    }
     out(`Kaylo ${tag} ${command} plan:`);
     for (const item of work) {
       out(`\n${item.host.name}`);

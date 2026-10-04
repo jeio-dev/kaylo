@@ -56,9 +56,23 @@ function setup(t, { hosts = ['claude', 'codex', 'agy', 'gemini'] } = {}) {
   fs.mkdirSync(bin);
   fs.mkdirSync(home);
   for (const host of hosts) fs.writeFileSync(path.join(bin, host), stub, { mode: 0o755 });
-  const env = { PATH: bin, HOME: home, KAYLO_STUB_LOG: path.join(dir, 'log'), KAYLO_STUB_SCENARIO: path.join(dir, 'scenario.json') };
+  const npmStub = path.join(dir, 'npm-stub.cjs');
+  const npmFixture = path.join(dir, 'npm.json');
+  fs.writeFileSync(npmStub, `'use strict';
+const fs = require('node:fs');
+globalThis.fetch = async (url, options) => {
+  fs.appendFileSync(process.env.KAYLO_NPM_LOG, JSON.stringify({ url, timeout: Boolean(options.signal) }) + '\\n');
+  const fixture = JSON.parse(fs.readFileSync(process.env.KAYLO_NPM_FIXTURE, 'utf8'));
+  if (fixture.fail) throw new Error('offline');
+  return { ok: true, json: async () => ({ version: fixture.version }) };
+};`);
+  fs.writeFileSync(npmFixture, JSON.stringify({ version }));
+  const env = { PATH: bin, HOME: home, KAYLO_STUB_LOG: path.join(dir, 'log'),
+    KAYLO_STUB_SCENARIO: path.join(dir, 'scenario.json'), KAYLO_NPM_FIXTURE: npmFixture,
+    KAYLO_NPM_LOG: path.join(dir, 'npm.log') };
+  const testEnv = () => ({ ...env, NODE_OPTIONS: `--require=${npmStub} ${env.NODE_OPTIONS || ''}` });
   const ctx = {
-    dir, home, env,
+    dir, home, env, testEnv,
     roots: {
       claude: path.join(home, '.claude', 'plugins', 'cache', 'kaylo', 'kaylo', version),
       codex: path.join(home, '.codex', 'plugins', 'cache', 'kaylo', 'kaylo', version),
@@ -71,8 +85,9 @@ function setup(t, { hosts = ['claude', 'codex', 'agy', 'gemini'] } = {}) {
       fs.writeFileSync(env.KAYLO_STUB_LOG, '');
       fs.rmSync(`${env.KAYLO_STUB_SCENARIO}.counts`, { force: true });
     },
+    npm(value) { fs.writeFileSync(npmFixture, JSON.stringify(value)); },
     run(args, input = '') {
-      const result = spawnSync(process.execPath, [kaylo, ...args], { env, input, encoding: 'utf8', cwd: dir });
+      const result = spawnSync(process.execPath, [kaylo, ...args], { env: testEnv(), input, encoding: 'utf8', cwd: dir });
       result.log = fs.readFileSync(env.KAYLO_STUB_LOG, 'utf8').split('\n').filter(Boolean).map(line => JSON.parse(line));
       result.mutations = result.log.filter(line => !readOnly.has(line));
       return result;
@@ -448,9 +463,37 @@ output.on('data', chunk => {
 });
 main(${JSON.stringify(args)}, { input, output, error: process.stderr }).then(code => { process.exitCode = code; });
 `);
-  const result = spawnSync(process.execPath, [script], { env: ctx.env, encoding: 'utf8', cwd: ctx.dir, timeout: 20000 });
+  const result = spawnSync(process.execPath, [script], { env: ctx.testEnv(), encoding: 'utf8', cwd: ctx.dir, timeout: 20000 });
   result.mutations = fs.readFileSync(ctx.env.KAYLO_STUB_LOG, 'utf8').split('\n').filter(Boolean).map(line => JSON.parse(line))
     .filter(line => !readOnly.has(line));
+  return result;
+}
+
+function promptedRun(ctx, args, answers) {
+  const script = path.join(ctx.dir, 'answers.cjs');
+  fs.writeFileSync(script, `'use strict';
+const fs = require('node:fs');
+const { main } = require(${JSON.stringify(kaylo)});
+const answers = ${JSON.stringify(answers)};
+const prompt = async question => {
+  process.stdout.write(question);
+  const [expected, answer] = answers.shift() || [];
+  if (!question.includes(expected)) throw new Error('Unexpected prompt: ' + question);
+  process.stdout.write(answer + '\\n');
+  return answer;
+};
+const fetch = async (url, options) => {
+  fs.appendFileSync(process.env.KAYLO_NPM_LOG, JSON.stringify({ url, timeout: Boolean(options.signal) }) + '\\n');
+  const fixture = JSON.parse(fs.readFileSync(process.env.KAYLO_NPM_FIXTURE, 'utf8'));
+  if (fixture.fail) throw new Error('offline');
+  return { ok: true, json: async () => ({ version: fixture.version }) };
+};
+main(${JSON.stringify(args)}, { input: process.stdin, output: process.stdout, error: process.stderr,
+  interactive: true, prompt, fetch }).then(code => { process.exitCode = code; });
+`);
+  const result = spawnSync(process.execPath, [script], { env: ctx.testEnv(), encoding: 'utf8', cwd: ctx.dir, timeout: 20000 });
+  result.log = fs.readFileSync(ctx.env.KAYLO_STUB_LOG, 'utf8').split('\n').filter(Boolean).map(line => JSON.parse(line));
+  result.mutations = result.log.filter(line => !readOnly.has(line));
   return result;
 }
 
@@ -467,7 +510,7 @@ test('closed input or Ctrl-C at the picker aborts with no change, with or withou
 
 test('closed input or Ctrl-C at the confirmation aborts with no change', t => {
   for (const [send, code] of [['eof', 1], ['ctrl-c', 130]]) {
-    const ctx = setup(t);
+    const ctx = setup(t, { hosts: ['gemini'] });
     ctx.scenario(fresh(ctx));
     const result = ttyRun(ctx, ['--gemini'], 'Proceed? [y/N]', send);
     assert.equal(result.status, code, result.stdout + result.stderr);
@@ -496,7 +539,7 @@ function openSetup(t) {
   return { ...ctx, configDir, configFile, data, target, skill,
     seed(content) { fs.writeFileSync(configFile, content); },
     run(args, input = '') {
-      const result = spawnSync(process.execPath, [kaylo, ...args], { env: ctx.env, input, encoding: 'utf8', cwd: ctx.dir });
+      const result = spawnSync(process.execPath, [kaylo, ...args], { env: ctx.testEnv(), input, encoding: 'utf8', cwd: ctx.dir });
       return result;
     }
   };
@@ -739,4 +782,173 @@ test('OpenCode refuses a symlinked config before changing its target or data', t
   assert(fs.lstatSync(ctx.configFile).isSymbolicLink());
   assert.equal(fs.readFileSync(target, 'utf8'), seed);
   assert(!fs.existsSync(ctx.data));
+});
+
+test('status reports verified, differing, older, unknown, absent, and missing hosts', t => {
+  const ids = ['claude', 'agy', 'gemini', 'opencode'];
+  const ctx = setup(t, { hosts: [...ids, 'codex'] });
+  ctx.env.XDG_CONFIG_HOME = path.join(ctx.home, 'xdg-config');
+  ctx.env.XDG_DATA_HOME = path.join(ctx.home, 'xdg-data');
+  const config = path.join(ctx.env.XDG_CONFIG_HOME, 'opencode', 'opencode.json');
+  const openRoot = path.join(ctx.env.XDG_DATA_HOME, 'kaylo', tag);
+  fs.mkdirSync(path.dirname(config), { recursive: true });
+  const roots = { ...ctx.roots, opencode: openRoot };
+  const scenario = as => ({
+    'claude plugin list --json': { stdout: [claudeEntry(roots.claude, as)] },
+    'codex plugin list --json': { stdout: codexList(as) },
+    'agy plugin list': { stdout: { imports: [{ name: 'kaylo' }] } },
+    'gemini extensions list': { stderr: geminiList(roots.gemini, as) }
+  });
+  for (const id of ids) copy(roots[id]);
+  fs.writeFileSync(config, JSON.stringify({ skills: [path.join(openRoot, 'skills')] }));
+  ctx.scenario(scenario(version));
+  let result = ctx.run(['status']);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  for (const id of ids) assert.match(result.stdout, new RegExp(`${{ claude: 'Claude Code', agy: 'Antigravity', gemini: 'Gemini CLI', opencode: 'OpenCode' }[id]}: ${tag.replaceAll('.', '\\.')} \\(files verified\\)`));
+  assert.match(result.stdout, new RegExp(`Codex: ${tag.replaceAll('.', '\\.')} \\(files not verified\\)`));
+  assert(result.log.every(line => readOnly.has(line)));
+
+  for (const id of ids) fs.appendFileSync(path.join(roots[id], 'templates', 'PHASE.md'), '\nchanged\n');
+  ctx.scenario(scenario(version));
+  result = ctx.run(['status']);
+  assert.equal(result.status, 0);
+  for (const name of ['Claude Code', 'Antigravity', 'Gemini CLI', 'OpenCode'])
+    assert.match(result.stdout, new RegExp(`${name}: ${tag.replaceAll('.', '\\.')} \\(files differ\\)`));
+
+  for (const id of ids) copy(roots[id], { as: '0.8.0' });
+  ctx.scenario(scenario('0.8.0'));
+  result = ctx.run(['status']);
+  assert.equal(result.status, 0);
+  for (const name of ['Claude Code', 'Antigravity', 'Gemini CLI', 'OpenCode'])
+    assert.match(result.stdout, new RegExp(`${name}: v0\\.8\\.0 \\(files not compared\\)`));
+  assert.match(result.stdout, /Codex: v0\.8\.0 \(files not verified\)/);
+
+  fs.rmSync(roots.claude, { recursive: true });
+  fs.rmSync(path.join(roots.agy, '.claude-plugin', 'plugin.json'));
+  fs.rmSync(path.join(roots.gemini, 'gemini-extension.json'));
+  fs.rmSync(openRoot, { recursive: true });
+  ctx.scenario(scenario('0.8.0'));
+  result = ctx.run(['status']);
+  assert.equal(result.status, 0);
+  for (const name of ['Claude Code', 'Antigravity', 'Gemini CLI', 'OpenCode'])
+    assert.match(result.stdout, new RegExp(`${name}: version unknown`));
+
+  ctx.scenario({ 'claude plugin list --json': { stdout: [] },
+    'codex plugin list --json': { stdout: { installed: [] } },
+    'agy plugin list': { stdout: { imports: [] } },
+    'gemini extensions list': { stderr: 'No extensions installed.\n' } });
+  fs.writeFileSync(config, '{"skills": []}');
+  result = ctx.run(['status']);
+  assert.equal(result.status, 0);
+  for (const name of ['Claude Code', 'Codex', 'Antigravity', 'Gemini CLI', 'OpenCode'])
+    assert.match(result.stdout, new RegExp(`${name}: not installed`));
+  fs.rmSync(path.join(ctx.dir, 'bin', 'claude'));
+  result = ctx.run(['status']);
+  assert.match(result.stdout, /Claude Code: not found on PATH/);
+});
+
+test('Codex status reads its list only, even with a cache directory present', t => {
+  const ctx = setup(t, { hosts: ['codex'] });
+  fs.mkdirSync(ctx.roots.codex, { recursive: true });
+  const guard = path.join(ctx.dir, 'guard-status.cjs');
+  fs.writeFileSync(guard, `'use strict';
+const fs = require('node:fs');
+const cp = require('node:child_process');
+for (const key of ['readFileSync', 'readdirSync', 'statSync', 'lstatSync', 'accessSync']) {
+  const original = fs[key];
+  fs[key] = function(file, ...args) {
+    if (String(file).includes('/.codex/')) throw new Error('Codex cache read');
+    return original.call(this, file, ...args);
+  };
+}
+const spawn = cp.spawnSync;
+cp.spawnSync = function(bin, args, options) {
+  if (String(args?.[0]).endsWith('validate-package.cjs')) throw new Error('validator run');
+  return spawn.call(this, bin, args, options);
+};`);
+  ctx.env.NODE_OPTIONS = `--require=${guard}`;
+  for (const as of [version, '0.8.0']) {
+    ctx.scenario({ 'codex plugin list --json': { stdout: codexList(as) } });
+    const result = ctx.run(['status']);
+    assert.equal(result.status, 0, result.stdout + result.stderr);
+    assert.match(result.stdout, new RegExp(`Codex: v${as.replaceAll('.', '\\.')} \\(files not verified\\)`));
+    assert.deepEqual(result.log, ['codex plugin list --json']);
+  }
+});
+
+test('status does not claim a version without a usable source or active root', t => {
+  const ctx = setup(t, { hosts: ['claude', 'codex', 'gemini'] });
+  const claude = claudeEntry(ctx.roots.claude);
+  delete claude.installPath;
+  ctx.scenario({
+    'claude plugin list --json': { stdout: [claude] },
+    'codex plugin list --json': { stdout: { installed: [{ pluginId: 'kaylo@kaylo', installed: true }] } },
+    'gemini extensions list': { stderr: `✓ kaylo (${version})\n Enabled (User): true\n` }
+  });
+  const result = ctx.run(['status']);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  for (const name of ['Claude Code', 'Codex', 'Gemini CLI'])
+    assert.match(result.stdout, new RegExp(`${name}: version unknown`));
+  assert.doesNotMatch(result.stdout, /files verified|files differ/);
+});
+
+test('OpenCode status reports config errors and cleanup without changing HOME', t => {
+  const ctx = openSetup(t);
+  fs.mkdirSync(ctx.target, { recursive: true });
+  copy(ctx.target);
+  ctx.seed(openEntry(ctx.skill));
+  fs.mkdirSync(path.join(ctx.data, '.previous-left'));
+  fs.mkdirSync(path.join(ctx.data, '.staging-left'));
+  const snapshot = () => fs.readdirSync(ctx.home, { recursive: true }).sort().map(name => {
+    const file = path.join(ctx.home, name);
+    return [name, fs.lstatSync(file).isFile() ? fs.readFileSync(file).toString('base64') : null];
+  });
+  const before = snapshot();
+  let result = ctx.run(['status']);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.match(result.stdout, /OpenCode: v[\d.]+ \(files verified\); cleanup pending: .*\.previous-left; cleanup pending: .*\.staging-left/);
+  assert.deepEqual(snapshot(), before);
+  ctx.seed('{broken');
+  result = ctx.run(['status']);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.match(result.stdout, /OpenCode: version unknown \(expected object key\)/);
+  assert.match(result.stdout, /cleanup pending: .*\.staging-left/);
+});
+
+test('preflight warns on unselected hosts and only an interactive add extends selection', t => {
+  const ctx = setup(t, { hosts: ['claude', 'codex'] });
+  ctx.scenario({ ...fresh(ctx), 'codex plugin list --json': { stdout: codexList('0.8.0') } });
+  let result = ctx.run(['install', '--claude', '--yes']);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.match(result.stdout, new RegExp(`Codex has Kaylo v0\\.8\\.0 and will stay on it; this run installs ${tag.replaceAll('.', '\\.')}`));
+  assert.deepEqual(byHost(result.mutations, 'codex'), []);
+  ctx.scenario({ ...fresh(ctx), 'codex plugin list --json':
+    [{ stdout: codexList('0.8.0') }, { stdout: codexList() }] });
+  result = promptedRun(ctx, ['install', '--claude'], [['Add these hosts', 'y'], ['Proceed?', 'y']]);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert(byHost(result.mutations, 'codex').includes(`codex plugin add kaylo@kaylo --json`));
+});
+
+test('newer npm version can abort; fetch failure continues; dry run shows both warnings', t => {
+  const ctx = setup(t, { hosts: ['claude', 'codex'] });
+  ctx.npm({ version: '99.0.0' });
+  ctx.scenario({ ...fresh(ctx), 'codex plugin list --json': { stdout: codexList('0.8.0') } });
+  let result = promptedRun(ctx, ['install', '--claude'], [['Add these hosts', 'n'], ['Continue with this version?', 'n']]);
+  assert.equal(result.status, 1, result.stdout + result.stderr);
+  assert.match(result.stdout, /kaylo v99\.0\.0 is available; this is v[\d.]+\. Run npx kaylo@latest\./);
+  assert.deepEqual(result.mutations, []);
+  ctx.scenario({ ...fresh(ctx), 'codex plugin list --json': { stdout: codexList('0.8.0') } });
+  result = ctx.run(['install', '--claude', '--dry-run']);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.match(result.stdout, /Codex has Kaylo v0\.8\.0/);
+  assert.match(result.stdout, /kaylo v99\.0\.0 is available/);
+  assert.deepEqual(result.mutations, []);
+  assert(result.log.every(line => readOnly.has(line)));
+  const npmCalls = fs.readFileSync(ctx.env.KAYLO_NPM_LOG, 'utf8').trim().split('\n').map(JSON.parse);
+  assert(npmCalls.every(call => call.url === 'https://registry.npmjs.org/kaylo/latest' && call.timeout));
+  ctx.npm({ fail: true });
+  ctx.scenario(fresh(ctx));
+  result = ctx.run(['install', '--all', '--yes', '--dry-run']);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.match(result.stdout, /Could not check npm for a newer Kaylo\./);
 });

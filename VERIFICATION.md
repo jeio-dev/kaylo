@@ -25,6 +25,33 @@ consistency claim.
 Not established on any host: Antigravity IDE loading, models other than those
 named, and repeated runs of the same case.
 
+## Status and version drift preflight — 2026-10-03
+
+Issue #61 adds plain-text `kaylo status` for all five hosts and version drift
+warnings before install and update confirmation. Stubbed, isolated profiles
+covered the applicable status states, Codex list-only version reporting,
+OpenCode config errors and leftover cleanup directories, an unchanged HOME
+tree after status, interactive selection expansion, `--yes` preserving the
+selection, an npm version warning and declined continuation, fetch failure,
+and a dry run with both warnings and read-only host commands. Prompt and fetch
+functions were injected for the new interactive tests; no network or real
+terminal was used. A Codex guard rejected validator calls and reads under its
+cache directory during status. These are installer tests, not observations of
+live host list output or public npm availability.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: five skills and matching release versions/catalogs |
+| `node --test tests/*.test.cjs` | Passed: 164 tests, including the #61 installer cases |
+| `npm pack --dry-run --json` | Passed: 48 package entries; no package was published |
+| Claude Code strict plugin and marketplace manifest validation | Both passed |
+| `agy plugin validate .` | Passed: five skills and three agents |
+| `git diff --check` | Passed |
+
+No real host install or update, signed-in session, model request, or public
+installation trial was run for #61. The isolated end-to-end trial belongs to
+#62.
+
 ## OpenCode installer — 2026-10-03
 
 Issue #60 adds OpenCode 2 detection, `--opencode` and `--all` selection, a full
