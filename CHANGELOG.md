@@ -10,7 +10,9 @@
   update now warn about unselected hosts with Kaylo and a newer npm release
   before confirmation; an interactive prompt can add those hosts, while
   `--yes` and `--dry-run` leave the selection unchanged. Status reads leftover
-  OpenCode cleanup directories without removing them
+  OpenCode cleanup directories without removing them. A host whose status
+  command fails is reported individually, while other hosts still report and
+  selected install plans continue
   ([#61](https://github.com/jeio-dev/kaylo/issues/61)).
 - **tools**: The `kaylo` installer now supports OpenCode 2 through `--opencode`
   and `--all`. It copies and verifies the full package in a versioned data

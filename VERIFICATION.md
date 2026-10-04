@@ -39,10 +39,17 @@ terminal was used. A Codex guard rejected validator calls and reads under its
 cache directory during status. These are installer tests, not observations of
 live host list output or public npm availability.
 
+Review follow-up on 2026-10-04: an isolated Codex stub exiting 42 during
+`plugin list --json` now produces a `status unavailable` line while Claude's
+verified and Gemini's not-installed lines still print. In `install --claude`,
+the same failure produces a notice; the dry run shows the Claude plan, and a
+`--yes` run completes the Claude stub install. This test covers a host reader
+failure without claiming whether the failed host has Kaylo installed.
+
 | Check | Observed result |
 | --- | --- |
 | `node scripts/validate-package.cjs` | Passed: five skills and matching release versions/catalogs |
-| `node --test tests/*.test.cjs` | Passed: 164 tests, including the #61 installer cases |
+| `node --test tests/*.test.cjs` | Passed: 165 tests, including the #61 installer cases and per-host reader failure |
 | `npm pack --dry-run --json` | Passed: 48 package entries; no package was published |
 | Claude Code strict plugin and marketplace manifest validation | Both passed |
 | `agy plugin validate .` | Passed: five skills and three agents |

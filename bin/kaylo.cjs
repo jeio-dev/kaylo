@@ -306,7 +306,11 @@ function hostStatus(id) {
   return result;
 }
 function statuses(found) {
-  return hosts.map(host => ({ host, ...found.has(host.id) ? hostStatus(host.id) : { state: 'not found on PATH' } }));
+  return hosts.map(host => {
+    if (!found.has(host.id)) return { host, state: 'not found on PATH' };
+    try { return { host, ...hostStatus(host.id) }; }
+    catch (error) { return { host, state: `status unavailable (${error.message})`, error: error.message }; }
+  });
 }
 function newerVersion(candidate) {
   const parts = value => /^\d+\.\d+\.\d+$/.test(value) ? value.split('.').map(BigInt) : null;
@@ -497,13 +501,9 @@ async function main(argv, io = { input: process.stdin, output: process.stdout, e
   if (options.version) return out(version), 0;
   const found = detect();
   if (options.command === 'status') {
-    try {
-      for (const item of statuses(found)) out(`${item.host.name}: ${item.state}`);
-      return 0;
-    } catch (error) {
-      fail(`Could not read Kaylo status: ${error.message}`);
-      return 1;
-    }
+    const current = statuses(found);
+    for (const item of current) out(`${item.host.name}: ${item.state}`);
+    return current.some(item => item.error) ? 1 : 0;
   }
   const missing = hosts.filter(host => options.hosts.has(host.id) && !found.has(host.id));
   if (missing.length) {
@@ -539,14 +539,11 @@ async function main(argv, io = { input: process.stdin, output: process.stdout, e
     };
     const work = selected.map(planFor);
     if (command !== 'uninstall') {
-      let current;
-      try { current = statuses(found); }
-      catch (error) {
-        fail(`Could not check Kaylo versions: ${error.message}`);
-        return 1;
-      }
+      const current = statuses(found);
+      for (const item of current.filter(item => item.error))
+        out(`Could not check ${item.host.name} Kaylo status: ${item.error}.`);
       const drifted = current.filter(item => found.has(item.host.id) && !selected.includes(item.host.id) &&
-        !item.state.startsWith('not installed'));
+        !item.error && !item.state.startsWith('not installed'));
       for (const item of drifted) {
         out(`${item.host.name} has Kaylo ${item.version ? `v${item.version}` : '(version unknown)'} and will stay on it; this run installs ${tag}.`);
       }

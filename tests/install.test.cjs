@@ -892,6 +892,38 @@ test('status does not claim a version without a usable source or active root', t
   assert.doesNotMatch(result.stdout, /files verified|files differ/);
 });
 
+test('a failing host reader does not hide other status lines or block a selected host', t => {
+  const ctx = setup(t, { hosts: ['claude', 'codex', 'gemini'] });
+  copy(ctx.roots.claude);
+  const scenario = {
+    'claude plugin marketplace list --json': { stdout: [] },
+    'claude plugin list --json': { stdout: [claudeEntry(ctx.roots.claude)] },
+    'codex plugin list --json': { status: 42, stderr: 'broken list' },
+    'gemini extensions list': { stderr: 'No extensions installed.\n' }
+  };
+  ctx.scenario(scenario);
+  let result = ctx.run(['status']);
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, new RegExp(`Claude Code: ${tag.replaceAll('.', '\\.')} \\(files verified\\)`));
+  assert.match(result.stdout, /Codex: status unavailable \(codex plugin list --json exited with 42: broken list\)/);
+  assert.match(result.stdout, /Gemini CLI: not installed/);
+  assert.equal(result.stdout.trim().split('\n').length, 5);
+
+  ctx.scenario(scenario);
+  result = ctx.run(['install', '--claude', '--dry-run']);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.match(result.stdout, /Could not check Codex Kaylo status: codex plugin list --json exited with 42: broken list\./);
+  assert.match(result.stdout, /Kaylo v[\d.]+ install plan:/);
+  assert.match(result.stdout, /\$ claude plugin install kaylo@kaylo/);
+  assert.deepEqual(result.mutations, []);
+
+  ctx.scenario(scenario);
+  result = ctx.run(['install', '--claude', '--yes']);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.match(result.stdout, /Claude Code: v[\d.]+, files verified/);
+  assert.deepEqual(byHost(result.mutations, 'codex'), []);
+});
+
 test('OpenCode status reports config errors and cleanup without changing HOME', t => {
   const ctx = openSetup(t);
   fs.mkdirSync(ctx.target, { recursive: true });
