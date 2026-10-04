@@ -4,6 +4,16 @@
 
 ### Notable Changes
 
+- **tools**: `kaylo status` reports each host's installed version and, where
+  its active path is available, compares installed files with this package.
+  Codex reports its listed version without a file comparison. Install and
+  update now warn about unselected hosts with Kaylo and a newer npm release
+  before confirmation; an interactive prompt can add those hosts, while
+  `--yes` and `--dry-run` leave the selection unchanged. Status reads leftover
+  OpenCode cleanup directories without removing them. A host whose status
+  command fails is reported individually, while other hosts still report and
+  selected install plans continue
+  ([#61](https://github.com/jeio-dev/kaylo/issues/61)).
 - **tools**: The `kaylo` installer now supports OpenCode 2 through `--opencode`
   and `--all`. It copies and verifies the full package in a versioned data
   directory, then edits the global JSON or JSONC config while preserving its
@@ -25,8 +35,7 @@
   against the path its extension list names, and no host against a cached
   copy. Without host flags, a terminal gets a picker; `--dry-run` runs only
   read-only commands. Declining the confirmation, closing input, or pressing
-  Ctrl-C at a prompt changes nothing. `status` and drift warnings follow in
-  #61. The package is not on npm
+  Ctrl-C at a prompt changes nothing. The package is not on npm
   yet; this was tried from a checkout against a local mirror, not public GitHub
   ([#59](https://github.com/jeio-dev/kaylo/issues/59)).
 - **tools**: The repository now carries an npm `package.json` for the planned
