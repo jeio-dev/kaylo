@@ -1,61 +1,119 @@
 # Changelog
 
-## [Unreleased]
+## 2026-10-04, Version 0.10.0
 
 ### Notable Changes
 
-- **docs**: The README now leads with `npx kaylo` install, update, status, and
-  uninstall commands while retaining native per-host instructions. It names
-  the packed-tarball trial's observed platform and the remaining Gemini CLI
-  model and public npm limits. The release guide lists the installer update
-  command first ([#62](https://github.com/jeio-dev/kaylo/issues/62)).
-- **tools**: The OpenCode installer now completes from an npm-installed
-  package, such as `npx kaylo`. npm renames the packed `.gitignore` to
-  `.npmignore` when it unpacks a package; the installer now stages that file
-  under its packed name, so the OpenCode copy still matches the tarball
-  ([#68](https://github.com/jeio-dev/kaylo/issues/68)).
-- **tools**: `kaylo status` reports each host's installed version and, where
-  its active path is available, compares installed files with this package.
-  Codex reports its listed version without a file comparison. Install and
-  update now warn about unselected hosts with Kaylo and a newer npm release
-  before confirmation; an interactive prompt can add those hosts, while
-  `--yes` and `--dry-run` leave the selection unchanged. Status reads leftover
-  OpenCode cleanup directories without removing them. A host whose status
-  command fails is reported individually, while other hosts still report and
-  selected install plans continue
-  ([#61](https://github.com/jeio-dev/kaylo/issues/61)).
-- **tools**: The `kaylo` installer now supports OpenCode 2 through `--opencode`
-  and `--all`. It copies and verifies the full package in a versioned data
-  directory, then edits the global JSON or JSONC config while preserving its
-  comments and other settings. Updates keep the referenced copy until the new
-  one is verified; an interrupted same-version replacement is recovered on the
-  next mutating run. Symlinked global configs are refused. If removal of an old
-  copy fails after the config edit commits, the installer reports the active
-  state and warns that cleanup is pending. A later run can proceed while that
-  old copy remains blocked. Uninstall removes the Kaylo skills
-  entry and its copy when deletion succeeds.
-  OpenCode 1 and per-project config are outside this installer path
-  ([#60](https://github.com/jeio-dev/kaylo/issues/60)).
-- **tools**: A new `kaylo` command (`bin/kaylo.cjs`, the npm package's `bin`)
-  installs, updates, and uninstalls Kaylo on Claude Code, Codex, Antigravity
-  CLI, and Gemini CLI. It runs each host's own commands, pinned to the
-  package's release tag, and then checks each install. A host passes only when
-  it reports that version and the installed files match the package. Codex is
-  checked against the path its own `plugin add --json` reports, Gemini CLI
-  against the path its extension list names, and no host against a cached
-  copy. Without host flags, a terminal gets a picker; `--dry-run` runs only
-  read-only commands. Declining the confirmation, closing input, or pressing
-  Ctrl-C at a prompt changes nothing. The package is not on npm
-  yet; this was tried from a checkout against a local mirror, not public GitHub
+- **tools**: Kaylo now has a one-command installer, published on npm as
+  `kaylo`. `npx kaylo` installs Kaylo on Claude Code, Codex, Antigravity CLI,
+  Gemini CLI, and OpenCode 2; `npx kaylo@latest update`, `npx kaylo status`,
+  and `npx kaylo uninstall` update, report, and remove it. In a terminal it
+  offers a host picker; `--claude`, `--codex`, `--agy`, `--gemini`,
+  `--opencode`, and `--all` select hosts, `--yes` skips Kaylo's own
+  confirmation, and `--dry-run` runs only read-only commands. It needs Node.js
+  24 or newer and has no dependencies
+  ([#56](https://github.com/jeio-dev/kaylo/issues/56),
+  [#59](https://github.com/jeio-dev/kaylo/issues/59)).
+- **tools**: The installer is a thin wrapper. It runs each host's own commands
+  pinned to its release tag: Claude Code and Codex marketplaces at `v0.10.0`,
+  Gemini CLI with `--ref v0.10.0`, and Antigravity from the npm package
+  directory. A host passes only when it reports this version and its installed
+  files match the package byte for byte. Codex is checked at the path its own
+  `plugin add --json` reports and Gemini CLI at the path its extension list
+  names; no host is checked against a searched cache copy. Declining the
+  confirmation, closing input, or pressing Ctrl-C at a prompt changes nothing.
+  A host that fails is reported and the run exits non-zero
   ([#59](https://github.com/jeio-dev/kaylo/issues/59)).
-- **tools**: The repository now carries an npm `package.json` for the planned
-  `kaylo` package, with the same version as the plugin manifests. Its `files`
-  list matches the files Git tracks, and a new inventory test proves the packed
-  tarball holds exactly those files and passes package validation. Nothing is
-  published to npm yet, and the package has no installer command. Git-based
-  installs now also contain `package.json`; the Claude Code and Antigravity
-  validators accept it, but no host install was tested
-  ([#58](https://github.com/jeio-dev/kaylo/issues/58)).
+- **tools**: For OpenCode 2, which reads skills in place, the installer copies
+  and verifies the full package in `<XDG_DATA_HOME>/kaylo/v<version>/`, then
+  edits the global JSON or JSONC config while preserving comments and other
+  settings. Updates keep the referenced copy until the new one is verified, and
+  an interrupted same-version replacement is recovered on the next mutating run.
+  Symlinked global configs and a config with both `opencode.json` and
+  `opencode.jsonc` are refused. If removing an old copy fails after the config
+  edit, the installer reports the active state and `cleanup pending`. The copy
+  also completes from an npm-unpacked package, where npm renames `.gitignore`
+  to `.npmignore` ([#60](https://github.com/jeio-dev/kaylo/issues/60),
+  [#68](https://github.com/jeio-dev/kaylo/issues/68)). OpenCode 1 and
+  per-project config are outside the installer.
+- **tools**: `kaylo status` reports each host's installed version and, where
+  its active path is available, compares the installed files with the package.
+  Codex shows its listed version as `files not verified`, because its read-only
+  commands do not expose the active path. Before confirming, install and update
+  warn about unselected hosts that already have Kaylo and would stay on their
+  version, and about a newer `kaylo` on npm; an interactive prompt can add those
+  hosts, while `--yes` and `--dry-run` leave the selection unchanged. A host whose
+  status command fails is reported individually without stopping the others
+  ([#61](https://github.com/jeio-dev/kaylo/issues/61)).
+- **plugins**: The repository carries an npm `package.json` with the same
+  version as the plugin manifests and a `files` list matching the files Git
+  tracks. A new inventory test proves the packed tarball holds exactly the
+  tag's files and passes package validation; npm publishes from a `git
+  archive` export of the tag. Git-based installs now also contain
+  `package.json` and `bin/`; the Claude Code and Antigravity validators accept
+  them ([#58](https://github.com/jeio-dev/kaylo/issues/58)).
+- **docs**: The README leads with the `npx kaylo` commands and keeps the native
+  per-host instructions. `RELEASING.md` lists the installer update command
+  first and adds the npm publication steps. `VERIFICATION.md` records the host
+  trials the design depends on (#57) and the packed-tarball end-to-end trial
+  ([#62](https://github.com/jeio-dev/kaylo/issues/62)).
+
+Skills, worker briefs, Claude adapters, hooks, and templates are unchanged from
+0.9.3. Native per-host installs keep working as before; using the installer is
+optional.
+
+### Verification
+
+The package validator, all 166 Node tests, strict Claude plugin and marketplace
+validation, Antigravity validation, `npm pack --dry-run` (48 entries), and
+whitespace checks passed on the release tree. In isolated profiles against a
+local release mirror, a tarball packed from the release tree updated native
+v0.9.3 installs on Claude Code, Codex, Antigravity, Gemini CLI, and OpenCode to
+0.10.0; every installed root matched the release tree's 23 shared resources,
+none followed the mirror's newer `main`, and OpenCode listed all five skills
+from the new copy. Issue #62's packed-tarball trial also covered fresh install,
+status, uninstall, mixed versions, and the OpenCode config refusal, and a clean
+real-profile hash check showed a fresh install wrote nothing to the normal host
+profiles. These checks ran on one Linux (WSL2) machine without sign-in or model
+requests; Gemini CLI reached the mirror by Git clone after its release-archive
+request failed offline. Live worker starts were not rerun because the briefs
+and adapters are byte-identical to v0.9.3. Public `npx kaylo`, npm registry,
+GitHub marketplace, and Gemini release-archive installs of 0.10.0, other
+operating systems, Gemini CLI model behavior, and Antigravity IDE loading
+remain untested. Details and limits are in `VERIFICATION.md`.
+
+### Commits
+
+- [`1fb9763491`](https://github.com/jeio-dev/kaylo/commit/1fb9763491c9260fa8c481c0510e8dbfe9a0dec2) - **docs**: record v0.9.3 public installation checks (Jeio)
+- [`95336c2ffc`](https://github.com/jeio-dev/kaylo/commit/95336c2ffcf8ae171b0f63865e40d95f98d083a6) - **docs**: verify OpenCode against public v0.9.3 tag (Jeio)
+- [`75aee23037`](https://github.com/jeio-dev/kaylo/commit/75aee2303791ad88d1e8e7188d757c5f66f72a2d) - **tools**: add npm package manifest and inventory test (#58) (Jeio) [#63](https://github.com/jeio-dev/kaylo/pull/63)
+- [`afa425ae95`](https://github.com/jeio-dev/kaylo/commit/afa425ae95affe003b9f2cd724aa74b4eb93df94) - **docs**: record release-mode inventory pass (#58) (Jeio) [#63](https://github.com/jeio-dev/kaylo/pull/63)
+- [`a4d8d5f646`](https://github.com/jeio-dev/kaylo/commit/a4d8d5f646dd60a76f3699c766b400184d8ef08f) - **tools**: keep the release-mode archive inside cleaned temp folders (#58) (Jeio) [#63](https://github.com/jeio-dev/kaylo/pull/63)
+- [`5d32a78fc2`](https://github.com/jeio-dev/kaylo/commit/5d32a78fc27776bc6556b826418daeda17c8aec1) - **docs**: record release-mode run against a tagged clone (#58) (Jeio) [#63](https://github.com/jeio-dev/kaylo/pull/63)
+- [`9657a58613`](https://github.com/jeio-dev/kaylo/commit/9657a586135f7f498d216445dd606d2e5bf909b3) - **tools**: keep an existing development staging folder in the inventory test (#58) (Jeio) [#63](https://github.com/jeio-dev/kaylo/pull/63)
+- [`66b8636aa8`](https://github.com/jeio-dev/kaylo/commit/66b8636aa81291439fb0b5ef265e9ab60a0d0ebf) - **tools**: merge pull request #63 from jeio-dev/feat/issue-58-npm-package (Jeio) [#63](https://github.com/jeio-dev/kaylo/pull/63)
+- [`8c28773bf3`](https://github.com/jeio-dev/kaylo/commit/8c28773bf372930556ff1699c4923899cbc3f9f9) - **docs**: record installer host trials (#57) (Jeio) [#64](https://github.com/jeio-dev/kaylo/pull/64)
+- [`88a9d84429`](https://github.com/jeio-dev/kaylo/commit/88a9d84429b78f5137b8d80ac09be1f83435ca9e) - **docs**: correct installer host trial record (#57) (Jeio) [#64](https://github.com/jeio-dev/kaylo/pull/64)
+- [`f30b4bdac1`](https://github.com/jeio-dev/kaylo/commit/f30b4bdac17826dfc9268e14d4bcb580b5efa7f0) - **docs**: merge pull request #64 from jeio-dev/docs/issue-57-host-trials (Jeio) [#64](https://github.com/jeio-dev/kaylo/pull/64)
+- [`0c55ddbae0`](https://github.com/jeio-dev/kaylo/commit/0c55ddbae086aedd90ae5df07498d4b26da7e43e) - **tools**: add the kaylo installer for Claude Code, Codex, Antigravity, and Gemini CLI (#59) (Jeio) [#65](https://github.com/jeio-dev/kaylo/pull/65)
+- [`9b3e24fff1`](https://github.com/jeio-dev/kaylo/commit/9b3e24fff195c23bdd124c69b492eefeefe64306) - **tools**: read Gemini CLI's extension list from stderr too (#59) (Jeio) [#65](https://github.com/jeio-dev/kaylo/pull/65)
+- [`c328e95362`](https://github.com/jeio-dev/kaylo/commit/c328e9536229df3af88707f4f8a0ad58265aa33d) - **docs**: record installer core checks and smoke trial (#59) (Jeio) [#65](https://github.com/jeio-dev/kaylo/pull/65)
+- [`2bc6d5295a`](https://github.com/jeio-dev/kaylo/commit/2bc6d5295a6f3fd113eae9d803f1f5385dae36ca) - **tools**: abort on closed prompts, read the Gemini root from its list, and report failed replaces (#59) (Jeio) [#65](https://github.com/jeio-dev/kaylo/pull/65)
+- [`890987558f`](https://github.com/jeio-dev/kaylo/commit/890987558f3e13d68945156e8ca5aa085e77be79) - **docs**: record the #59 review fixes and smoke trial rerun (#59) (Jeio) [#65](https://github.com/jeio-dev/kaylo/pull/65)
+- [`9041cad55d`](https://github.com/jeio-dev/kaylo/commit/9041cad55d57af6cc56c3cd10d0701c0841bfb77) - **tools**: report a removed install only when Kaylo was installed (#59) (Jeio) [#65](https://github.com/jeio-dev/kaylo/pull/65)
+- [`b3bb5fde58`](https://github.com/jeio-dev/kaylo/commit/b3bb5fde58797352b2258340f7dfd724fe613c69) - **tools**: report a missing install path before a version mismatch (#59) (Jeio) [#65](https://github.com/jeio-dev/kaylo/pull/65)
+- [`4623318cef`](https://github.com/jeio-dev/kaylo/commit/4623318cef0d0b1d9278cf23a8c16d42736f0f49) - **tools**: merge pull request #65 from jeio-dev/feat/issue-59-installer-core (Jeio) [#65](https://github.com/jeio-dev/kaylo/pull/65)
+- [`44c43960ae`](https://github.com/jeio-dev/kaylo/commit/44c43960ae5a121d61fdf6e39b90d9c1cf34a0cb) - **tools**: add OpenCode installer support (Jeio) [#66](https://github.com/jeio-dev/kaylo/pull/66)
+- [`68f2afaff0`](https://github.com/jeio-dev/kaylo/commit/68f2afaff020997a4c008c5d8575822254663150) - **tools**: report OpenCode cleanup accurately and refuse symlinked config (Jeio) [#66](https://github.com/jeio-dev/kaylo/pull/66)
+- [`11c09b015c`](https://github.com/jeio-dev/kaylo/commit/11c09b015cf0fb92aa0f3895594e11ffb0fe16fc) - **tools**: defer blocked OpenCode startup cleanup (Jeio) [#66](https://github.com/jeio-dev/kaylo/pull/66)
+- [`282f6bc85d`](https://github.com/jeio-dev/kaylo/commit/282f6bc85de56926145665aa3854d6d1b63106fa) - **tools**: merge pull request #66 from jeio-dev/issue-60-opencode-installer (Jeio) [#66](https://github.com/jeio-dev/kaylo/pull/66)
+- [`111dde021c`](https://github.com/jeio-dev/kaylo/commit/111dde021cc8b06a79d8855dcb40ca21f927cccc) - **tools**: add Kaylo status and version drift preflight (Jeio) [#67](https://github.com/jeio-dev/kaylo/pull/67)
+- [`7b9313f484`](https://github.com/jeio-dev/kaylo/commit/7b9313f48455ea089b027b80cc9955728d1fb581) - **tools**: keep host status failures isolated during preflight (Jeio) [#67](https://github.com/jeio-dev/kaylo/pull/67)
+- [`a3992b63b0`](https://github.com/jeio-dev/kaylo/commit/a3992b63b0b23e7d74128044c8e8e035365ccfc7) - **tools**: merge pull request #67 from jeio-dev/issue-61-status-preflight (Jeio) [#67](https://github.com/jeio-dev/kaylo/pull/67)
+- [`3b38beef4d`](https://github.com/jeio-dev/kaylo/commit/3b38beef4d9dc02cb8b270f2c9a71bbbad9c03cf) - **tools**: fix OpenCode install from npm-unpacked package (#68) (Jeio) [#69](https://github.com/jeio-dev/kaylo/pull/69)
+- [`4b19e7dd86`](https://github.com/jeio-dev/kaylo/commit/4b19e7dd86bc4d4508339cc978a3d044c90efaf0) - **docs**: document npx kaylo installer and record packed-tarball trial (#62) (Jeio) [#69](https://github.com/jeio-dev/kaylo/pull/69)
+- [`91d0cffb0b`](https://github.com/jeio-dev/kaylo/commit/91d0cffb0beb7f87a0348441d1e943ba22e2108e) - **docs**: merge pull request #69 from jeio-dev/issue-62-packed-trial (Jeio) [#69](https://github.com/jeio-dev/kaylo/pull/69)
+- [`dd8dc6a8a0`](https://github.com/jeio-dev/kaylo/commit/dd8dc6a8a03af22e1831c2aab07c7f343e24f4fc) - **plugins**: prepare v0.10.0 manifests and README (Jeio)
 
 ## 2026-10-03, Version 0.9.3
 
