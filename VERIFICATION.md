@@ -25,6 +25,34 @@ consistency claim.
 Not established on any host: Antigravity IDE loading, models other than those
 named, and repeated runs of the same case.
 
+## Plan validator pre-commit hook — 2026-10-05
+
+Issue #73 added a README passage on running the plan validator as an optional,
+user-owned Git pre-commit hook. The setup was followed in a temporary Git
+repository on Linux (WSL2, kernel 6.18.33.2-microsoft-standard-WSL2) with Git
+2.53.0 and Node.js v24.21.0. The hook file was taken from the README's code
+block. Only the placeholder Kaylo path was replaced, with this checkout. The
+project held a valid plan: `ROADMAP.md`, `PRD.md`, and one phase plan under
+`.kaylo/phases/` with tasks `T1` and `T2`, where `T2` is blocked by `T1`.
+
+| Case | Observed result |
+| --- | --- |
+| Hook saved but not yet executable; invalid plan staged | Git printed "hook was ignored because it's not set as executable" and committed (exit 0). The commit was then removed |
+| After `chmod +x`, valid plan staged | `PASS plan structure…`; commit created (exit 0) |
+| `T2`'s `Blocked by:` set to `T9` and staged | `FAIL T2: Blocked by T9 must name an earlier task in this phase`; commit refused (exit 1) |
+| Partial staging: invalid plan staged, working copy fixed (`MM`) | Same `FAIL` diagnostic; commit refused (exit 1) |
+| Valid plan staged, invalid plan in the working tree only, unrelated file staged | `PASS`; commit created (exit 0), and the committed plan kept `Blocked by: T1` |
+| Phase plan moved to `docs/` and linked from `ROADMAP.md` | `FAIL Cannot read plan: docs/01-PLAN.md`; commit refused (exit 1) |
+| `git commit --no-verify` with that plan | Commit created (exit 0); the hook was skipped |
+| `git commit -a` and `git commit -- <plan>`, with the invalid plan only in the working tree | Both refused with the same `FAIL` diagnostic (exit 1); Git commits from a temporary index here, and the hook read it |
+| `git commit -a` after fixing the plan | `PASS`; commit created (exit 0) |
+| Temporary copy after a refused commit | No `tmp.*` directory left in `/tmp` |
+
+Not tested: macOS, Windows (Git for Windows' `sh`), CI steps, and hooks under a
+custom `core.hooksPath`. No model run took place, and no skill text changed.
+`node scripts/validate-package.cjs`, `node --test tests/*.test.cjs` (168
+passed, zero failed or skipped), and `git diff --check` passed.
+
 ## Rule sources and within-skill repeats — 2026-10-05
 
 PR #77 review at `9e2c9759bdb688ba9af5572a9f94f43e88c55b50`: direct
