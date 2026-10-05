@@ -4,6 +4,15 @@
 
 ### Notable Changes
 
+- **docs**: The README's guardrails section now shows how to run the plan
+  validator as an optional Git pre-commit hook that you add yourself. The hook
+  validates a copy of the staged plan files, so a plan fixed only in the working
+  tree cannot hide an invalid staged one. Add it after `ROADMAP.md` is
+  committed; until then every commit fails. Kaylo still installs no hook. The
+  section explains that `--no-verify` skips the hook, that clones do not share
+  hooks, and that only a CI step guarantees what lands in the repository. The
+  setup was tried on Linux only
+  ([#73](https://github.com/jeio-dev/kaylo/issues/73)).
 - **skills**: Remove five repeated clauses within `plan` and `build`, keeping
   each requirement in its more specific rule. All five skills now have a
   rule-source inventory in the comments on

@@ -341,6 +341,39 @@ checks can provide enforcement outside the assistant; Kaylo installs none.
 Run the validator's fixture tests with `node --test tests/validate-plan.test.cjs`.
 See [guardrail trials](tests/GUARDRAIL-TRIALS.md) for behavioral scenarios.
 
+To run the validator outside the assistant, you can add an optional Git
+pre-commit hook yourself. It checks the staged plan files, not the working tree.
+Add it after `ROADMAP.md` is committed; until then, every commit fails with
+`Missing ROADMAP.md`. Save this as `.git/hooks/pre-commit` in your project:
+
+```sh
+#!/bin/sh
+# Validate the staged plan files, not the working tree.
+tmp=$(mktemp -d) || exit 1
+trap 'rm -rf "$tmp"' EXIT
+git ls-files -z -- ROADMAP.md OBJECTIVE.md PLAN.md .kaylo | git checkout-index -z --stdin --prefix="$tmp/"
+node /absolute/path/to/kaylo/scripts/validate-plan.cjs "$tmp"
+```
+
+Then make it executable. Without this step, Git ignores the hook and commits anyway:
+
+```sh
+chmod +x .git/hooks/pre-commit
+```
+
+Exit code `1` refuses the commit and shows the validator's diagnostics; the
+validator stays read-only. The hook copies `ROADMAP.md`, the older-format files
+the validator checks for, and `.kaylo/`. A phase plan linked from outside
+`.kaylo/` is missing from the copy, so the validator reports `Cannot read plan`
+and refuses the commit. Use plain mode, not `--closing`; closure checks already
+run when the current phase is checked. The hook runs only in your local clone:
+`git commit --no-verify` skips it, and clones do not share hooks. Only a CI step
+that validates the committed checkout guarantees what lands in the repository.
+The Kaylo path differs by host and can change when Kaylo updates; OpenCode's copy,
+for example, sits in a version-named folder. Point the hook at a Kaylo checkout
+you control, or update the path after each Kaylo update. The hook has been tried
+on Linux only; macOS and Windows (Git for Windows' `sh`) are untested.
+
 ## Workers and budgets
 
 Claude and Codex can guide a project. Antigravity can receive research work; Gemini CLI loads the same briefs, but no worker has been run there, and OpenCode with an available DeepSeek model can receive implementation work. Read [working with a worker](WORKERS.md) for a copyable handoff and model-selection guidance. When a plan expects workers for which Kaylo can choose a model at dispatch, plan asks once for a project preference and writes `Format: 1` and a `Worker models:` choice of Inherit, Quality, Balanced, or Budget to `.kaylo/preferences.md`. The user can edit that file later. A missing or unknown preference uses Inherit; build never asks for a preference. Gemini CLI and Antigravity use Inherit for their packaged workers, so plan does not ask for their model preference. When a requested tier is unavailable, dispatch waits for a user choice rather than silently using a weaker model.

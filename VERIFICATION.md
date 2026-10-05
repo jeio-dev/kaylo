@@ -25,6 +25,64 @@ consistency claim.
 Not established on any host: Antigravity IDE loading, models other than those
 named, and repeated runs of the same case.
 
+## PR #78 review — 2026-10-05
+
+Reviewed `1a5a238084adb52197ffe84e06db74f545997117` directly, without a
+fresh reviewer context, against issue #73, the changed documentation, and the
+validator implementation. No blocking findings. The already disclosed absence
+of `ROADMAP.md` blocks every commit; a setup note to install the hook after the
+roadmap is tracked would be a non-blocking documentation improvement. The
+maintainer chose to apply it in this PR; see the follow-up below.
+
+Copied the README hook verbatim into an isolated temporary Git repository,
+replacing only the Kaylo path and making the hook executable. Confirmed that a
+valid staged plan commits, an invalid dependency is refused, an invalid staged
+plan with a fixed working copy is refused, and a valid staged plan with an
+invalid working copy commits. Both `git commit -a` and a commit naming the plan
+file refused the invalid working copy. Missing or staged removal of
+`ROADMAP.md` refused the commit. The temporary repository was removed.
+
+`node scripts/validate-package.cjs`, `node --test tests/*.test.cjs` (168 passed,
+none failed or skipped), and `git diff main...HEAD --check` passed. These checks
+ran on Linux only. This review did not run other platforms, CI enforcement,
+host installation or native manifest validation, or model/worker behavior.
+
+Follow-up: the README passage now says to add the hook after `ROADMAP.md` is
+committed. In a fresh temporary repository, the hook taken from the README
+refused a commit before `ROADMAP.md` existed (`FAIL Missing ROADMAP.md`, exit 1).
+After the plan was committed without the hook and the hook was then added, the
+next commit passed (exit 0). Same platform and versions as the trial below.
+Package validation, all 168 Node tests (none failed or skipped), and
+`git diff main --check` passed again after the change.
+
+## Plan validator pre-commit hook — 2026-10-05
+
+Issue #73 added a README passage on running the plan validator as an optional,
+user-owned Git pre-commit hook. The setup was followed in a temporary Git
+repository on Linux (WSL2, kernel 6.18.33.2-microsoft-standard-WSL2) with Git
+2.53.0 and Node.js v24.21.0. The hook file was taken from the README's code
+block. Only the placeholder Kaylo path was replaced, with this checkout. The
+project held a valid plan: `ROADMAP.md`, `PRD.md`, and one phase plan under
+`.kaylo/phases/` with tasks `T1` and `T2`, where `T2` is blocked by `T1`.
+
+| Case | Observed result |
+| --- | --- |
+| Hook saved but not yet executable; invalid plan staged | Git printed "hook was ignored because it's not set as executable" and committed (exit 0). The commit was then removed |
+| After `chmod +x`, valid plan staged | `PASS plan structure…`; commit created (exit 0) |
+| `T2`'s `Blocked by:` set to `T9` and staged | `FAIL T2: Blocked by T9 must name an earlier task in this phase`; commit refused (exit 1) |
+| Partial staging: invalid plan staged, working copy fixed (`MM`) | Same `FAIL` diagnostic; commit refused (exit 1) |
+| Valid plan staged, invalid plan in the working tree only, unrelated file staged | `PASS`; commit created (exit 0), and the committed plan kept `Blocked by: T1` |
+| Phase plan moved to `docs/` and linked from `ROADMAP.md` | `FAIL Cannot read plan: docs/01-PLAN.md`; commit refused (exit 1) |
+| `git commit --no-verify` with that plan | Commit created (exit 0); the hook was skipped |
+| `git commit -a` and `git commit -- <plan>`, with the invalid plan only in the working tree | Both refused with the same `FAIL` diagnostic (exit 1); Git commits from a temporary index here, and the hook read it |
+| `git commit -a` after fixing the plan | `PASS`; commit created (exit 0) |
+| Temporary copy after a refused commit | No `tmp.*` directory left in `/tmp` |
+
+Not tested: macOS, Windows (Git for Windows' `sh`), CI steps, and hooks under a
+custom `core.hooksPath`. No model run took place, and no skill text changed.
+`node scripts/validate-package.cjs`, `node --test tests/*.test.cjs` (168
+passed, zero failed or skipped), and `git diff --check` passed.
+
 ## Rule sources and within-skill repeats — 2026-10-05
 
 PR #77 review at `9e2c9759bdb688ba9af5572a9f94f43e88c55b50`: direct
