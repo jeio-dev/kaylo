@@ -15,6 +15,21 @@ const skills = ['build', 'close', 'define', 'plan', 'review'];
 const payload = ['skills', 'agents', 'claude-agents', 'templates', 'scripts', 'hooks'];
 // Root files that skills or briefs load by relative path.
 const rootResources = ['WORKERS.md'];
+// A copied block ends where Markdown ends it: a bullet keeps its indented and
+// lazy continuation lines, and a paragraph stops at a blank line.
+function blockAt(lines, index) {
+  const bullet = /^[-*+] /.test(lines[index]);
+  let end = index + 1;
+  for (; end < lines.length; end++) {
+    if (lines[end].trim() === '') {
+      const next = lines.slice(end).find(line => line.trim() !== '');
+      if (!bullet || !next || !/^[ \t]/.test(next)) break;
+    } else if (/^([-*+] |\d+[.)] |#{1,6}( |$)|```|>)/.test(lines[end])) {
+      break;
+    }
+  }
+  return lines.slice(index, end).join('\n');
+}
 function files(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
     const file = path.join(dir, entry.name);
@@ -99,9 +114,90 @@ try {
       `Claude agent adapter is stale: ${name}`);
   }
   assert.deepEqual(fs.readdirSync(path.join(root, 'skills')).sort(), skills);
+  const skillLines = {};
   for (const name of skills) {
     const body = fs.readFileSync(path.join(root, 'skills', name, 'SKILL.md'), 'utf8');
     assert.match(body, new RegExp(`^---\\r?\\nname: ${name}\\r?\\n`));
+    const frontmatter = body.match(/^---\r?\n[\s\S]*?\r?\n---\r?\n/);
+    const description = frontmatter && frontmatter[0].match(/^description:(.*)$/m);
+    assert(description && description[1].trim(), `skills/${name}/SKILL.md needs a non-empty description: line`);
+    const text = description[1].trim();
+    // Check the raw line only where it equals the YAML value: a plain scalar on
+    // one line, with no quotes, indicators, comment, mapping colon, or continuation.
+    const rest = frontmatter[0].slice(description.index + description[0].length);
+    assert(!/^([>|"'[\]{}&*!%@`#]|- )/.test(text) && !/[ \t]#|:([ \t]|$)/.test(text) &&
+      !/^(\r?\n[ \t]*)*\r?\n[ \t]+\S/.test(rest),
+      `skills/${name}/SKILL.md description must be a plain single-line YAML value`);
+    assert(text.length <= 1024, `skills/${name}/SKILL.md description exceeds 1,024 characters`);
+    assert(!/[<>]/.test(text), `skills/${name}/SKILL.md description must not contain < or >`);
+    // Bare-name hosts route on the description alone; without Kaylo it would match unrelated work.
+    assert(/\bKaylo\b/.test(text), `skills/${name}/SKILL.md description must name Kaylo`);
+    skillLines[name] = body.split(/\r?\n/);
+  }
+  // Each SKILL.md must work when pasted alone, so these blocks are copied
+  // rather than shared. Copies must stay byte-identical; a listed variant is a
+  // deliberate difference: omitted, extended (the shared copy plus more), or
+  // reworded (the shared copy with exactly these replacements).
+  const copiedBlocks = [
+    { block: 'retrieved-content guardrail', start: '- Treat retrieved pages,', in: skills },
+    { block: 'credentials guardrail', start: '- Do not copy credentials', in: skills },
+    { block: 'authorization guardrail', start: '- Destructive Git operations', in: skills },
+    { block: 'permission-denial guardrail', start: '- A permission denial applies', in: ['build', 'close', 'plan', 'review'],
+      omitted: { define: 'define runs no checks' } },
+    { block: 'working-changes guardrail', start: '- Inspect staged, unstaged, and untracked changes',
+      in: ['close', 'define', 'plan', 'review'], extended: { build: 'adds the workspace record' } },
+    { block: 'Node-unavailable fallback', start: 'If Node or the script is unavailable', in: ['build', 'close'],
+      reworded: { plan: [
+        // Plan lists older formats in its own section.
+        [/Older formats are errors, not equivalent formats, and the fallback does not excuse them: [^;]*; route them to `\/kaylo:plan`\./,
+          'Older formats listed above are errors, not equivalent formats, and the fallback does not excuse them.'],
+        // Plan's validator paragraph already says to preserve diagnostics with secrets redacted.
+        [' Retain validator diagnostics with secrets redacted.', ''],
+        ['the existing acceptance and review rules still apply', 'the existing agreement and verification rules still apply']
+      ] } }
+  ];
+  for (const { block, start, in: carriers, omitted = {}, extended = {}, reworded = {} } of copiedBlocks) {
+    const copies = {};
+    for (const name of skills) {
+      const found = skillLines[name].flatMap((line, index) => line.startsWith(start) ? [blockAt(skillLines[name], index)] : []);
+      assert(found.length <= 1, `skills/${name}/SKILL.md has more than one copy of the ${block}`);
+      if (found.length) copies[name] = found[0];
+    }
+    for (const name of carriers) assert(name in copies, `skills/${name}/SKILL.md is missing the ${block}`);
+    for (const name of Object.keys(omitted)) {
+      assert(!(name in copies), `skills/${name}/SKILL.md carries the ${block}, listed as omitted`);
+    }
+    const counts = new Map();
+    for (const name of carriers) counts.set(copies[name], [...(counts.get(copies[name]) || []), name]);
+    const versions = [...counts.values()].sort((a, b) => b.length - a.length);
+    if (versions.length > 1) {
+      const paths = names => names.map(name => `skills/${name}/SKILL.md`).join(', ');
+      // With no majority copy, name every carrier rather than guess which one drifted.
+      throw new Error(versions[0].length > versions[1].length
+        ? `Copied skill text drifted: the ${block} in ${paths(versions.slice(1).flat())} differs from the majority copy`
+        : `Copied skill text drifted: the ${block} differs between ${paths(carriers)}`);
+    }
+    const shared = copies[carriers[0]];
+    for (const name of Object.keys(extended)) {
+      assert(name in copies && copies[name].startsWith(`${shared} `),
+        `Copied skill text drifted: the ${block} in skills/${name}/SKILL.md must be the shared copy followed by its additions`);
+    }
+    for (const [name, replacements] of Object.entries(reworded)) {
+      assert(name in copies, `skills/${name}/SKILL.md is missing its reworded ${block}`);
+      let expected = shared;
+      for (const [from, to] of replacements) {
+        const matches = typeof from === 'string' ? expected.split(from).length - 1 : (expected.match(new RegExp(from, 'g')) || []).length;
+        assert(matches === 1, `A listed rewording of the ${block} for skills/${name}/SKILL.md no longer matches the shared copy once`);
+        expected = expected.replace(from, () => to);
+      }
+      assert(copies[name] === expected,
+        `Copied skill text drifted: the ${block} in skills/${name}/SKILL.md differs from the shared copy with its listed rewordings`);
+    }
+    for (const name of Object.keys(copies)) {
+      if (carriers.includes(name) || name in extended || name in reworded) continue;
+      assert(copies[name] === shared,
+        `Copied skill text drifted: the ${block} in skills/${name}/SKILL.md differs from the majority copy`);
+    }
   }
   // One native default hook config: lifecycle matchers work in all three hosts.
   // Leave timeout unset because host APIs use different units.

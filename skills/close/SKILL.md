@@ -1,6 +1,6 @@
 ---
 name: close
-description: Check the current Kaylo phase against acceptance criteria, record remaining limitations, and close it without expanding its scope.
+description: Check the current Kaylo phase against acceptance criteria, record remaining limitations, and close it without expanding its scope. Use when a Kaylo review finds the current phase's implementation ready.
 ---
 
 # Finish the current phase

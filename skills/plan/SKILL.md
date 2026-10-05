@@ -1,6 +1,6 @@
 ---
 name: plan
-description: Inspect a project and turn an agreed Kaylo outcome into ordered phases and small, verifiable tasks, or revise the current phase plan after feedback or a blocker.
+description: Inspect a project and turn an agreed Kaylo outcome into ordered phases and small, verifiable tasks, or revise the current phase plan after feedback or a blocker. Use after a Kaylo PRD is agreed, when the current phase closes, or when another Kaylo skill routes back to plan.
 ---
 
 # Plan phases and tasks

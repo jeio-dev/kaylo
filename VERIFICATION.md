@@ -25,6 +25,60 @@ consistency claim.
 Not established on any host: Antigravity IDE loading, models other than those
 named, and repeated runs of the same case.
 
+## Skill descriptions and copied skill text — 2026-10-05
+
+Issue #72 added "use when" clauses to the `plan` and `close` descriptions and
+two groups of checks to `scripts/validate-package.cjs`: description checks for
+all five skills, and a byte-identity check for six blocks copied across skills.
+The three variants listed in the issue were inspected before being written
+into the check. `plan`'s reworded fallback differs from the `build` and
+`close` copy in three ways: it cites its own "Older formats" section instead of
+listing them, it omits "Retain validator diagnostics with secrets redacted"
+because its preceding validator paragraph already says so, and it ends with
+"agreement and verification rules" instead of "acceptance and review rules".
+All three come from the paragraph as written in #11 (`9ee5eb9`), and no copy
+has changed since. They fit plan's own rules, and the maintainer confirmed all
+three as intended on 2026-10-05. The check records them as intended rewordings: `plan`'s copy must equal the shared copy with exactly
+those three replacements, and a replacement that no longer matches the shared
+copy fails. An independent review of PR #76 found that the first version of
+the check only required `plan`'s copy to differ from the shared one, so adding
+`` `Stuck` `` to its unfinished-state markers still passed; that edit now fails.
+A second review found two more gaps, both reproduced and fixed. The
+description checks read the raw line, so
+`description: Plan unrelated work. # Kaylo` passed on a YAML comment. An indented continuation line, which YAML
+folds into the value, bypassed the length, `<`/`>`, and single-line checks.
+The validator now accepts only a plain single-line YAML value. The block check
+compared only each block's first line, so an extra line under a guardrail
+bullet passed. Each block now runs to its Markdown end: a bullet keeps its
+indented and lazy continuation lines, including those after a blank line, and
+a paragraph ends at a blank line.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: package v0.10.0, five shared skills, matching versions and release catalogs |
+| New fixtures, one per assertion, each in a copied checkout | Each exited 1 with its own message: missing and empty descriptions (`needs a non-empty description: line`); a folded `description: >` value, a quoted value, a `# Kaylo` comment, an indented continuation line (directly or after a blank line), and a mapping colon (`must be a plain single-line YAML value`); a description over 1,024 characters, `<phase>` in a description, `Kaylo` removed, a reworded credentials guardrail in `review`, and that bullet with an indented, lazy, or post-blank continuation line (`differs from the majority copy`), a credentials guardrail in `close` whose opening words changed (`is missing the credentials guardrail`), a shortened working-changes guardrail in `build`, a reworded fallback in `close` (names both `build` and `close`, since neither copy is the majority), the permission-denial guardrail added to `define`, and `plan`'s fallback with `` `Stuck` `` added, a continuation line appended, or replaced by the shared copy |
+| Stale rewording: "Retain validator diagnostics with secrets redacted." removed from both `build` and `close` | Exited 1: the listed rewording no longer matches the shared copy once |
+| The two new tests against `main`'s validator, and against the validator before the second review's fixes (`1619c78`) | Both failed in each case, so they depend on the new assertions. The second review's three reproductions (the comment, the 1,100-character continuation with `<phase>`, and the indented credentials continuation) passed at `1619c78` and fail now |
+| `node --test tests/*.test.cjs` | 168 tests passed |
+| `claude plugin validate .claude-plugin/plugin.json --strict` | Passed |
+| `claude plugin validate .claude-plugin/marketplace.json --strict` | Passed |
+| `agy plugin validate .` | Passed: five skills and three agents processed |
+| `git diff --check` | Clean on the final working diff |
+
+The checks used Node v24.21.0, Claude Code 2.1.289, and Antigravity CLI 1.2.14
+on the uncommitted checkout. These are package checks only. No model request,
+host install, or skill-routing trial ran, so whether the new clauses change
+which skill a host loads is not observed. The description check does not parse
+YAML; it rejects every form other than a plain single-line value. The identity
+check covers only the six listed blocks. A skill that is not listed as
+carrying a block may gain an identical copy without failing; a differing copy
+there fails. When most copies drift the same way, the error names the
+unchanged minority instead. Other text repeated across skills is not compared.
+`plan`'s fallback has no redaction sentence of its own. Its only instruction to
+redact validator diagnostics is in the validator paragraph just above it ("Preserve
+validator diagnostics with secrets redacted", `skills/plan/SKILL.md` line 129),
+which the check does not cover, so removing that clause would pass.
+
 ## Public installation 0.10.0 — 2026-10-04
 
 PR #70 merged the release commits into `main` as `fffd06d`. The immutable

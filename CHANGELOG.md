@@ -1,5 +1,29 @@
 # Changelog
 
+## [Unreleased]
+
+### Notable Changes
+
+- **skills**: The `plan` and `close` descriptions now say when to use them, as
+  the other three already did. `plan` applies after a Kaylo PRD is agreed, when
+  the current phase closes, or when another Kaylo skill routes back to it;
+  `close` applies when a Kaylo review finds the current phase's implementation
+  ready. Both clauses name Kaylo so that hosts that load skills by bare name
+  are less likely to pick them for projects that don't use Kaylo; no routing
+  trial has tested this ([#72](https://github.com/jeio-dev/kaylo/issues/72)).
+- **tools**: The package validator now checks every skill description: it must
+  be a present, non-empty, plain single-line YAML value (no quotes, block
+  indicators, comments, or continuation lines) of at most 1,024 characters,
+  free of `<` and `>`, that names Kaylo. It also checks the guardrail bullets and the
+  Node-unavailable fallback that are copied across skills so each `SKILL.md`
+  works when pasted alone. Every copy must match byte for byte, except the
+  intended variants written into the check: `define` omits the
+  permission-denial guardrail, `build` extends the working-changes guardrail,
+  and `plan`'s fallback must equal the shared copy with three listed
+  rewordings. Each block is compared whole, including a bullet's continuation
+  lines. A missing or drifted copy fails with a message naming the skill and
+  the block ([#72](https://github.com/jeio-dev/kaylo/issues/72)).
+
 ## 2026-10-04, Version 0.10.0
 
 ### Notable Changes

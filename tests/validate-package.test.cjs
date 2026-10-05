@@ -206,6 +206,75 @@ test('adapter generation fails loudly instead of dropping Claude tool lists', t 
     assert.equal(fs.readFileSync(target, 'utf8'), adapter);
   }
 });
+test('skill descriptions must be single-line, present, short, tag-free, and name Kaylo', t => {
+  const cases = [
+    ['missing', text => text.replace(/^description:.*\n/m, ''), /skills\/plan\/SKILL\.md needs a non-empty description: line/],
+    ['empty', text => text.replace(/^description:.*$/m, 'description:   '), /skills\/plan\/SKILL\.md needs a non-empty description: line/],
+    ['folded block', text => text.replace(/^description: (.*)$/m, 'description: >\n  $1'), /skills\/plan\/SKILL\.md description must be a plain single-line YAML value/],
+    ['quoted', text => text.replace(/^description: (.*)$/m, 'description: "$1"'), /skills\/plan\/SKILL\.md description must be a plain single-line YAML value/],
+    ['comment names Kaylo', text => text.replace(/^description:.*$/m, 'description: Plan unrelated work. # Kaylo'), /skills\/plan\/SKILL\.md description must be a plain single-line YAML value/],
+    ['continuation line', text => text.replace(/^(description:.*)$/m, `$1\n  ${'x'.repeat(1100)} Use <phase>.`), /skills\/plan\/SKILL\.md description must be a plain single-line YAML value/],
+    ['continuation after a blank line', text => text.replace(/^(description:.*)$/m, '$1\n\n  more text'), /skills\/plan\/SKILL\.md description must be a plain single-line YAML value/],
+    ['mapping colon', text => text.replace(/^(description:.*)$/m, '$1 Note: ask first.'), /skills\/plan\/SKILL\.md description must be a plain single-line YAML value/],
+    ['too long', text => text.replace(/^(description:.*)$/m, `$1 ${'x'.repeat(1024)}`), /skills\/plan\/SKILL\.md description exceeds 1,024 characters/],
+    ['angle bracket', text => text.replace(/^(description:.*)$/m, '$1 Use <phase>.'), /skills\/plan\/SKILL\.md description must not contain < or >/],
+    ['no Kaylo', text => text.replace(/^(description:.*)$/m, m => m.replaceAll('Kaylo', 'project')), /skills\/plan\/SKILL\.md description must name Kaylo/]
+  ];
+  for (const [label, update, message] of cases) {
+    const dir = fixture(t);
+    const target = path.join(dir, 'skills/plan/SKILL.md');
+    const original = fs.readFileSync(target, 'utf8');
+    const changed = update(original);
+    assert.notEqual(changed, original, label);
+    fs.writeFileSync(target, changed);
+    const result = check(dir);
+    assert.equal(result.status, 1, label);
+    assert.match(result.stderr, message, label);
+  }
+});
+test('a drifted or missing copy of shared skill text names the skill and block', t => {
+  const fallback = /^If Node or the script is unavailable.*$/m;
+  const cases = [
+    ['skills/review/SKILL.md', 'Read only necessary sensitive data', 'Read only needed sensitive data',
+      /credentials guardrail in skills\/review\/SKILL\.md differs from the majority copy/],
+    ['skills/review/SKILL.md', /^(- Do not copy credentials.*)$/m, '$1\n  Also share them with reviewers.',
+      /credentials guardrail in skills\/review\/SKILL\.md differs from the majority copy/],
+    ['skills/review/SKILL.md', /^(- Do not copy credentials.*)$/m, '$1\nAlso share them with reviewers.',
+      /credentials guardrail in skills\/review\/SKILL\.md differs from the majority copy/],
+    ['skills/review/SKILL.md', /^(- Do not copy credentials.*)$/m, '$1\n\n  Also share them with reviewers.',
+      /credentials guardrail in skills\/review\/SKILL\.md differs from the majority copy/],
+    ['skills/plan/SKILL.md', /^(If Node or the script is unavailable.*)$/m, '$1\nSkip the check when in a hurry.',
+      /Node-unavailable fallback in skills\/plan\/SKILL\.md differs from the shared copy with its listed rewordings/],
+    ['skills/close/SKILL.md', '- Do not copy credentials', '- Never copy credentials',
+      /skills\/close\/SKILL\.md is missing the credentials guardrail/],
+    ['skills/build/SKILL.md', 'do not reset, clean, or discard it to make checks pass. Record',
+      'do not reset or discard it to make checks pass. Record',
+      /working-changes guardrail in skills\/build\/SKILL\.md must be the shared copy followed by its additions/],
+    ['skills/close/SKILL.md', 'record that the automated check was unavailable', 'note that the automated check was unavailable',
+      /Node-unavailable fallback differs between skills\/build\/SKILL\.md, skills\/close\/SKILL\.md/],
+    ['skills/define/SKILL.md', '- Inspect staged,',
+      '- A permission denial applies only to the denied command.\n- Inspect staged,',
+      /skills\/define\/SKILL\.md carries the permission-denial guardrail, listed as omitted/],
+    ['skills/plan/SKILL.md', '`TBD`, or `Blocked`', '`TBD`, `Stuck`, or `Blocked`',
+      /Node-unavailable fallback in skills\/plan\/SKILL\.md differs from the shared copy with its listed rewordings/],
+    ['skills/plan/SKILL.md', fallback,
+      fs.readFileSync(path.join(repo, 'skills/close/SKILL.md'), 'utf8').match(fallback)[0],
+      /Node-unavailable fallback in skills\/plan\/SKILL\.md differs from the shared copy with its listed rewordings/]
+  ];
+  for (const [file, from, to, message] of cases) {
+    const label = `${file}: ${from}`;
+    const dir = fixture(t);
+    const target = path.join(dir, file);
+    const original = fs.readFileSync(target, 'utf8');
+    // `$1` keeps the matched line; other `to` values are literal text.
+    const changed = original.replace(from, to.startsWith('$1') ? to : () => to);
+    assert.notEqual(changed, original, label);
+    fs.writeFileSync(target, changed);
+    const result = check(dir);
+    assert.equal(result.status, 1, label);
+    assert.match(result.stderr, message, label);
+  }
+});
 test('invalid CLI usage returns 2', () => {
   assert.equal(check(repo, ['--installed']).status, 2);
 });
