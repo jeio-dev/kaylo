@@ -37,8 +37,8 @@ listing them, it omits "Retain validator diagnostics with secrets redacted"
 because its preceding validator paragraph already says so, and it ends with
 "agreement and verification rules" instead of "acceptance and review rules".
 All three come from the paragraph as written in #11 (`9ee5eb9`), and no copy
-has changed since. They fit plan's own rules, so the check records them as
-intended rewordings: `plan`'s copy must equal the shared copy with exactly
+has changed since. They fit plan's own rules, and the maintainer confirmed all
+three as intended on 2026-10-05. The check records them as intended rewordings: `plan`'s copy must equal the shared copy with exactly
 those three replacements, and a replacement that no longer matches the shared
 copy fails. An independent review of PR #76 found that the first version of
 the check only required `plan`'s copy to differ from the shared one, so adding
@@ -65,6 +65,10 @@ under a guardrail bullet is not compared. A skill that is not listed as
 carrying a block may gain an identical copy without failing; a differing copy
 there fails. When most copies drift the same way, the error names the
 unchanged minority instead. Other text repeated across skills is not compared.
+`plan`'s fallback has no redaction sentence of its own. Its only instruction to
+redact validator diagnostics is in the validator paragraph just above it ("Preserve
+validator diagnostics with secrets redacted", `skills/plan/SKILL.md` line 129),
+which the check does not cover, so removing that clause would pass.
 
 ## Public installation 0.10.0 — 2026-10-04
 
