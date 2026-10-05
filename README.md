@@ -343,7 +343,8 @@ See [guardrail trials](tests/GUARDRAIL-TRIALS.md) for behavioral scenarios.
 
 To run the validator outside the assistant, you can add an optional Git
 pre-commit hook yourself. It checks the staged plan files, not the working tree.
-Save this as `.git/hooks/pre-commit` in your project:
+Add it after `ROADMAP.md` is committed; until then, every commit fails with
+`Missing ROADMAP.md`. Save this as `.git/hooks/pre-commit` in your project:
 
 ```sh
 #!/bin/sh

@@ -25,6 +25,36 @@ consistency claim.
 Not established on any host: Antigravity IDE loading, models other than those
 named, and repeated runs of the same case.
 
+## PR #78 review — 2026-10-05
+
+Reviewed `1a5a238084adb52197ffe84e06db74f545997117` directly, without a
+fresh reviewer context, against issue #73, the changed documentation, and the
+validator implementation. No blocking findings. The already disclosed absence
+of `ROADMAP.md` blocks every commit; a setup note to install the hook after the
+roadmap is tracked would be a non-blocking documentation improvement. The
+maintainer chose to apply it in this PR; see the follow-up below.
+
+Copied the README hook verbatim into an isolated temporary Git repository,
+replacing only the Kaylo path and making the hook executable. Confirmed that a
+valid staged plan commits, an invalid dependency is refused, an invalid staged
+plan with a fixed working copy is refused, and a valid staged plan with an
+invalid working copy commits. Both `git commit -a` and a commit naming the plan
+file refused the invalid working copy. Missing or staged removal of
+`ROADMAP.md` refused the commit. The temporary repository was removed.
+
+`node scripts/validate-package.cjs`, `node --test tests/*.test.cjs` (168 passed,
+none failed or skipped), and `git diff main...HEAD --check` passed. These checks
+ran on Linux only. This review did not run other platforms, CI enforcement,
+host installation or native manifest validation, or model/worker behavior.
+
+Follow-up: the README passage now says to add the hook after `ROADMAP.md` is
+committed. In a fresh temporary repository, the hook taken from the README
+refused a commit before `ROADMAP.md` existed (`FAIL Missing ROADMAP.md`, exit 1).
+After the plan was committed without the hook and the hook was then added, the
+next commit passed (exit 0). Same platform and versions as the trial below.
+Package validation, all 168 Node tests (none failed or skipped), and
+`git diff main --check` passed again after the change.
+
 ## Plan validator pre-commit hook — 2026-10-05
 
 Issue #73 added a README passage on running the plan validator as an optional,

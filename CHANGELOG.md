@@ -7,7 +7,8 @@
 - **docs**: The README's guardrails section now shows how to run the plan
   validator as an optional Git pre-commit hook that you add yourself. The hook
   validates a copy of the staged plan files, so a plan fixed only in the working
-  tree cannot hide an invalid staged one. Kaylo still installs no hook. The
+  tree cannot hide an invalid staged one. Add it after `ROADMAP.md` is
+  committed; until then every commit fails. Kaylo still installs no hook. The
   section explains that `--no-verify` skips the hook, that clones do not share
   hooks, and that only a CI step guarantees what lands in the repository. The
   setup was tried on Linux only
