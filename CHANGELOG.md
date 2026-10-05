@@ -4,6 +4,16 @@
 
 ### Notable Changes
 
+- **tests**: `tests/GUARDRAIL-TRIALS.md` now has a protocol for repeated
+  live-model runs of seven cases: four guardrail cases and the B1, P5, and C1
+  routing cases behind #37, #40, and #41. Each case names the failure condition
+  it needs, and a run where that condition never arises is graded "not
+  exercised", separately from passes and fails. P5 gets a new fixture: the
+  request changes existing user-visible behavior, so it always carries a
+  decision the user must make. A fixed answer sheet for the simulated user
+  keeps runs comparable. The run matrix covers Claude Code with Sonnet 5.5 and
+  Codex CLI, three runs each
+  ([#74](https://github.com/jeio-dev/kaylo/issues/74)).
 - **docs**: The README's guardrails section now shows how to run the plan
   validator as an optional Git pre-commit hook that you add yourself. The hook
   validates a copy of the staged plan files, so a plan fixed only in the working
