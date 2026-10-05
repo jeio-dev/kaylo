@@ -36,14 +36,20 @@ into the check. `plan`'s reworded fallback differs from the `build` and
 listing them, it omits "Retain validator diagnostics with secrets redacted"
 because its preceding validator paragraph already says so, and it ends with
 "agreement and verification rules" instead of "acceptance and review rules".
-All three come from the paragraph as written in #11 (`9ee5eb9`) and fit plan's
-own rules, so they were treated as intended rather than drift.
+All three come from the paragraph as written in #11 (`9ee5eb9`), and no copy
+has changed since. They fit plan's own rules, so the check records them as
+intended rewordings: `plan`'s copy must equal the shared copy with exactly
+those three replacements, and a replacement that no longer matches the shared
+copy fails. An independent review of PR #76 found that the first version of
+the check only required `plan`'s copy to differ from the shared one, so adding
+`` `Stuck` `` to its unfinished-state markers still passed; that edit now fails.
 
 | Check | Observed result |
 | --- | --- |
 | `node scripts/validate-package.cjs` | Passed: package v0.10.0, five shared skills, matching versions and release catalogs |
-| New fixtures, one per assertion, each in a copied checkout | Each exited 1 with its own message: missing and empty descriptions (`needs a non-empty description: line`), a description over 1,024 characters, `<phase>` in a description, `Kaylo` removed, a reworded credentials guardrail in `review`, a shortened working-changes guardrail in `build`, a reworded fallback in `close` (names both `build` and `close`, since neither copy is the majority), the permission-denial guardrail added to `define`, and `plan`'s fallback replaced by the shared copy |
-| The two new tests against the previous validator (`git show HEAD:scripts/validate-package.cjs`) | Both failed, so they depend on the new assertions |
+| New fixtures, one per assertion, each in a copied checkout | Each exited 1 with its own message: missing and empty descriptions (`needs a non-empty description: line`), a multi-line `description: >` value, a description over 1,024 characters, `<phase>` in a description, `Kaylo` removed, a reworded credentials guardrail in `review` (`differs from the majority copy`), a credentials guardrail in `close` whose opening words changed (`is missing the credentials guardrail`), a shortened working-changes guardrail in `build`, a reworded fallback in `close` (names both `build` and `close`, since neither copy is the majority), the permission-denial guardrail added to `define`, and `plan`'s fallback with `` `Stuck` `` added or replaced by the shared copy |
+| Stale rewording: "Retain validator diagnostics with secrets redacted." removed from both `build` and `close` | Exited 1: the listed rewording no longer matches the shared copy once |
+| The two new tests against `main`'s validator | Both failed, so they depend on the new assertions |
 | `node --test tests/*.test.cjs` | 168 tests passed |
 | `claude plugin validate .claude-plugin/plugin.json --strict` | Passed |
 | `claude plugin validate .claude-plugin/marketplace.json --strict` | Passed |
@@ -54,7 +60,11 @@ The checks used Node v24.21.0, Claude Code 2.1.289, and Antigravity CLI 1.2.14
 on the uncommitted checkout. These are package checks only. No model request,
 host install, or skill-routing trial ran, so whether the new clauses change
 which skill a host loads is not observed. The identity check covers only the
-six listed blocks; other text repeated across skills is not compared.
+six listed blocks, and only each block's first line: a continuation line added
+under a guardrail bullet is not compared. A skill that is not listed as
+carrying a block may gain an identical copy without failing; a differing copy
+there fails. When most copies drift the same way, the error names the
+unchanged minority instead. Other text repeated across skills is not compared.
 
 ## Public installation 0.10.0 — 2026-10-04
 
