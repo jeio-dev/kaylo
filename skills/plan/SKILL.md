@@ -18,9 +18,9 @@ Guide the user toward the simplest approach that meets the outcome. Work in the 
 ## Workflow
 
 1. Read project instructions, `PRD.md` if present, `ROADMAP.md`, and the current phase plan its `Current:` line links. Convert older formats first (see below). A concrete small-change request can stand in for a PRD. Ask for missing intent only when it changes the work.
-2. Inspect relevant code, dependencies, and checks. Establish repository facts yourself. A research worker may answer a bounded factual question; give it the project location and request file references or source links and remaining uncertainties. Before research delegation, follow the preference rule below and [worker model guidance](../../WORKERS.md); record the resolved choice and any fallback in the phase plan's research notes or, before a plan exists, in the response.
+2. Inspect relevant code, dependencies, and checks. A research worker may answer a bounded factual question; give it the project location and request file references or source links and remaining uncertainties. Before research delegation, follow the preference rule below and [worker model guidance](../../WORKERS.md); record the resolved choice and any fallback in the phase plan's research notes or, before a plan exists, in the response.
 3. Identify the planning case below. Trace the user flow and choose a design using the rules below. Explain why it meets the outcome.
-4. Resolve consequential unknowns using the decision rules below: at most three independent numbered questions per round, each with a recommendation and its tradeoff. For technical investigation, define a bounded research task with a question and expected deliverable.
+4. Resolve consequential unknowns using the decision rules below: at most three independent numbered questions per round. For technical investigation, define a bounded research task with a question and expected deliverable.
 5. Write or revise the phase plan using the plan and task requirements below, then update the index. Apply the revision rules when existing work is affected.
 6. Run the structural plan check below after writing or converting plans. Report remaining errors and unfinished conversion steps before giving the next action.
 7. Run the plan check below when it is required, then apply the readiness test before presenting the plan as ready.
@@ -75,7 +75,7 @@ Record the chosen approach under the phase plan's `## Design`.
 
 ## Plan contents
 
-Each phase plan records goal, scope and exclusions, design, constraints, tasks ordered by prerequisites, review comments, actual agreement, and next step. Never invent approval. Preserve unrelated work and completed results.
+Each phase plan records goal, scope and exclusions, design, constraints, tasks ordered by prerequisites, review comments, actual agreement, and next step. Preserve completed results.
 
 Use the optional [roadmap template](../../templates/ROADMAP.md) and [phase template](../../templates/PHASE.md), resolved relative to this skill directory, or preserve an existing equivalent format that uses the names below. A missing template does not block planning.
 
