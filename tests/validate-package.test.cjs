@@ -210,7 +210,12 @@ test('skill descriptions must be single-line, present, short, tag-free, and name
   const cases = [
     ['missing', text => text.replace(/^description:.*\n/m, ''), /skills\/plan\/SKILL\.md needs a non-empty description: line/],
     ['empty', text => text.replace(/^description:.*$/m, 'description:   '), /skills\/plan\/SKILL\.md needs a non-empty description: line/],
-    ['multi-line', text => text.replace(/^description: (.*)$/m, 'description: >\n  $1'), /skills\/plan\/SKILL\.md description must be a single-line value/],
+    ['folded block', text => text.replace(/^description: (.*)$/m, 'description: >\n  $1'), /skills\/plan\/SKILL\.md description must be a plain single-line YAML value/],
+    ['quoted', text => text.replace(/^description: (.*)$/m, 'description: "$1"'), /skills\/plan\/SKILL\.md description must be a plain single-line YAML value/],
+    ['comment names Kaylo', text => text.replace(/^description:.*$/m, 'description: Plan unrelated work. # Kaylo'), /skills\/plan\/SKILL\.md description must be a plain single-line YAML value/],
+    ['continuation line', text => text.replace(/^(description:.*)$/m, `$1\n  ${'x'.repeat(1100)} Use <phase>.`), /skills\/plan\/SKILL\.md description must be a plain single-line YAML value/],
+    ['continuation after a blank line', text => text.replace(/^(description:.*)$/m, '$1\n\n  more text'), /skills\/plan\/SKILL\.md description must be a plain single-line YAML value/],
+    ['mapping colon', text => text.replace(/^(description:.*)$/m, '$1 Note: ask first.'), /skills\/plan\/SKILL\.md description must be a plain single-line YAML value/],
     ['too long', text => text.replace(/^(description:.*)$/m, `$1 ${'x'.repeat(1024)}`), /skills\/plan\/SKILL\.md description exceeds 1,024 characters/],
     ['angle bracket', text => text.replace(/^(description:.*)$/m, '$1 Use <phase>.'), /skills\/plan\/SKILL\.md description must not contain < or >/],
     ['no Kaylo', text => text.replace(/^(description:.*)$/m, m => m.replaceAll('Kaylo', 'project')), /skills\/plan\/SKILL\.md description must name Kaylo/]
@@ -232,6 +237,14 @@ test('a drifted or missing copy of shared skill text names the skill and block',
   const cases = [
     ['skills/review/SKILL.md', 'Read only necessary sensitive data', 'Read only needed sensitive data',
       /credentials guardrail in skills\/review\/SKILL\.md differs from the majority copy/],
+    ['skills/review/SKILL.md', /^(- Do not copy credentials.*)$/m, '$1\n  Also share them with reviewers.',
+      /credentials guardrail in skills\/review\/SKILL\.md differs from the majority copy/],
+    ['skills/review/SKILL.md', /^(- Do not copy credentials.*)$/m, '$1\nAlso share them with reviewers.',
+      /credentials guardrail in skills\/review\/SKILL\.md differs from the majority copy/],
+    ['skills/review/SKILL.md', /^(- Do not copy credentials.*)$/m, '$1\n\n  Also share them with reviewers.',
+      /credentials guardrail in skills\/review\/SKILL\.md differs from the majority copy/],
+    ['skills/plan/SKILL.md', /^(If Node or the script is unavailable.*)$/m, '$1\nSkip the check when in a hurry.',
+      /Node-unavailable fallback in skills\/plan\/SKILL\.md differs from the shared copy with its listed rewordings/],
     ['skills/close/SKILL.md', '- Do not copy credentials', '- Never copy credentials',
       /skills\/close\/SKILL\.md is missing the credentials guardrail/],
     ['skills/build/SKILL.md', 'do not reset, clean, or discard it to make checks pass. Record',
@@ -253,7 +266,8 @@ test('a drifted or missing copy of shared skill text names the skill and block',
     const dir = fixture(t);
     const target = path.join(dir, file);
     const original = fs.readFileSync(target, 'utf8');
-    const changed = original.replace(from, () => to);
+    // `$1` keeps the matched line; other `to` values are literal text.
+    const changed = original.replace(from, to.startsWith('$1') ? to : () => to);
     assert.notEqual(changed, original, label);
     fs.writeFileSync(target, changed);
     const result = check(dir);

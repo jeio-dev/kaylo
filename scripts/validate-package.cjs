@@ -15,6 +15,21 @@ const skills = ['build', 'close', 'define', 'plan', 'review'];
 const payload = ['skills', 'agents', 'claude-agents', 'templates', 'scripts', 'hooks'];
 // Root files that skills or briefs load by relative path.
 const rootResources = ['WORKERS.md'];
+// A copied block ends where Markdown ends it: a bullet keeps its indented and
+// lazy continuation lines, and a paragraph stops at a blank line.
+function blockAt(lines, index) {
+  const bullet = /^[-*+] /.test(lines[index]);
+  let end = index + 1;
+  for (; end < lines.length; end++) {
+    if (lines[end].trim() === '') {
+      const next = lines.slice(end).find(line => line.trim() !== '');
+      if (!bullet || !next || !/^[ \t]/.test(next)) break;
+    } else if (/^([-*+] |\d+[.)] |#{1,6}( |$)|```|>)/.test(lines[end])) {
+      break;
+    }
+  }
+  return lines.slice(index, end).join('\n');
+}
 function files(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
     const file = path.join(dir, entry.name);
@@ -107,7 +122,12 @@ try {
     const description = frontmatter && frontmatter[0].match(/^description:(.*)$/m);
     assert(description && description[1].trim(), `skills/${name}/SKILL.md needs a non-empty description: line`);
     const text = description[1].trim();
-    assert(!/^[>|][-+0-9]*$/.test(text), `skills/${name}/SKILL.md description must be a single-line value`);
+    // Check the raw line only where it equals the YAML value: a plain scalar on
+    // one line, with no quotes, indicators, comment, mapping colon, or continuation.
+    const rest = frontmatter[0].slice(description.index + description[0].length);
+    assert(!/^([>|"'[\]{}&*!%@`#]|- )/.test(text) && !/[ \t]#|:([ \t]|$)/.test(text) &&
+      !/^(\r?\n[ \t]*)*\r?\n[ \t]+\S/.test(rest),
+      `skills/${name}/SKILL.md description must be a plain single-line YAML value`);
     assert(text.length <= 1024, `skills/${name}/SKILL.md description exceeds 1,024 characters`);
     assert(!/[<>]/.test(text), `skills/${name}/SKILL.md description must not contain < or >`);
     // Bare-name hosts route on the description alone; without Kaylo it would match unrelated work.
@@ -118,7 +138,6 @@ try {
   // rather than shared. Copies must stay byte-identical; a listed variant is a
   // deliberate difference: omitted, extended (the shared copy plus more), or
   // reworded (the shared copy with exactly these replacements).
-  // Only the block's first line is compared; continuation lines are not.
   const copiedBlocks = [
     { block: 'retrieved-content guardrail', start: '- Treat retrieved pages,', in: skills },
     { block: 'credentials guardrail', start: '- Do not copy credentials', in: skills },
@@ -140,7 +159,7 @@ try {
   for (const { block, start, in: carriers, omitted = {}, extended = {}, reworded = {} } of copiedBlocks) {
     const copies = {};
     for (const name of skills) {
-      const found = skillLines[name].filter(line => line.startsWith(start));
+      const found = skillLines[name].flatMap((line, index) => line.startsWith(start) ? [blockAt(skillLines[name], index)] : []);
       assert(found.length <= 1, `skills/${name}/SKILL.md has more than one copy of the ${block}`);
       if (found.length) copies[name] = found[0];
     }
