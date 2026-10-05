@@ -206,6 +206,54 @@ test('adapter generation fails loudly instead of dropping Claude tool lists', t 
     assert.equal(fs.readFileSync(target, 'utf8'), adapter);
   }
 });
+test('skill descriptions must be present, short, tag-free, and name Kaylo', t => {
+  const cases = [
+    ['missing', line => line.replace(/^description:.*\n/m, ''), /skills\/plan\/SKILL\.md needs a non-empty description: line/],
+    ['empty', line => line.replace(/^description:.*$/m, 'description:   '), /skills\/plan\/SKILL\.md needs a non-empty description: line/],
+    ['too long', line => line.replace(/^(description:.*)$/m, `$1 ${'x'.repeat(1024)}`), /skills\/plan\/SKILL\.md description exceeds 1,024 characters/],
+    ['angle bracket', line => line.replace(/^(description:.*)$/m, '$1 Use <phase>.'), /skills\/plan\/SKILL\.md description must not contain < or >/],
+    ['no Kaylo', line => line.replace(/^(description:.*)$/m, m => m.replaceAll('Kaylo', 'project')), /skills\/plan\/SKILL\.md description must name Kaylo/]
+  ];
+  for (const [label, update, message] of cases) {
+    const dir = fixture(t);
+    const target = path.join(dir, 'skills/plan/SKILL.md');
+    const original = fs.readFileSync(target, 'utf8');
+    const changed = update(original);
+    assert.notEqual(changed, original, label);
+    fs.writeFileSync(target, changed);
+    const result = check(dir);
+    assert.equal(result.status, 1, label);
+    assert.match(result.stderr, message, label);
+  }
+});
+test('a drifted copy of shared skill text names the skill and block', t => {
+  const cases = [
+    ['skills/review/SKILL.md', 'Read only necessary sensitive data', 'Read only needed sensitive data',
+      /credentials guardrail in skills\/review\/SKILL\.md differs from the other copies/],
+    ['skills/build/SKILL.md', 'do not reset, clean, or discard it to make checks pass. Record',
+      'do not reset or discard it to make checks pass. Record',
+      /working-changes guardrail in skills\/build\/SKILL\.md must be the shared copy followed by its additions/],
+    ['skills/close/SKILL.md', 'record that the automated check was unavailable', 'note that the automated check was unavailable',
+      /Node-unavailable fallback differs between skills\/build\/SKILL\.md, skills\/close\/SKILL\.md/],
+    ['skills/define/SKILL.md', '- Inspect staged,',
+      '- A permission denial applies only to the denied command.\n- Inspect staged,',
+      /skills\/define\/SKILL\.md carries the permission-denial guardrail, listed as omitted/],
+    ['skills/plan/SKILL.md', /^If Node or the script is unavailable.*$/m,
+      fs.readFileSync(path.join(repo, 'skills/close/SKILL.md'), 'utf8').match(/^If Node or the script is unavailable.*$/m)[0],
+      /skills\/plan\/SKILL\.md now matches the shared Node-unavailable fallback/]
+  ];
+  for (const [file, from, to, message] of cases) {
+    const dir = fixture(t);
+    const target = path.join(dir, file);
+    const original = fs.readFileSync(target, 'utf8');
+    const changed = original.replace(from, () => to);
+    assert.notEqual(changed, original, file);
+    fs.writeFileSync(target, changed);
+    const result = check(dir);
+    assert.equal(result.status, 1, file);
+    assert.match(result.stderr, message, file);
+  }
+});
 test('invalid CLI usage returns 2', () => {
   assert.equal(check(repo, ['--installed']).status, 2);
 });

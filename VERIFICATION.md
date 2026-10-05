@@ -25,6 +25,37 @@ consistency claim.
 Not established on any host: Antigravity IDE loading, models other than those
 named, and repeated runs of the same case.
 
+## Skill descriptions and copied skill text — 2026-10-05
+
+Issue #72 added "use when" clauses to the `plan` and `close` descriptions and
+two groups of checks to `scripts/validate-package.cjs`: description checks for
+all five skills, and a byte-identity check for six blocks copied across skills.
+The three variants listed in the issue were inspected before being written
+into the check. `plan`'s reworded fallback differs from the `build` and
+`close` copy in three ways: it cites its own "Older formats" section instead of
+listing them, it omits "Retain validator diagnostics with secrets redacted"
+because its preceding validator paragraph already says so, and it ends with
+"agreement and verification rules" instead of "acceptance and review rules".
+All three come from the paragraph as written in #11 (`9ee5eb9`) and fit plan's
+own rules, so they were treated as intended rather than drift.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: package v0.10.0, five shared skills, matching versions and release catalogs |
+| New fixtures, one per assertion, each in a copied checkout | Each exited 1 with its own message: missing and empty descriptions (`needs a non-empty description: line`), a description over 1,024 characters, `<phase>` in a description, `Kaylo` removed, a reworded credentials guardrail in `review`, a shortened working-changes guardrail in `build`, a reworded fallback in `close` (names both `build` and `close`, since neither copy is the majority), the permission-denial guardrail added to `define`, and `plan`'s fallback replaced by the shared copy |
+| The two new tests against the previous validator (`git show HEAD:scripts/validate-package.cjs`) | Both failed, so they depend on the new assertions |
+| `node --test tests/*.test.cjs` | 168 tests passed |
+| `claude plugin validate .claude-plugin/plugin.json --strict` | Passed |
+| `claude plugin validate .claude-plugin/marketplace.json --strict` | Passed |
+| `agy plugin validate .` | Passed: five skills and three agents processed |
+| `git diff --check` | Clean on the final working diff |
+
+The checks used Node v24.21.0, Claude Code 2.1.289, and Antigravity CLI 1.2.14
+on the uncommitted checkout. These are package checks only. No model request,
+host install, or skill-routing trial ran, so whether the new clauses change
+which skill a host loads is not observed. The identity check covers only the
+six listed blocks; other text repeated across skills is not compared.
+
 ## Public installation 0.10.0 — 2026-10-04
 
 PR #70 merged the release commits into `main` as `fffd06d`. The immutable

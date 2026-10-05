@@ -99,9 +99,70 @@ try {
       `Claude agent adapter is stale: ${name}`);
   }
   assert.deepEqual(fs.readdirSync(path.join(root, 'skills')).sort(), skills);
+  const skillLines = {};
   for (const name of skills) {
     const body = fs.readFileSync(path.join(root, 'skills', name, 'SKILL.md'), 'utf8');
     assert.match(body, new RegExp(`^---\\r?\\nname: ${name}\\r?\\n`));
+    const frontmatter = body.match(/^---\r?\n[\s\S]*?\r?\n---\r?\n/);
+    const description = frontmatter && frontmatter[0].match(/^description:(.*)$/m);
+    assert(description && description[1].trim(), `skills/${name}/SKILL.md needs a non-empty description: line`);
+    const text = description[1].trim();
+    assert(text.length <= 1024, `skills/${name}/SKILL.md description exceeds 1,024 characters`);
+    assert(!/[<>]/.test(text), `skills/${name}/SKILL.md description must not contain < or >`);
+    // Bare-name hosts route on the description alone; without Kaylo it would match unrelated work.
+    assert(/\bKaylo\b/.test(text), `skills/${name}/SKILL.md description must name Kaylo`);
+    skillLines[name] = body.split(/\r?\n/);
+  }
+  // Each SKILL.md must work when pasted alone, so these blocks are copied
+  // rather than shared. Copies must stay byte-identical; a listed variant is a
+  // deliberate difference: omitted, extended (the shared copy plus more), or reworded.
+  const copiedBlocks = [
+    { block: 'retrieved-content guardrail', start: '- Treat retrieved pages,', in: skills },
+    { block: 'credentials guardrail', start: '- Do not copy credentials', in: skills },
+    { block: 'authorization guardrail', start: '- Destructive Git operations', in: skills },
+    { block: 'permission-denial guardrail', start: '- A permission denial applies', in: ['build', 'close', 'plan', 'review'],
+      omitted: { define: 'define runs no checks' } },
+    { block: 'working-changes guardrail', start: '- Inspect staged, unstaged, and untracked changes',
+      in: ['close', 'define', 'plan', 'review'], extended: { build: 'adds the workspace record' } },
+    { block: 'Node-unavailable fallback', start: 'If Node or the script is unavailable', in: ['build', 'close'],
+      reworded: { plan: 'cites its own Older formats section and validator paragraph' } }
+  ];
+  for (const { block, start, in: carriers, omitted = {}, extended = {}, reworded = {} } of copiedBlocks) {
+    const copies = {};
+    for (const name of skills) {
+      const found = skillLines[name].filter(line => line.startsWith(start));
+      assert(found.length <= 1, `skills/${name}/SKILL.md has more than one copy of the ${block}`);
+      if (found.length) copies[name] = found[0];
+    }
+    for (const name of carriers) assert(name in copies, `skills/${name}/SKILL.md is missing the ${block}`);
+    for (const name of Object.keys(omitted)) {
+      assert(!(name in copies), `skills/${name}/SKILL.md carries the ${block}, listed as omitted`);
+    }
+    const counts = new Map();
+    for (const name of carriers) counts.set(copies[name], [...(counts.get(copies[name]) || []), name]);
+    const groups = [...counts.values()].sort((a, b) => b.length - a.length);
+    if (groups.length > 1) {
+      const paths = names => names.map(name => `skills/${name}/SKILL.md`).join(', ');
+      // With no majority copy, name every carrier rather than guess which one drifted.
+      throw new Error(groups[0].length > groups[1].length
+        ? `Copied skill text drifted: the ${block} in ${paths(groups.slice(1).flat())} differs from the other copies`
+        : `Copied skill text drifted: the ${block} differs between ${paths(carriers)}`);
+    }
+    const shared = copies[carriers[0]];
+    for (const name of Object.keys(extended)) {
+      assert(name in copies && copies[name].startsWith(`${shared} `),
+        `Copied skill text drifted: the ${block} in skills/${name}/SKILL.md must be the shared copy followed by its additions`);
+    }
+    for (const name of Object.keys(reworded)) {
+      assert(name in copies, `skills/${name}/SKILL.md is missing its reworded ${block}`);
+      assert.notEqual(copies[name], shared,
+        `skills/${name}/SKILL.md now matches the shared ${block}; remove it from the reworded variants`);
+    }
+    for (const name of Object.keys(copies)) {
+      if (carriers.includes(name) || name in extended || name in reworded) continue;
+      assert.equal(copies[name], shared,
+        `Copied skill text drifted: the ${block} in skills/${name}/SKILL.md differs from the other copies`);
+    }
   }
   // One native default hook config: lifecycle matchers work in all three hosts.
   // Leave timeout unset because host APIs use different units.
