@@ -4,6 +4,12 @@
 
 ### Notable Changes
 
+- **skills**: Remove five repeated clauses within `plan` and `build`, keeping
+  each requirement in its more specific rule. All five skills now have a
+  rule-source inventory in the comments on
+  [#75](https://github.com/jeio-dev/kaylo/issues/75); guardrails and shared
+  copies are unchanged. This is a text-only cleanup; model behavior is
+  checked separately in [#74](https://github.com/jeio-dev/kaylo/issues/74).
 - **skills**: The `plan` and `close` descriptions now say when to use them, as
   the other three already did. `plan` applies after a Kaylo PRD is agreed, when
   the current phase closes, or when another Kaylo skill routes back to it;

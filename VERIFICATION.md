@@ -25,6 +25,49 @@ consistency claim.
 Not established on any host: Antigravity IDE loading, models other than those
 named, and repeated runs of the same case.
 
+## Rule sources and within-skill repeats — 2026-10-05
+
+PR #77 review at `9e2c9759bdb688ba9af5572a9f94f43e88c55b50`: direct
+review found no actionable issues in the five clause removals. Re-ran package
+validation, all 168 Node tests (no failures or skips), both strict Claude
+manifest validators, Antigravity plugin validation, and the baseline-to-head
+diff whitespace check; all passed. Confirmed the five before/after word counts
+and surviving requirements. No separate fresh reviewer, model trial, or host
+install/update trial was used; the source inventory's historical provenance
+was not independently audited exhaustively.
+
+Issue #75 traced the prose rules in all five skills against `8c5ea347b3` with
+Git pickaxe searches, introduction diffs, and historical README and verification
+records. The [rule-source table](https://github.com/jeio-dev/kaylo/issues/75#issuecomment-6003230269)
+lives only in the issue comments, not in the shipped package. It covers 582
+sentence/list-item units, including descriptions and cross-skill copies, with
+failure, design, or general tags. Sources record provenance, not evidence that
+a rule is necessary.
+
+Five repeated clauses were removed from `plan` and `build`; each requirement
+remains in the same skill's more specific rule. Whitespace-delimited word counts
+for the whole files (including frontmatter) are: define 797 → 797, plan
+3,386 → 3,369, build 3,006 → 3,003, review 1,041 → 1,041, and close
+1,620 → 1,620. The older-format candidates already use pointers to their lists.
+Close's evidence-preservation clauses remain because they cover distinct
+failure paths. Guardrails, descriptions, shared fallback paragraphs, and plan's
+validator-diagnostic redaction are unchanged.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: five shared skills, matching versions and release catalogs; includes #72's copied-block identity checks |
+| `node --test tests/*.test.cjs` | 168 passed, zero failed or skipped, including copied-block drift fixtures |
+| `claude plugin validate .claude-plugin/plugin.json --strict` | Passed |
+| `claude plugin validate .claude-plugin/marketplace.json --strict` | Passed |
+| `agy plugin validate .` | Passed: five skills and three agents processed |
+| Direct comparison with the baseline | Only the five listed repeated clauses changed in skills; define, review, and close are byte-identical, as are every guardrail and fallback paragraph |
+| `git diff --check` | Clean |
+
+This is a text-only change. These checks establish package structure and text
+consistency, not model or worker behavior. No model trials or isolated host
+install/update checks ran; model behavior is checked in #74. No release was
+prepared or published.
+
 ## Skill descriptions and copied skill text — 2026-10-05
 
 Issue #72 added "use when" clauses to the `plan` and `close` descriptions and
