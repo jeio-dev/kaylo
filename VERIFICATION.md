@@ -27,6 +27,15 @@ named, and repeated runs of the same case.
 
 ## Rule sources and within-skill repeats — 2026-10-05
 
+PR #77 review at `9e2c9759bdb688ba9af5572a9f94f43e88c55b50`: direct
+review found no actionable issues in the five clause removals. Re-ran package
+validation, all 168 Node tests (no failures or skips), both strict Claude
+manifest validators, Antigravity plugin validation, and the baseline-to-head
+diff whitespace check; all passed. Confirmed the five before/after word counts
+and surviving requirements. No separate fresh reviewer, model trial, or host
+install/update trial was used; the source inventory's historical provenance
+was not independently audited exhaustively.
+
 Issue #75 traced the prose rules in all five skills against `8c5ea347b3` with
 Git pickaxe searches, introduction diffs, and historical README and verification
 records. The [rule-source table](https://github.com/jeio-dev/kaylo/issues/75#issuecomment-6003230269)
