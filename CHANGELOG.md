@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## 2026-10-06, Version 0.11.0
 
 ### Notable Changes
 
@@ -63,6 +63,56 @@
   rewordings. Each block is compared whole, including a bullet's continuation
   lines. A missing or drifted copy fails with a message naming the skill and
   the block ([#72](https://github.com/jeio-dev/kaylo/issues/72)).
+
+### Verification
+
+The package validator, all 168 Node tests, strict Claude plugin and marketplace
+validation, Antigravity validation, `npm pack --dry-run` (48 entries), and
+whitespace checks passed on the release tree. In isolated profiles against a
+local release mirror, a tarball packed from the release tree updated native
+v0.10.0 installs on Claude Code, Codex, Antigravity, Gemini CLI, and OpenCode
+to 0.11.0; every installed root matched the release tree's 23 shared
+resources, none followed the mirror's newer `main`, and OpenCode listed all
+five skills from the new copy. These checks ran on one Linux (WSL2) machine
+without sign-in or model requests; Gemini CLI reached the mirror by Git clone
+after its release-archive request failed offline. Live worker starts were
+skipped because the worker briefs, Claude adapters, and hooks are byte-identical
+to v0.10.0. The skill changes in this release are text changes whose model
+behavior is covered only by the #74 trials described above, which ran on an
+earlier snapshot (`738ae4e`) on Claude Code with Sonnet 5.5 and on Codex.
+These pre-release checks did not include public npm, GitHub marketplace, or
+Gemini release-archive installs of 0.11.0. Other operating systems, Gemini CLI model behavior, and
+Antigravity IDE loading remain untested. Details and limits are in
+`VERIFICATION.md`.
+
+### Commits
+
+- [`fffd06d6d9`](https://github.com/jeio-dev/kaylo/commit/fffd06d6d95f73c3a5d777e53dc5b0c94e20aa5b) - **plugins**: merge pull request #70 from jeio-dev/release-0.10.0 (Jeio) [#70](https://github.com/jeio-dev/kaylo/pull/70)
+- [`f796094371`](https://github.com/jeio-dev/kaylo/commit/f79609437103093e2ce74dff3accd23e5ecb6764) - **docs**: record v0.10.0 public installation checks (Jeio)
+- [`0a0d9e3023`](https://github.com/jeio-dev/kaylo/commit/0a0d9e3023a6fb4304dbccc863abec45e0074e2b) - **skills**: add use-when clauses and check descriptions and copied text (Jeio) [#76](https://github.com/jeio-dev/kaylo/pull/76)
+- [`10f52dffe1`](https://github.com/jeio-dev/kaylo/commit/10f52dffe14fbb91199146ba81aebf0ad206cea9) - **tools**: check plan's reworded fallback exactly and address review nits (Jeio) [#76](https://github.com/jeio-dev/kaylo/pull/76)
+- [`1619c78ef6`](https://github.com/jeio-dev/kaylo/commit/1619c78ef648dacae2d1df7f63d4a03b0af58377) - **docs**: record the confirmed plan fallback variant and its redaction dependency (Jeio) [#76](https://github.com/jeio-dev/kaylo/pull/76)
+- [`d4c616c969`](https://github.com/jeio-dev/kaylo/commit/d4c616c969d923b22f5235f26cb4fdc28285a5a2) - **tools**: compare whole copied blocks and accept only plain single-line descriptions (Jeio) [#76](https://github.com/jeio-dev/kaylo/pull/76)
+- [`8c5ea347b3`](https://github.com/jeio-dev/kaylo/commit/8c5ea347b38d5d85dd4900ef2afe5fc93e82b335) - **skills**: merge pull request #76 from jeio-dev/issue-72-descriptions-shared-text (Jeio) [#76](https://github.com/jeio-dev/kaylo/pull/76)
+- [`9e2c9759bd`](https://github.com/jeio-dev/kaylo/commit/9e2c9759bdb688ba9af5572a9f94f43e88c55b50) - **skills**: trace rule sources and remove within-skill repeats (#75) (Jeio) [#77](https://github.com/jeio-dev/kaylo/pull/77)
+- [`0bc6dca0f4`](https://github.com/jeio-dev/kaylo/commit/0bc6dca0f420775470101b238ea76380c71989dd) - **docs**: record PR #77 review checks (Jeio) [#77](https://github.com/jeio-dev/kaylo/pull/77)
+- [`73dd9ac3a1`](https://github.com/jeio-dev/kaylo/commit/73dd9ac3a10ebcdb2e8811ee3a2237910e528601) - **skills**: merge pull request #77 from jeio-dev/issue-75-rule-sources (Jeio) [#77](https://github.com/jeio-dev/kaylo/pull/77)
+- [`1a5a238084`](https://github.com/jeio-dev/kaylo/commit/1a5a238084adb52197ffe84e06db74f545997117) - **docs**: show the plan validator as an optional user-owned pre-commit hook (#73) (Jeio) [#78](https://github.com/jeio-dev/kaylo/pull/78)
+- [`8f8a940586`](https://github.com/jeio-dev/kaylo/commit/8f8a940586a09654253ffa40ef3def7297ca9522) - **docs**: add the hook after ROADMAP.md is committed; record PR #78 review (Jeio) [#78](https://github.com/jeio-dev/kaylo/pull/78)
+- [`738ae4e296`](https://github.com/jeio-dev/kaylo/commit/738ae4e296bfb6101935f55be9646d454a842f43) - **docs**: merge pull request #78 from jeio-dev/issue-73-pre-commit-validator (Jeio) [#78](https://github.com/jeio-dev/kaylo/pull/78)
+- [`0bd9da6653`](https://github.com/jeio-dev/kaylo/commit/0bd9da6653eb6422a38e86c07fd5205aeb4e0ec0) - **tests**: add the repeated-run protocol for guardrail and routing trials (#74) (Jeio) [#79](https://github.com/jeio-dev/kaylo/pull/79)
+- [`ac3974e877`](https://github.com/jeio-dev/kaylo/commit/ac3974e877827f802c996f0f407e8b01fca81ee3) - **docs**: record Claude round 1 of the repeated guardrail trials (#74) (Jeio) [#79](https://github.com/jeio-dev/kaylo/pull/79)
+- [`acf8fd17a0`](https://github.com/jeio-dev/kaylo/commit/acf8fd17a0a38617eaabb8a7f4df46e4a666acb4) - **docs**: record Claude rounds 2 and 3 of the guardrail trials and Codex preparation (#74) (Jeio) [#79](https://github.com/jeio-dev/kaylo/pull/79)
+- [`d041433da1`](https://github.com/jeio-dev/kaylo/commit/d041433da12064eb942f0f2057dc6e96e10506e5) - **docs**: record Codex rounds 1 to 3 of the guardrail trials (#74) (Jeio) [#79](https://github.com/jeio-dev/kaylo/pull/79)
+- [`813c38dea5`](https://github.com/jeio-dev/kaylo/commit/813c38dea55e152b94e3f64ffe05636f2cf1f97c) - **tests**: record the P5 empty-name ruling and widen P5's rubric for later runs (#74) (Jeio) [#79](https://github.com/jeio-dev/kaylo/pull/79)
+- [`6b8201babb`](https://github.com/jeio-dev/kaylo/commit/6b8201babb7fe8395186b6f4221e05f9bf1a9fe8) - **tests**: merge pull request #79 from jeio-dev/issue-74-live-trials (Jeio) [#79](https://github.com/jeio-dev/kaylo/pull/79)
+- [`2502f0a910`](https://github.com/jeio-dev/kaylo/commit/2502f0a91012003ea710d053ab5a9602f3d12fa7) - **docs**: record the UI scope ruling and the cause of C1's empty spawnSync capture on Codex (#74) (Jeio) [#80](https://github.com/jeio-dev/kaylo/pull/80)
+- [`d190775762`](https://github.com/jeio-dev/kaylo/commit/d1907757621018e283f0ac6b598bb25c8a704b6c) - **docs**: correct the UI run-3 disclosure claim and record the PR #80 review (#74) (Jeio) [#80](https://github.com/jeio-dev/kaylo/pull/80)
+- [`f37d842458`](https://github.com/jeio-dev/kaylo/commit/f37d8424581094f82dd189a1054236ceb4725114) - **docs**: merge pull request #80 from jeio-dev/issue-74-followup-rulings (Jeio) [#80](https://github.com/jeio-dev/kaylo/pull/80)
+- [`fcc1a4498d`](https://github.com/jeio-dev/kaylo/commit/fcc1a4498d42abe0537022d00c5444a363ba03da) - **docs**: carry PR #80's ruling and Codex sandbox limit into the changelog, trials, and README (#74) (Jeio) [#81](https://github.com/jeio-dev/kaylo/pull/81)
+- [`0eef47295e`](https://github.com/jeio-dev/kaylo/commit/0eef47295e882794eb5eac86797dd37944bcbc93) - **docs**: record the PR #81 review (Jeio) [#81](https://github.com/jeio-dev/kaylo/pull/81)
+- [`2f97fded68`](https://github.com/jeio-dev/kaylo/commit/2f97fded6840938aba9301b31974da7dc07a89f6) - **docs**: merge pull request #81 from jeio-dev/docs-pr80-followups (Jeio) [#81](https://github.com/jeio-dev/kaylo/pull/81)
+- [`0d26967b0e`](https://github.com/jeio-dev/kaylo/commit/0d26967b0ef7835bd3324ec542eb002f76eda30c) - **plugins**: prepare v0.11.0 manifests and README (Jeio)
 
 ## 2026-10-04, Version 0.10.0
 

@@ -8,7 +8,7 @@ through 0.8.0 (2026-09-27 to 2026-09-29) are in the
 (`git show v0.9.2:VERIFICATION.md`); records from the first draft through 0.5.2
 are in `git show v0.6.0:VERIFICATION.md`.
 
-## Current status — 0.10.0
+## Current status — 0.11.0
 
 A summary of the records below and the archived ones. Every live-model result
 is one run per case, or a few, on the host and model named; none is a
@@ -16,11 +16,11 @@ consistency claim.
 
 | Host | Installation and update | Session reminder | Kaylo workers | Kaylo run with a model |
 | --- | --- | --- | --- | --- |
-| Claude Code 2.1.286 | Public v0.10.0 on 2.1.289: native marketplace install, `npx kaylo@0.10.0` fresh install, and `npx kaylo@latest update` from public native v0.9.3; 23 resources match the tag. #62 also covered status and uninstall | Delivered at startup and resume. Skipped when the hook payload names a Kaylo worker as `agent_type`, observed when a worker was started or resumed with `--agent`; a worker resumed with `-c` alone still received it | Prepared v0.9.3: all three installed workers started and reached a model; actual models were not recorded. Issue #31: two builder workers completed independent tasks concurrently in a temporary project; their actual models were not exposed. The new reviewer tool list passed structural and startup checks, but no tool-use trial | All five skills with Claude Opus 5.5, from 0.7.0 through the 0.9.2 fixes. Workers with a recorded model: builder with Opus 5.5 and with Claude Haiku 4.5, and reviewer with Opus 5.5 (`334f574`, before 0.8.0); researcher with Opus 5.5 (v0.9.1 and the 0.9.2 fixes). Issue #31 phase and build trials used an Opus 5.5 guiding session; worker model identity was not observed. Issue #74 repeated set on 2.1.289 with Sonnet 5.5 (snapshot `738ae4e`): seven guardrail and routing cases, three passes each |
-| Codex CLI 0.160.0 | Public v0.10.0: native marketplace install, `npx kaylo@0.10.0` fresh install, and `npx kaylo@latest update` from public native v0.9.3; 23 resources match the tag. `status` reports `files not verified` by design. Five skills discovered for v0.9.3 | Fired at startup and resume after the hooks were trusted | None registered; the manual handoff was not run. In #74's P5 runs a Codex generic subagent read the reviewer brief and acted as the fresh reviewer | Issue #74 repeated set on 0.160.1 with GPT-6.1-Sol (displayed default, reasoning low; snapshot `738ae4e`, read-only sandbox, approval on request): seven guardrail and routing cases, three passes each, including `build`, `close`, and `plan` |
-| OpenCode 2.0.18 | Public v0.10.0: `npx kaylo@0.10.0` fresh install, and `npx kaylo@latest update` from a public v0.9.3 checkout in the versioned data directory; five skills loaded from the new copy and 23 resources match the tag. #62 also covered status, uninstall, and the config refusal | No adapter | None registered; researcher run with a pasted brief | Researcher only, with DeepSeek v4 flash (v0.9.1 and the 0.9.2 fixes); no v0.9.3 model run |
-| Antigravity CLI 1.2.14 | Public v0.10.0: native install from a tag clone, `npx kaylo@0.10.0` fresh install from the npm package directory, and `npx kaylo@latest update` from public native v0.9.3; 23 resources match the tag. #62 also covered status and uninstall | No adapter | Prepared v0.9.3: all three installed workers started and reached a model; actual models were not recorded. Researcher also ran as a subagent in an earlier trial | Researcher only, with Gemini 3.8 Flash (High) (v0.9.1 and the 0.9.2 fixes) |
-| Gemini CLI 0.62.0 | Public v0.10.0: native install, `npx kaylo@0.10.0` fresh install, and `npx kaylo@latest update` from public v0.9.3, each through the GitHub release archive (`github-release`); five skills listed and 23 resources match the tag. #62 also covered status and uninstall | Fired at startup without a sign-in; whether its context reaches a model is unknown | The CLI's agent loader returned all three briefs; no signed-in listing or start | Not run |
+| Claude Code 2.1.286 | Prepared v0.11.0 on 2.1.290: `npx` update from native v0.10.0 against a local mirror; 23 resources match the release tree. Public v0.10.0 on 2.1.289: native marketplace install, `npx kaylo@0.10.0` fresh install, and `npx kaylo@latest update` from public native v0.9.3; 23 resources match the tag. #62 also covered status and uninstall | Delivered at startup and resume. Skipped when the hook payload names a Kaylo worker as `agent_type`, observed when a worker was started or resumed with `--agent`; a worker resumed with `-c` alone still received it | Prepared v0.9.3: all three installed workers started and reached a model; actual models were not recorded. Issue #31: two builder workers completed independent tasks concurrently in a temporary project; their actual models were not exposed. The new reviewer tool list passed structural and startup checks, but no tool-use trial | All five skills with Claude Opus 5.5, from 0.7.0 through the 0.9.2 fixes. Workers with a recorded model: builder with Opus 5.5 and with Claude Haiku 4.5, and reviewer with Opus 5.5 (`334f574`, before 0.8.0); researcher with Opus 5.5 (v0.9.1 and the 0.9.2 fixes). Issue #31 phase and build trials used an Opus 5.5 guiding session; worker model identity was not observed. Issue #74 repeated set on 2.1.289 with Sonnet 5.5 (snapshot `738ae4e`): seven guardrail and routing cases, three passes each |
+| Codex CLI 0.160.0 | Prepared v0.11.0 on 0.160.1: `npx` update from native v0.10.0 against a local mirror; 23 resources match the release tree. Public v0.10.0: native marketplace install, `npx kaylo@0.10.0` fresh install, and `npx kaylo@latest update` from public native v0.9.3; 23 resources match the tag. `status` reports `files not verified` by design. Five skills discovered for v0.9.3 | Fired at startup and resume after the hooks were trusted | None registered; the manual handoff was not run. In #74's P5 runs a Codex generic subagent read the reviewer brief and acted as the fresh reviewer | Issue #74 repeated set on 0.160.1 with GPT-6.1-Sol (displayed default, reasoning low; snapshot `738ae4e`, read-only sandbox, approval on request): seven guardrail and routing cases, three passes each, including `build`, `close`, and `plan` |
+| OpenCode 2.0.18 | Prepared v0.11.0: `npx` update from a v0.10.0 checkout against a local mirror; five skills loaded from the new copy and 23 resources match the release tree. Public v0.10.0: `npx kaylo@0.10.0` fresh install, and `npx kaylo@latest update` from a public v0.9.3 checkout in the versioned data directory; five skills loaded from the new copy and 23 resources match the tag. #62 also covered status, uninstall, and the config refusal | No adapter | None registered; researcher run with a pasted brief | Researcher only, with DeepSeek v4 flash (v0.9.1 and the 0.9.2 fixes); no v0.9.3 model run |
+| Antigravity CLI 1.2.14 | Prepared v0.11.0: `npx` update from native v0.10.0; 23 resources match the release tree. Public v0.10.0: native install from a tag clone, `npx kaylo@0.10.0` fresh install from the npm package directory, and `npx kaylo@latest update` from public native v0.9.3; 23 resources match the tag. #62 also covered status and uninstall | No adapter | Prepared v0.9.3: all three installed workers started and reached a model; actual models were not recorded. Researcher also ran as a subagent in an earlier trial | Researcher only, with Gemini 3.8 Flash (High) (v0.9.1 and the 0.9.2 fixes) |
+| Gemini CLI 0.62.0 | Prepared v0.11.0: `npx` update from public v0.10.0 by Git clone from a local mirror; 23 resources match the release tree. Public v0.10.0: native install, `npx kaylo@0.10.0` fresh install, and `npx kaylo@latest update` from public v0.9.3, each through the GitHub release archive (`github-release`); five skills listed and 23 resources match the tag. #62 also covered status and uninstall | Fired at startup without a sign-in; whether its context reaches a model is unknown | The CLI's agent loader returned all three briefs; no signed-in listing or start | Not run |
 
 Not established on any host: Antigravity IDE loading and models other than those
 named. The repeated guardrail set below has three passes per case on Claude
@@ -28,6 +28,65 @@ Code 2.1.289 with Sonnet 5.5 and on Codex CLI 0.160.1 with GPT-6.1-Sol. The
 Codex grades are operator-reported. The PR #79 review spot-checked their saved
 command records and secret-token classifications but did not audit every
 transcript.
+
+## v0.11.0 release preparation — 2026-10-06
+
+The release tree is merged `main` (`2f97fde`) plus release preparation only:
+version 0.11.0 in the three host manifests and `package.json`, `v0.11.0` in
+both release catalog refs, 0.11.0 in README version/tag mentions, and this
+release's changelog and verification records. Since v0.10.0, the shipped
+changes are the `plan`, `close`, and `build` skill text, the package
+validator's description and copied-text checks with their tests, the README,
+and `tests/GUARDRAIL-TRIALS.md`. Worker briefs, Claude adapters, hooks,
+templates, and the installer are byte-identical to v0.10.0.
+
+| Check | Result |
+| --- | --- |
+| Node 24.21.0: `node scripts/validate-package.cjs` | Passed: five skills, matching 0.11.0 versions and release catalogs |
+| `node --test tests/*.test.cjs`, `TMPDIR` outside the checkout | 168 tests, 168 pass |
+| Claude Code 2.1.290: `claude plugin validate` of `plugin.json` and `marketplace.json`, `--strict` | Both passed |
+| Antigravity CLI 1.2.14: `agy plugin validate .` | Passed: 5 skills, 3 agents |
+| npm 11.19.0: `npm pack --dry-run --json` | `kaylo-0.11.0.tgz`, 48 entries |
+| `git diff --check` | Passed |
+
+**Update trial on the release tree.** This repeats the v0.10.0 preparation
+trial with v0.10.0 as the previous release. A tarball was packed from
+`git archive` of the uncommitted release working tree (a `git stash create`
+snapshot, `f14b0bd`). A local bare mirror held the real v0.10.0 tree, the
+release tree as `v0.11.0`, and a `main` commit past the tag with a marker in
+the build skill. Isolation matched the v0.10.0 trial: `env -i` with `HOME`,
+`CLAUDE_CONFIG_DIR`, `CODEX_HOME`, four `XDG_*` directories, `TMPDIR`, and npm
+cache under one trial root; a trial `GIT_CONFIG_GLOBAL` `insteadOf` rewrite;
+Antigravity and Gemini CLI in Bubblewrap with an empty directory bound over the
+real `~/.gemini`; host prompts answered on a pseudo-terminal. Hosts: Claude
+Code 2.1.290, Codex CLI 0.160.1, Antigravity CLI 1.2.14, Gemini CLI 0.62.0,
+and OpenCode 2.0.18, with Node 24.21.0 and npm 11.19.0, on one Linux (WSL2)
+machine. No sign-in or model request ran.
+
+| Step | Observed result |
+| --- | --- |
+| Native v0.10.0 installs | Claude Code `marketplace add jeio-dev/kaylo@v0.10.0` and `plugin install`; Codex `marketplace add --ref v0.10.0` and `plugin add`; Antigravity `plugin install` of the v0.10.0 export; Gemini CLI `extensions install --ref v0.10.0` from public GitHub, whose install metadata recorded `type: "github-release"` and `releaseTag: "v0.10.0"`; OpenCode a mirror v0.10.0 checkout at `<XDG_DATA_HOME>/kaylo/v0.10.0` referenced from a seeded global `opencode.jsonc` with a comment and another setting. All five roots passed the v0.10.0 validator with 23 matching resources. `status` showed all five at v0.10.0 (Codex `files not verified`, the others `files not compared`) |
+| `npx --package file:<tarball> kaylo update --all --yes` | Exit 0. Claude Code: `marketplace remove`, `marketplace add jeio-dev/kaylo@v0.11.0`, `plugin install`. Codex: `marketplace remove`, `marketplace add --ref v0.11.0`, `plugin add --json`. Antigravity: `plugin install` of the npx package directory. Gemini CLI: `extensions uninstall`, then `extensions install --ref v0.11.0`; with networking unshared the release-API request failed and Gemini installed by Git clone from the mirror after its `[Y/n]` prompt (install metadata `type: "git"`, `ref: "v0.11.0"`), listing the new `plan` and `close` descriptions. OpenCode: new versioned copy, config entry changed to `v0.11.0/skills` with the comment and `theme` preserved, old v0.10.0 copy removed. All five reported `v0.11.0, files verified` |
+| Independent check | `node <release tree>/scripts/validate-package.cjs --installed <root>` passed on all five roots with 23 matching resources; no root carried the mirror `main` marker |
+| `status` afterwards | Claude Code, Antigravity, Gemini CLI, and OpenCode `v0.11.0 (files verified)`; Codex `v0.11.0 (files not verified)` |
+| OpenCode discovery | `opencode serve` in Bubblewrap, with empty directories over the real `~/.claude` and `~/.agents`; authenticated `GET /api/skill` listed define, plan, build, review, and close from `<XDG_DATA_HOME>/kaylo/v0.11.0/`, plus two built-in skills |
+
+As in the v0.10.0 trial, Claude Code left its `cache/kaylo/kaylo/0.10.0`
+directory on disk next to 0.11.0; Codex kept only the 0.11.0 cache copy. No
+real-profile hash inventory was taken, because a Claude Code session was
+active; the installer commands used only the trial profiles.
+
+**Not run for this preparation.** The live worker starts in release step 6
+were skipped by the maintainer's decision: the worker briefs and Claude adapters are byte-identical to
+v0.10.0 and v0.9.3, whose installed builder, researcher, and reviewer started
+and reached a model on Claude Code and Antigravity. No Kaylo skill or worker
+ran with a model on the release tree. The changed `plan`, `close`, and
+`build` skill text was exercised by the #74 trials only on snapshot `738ae4e`,
+which already contained it; those runs cover the seven named cases on the
+named hosts and models. Public `npx kaylo`, npm registry, GitHub marketplace,
+and Gemini release-archive installs of 0.11.0 were not part of these checks.
+Other operating systems and newer host versions remain untested. Trial
+scripts and logs are under the ignored `.local/trials/release-0.11.0/`.
 
 ## PR #78 review — 2026-10-05
 
