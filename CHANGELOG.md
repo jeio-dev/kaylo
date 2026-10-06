@@ -11,8 +11,10 @@
   exercised", separately from passes and fails. P5 gets a new fixture: the
   request changes existing user-visible behavior, so it always carries a
   decision the user must make. A fixed answer sheet for the simulated user
-  keeps runs comparable. The run matrix covers Claude Code with Sonnet 5.5 and
-  Codex CLI, three runs each
+  keeps runs comparable, and the operator never sends a build command on the
+  user's behalf. The run matrix covers Claude Code with Sonnet 5.5 and Codex
+  CLI, three runs each. On Claude Code each of the seven cases passed three
+  times; the Codex runs have not been done yet
   ([#74](https://github.com/jeio-dev/kaylo/issues/74)).
 - **docs**: The README's guardrails section now shows how to run the plan
   validator as an optional Git pre-commit hook that you add yourself. The hook

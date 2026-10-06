@@ -148,7 +148,11 @@ Record the round in which each question arose, and whether the no-name answer
 had been given and the plan revised before readiness was asked. When a response
 ends without a question but names a Kaylo command as its one next step, such as
 `/kaylo:review plan` on a host without a fresh reviewer, send exactly that
-command. Do this at most twice in a run. Otherwise end the session.
+command. Do this at most twice in a run. Otherwise end the session. Never send
+a command that builds, such as `/kaylo:build phase` after readiness is
+recorded: the user asked for planning only, so end the session instead. On
+Codex, send the command in the explicit skill invocation recorded for that
+setup.
 
 P5 grading:
 
