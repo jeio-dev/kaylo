@@ -16,11 +16,11 @@ consistency claim.
 
 | Host | Installation and update | Session reminder | Kaylo workers | Kaylo run with a model |
 | --- | --- | --- | --- | --- |
-| Claude Code 2.1.286 | Prepared v0.11.0 on 2.1.290: `npx` update from native v0.10.0 against a local mirror; 23 resources match the release tree. Public v0.10.0 on 2.1.289: native marketplace install, `npx kaylo@0.10.0` fresh install, and `npx kaylo@latest update` from public native v0.9.3; 23 resources match the tag. #62 also covered status and uninstall | Delivered at startup and resume. Skipped when the hook payload names a Kaylo worker as `agent_type`, observed when a worker was started or resumed with `--agent`; a worker resumed with `-c` alone still received it | Prepared v0.9.3: all three installed workers started and reached a model; actual models were not recorded. Issue #31: two builder workers completed independent tasks concurrently in a temporary project; their actual models were not exposed. The new reviewer tool list passed structural and startup checks, but no tool-use trial | All five skills with Claude Opus 5.5, from 0.7.0 through the 0.9.2 fixes. Workers with a recorded model: builder with Opus 5.5 and with Claude Haiku 4.5, and reviewer with Opus 5.5 (`334f574`, before 0.8.0); researcher with Opus 5.5 (v0.9.1 and the 0.9.2 fixes). Issue #31 phase and build trials used an Opus 5.5 guiding session; worker model identity was not observed. Issue #74 repeated set on 2.1.289 with Sonnet 5.5 (snapshot `738ae4e`): seven guardrail and routing cases, three passes each |
-| Codex CLI 0.160.0 | Prepared v0.11.0 on 0.160.1: `npx` update from native v0.10.0 against a local mirror; 23 resources match the release tree. Public v0.10.0: native marketplace install, `npx kaylo@0.10.0` fresh install, and `npx kaylo@latest update` from public native v0.9.3; 23 resources match the tag. `status` reports `files not verified` by design. Five skills discovered for v0.9.3 | Fired at startup and resume after the hooks were trusted | None registered; the manual handoff was not run. In #74's P5 runs a Codex generic subagent read the reviewer brief and acted as the fresh reviewer | Issue #74 repeated set on 0.160.1 with GPT-6.1-Sol (displayed default, reasoning low; snapshot `738ae4e`, read-only sandbox, approval on request): seven guardrail and routing cases, three passes each, including `build`, `close`, and `plan` |
-| OpenCode 2.0.18 | Prepared v0.11.0: `npx` update from a v0.10.0 checkout against a local mirror; five skills loaded from the new copy and 23 resources match the release tree. Public v0.10.0: `npx kaylo@0.10.0` fresh install, and `npx kaylo@latest update` from a public v0.9.3 checkout in the versioned data directory; five skills loaded from the new copy and 23 resources match the tag. #62 also covered status, uninstall, and the config refusal | No adapter | None registered; researcher run with a pasted brief | Researcher only, with DeepSeek v4 flash (v0.9.1 and the 0.9.2 fixes); no v0.9.3 model run |
-| Antigravity CLI 1.2.14 | Prepared v0.11.0: `npx` update from native v0.10.0; 23 resources match the release tree. Public v0.10.0: native install from a tag clone, `npx kaylo@0.10.0` fresh install from the npm package directory, and `npx kaylo@latest update` from public native v0.9.3; 23 resources match the tag. #62 also covered status and uninstall | No adapter | Prepared v0.9.3: all three installed workers started and reached a model; actual models were not recorded. Researcher also ran as a subagent in an earlier trial | Researcher only, with Gemini 3.8 Flash (High) (v0.9.1 and the 0.9.2 fixes) |
-| Gemini CLI 0.62.0 | Prepared v0.11.0: `npx` update from public v0.10.0 by Git clone from a local mirror; 23 resources match the release tree. Public v0.10.0: native install, `npx kaylo@0.10.0` fresh install, and `npx kaylo@latest update` from public v0.9.3, each through the GitHub release archive (`github-release`); five skills listed and 23 resources match the tag. #62 also covered status and uninstall | Fired at startup without a sign-in; whether its context reaches a model is unknown | The CLI's agent loader returned all three briefs; no signed-in listing or start | Not run |
+| Claude Code 2.1.286 | Public v0.11.0 on 2.1.290: native marketplace install, `npx kaylo@0.11.0` fresh install, and `npx kaylo@latest update` from public native v0.10.0; 23 resources match the tag. Public v0.10.0 on 2.1.289: native marketplace install, `npx kaylo@0.10.0` fresh install, and `npx kaylo@latest update` from public native v0.9.3; 23 resources match the tag. #62 also covered status and uninstall | Delivered at startup and resume. Skipped when the hook payload names a Kaylo worker as `agent_type`, observed when a worker was started or resumed with `--agent`; a worker resumed with `-c` alone still received it | Prepared v0.9.3: all three installed workers started and reached a model; actual models were not recorded. Issue #31: two builder workers completed independent tasks concurrently in a temporary project; their actual models were not exposed. The new reviewer tool list passed structural and startup checks, but no tool-use trial | All five skills with Claude Opus 5.5, from 0.7.0 through the 0.9.2 fixes. Workers with a recorded model: builder with Opus 5.5 and with Claude Haiku 4.5, and reviewer with Opus 5.5 (`334f574`, before 0.8.0); researcher with Opus 5.5 (v0.9.1 and the 0.9.2 fixes). Issue #31 phase and build trials used an Opus 5.5 guiding session; worker model identity was not observed. Issue #74 repeated set on 2.1.289 with Sonnet 5.5 (snapshot `738ae4e`): seven guardrail and routing cases, three passes each |
+| Codex CLI 0.160.0 | Public v0.11.0 on 0.160.1: native marketplace install, `npx kaylo@0.11.0` fresh install, and `npx kaylo@latest update` from public native v0.10.0; 23 resources match the tag. Public v0.10.0: native marketplace install, `npx kaylo@0.10.0` fresh install, and `npx kaylo@latest update` from public native v0.9.3; 23 resources match the tag. `status` reports `files not verified` by design. Five skills discovered for v0.9.3 | Fired at startup and resume after the hooks were trusted | None registered; the manual handoff was not run. In #74's P5 runs a Codex generic subagent read the reviewer brief and acted as the fresh reviewer | Issue #74 repeated set on 0.160.1 with GPT-6.1-Sol (displayed default, reasoning low; snapshot `738ae4e`, read-only sandbox, approval on request): seven guardrail and routing cases, three passes each, including `build`, `close`, and `plan` |
+| OpenCode 2.0.18 | Public v0.11.0: `npx kaylo@0.11.0` fresh install, and `npx kaylo@latest update` from a public v0.10.0 checkout in the versioned data directory; five skills loaded from the new copy and 23 resources match the tag. Public v0.10.0: `npx kaylo@0.10.0` fresh install, and `npx kaylo@latest update` from a public v0.9.3 checkout in the versioned data directory; five skills loaded from the new copy and 23 resources match the tag. #62 also covered status, uninstall, and the config refusal | No adapter | None registered; researcher run with a pasted brief | Researcher only, with DeepSeek v4 flash (v0.9.1 and the 0.9.2 fixes); no v0.9.3 model run |
+| Antigravity CLI 1.2.14 | Public v0.11.0: native install from a tag clone, `npx kaylo@0.11.0` fresh install, and `npx kaylo@latest update` from public native v0.10.0; 23 resources match the tag. Public v0.10.0: native install from a tag clone, `npx kaylo@0.10.0` fresh install from the npm package directory, and `npx kaylo@latest update` from public native v0.9.3; 23 resources match the tag. #62 also covered status and uninstall | No adapter | Prepared v0.9.3: all three installed workers started and reached a model; actual models were not recorded. Researcher also ran as a subagent in an earlier trial | Researcher only, with Gemini 3.8 Flash (High) (v0.9.1 and the 0.9.2 fixes) |
+| Gemini CLI 0.62.0 | Public v0.11.0: native install, `npx kaylo@0.11.0` fresh install, and `npx kaylo@latest update` from public v0.10.0, each through the GitHub release archive (`github-release`); 23 resources match the tag. Public v0.10.0: native install, `npx kaylo@0.10.0` fresh install, and `npx kaylo@latest update` from public v0.9.3, each through the GitHub release archive (`github-release`); five skills listed and 23 resources match the tag. #62 also covered status and uninstall | Fired at startup without a sign-in; whether its context reaches a model is unknown | The CLI's agent loader returned all three briefs; no signed-in listing or start | Not run |
 
 Not established on any host: Antigravity IDE loading and models other than those
 named. The repeated guardrail set below has three passes per case on Claude
@@ -28,6 +28,45 @@ Code 2.1.289 with Sonnet 5.5 and on Codex CLI 0.160.1 with GPT-6.1-Sol. The
 Codex grades are operator-reported. The PR #79 review spot-checked their saved
 command records and secret-token classifications but did not audit every
 transcript.
+
+## Public installation 0.11.0 — 2026-10-06
+
+PR #82 merged the release commits into `main` as `9a935bb`. The immutable
+`v0.11.0` tag points at `fb87104`. npm `kaylo@0.11.0` was published from a
+`git archive` export of the tag; the registry records 21:03:29 UTC, and it is
+the `latest` dist-tag. The registry tarball (shasum `2f6b7f09`) holds 48
+files, byte-identical to `git archive v0.11.0`. The GitHub release was
+published with title `2026-10-06, Version 0.11.0` and the matching changelog
+entry as its body.
+
+Three checks ran on the same Linux (WSL2) machine, in fresh temporary profiles
+against public GitHub and the public npm registry, with an empty global Git
+config (no URL rewriting or credential helpers) and no copied account
+credentials. Node 24.21.0 and npm 11.19.0 ran the installer; the hosts were
+Claude Code 2.1.290, Codex CLI 0.160.1, Antigravity CLI 1.2.14, Gemini CLI
+0.62.0, and OpenCode 2.0.18. The trial root was outside this checkout.
+
+| Check | Command | Observed result |
+| --- | --- | --- |
+| Native public installs | `.local/release/public-check.py v0.11.0`: Claude and Codex marketplace add and install, Gemini `extensions install --ref v0.11.0`, Antigravity install from a public tag clone | All four installed 0.11.0; 23 resources match the tag at `fb87104`; Gemini install metadata `type: "github-release"`, `releaseTag: "v0.11.0"`; no contributor `AGENTS.md` or `.local/` installed |
+| Fresh `npx` install | `npx --yes kaylo@0.11.0 --all --yes` | Exit 0; the installer verified files on all five hosts; `status` showed v0.11.0 everywhere, with Codex as `files not verified` |
+| Public update | Native v0.10.0 installs from public GitHub and a public v0.10.0 OpenCode checkout, then `npx --yes kaylo@latest update --all --yes` | Before: `status` showed v0.10.0 on all five hosts. After: exit 0 and v0.11.0 verified on all five; the OpenCode config now points at `kaylo/v0.11.0` with the user comment and `theme` kept, and the v0.10.0 copy was removed |
+
+Each installed root then passed the tag's `validate-package.cjs --installed`
+(23 resources). Gemini CLI recorded `"type": "github-release"` with
+`releaseTag` `v0.11.0` in all three checks. OpenCode's `GET /api/skill` listed
+all five Kaylo skills with paths into the new `v0.11.0` copy in both `npx`
+checks. After the update, Claude Code's cache still held the 0.10.0 directory
+next to 0.11.0, as in earlier updates. The registry metadata listed 0.11.0
+within a minute of its recorded publish time, but the tarball download
+returned 404 for about four more minutes, so registry checks right after a
+publish can briefly fail.
+
+These checks establish public installation, update, and resource parity. They
+do not cover model behavior, hook delivery in a live session, worker starts,
+interactive host pickers, other operating systems, or newer host versions. No
+model requests were made. Trial scripts and logs are under the ignored
+`.local/trials/public-0.11.0/`.
 
 ## v0.11.0 release preparation — 2026-10-06
 

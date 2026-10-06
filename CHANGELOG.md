@@ -80,8 +80,13 @@ skipped because the worker briefs, Claude adapters, and hooks are byte-identical
 to v0.10.0. The skill changes in this release are text changes whose model
 behavior is covered only by the #74 trials described above, which ran on an
 earlier snapshot (`738ae4e`) on Claude Code with Sonnet 5.5 and on Codex.
-These pre-release checks did not include public npm, GitHub marketplace, or
-Gemini release-archive installs of 0.11.0. Other operating systems, Gemini CLI model behavior, and
+After publication, the npm tarball matched the tag file for file. In fresh
+profiles against public GitHub and npm, native installs on Claude Code, Codex,
+Gemini CLI, and Antigravity, a fresh `npx kaylo@0.11.0 --all`, and
+`npx kaylo@latest update` from public v0.10.0 installs each put 0.11.0 on
+every host with all 23 shared resources matching the tag. Gemini CLI installed
+from the GitHub release archive, and OpenCode listed all five skills from the
+new copy; no model requests were made. Other operating systems, Gemini CLI model behavior, and
 Antigravity IDE loading remain untested. Details and limits are in
 `VERIFICATION.md`.
 
