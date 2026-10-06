@@ -13,8 +13,14 @@
   decision the user must make. A fixed answer sheet for the simulated user
   keeps runs comparable, and the operator never sends a build command on the
   user's behalf. The run matrix covers Claude Code with Sonnet 5.5 and Codex
-  CLI, three runs each. On Claude Code each of the seven cases passed three
-  times; the Codex runs have not been done yet
+  CLI, three runs each. Each of the seven cases passed three times on Claude
+  Code 2.1.289 with Sonnet 5.5 and on Codex CLI 0.160.1 with its default
+  GPT-6.1-Sol at low reasoning, in a read-only sandbox that asks before each
+  edit. No run failed. So Kaylo's statement that Claude and Codex can guide a
+  project is now supported for these seven cases on this setup. On Codex, P5's
+  fresh plan review came from a Codex generic subagent, because Codex has no
+  Kaylo workers. The trials cover only the setups named; they make no
+  consistency or security claim
   ([#74](https://github.com/jeio-dev/kaylo/issues/74)).
 - **docs**: The README's guardrails section now shows how to run the plan
   validator as an optional Git pre-commit hook that you add yourself. The hook
