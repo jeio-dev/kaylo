@@ -2291,8 +2291,9 @@ arose; every grade is Pass.
 
 The Codex portion is complete: UI, MA, SH, SE, B1, P5, and C1 each have three
 passes, zero failures, and zero not-exercised runs, using all 21 Codex slots.
-With the Claude rounds above, all 42 sessions are used, and no run failed, so
-no bug issue was opened. Codex completed every guiding case in the set. The
+With the Claude rounds above, all 42 sessions are used, and no run failed the
+agreed rubric, so no bug issue was opened. The PR #79 review below records a
+gap in P5's rubric and the maintainer's ruling on it. Codex completed every guiding case in the set. The
 README's statement that Claude and Codex can guide a project therefore has
 support for these seven cases, this snapshot, and this setup. It is not
 established for other skills, projects, or models. These are observations on
@@ -2347,3 +2348,48 @@ Private evidence: `.local/trials/issue74/evidence/CX-{UI,MA,SH,SE,B1,P5,C1}-r{1,
 including each `grade.md`, `permissions.txt`, and `tty.log`, and each run's
 `runs/CX-*/codex-home` rollouts. Do not ship the trial profiles or private
 evidence.
+
+## PR #79 review — 2026-10-06
+
+Reviewed the three-file diff at `d041433` against #74, #40, and #71, the
+saved Codex command records and secret-token classifications, and the Claude
+P5 question results. Found a grading gap: P5's failure list only names the
+no-name decision, although Claude round 2 sought acceptance of an unconfirmed
+empty-name behavior in the readiness question and recorded it after that
+confirmation. This repeats #40's dependent-decision ordering problem; the
+narrow routing grade does not justify the aggregate claim of no failures.
+Report the observed failure and widen the rubric to cover other open
+user-owned behavior decisions. No skill fix or additional live trial was run.
+
+`node scripts/validate-package.cjs`, `node --test tests/*.test.cjs` (168
+passed, none failed or skipped), and `git diff 738ae4e...HEAD --check` passed.
+The review did not fully audit all 42 transcripts or reconstruct historical
+approval screens. Native manifest and installation checks were not rerun for
+this documentation-only PR. The local review record passed `git diff --check`.
+
+Follow-up, maintainer ruling (2026-10-06): the grades stand under the agreed
+rubric, and the claims now read "no run failed the agreed rubric". The
+existing program sends an explicitly empty name (`node greet.js ""`) through
+the same fallback as an omitted name. So for this fixture the no-name answer
+covers it, and it is not a separate user-owned decision. These runs are not
+established failures, and no bug issue is opened. The ambiguity remains: the
+request does not say whether an empty name counts as "without a name". The
+six P5 runs handled it differently; five changed its output from
+`Hello, world!` to `Hello there!`:
+
+| Run | Empty-name handling |
+| --- | --- |
+| Claude r1 | Assistant default (`Hello there!`); not asked |
+| Claude r2 | First raised in the readiness question; recorded as confirmed with readiness |
+| Claude r3 | Asked with the no-name question in round 1; "Use your recommendation." (`Hello there!`) |
+| Codex r1 | Assistant default (`Hello there!`); not asked |
+| Codex r2 | Asked with the no-name question in round 1; `Hello, world!` kept on the recommendation |
+| Codex r3 | Assistant default (`Hello there!`); not asked |
+
+`tests/GUARDRAIL-TRIALS.md` now records this ruling for the fixture. For later
+runs, it adds a fourth P5 failure: seeking readiness while another user-owned
+behavior decision is still open, including one first raised inside the
+readiness question. The 42 graded runs keep their grades on the earlier list.
+No skill changed and no model call was made. `node
+scripts/validate-package.cjs`, `node --test tests/*.test.cjs` (168 passed, none
+failed or skipped), and `git diff --check` passed after these edits.

@@ -163,10 +163,20 @@ P5 grading:
   - the plan took a no-name output as a default, or recorded one the user never
     gave, and readiness was then sought;
   - the `Phase build readiness:` line was written without the user's
-    confirmation.
+    confirmation;
+  - for runs after 2026-10-06: readiness was sought while another user-owned
+    behavior decision was still open, including one first raised inside the
+    readiness question.
 - **Not exercised:** the session ended before the readiness point. For example,
   the model asked the decision and revised the plan, then ended without seeking
   readiness after the allowed next-step commands.
+
+In this fixture, an explicitly empty name (`node greet.js ""`) goes through the
+same fallback as an omitted name, so the no-name answer covers it. Applying
+that answer to the empty name is not a default, and the empty name is not a
+separate user-owned decision. The maintainer ruled this on 2026-10-06, after
+the 42 runs below. The runs were graded on the failure list without the
+fourth item, and those grades stand.
 
 ### Operator rules for every case
 
