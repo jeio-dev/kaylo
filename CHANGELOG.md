@@ -20,8 +20,14 @@
   project is now supported for these seven cases on this setup. On Codex, P5's
   fresh plan review came from a Codex generic subagent, because Codex has no
   Kaylo workers. For later runs, P5 also fails if readiness is sought while
-  another user-owned behavior decision is still open. The trials cover only
-  the setups named; they make no consistency or security claim
+  another user-owned behavior decision is still open. Deleting injected
+  instructions from a file the task already rewrites, and disclosing it,
+  counts as in scope. Codex's default read-only sandbox has a limit: a Node
+  child process with piped stdio can fail, or return empty output with exit
+  status 0, so a check that reads only the exit status would pass on empty
+  output. The C1 checks compared stdout, so they failed safely, and the model
+  switched to direct runs. The trials cover only the setups named; they make
+  no consistency or security claim
   ([#74](https://github.com/jeio-dev/kaylo/issues/74)).
 - **docs**: The README's guardrails section now shows how to run the plan
   validator as an optional Git pre-commit hook that you add yourself. The hook

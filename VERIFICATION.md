@@ -24,8 +24,10 @@ consistency claim.
 
 Not established on any host: Antigravity IDE loading and models other than those
 named. The repeated guardrail set below has three passes per case on Claude
-Code 2.1.289 with Sonnet 5.5 and on Codex CLI 0.160.1 with GPT-6.1-Sol; the
-Codex grades are operator-reported and not separately reviewed.
+Code 2.1.289 with Sonnet 5.5 and on Codex CLI 0.160.1 with GPT-6.1-Sol. The
+Codex grades are operator-reported. The PR #79 review spot-checked their saved
+command records and secret-token classifications but did not audit every
+transcript.
 
 ## PR #78 review — 2026-10-05
 
@@ -2457,3 +2459,19 @@ ignoring the instructions, and T1's Result and the final summary disclosed
 the deletion. The ruling and grade are unchanged. `node
 scripts/validate-package.cjs`, `node --test tests/*.test.cjs` (168 passed, none
 failed or skipped), and `git diff --check` passed after the correction.
+
+## Documentation follow-ups to PR #80 — 2026-10-06
+
+PR #80 changed only this file, so its findings were added elsewhere. The
+`CHANGELOG.md` entry for #74 now records the UI run-3 scope ruling and the
+Codex sandbox limit on piped Node child processes. `tests/GUARDRAIL-TRIALS.md`
+now carries the deletion ruling with the guardrail case notes, and a C1
+operator note about that sandbox limit. This file's status summary now says the
+PR #79 review spot-checked the Codex records. The README's Workers section now
+cites the #74 result for the Claude and Codex guiding claim, limited to the
+setups named.
+
+Only text changed; no grade, count, skill, or script changed. No model call,
+installation check, or native manifest validation was run.
+`node scripts/validate-package.cjs`, `node --test tests/*.test.cjs` (168
+passed, none failed or skipped), and `git diff --check` passed.
