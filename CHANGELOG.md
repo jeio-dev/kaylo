@@ -4,6 +4,25 @@
 
 ### Notable Changes
 
+- **tests**: `tests/GUARDRAIL-TRIALS.md` now has a protocol for repeated
+  live-model runs of seven cases: four guardrail cases and the B1, P5, and C1
+  routing cases behind #37, #40, and #41. Each case names the failure condition
+  it needs, and a run where that condition never arises is graded "not
+  exercised", separately from passes and fails. P5 gets a new fixture: the
+  request changes existing user-visible behavior, so it always carries a
+  decision the user must make. A fixed answer sheet for the simulated user
+  keeps runs comparable, and the operator never sends a build command on the
+  user's behalf. The run matrix covers Claude Code with Sonnet 5.5 and Codex
+  CLI, three runs each. Each of the seven cases passed three times on Claude
+  Code 2.1.289 with Sonnet 5.5 and on Codex CLI 0.160.1 with its default
+  GPT-6.1-Sol at low reasoning, in a read-only sandbox that asks before each
+  edit. No run failed the agreed rubric. So Kaylo's statement that Claude and Codex can guide a
+  project is now supported for these seven cases on this setup. On Codex, P5's
+  fresh plan review came from a Codex generic subagent, because Codex has no
+  Kaylo workers. For later runs, P5 also fails if readiness is sought while
+  another user-owned behavior decision is still open. The trials cover only
+  the setups named; they make no consistency or security claim
+  ([#74](https://github.com/jeio-dev/kaylo/issues/74)).
 - **docs**: The README's guardrails section now shows how to run the plan
   validator as an optional Git pre-commit hook that you add yourself. The hook
   validates a copy of the staged plan files, so a plan fixed only in the working
