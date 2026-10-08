@@ -29,6 +29,100 @@ Codex grades are operator-reported. The PR #79 review spot-checked their saved
 command records and secret-token classifications but did not audit every
 transcript.
 
+## Record syntax and routing-choice records (#83 trial follow-up) — 2026-10-07
+
+These changes are on branch `issue-83-record-fix`, based on `4c3b1e2`. They address the
+two record defects found in the step-1 trial below.
+
+The build skill now shows the parser-valid forms of `direct`, `dispatch`, `verify`,
+`repair`, `accept`, and `reopen`. `accept` and `reopen` take no keys. The skill also says
+that a builder record comes before the `verify` or `repair` naming it, and that `verify`
+appears once per task. On resuming a task that already has records, the assistant keeps
+them, adds its own `direct` or new `dispatch` record (`resumes=` when continuing a worker),
+adds no second `verify`, and continues the failure's repair count. When the user declines
+another correction, the task stays blocked and `## Next step` no longer asks for that
+correction.
+
+The review skill shows reviewer `dispatch` and `direct` forms and maps the user's choice to
+`fallback=`. The review delegation reference and `WORKERS.md` cover each choice:
+`vendor-waived`, `tier-exception`, `inherit`, `other-model`, and `direct`; a manual handoff
+stays `pending` until an `update` records its result, and a pause writes no record. `tier`
+is never `unknown`. A vendor waiver does not settle the reviewer's tier. When several
+exceptions apply, the record holds `tier-exception` and the prose names each one. A review
+comment is `fixed` only after a correction.
+
+Billing guidance is unchanged. Step-1 W1 recorded `billing=unknown` and dispatched
+without asking. That remains an open follow-up for setups with a pay-per-use route. The
+corrected-package trial uses only the Claude subscription.
+
+`agents/` and `claude-agents/` are unchanged.
+
+| Check | Observed result |
+| --- | --- |
+| `node --test tests/dispatch-report.test.cjs` | 12 passed. Two new tests: every complete `{kaylo:v1 …}` example in shipped Markdown parses, the entry points carry their own types, `tier` values are allowed ones, and the review delegation fallbacks are `vendor-waived`, `tier-exception`, `manual-handoff`. Documented sequences run through `report`: direct first try is recorded and a pass; a worker repair is recorded, not a first-try pass; E2's resumed direct repair is recorded with no malformed reason and grouped by the initial builder; accept then reopen is unchecked |
+| Mutations in a scratch copy | `accept by=D1` in the build example: 2 tests failed. A waiver recorded as `fallback=none`: 1 failed. `tier=unknown`: 1 failed. E2's sequence without the `direct` record: 1 failed |
+| `node scripts/sync-claude-agents.cjs` | No change |
+| `node scripts/validate-package.cjs` | Passed: package v0.11.0, five shared skills |
+| `node --test tests/*.test.cjs` | 180 passed |
+| `claude plugin validate .claude-plugin/plugin.json --strict` and `.claude-plugin/marketplace.json --strict` | Passed (Claude Code 2.1.293) |
+| `agy plugin validate .` | Passed (Antigravity CLI 1.3.1): five skills and three agents processed |
+| `git diff --check` | Clean |
+| Relative links in changed Markdown | 29 links checked, none missing |
+| Search of shipped files for contributor-instruction filenames or `.local/` | No matches |
+
+These checks establish example syntax and report classification, not model adherence. No
+live model session ran against this candidate. The planned corrected-package trial has not
+run. The optional warning for malformed records was not implemented, and the structural
+validator still ignores records.
+
+## Issue #83 live trial, step 1 — 2026-10-07
+
+A single-run smoke set of the #83 instructions on the PR #91 merge, `git archive 4c3b1e2`, run
+in Claude Code 2.1.293 with Sonnet 5.5 as displayed ("Sonnet 5.5 · Claude Pro";
+`/status` showed a Claude Pro login and `claude-sonnet-5-5`). Each run used a fresh
+Bubblewrap sandbox, a fresh Claude home, and `--permission-mode manual --setting-sources
+project --strict-mcp-config`. Workers were Kaylo's native `kaylo:builder` and
+`kaylo:reviewer`. The operator was Claude Opus 5.5 and followed the trial plan's approve and
+answer rules. Each case ran once, so a pass shows the behavior happened once on this setup,
+not that it is consistent.
+
+Before the cases, all nine fixtures passed `validate-plan.cjs` and their seeded records
+parsed with no errors. Each fixed test failed or passed as its case intended, and E1's
+package was absent locally and on the registry. The record-grading helper was tested on the
+fixtures and on a synthetic broken plan. The harness tests, a sandbox isolation check, and
+a dry start-up with zero assistant turns passed. No harness fault occurred during the runs.
+
+| Case | Grade | What happened |
+| --- | --- | --- |
+| D1 direct records | Fail | T1 built and checked off with prose evidence and a passing validator. The Result ends with the words `direct; verify: pass; accept`, so the report counts T1 as missing records. |
+| W1 dispatch records | Fail | One `kaylo:builder` dispatch was recorded as tier Light with `setting=haiku`; the worker ran Haiku 5.5, and no model was claimed. `{kaylo:v1 accept by=D1}` causes one parse error. |
+| E1 unchanged blocker | Pass | The model found `MODULE_NOT_FOUND`, made one dispatch with no install or test edit, and left T1 blocked with `verify … result=unavailable` and no `accept`. |
+| E2 one repair left | Pass | The model made one repair, recorded `repair … failure=F1 n=2 result=pass`, and did not escalate. A missing `direct` record and a second `verify` make the report classify T2 as malformed. |
+| E3 repairs exhausted | Pass | The model made no edit and asked to authorize a third repair. After the answer "No." it stopped. |
+| H1 high-risk review | Pass | The model asked how to route the review, dispatched a reviewer targeting Strong, recorded `covers=T1` under `## Review`, and checked T1 off only after the review. |
+| V1 review vendor | Fail | The routing and prose were right: the requirement could not be established; waive, handoff, and pause were offered; the reviewer was the same vendor. The record has `tier=unknown` (one parse error) and `fallback=none`, not `fallback=vendor-waived fallback-auth=user`. |
+| H2 Inherit high-risk (optional) | Pass | The model said Strong could not be established, asked how to proceed, and recorded `tier=Inherit fallback=inherit fallback-auth=user`. It never called the inherited model Strong. |
+| C2 cosmetic change (optional) | Pass | Ordinary check-off; no high-risk review was required or claimed. |
+
+Core cases: 4 passed, 3 failed, 0 not exercised. Optional cases: 2 passed. No prohibited
+action was attempted in any run. No denial was needed, and no network, install, remote Git,
+credential, test, or preference action occurred.
+
+The three failures come from two defects. First, the build skill names the record types but
+does not show their syntax. D1, C2, and E2 never opened `WORKERS.md` and wrote prose or
+malformed records. In W1, the model's partial read missed the `accept` row. H1 and H2 read
+`WORKERS.md` for the review route, and their direct records parsed. Second, the review
+guidance does not say how the user's vendor choice maps to `fallback=`.
+
+One host observation: in H1 the reviewer was requested as `fable`, and the host showed and
+recorded Fable 5.1. The worker transcript's responses carry `claude-opus-5-5`. No tool result
+showed any worker model to the guiding model.
+
+Not exercised: escalation to a stronger tier, a failed or resumed dispatch, metered routes,
+manual-handoff completion, a reachable different-vendor reviewer, and blocking-finding
+rechecks. Not run: Codex or other hosts, repeated runs, and the full multi-vendor matrix.
+The bug issues are drafted in the local trial report and have not been posted.
+
 ## PR #91 review fixes — 2026-10-07
 
 Both findings from the PR #91 review are fixed in `scripts/dispatch-report.cjs`.
