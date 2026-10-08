@@ -29,6 +29,150 @@ Codex grades are operator-reported. The PR #79 review spot-checked their saved
 command records and secret-token classifications but did not audit every
 transcript.
 
+## Review and full-suite check of the #83 C/D revision — 2026-10-07
+
+A separate session reviewed the uncommitted C/D revision below on `issue-83-record-fix`
+(base `7e5b4bd`). This session did not write the revision, and it found no blocking issue. It
+read the diff of `scripts/dispatch-report.cjs`, `tests/dispatch-report.test.cjs`, the build skill,
+the build delegation reference, `WORKERS.md`, and `CHANGELOG.md`. The checks the implementing
+session could not run passed in this environment:
+
+| Check | Observed result |
+| --- | --- |
+| `node --test tests/*.test.cjs` | 183 passed, 0 failed, 0 skipped (normal runner, no stdio adapter) |
+| `node --test tests/dispatch-report.test.cjs` | 15 passed |
+| Mutations in a scratch copy, applied cumulatively | Removing the reviewer-placement check: 1 test failed. Also restoring the old delegation reference: 2 failed. Then restoring the reference but changing WORKERS.md's Balanced S builder row to Medium: 2 failed |
+| `node scripts/validate-package.cjs` | Passed: v0.11.0, five shared skills |
+| `claude plugin validate .claude-plugin/plugin.json --strict` and `.claude-plugin/marketplace.json --strict` | Passed |
+| `agy plugin validate .` | Passed: five skills and three agents processed |
+| `node scripts/sync-claude-agents.cjs` | No change |
+| `git diff --check` | Clean |
+| `check-issue-83-placement-tier-candidate.py --ref HEAD` | Refused, as designed: the revision is not committed. All 49 files in its manifest match the working tree |
+| The same guard after the commit | Accepted `a9861547958c5fe412b7523b30ba5951206adcdd` |
+
+Two non-blocking observations fall outside the C/D scope. First, the report still does not
+flag a builder, `verify`, or `accept` record placed under `## Review`. Second, the review
+delegation reference does not carry the reviewer tier rows; in the V1 retrial the reviewer
+tier was stated only after the dispatch.
+
+This review covers report classification, table parity, and guidance text, not model
+adherence. No live model session or install ran. After the review, the revision was committed
+unchanged as `a986154`; the guard accepts that commit (see below). The four #87 and #88
+specification records at the end of this file are unrelated to #83 and were left out of the
+#83 commits.
+
+## Reviewer record placement and builder tier rows (#83 C/D) — 2026-10-07
+
+Local changes on `issue-83-record-fix`, based on `7e5b4bd`, address the two
+failures in the corrected-package smoke set. They remain uncommitted: this
+session can edit the working tree, but `.git` is read-only in its sandbox.
+All pre-existing verification records and trial evidence were preserved.
+
+Build now places reviewer `dispatch`/`direct` records and their updates under
+`## Review`, including high-risk reviews and inherited exceptions. The report
+classifies a checked task with a reviewer record in its Result as malformed
+and excludes it from first-try rates. This is a closed-phase report diagnostic,
+not an automatic build-time warning; the structural validator is unchanged.
+The build delegation reference carries the canonical S/M/L builder rows and
+requires the preference, estimate, table tier, chosen tier, requested setting,
+and a concrete reason for an increase before dispatch. Inherit and the
+capability, fallback, billing, and repair-limit rules retain their behavior.
+
+| Check | Observed result |
+| --- | --- |
+| New regression assertions before the fix | The placement test failed because a task was still recorded; the table test failed because the delegation reference had no builder table. Two existing CLI-output assertions also failed under the sandbox's child-I/O restriction |
+| `node --test --test-isolation=none tests/dispatch-report.test.cjs` after the fix | 13 passed, 2 failed: both failures were existing CLI-output assertions. A minimal `spawnSync` probe returned `EPERM` and empty captured output; the same child using regular-file stdio succeeded |
+| Focused tests with a local regular-file stdio adapter | 15 passed, 0 failed. The adapter changes only how the test process captures synchronous child output; the repository's tests and CLI were not modified for the sandbox. This is alternate-harness evidence, not a normal full-suite pass |
+| Saved H2 plan in a temporary closed-phase project | Malformed with `reviewer dispatch record belongs under ## Review, not in task Result`; no rate groups. Moving only that reviewer record to Review in the scratch copy restores recorded/first-try status. Original evidence untouched |
+| New regression coverage | Both misplaced reviewer forms, correct Review placement, unaffected neighboring tasks, phase-wide dispatch-ID collisions, unchanged structural validation, and builder table parity with WORKERS.md |
+| `node scripts/validate-package.cjs` | Passed: v0.11.0, five shared skills, matching versions and catalogs |
+| `node --test tests/*.test.cjs` | Did not pass in this sandbox: six test-file processes failed and one passed; this run does not establish the full test suite's assertion results |
+| Strict Claude plugin and marketplace validators | Both passed |
+| `agy plugin validate .` | Passed: five skills, three agents processed |
+| Relative file links in the three changed guidance files | 17 checked; no missing targets. Whole historical CHANGELOG link checking encountered an existing template path containing `<slug>`; it was not changed |
+| `git diff --check` | Clean |
+
+Direct inspection of the implementation and guidance found no additional
+blocking code issue, but this was a self-review without an independent
+reviewer. Required ordinary full-suite verification remains incomplete and
+must pass in a suitable environment before another live trial. No commit,
+installation, live model session, worker dispatch, billing probe, or retest
+was performed. No adapter regeneration was needed because worker briefs are
+unchanged. The three new tests and alternate focused run establish report
+classification and table parity, not adherence by a model. Local check logs
+and the adapter are retained in `.local/checks/issue-83-placement-tier/` and
+are not referenced by shipped skills or worker instructions.
+
+## Issue #83 corrected-package smoke set — 2026-10-07
+
+A single-run retrial of the #83 cases on the record fix, `git archive 7e5b4bd` (branch
+`issue-83-record-fix`, not merged), run in Claude Code 2.1.293 with Sonnet 5.5 as displayed
+("Sonnet 5.5 · Claude Pro"; `/status` showed a Claude Pro login and `claude-sonnet-5-5`). The
+setup matched step 1: a fresh Bubblewrap sandbox and Claude home per run, `--permission-mode
+manual --setting-sources project --strict-mcp-config`, Kaylo's native `kaylo:builder` and
+`kaylo:reviewer`, and Claude Opus 5.5 as the operator. Fixtures and requests were step 1's,
+byte for byte. Each case ran once, so a pass shows the behavior happened once on this setup,
+not that it is consistent. Step 1's grades are unchanged.
+
+Each run has three grades: the step-1 criteria, the retrial plan's added record criteria, and
+a composite. The added criteria include history checks on every task and on `## Review`:
+placement, unique dispatch IDs, `by=` and `resumes=` references, one initial `verify`, repair
+numbering, coverage, and unchanged seeded records. The criteria and operator answers were
+written down before the first case and not changed.
+
+The candidate review before the trial found no blocking issue. It ran these checks on the
+candidate; they were not rerun in the trial session:
+
+| Check (candidate review) | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: v0.11.0, five shared skills, matching versions and catalogs |
+| `node --test tests/*.test.cjs` | 180 passed, 0 failed, 0 skipped |
+| `claude plugin validate .claude-plugin/plugin.json --strict` and `.claude-plugin/marketplace.json --strict` | Passed |
+| `agy plugin validate .` | Passed: five skills and three agents processed |
+| `git diff 4c3b1e2..HEAD --check` | Clean |
+| Candidate SHA, branch, tree, and required guidance strings | Exact candidate, expected branch, clean tree; keyless `accept` and `vendor-waived` examples present |
+
+The trial session's checks before any case: the checkout was `7e5b4bd`, clean, with the
+two guidance strings. All nine fixtures passed the candidate's `validate-plan.cjs`, and their
+seeded records parsed with no errors. Each fixed test failed or passed as intended, and the
+reference fixes passed in scratch copies. The record-grading helper found no history problem
+in the fixtures and passed 22 synthetic tests, including the five step-1 defect plans. The
+harness tests passed 4 and 8 tests. A sandbox isolation check and a dry start-up with zero
+assistant turns also passed. No harness fault occurred during the runs.
+
+| Case | Original | Added | Composite | What happened |
+| --- | --- | --- | --- | --- |
+| D1 direct records | Pass | Pass | Pass | `direct role=builder`, one `verify by=direct`, and a keyless `accept`. The report counts T1 as recorded, first try. |
+| W1 dispatch records | Pass | Pass | Pass | One Haiku builder recorded as `tier=Light setting=haiku … model=unknown`, then `verify by=D1` and `accept`. The tier was written to the plan before the dispatch. |
+| E2 one repair left | Pass | Pass | Pass | Seeded records kept. `direct role=builder` came before `repair by=direct failure=F1 n=2 result=pass`, with no second `verify`. Recorded, not first try. |
+| V1 review vendor | Pass | Pass | Pass | The model offered waive, handoff, or pause, with no skip. After the waiver it recorded `tier=Medium setting=sonnet … fallback=vendor-waived fallback-auth=user … covers=T1` under `## Review`. |
+| H2 Inherit high-risk | Pass | Fail | Fail | Disclosure, choices, and record values were right (`tier=Inherit fallback=tier-exception fallback-auth=user covers=T1`). The reviewer record was written in T1's `Result:` instead of `## Review`. |
+| C2 cosmetic change | Pass | Pass | Pass | `direct`, `verify`, and `accept`, recorded first try. No high-risk review. |
+| E1 unchanged blocker | Pass | Fail | Fail | Blocker handled with no install or test edit, `verify … result=fail`, and no `accept`. The builder was dispatched at `tier=Medium` for a Balanced S task (table: Light) with no reason; the model never read the tier table. |
+| E3 repairs exhausted | Pass | Pass | Pass | No edit. It asked to authorize a fix; after "No." it recorded the decision and set the next step to `/kaylo:plan`. |
+| H1 high-risk review | Pass | Pass | Pass | It stated Strong, dispatched an `opus` reviewer, and recorded `tier=Strong setting=opus … covers=T1` under `## Review`. T1 was checked only after the review. |
+
+Original criteria: 9 passed. Added criteria: 7 passed, 2 failed. Composite: 7 passed, 2
+failed, 0 not exercised. No prohibited action was attempted: 51 permission prompts were each
+approved once, and no denial was needed. The three step-1 record failures did not recur in
+these runs. Two defects remain. First, a build-run high-risk review can write the reviewer
+record into the task `Result:`, and `dispatch-report.cjs` still counts that task as recorded.
+Second, the builder tier can be chosen without reading the tier table and raised without a
+reason; step 1's E1 showed the same. Under the retrial plan's exit rule, the repeated set
+should not start until the candidate is revised. Both bug issues are drafted in the local
+report and have not been posted.
+
+Observations: in V1 the reviewer tier was stated only after the dispatch. No run asked about
+billing, and billing was not graded. In every run the requested worker model matched the
+host's resolved model and the worker transcript. No tool result showed a worker model to the
+guiding model, and no record claimed one.
+
+Not exercised: tier escalation, E2's failed-repair branch, failed or resumed dispatches,
+manual handoff and `update`, a reachable different-vendor reviewer, metered routes, phase
+reuse of high-risk evidence, and blocking-finding rechecks. No separate tier or billing
+question arose. No deny rule was exercised. Not run: other hosts, repeated runs, and the full
+matrix.
+
 ## Record syntax and routing-choice records (#83 trial follow-up) — 2026-10-07
 
 These changes are on branch `issue-83-record-fix`, based on `4c3b1e2`. They address the
