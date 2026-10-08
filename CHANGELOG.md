@@ -4,6 +4,19 @@
 
 ### Notable Changes
 
+- **skills**: Under a Quality, Balanced, or Budget preference, review now
+  applies the reviewer tier to direct reviews too. Before reviewing directly,
+  the assistant states the required tier and its own model, and reviews
+  directly only if that model meets the tier; otherwise it uses a fresh
+  reviewer at that tier or asks you. A vendor waiver does not settle the tier.
+  On a host without reviewer subagents, a session whose model cannot be
+  identified as meeting the tier now stops for your choice. `direct` records
+  still take no `tier` key; the tier goes in the prose beside them
+  ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
+- **skills**: Build delegation now says the tier statement before a dispatch
+  is prose, and the builder `dispatch` record is appended when the worker
+  returns. A record written earlier is not edited; its later outcome is an
+  appended `update` ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
 - **skills and tools**: Build now states explicitly that reviewer records,
   including high-risk reviews and inherited exceptions, go under `## Review`.
   The dispatch report marks a checked task with a reviewer record in its

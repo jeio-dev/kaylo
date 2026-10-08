@@ -68,6 +68,7 @@ test('malformed records are diagnosed rather than skipped', () => {
     ['{kaylo:v1 __proto__}', /unreadable record/],
     ['{kaylo:v1 verify by=D1 result=ok}', /invalid result=ok/],
     ['{kaylo:v1 verify by=D1 result=pass vendor=x}', /unknown key vendor/],
+    ['{kaylo:v1 direct role=reviewer tier=Medium covers=T1}', /unknown key tier/],
     ['{kaylo:v1 dispatch id=D1 role=builder outcome=completed}', /missing tier/],
     ['{kaylo:v1 dispatch id=D1 id=D2 role=builder tier=Light outcome=completed}', /duplicate key id/],
     ['{kaylo:v1 repair by=D1 failure=F1 n=3 result=fail}', /needs basis/],

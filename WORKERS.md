@@ -33,7 +33,7 @@ Metered: allowed (openrouter)
 - `Review vendor:` accepts `same` or `different`. Missing or `same` keeps existing review routing, including a fresh reviewer when available and disclosed direct review when needed; `same` sets no cross-vendor requirement and does not enforce the same vendor. Treat an unknown value as missing and say so; it never authorizes another paid route. `different` follows [review vendor](#review-vendor-and-metered-routes) below.
 - `Metered: allowed (<route>)` authorizes the one named metered route or account, as described below. A missing key or any other value authorizes none.
 
-For Quality, Balanced, or Budget on a host that can select a worker model, use this table as a recommendation. Inherit skips the table and keeps the host's normal worker model choice. Light, Medium, and Strong are relative capability tiers, not model names or promises of availability. The planner row is guidance for a future user choice, not permission to change the invoking session's model.
+For Quality, Balanced, or Budget on a host that can select a worker model, use this table as a recommendation. A direct review by the guiding assistant uses the reviewer rows too: state the tier and the guiding model, and review directly only when that model is identified as meeting it. Inherit skips the table and keeps the host's normal worker model choice. Light, Medium, and Strong are relative capability tiers, not model names or promises of availability. The planner row is guidance for a future user choice, not permission to change the invoking session's model.
 
 | Work | Quality | Balanced | Budget |
 | --- | --- | --- | --- |
@@ -112,7 +112,7 @@ With `Review vendor: different`, the reviewer's model vendor must be known to di
 
 If a relevant vendor is unknown, or no reachable reviewer differs from all of them, say the requirement cannot be established. Never compare against one builder only or call unknown identity different. Offer these choices and record the one the user makes:
 
-1. Waive the different-vendor requirement for this review, then perform the required review through an available authorized route.
+1. Waive the different-vendor requirement for this review, then perform the required review at the required reviewer tier through an available authorized route.
 2. Perform a manual handoff and wait for its review evidence.
 3. Pause, recording the missing route, identity, or access.
 
