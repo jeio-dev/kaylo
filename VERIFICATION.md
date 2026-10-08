@@ -172,8 +172,7 @@ tier was stated only after the dispatch.
 This review covers report classification, table parity, and guidance text, not model
 adherence. No live model session or install ran. After the review, the revision was committed
 unchanged as `a986154`; the guard accepts that commit (see below). The four #87 and #88
-specification records at the end of this file are unrelated to #83 and were left out of the
-#83 commits.
+specification records are unrelated to #83 and were left out of the #83 commits.
 
 ## Reviewer record placement and builder tier rows (#83 C/D) — 2026-10-07
 
