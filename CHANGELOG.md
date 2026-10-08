@@ -1,5 +1,54 @@
 # Changelog
 
+## [Unreleased]
+
+### Notable Changes
+
+- **skills**: When a check fails, the assistant now diagnoses it before
+  choosing a stronger model. With a Quality, Balanced, or Budget preference
+  and a host that can apply the choice, it may recommend Light → Medium or
+  Medium → Strong within the remaining repairs; Strong stays Strong, and
+  Inherit stays Inherit unless you choose otherwise. A model change never adds
+  repairs: the limit is still two unsuccessful repairs of the same failure,
+  across sessions, workers, and models. A missing dependency, unavailable
+  check, quota limit, or access problem is reported as a blocker rather than
+  escalated. Failing with a Strong model no longer implies the plan is wrong;
+  only scope, acceptance, decision, or task-split problems go back to plan
+  ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
+- **skills**: `.kaylo/preferences.md` accepts two optional keys.
+  `Review vendor: different` requires a reviewer whose model vendor is known to
+  differ from every builder in the review target. If that cannot be
+  established, the assistant offers to waive the requirement for that review,
+  hand off manually, or pause; skipping review is not offered, and a pending
+  handoff or failed dispatch is not a review. A missing key or `same` keeps
+  today's routing. `Metered: allowed (<route>)` authorizes one named
+  pay-per-use route; an explicit session authorization for that route also
+  counts. Neither covers another account, provider fallback, or extra repairs,
+  and unknown billing is not treated as covered by a subscription. Plan does
+  not ask for these keys and keeps them when it writes the file
+  ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
+- **skills**: Tasks may carry `Risk: high` with a reason, classified by the
+  behavior changed (for example session enforcement or authorization), not by
+  incidental mentions. Build requests a focused review of such a task after
+  its checks pass and before check-off, targeting a Strong reviewer in a fresh
+  context; when that cannot be established, including an Inherit model of
+  unknown capability, you choose another qualifying route, a manual handoff, a
+  recorded exception, or a pause. The reviewer brief adds a checklist for
+  trust boundaries, authorization, invalid input, data exposure, and abuse
+  cases. Phase review reuses that review only while its inputs are unchanged.
+  A missing `Risk:` does not mean low risk, and older plans need no change
+  ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
+- **tools**: Builds and reviews append compact `{kaylo:v1 ...}` records to the
+  existing `Result:` line or `## Review`, documented in `WORKERS.md`. They keep
+  dispatches, repairs, requested and observed model identity, billing, and
+  fallbacks separate, with explicit `unknown` values. The new read-only
+  `scripts/dispatch-report.cjs` prints first-try pass rates among recorded
+  tasks in closed phases, grouped by requested tier, estimate, and builder
+  vendor, with missing and malformed counts. A rate below about 60% is
+  flagged as advisory only; nothing changes preferences or the tier table
+  automatically. The plan validator ignores the records, so existing plans
+  stay valid ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
+
 ## 2026-10-06, Version 0.11.0
 
 ### Notable Changes

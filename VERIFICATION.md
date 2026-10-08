@@ -29,6 +29,66 @@ Codex grades are operator-reported. The PR #79 review spot-checked their saved
 command records and secret-token classifications but did not audit every
 transcript.
 
+## Escalation, dispatch records, review vendor, and high-risk review (#83) — 2026-10-07
+
+Uncommitted changes on `main` at `07f6291` implement the revised #83 contracts.
+`WORKERS.md` adds diagnosis-driven escalation inside the existing repair limit,
+the optional `Review vendor:` and `Metered:` preference keys, a high-risk task
+reviewer tier row, and the `{kaylo:v1 ...}` record grammar. The `build`,
+`review`, `close`, and `plan` skills, both delegation references, the phase
+template, and the builder and reviewer briefs (regenerated into
+`claude-agents/`) follow those rules. `scripts/dispatch-report.cjs` is a new
+read-only report; `scripts/validate-plan.cjs` now also exports its existing
+`visibleMarkdown` helper and its validation is unchanged. No command, worker
+role, router, or host setting was added.
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/sync-claude-agents.cjs` | Regenerated `claude-agents/builder.md` and `claude-agents/reviewer.md` from the edited briefs |
+| `node scripts/validate-package.cjs` | Passed: package v0.11.0, five shared skills, matching versions and release catalogs |
+| `node --test tests/*.test.cjs` | 177 tests passed (168 before this change, plus 9 in `tests/dispatch-report.test.cjs`); this includes the package inventory, which packs the working tree with the new script and runs `validate-package.cjs --installed` on the result |
+| `claude plugin validate .claude-plugin/plugin.json --strict` | Passed (Claude Code 2.1.293) |
+| `claude plugin validate .claude-plugin/marketplace.json --strict` | Passed |
+| `agy plugin validate .` | Passed (Antigravity CLI 1.3.1): five skills and three agents processed |
+| `git diff --check` | Clean; the two new untracked files have no trailing whitespace |
+| Relative links and heading anchors in changed Markdown | 44 links checked, all targets and anchors exist |
+| Search of shipped skills, briefs, adapters, templates, hooks, `WORKERS.md`, and the new script for local contributor-instruction filenames or `.local/` | No matches |
+
+The report fixtures cover: old plans with no records, which stay valid under
+`validate-plan.cjs --closing` and are reported as missing; malformed records
+(other version, unknown type, key, or value, missing or duplicate key, an
+unclosed record, a third repair without `basis`); out-of-order or dangling
+references; dispatch IDs repeated across tasks or `## Review`; several repairs
+in one dispatch; escalation across two dispatches with `resumes=`; a pending
+manual handoff completed by an `update`; an authorized third repair and a
+distinct failure; unknown vendor; direct implementation; a phase-only review
+record; missing `verify` or `accept`; a reopened task, counted once and not
+as a first-try pass; open phases, unchecked tasks, and an unlinked closed
+phase, each excluded and disclosed; examples in fences and comments; a `Risk:`
+field; read-only CLI use, usage errors, and a phase link leaving the project.
+A further test parses the example in `WORKERS.md` and the template's record
+and checks that the documented record types match the parser.
+
+A direct text walk-through, by the same session that wrote the changes and
+without fresh context, compared the instructions with each row of #83's
+verification table: every tier and Inherit, exhaustion, distinct failures,
+resume, worker or model change, unchanged blockers, and authorized extra
+corrections; missing, `same`, `different`, and unknown review-vendor values,
+one or mixed or unknown vendors, failed routes, pending and completed
+handoffs, and the vendor waiver; named, session, ambiguous, alternate, and
+unknown billing; and security versus cosmetic changes, old plans without
+`Risk:`, unavailable Strong or fresh review, exceptions, blocking rechecks, and
+later edits that make an earlier review stale. It found a text rule for each
+case. This walk-through establishes what the instructions say, not how a
+model follows them.
+
+Not run: any live model session or worker dispatch, so escalation choices,
+cross-vendor routing, metered-route handling, fallbacks, high-risk review, and
+whether models write the records correctly are unobserved. No host
+installation or update trial ran, and no quota, billing, or authentication
+probe was made. Codex, OpenCode, and Gemini CLI were not checked. Whether a
+different model vendor improves review quality remains a hypothesis.
+
 ## Public installation 0.11.0 — 2026-10-06
 
 PR #82 merged the release commits into `main` as `9a935bb`. The immutable
