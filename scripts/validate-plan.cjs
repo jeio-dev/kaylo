@@ -252,4 +252,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { validate };
+module.exports = { validate, visibleMarkdown };

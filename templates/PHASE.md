@@ -25,11 +25,11 @@ Status: Current
   - Test plan: [Working directory, exact command and expected result, or manual action and observation; identify any check that must first be created]
   - Result: Not started
 
-[`Blocked by` lists tasks above this one in this phase whose output it needs to implement or verify, or None; every task needs it. It sets order, not concurrency. For tasks that need them, add starting points, required packages or tools, concrete steps, and an estimate reason. Use M or L for more complex work. IDs restart per phase. Before the first edit, replace a bare `Not started` placeholder with `In progress`; otherwise put `In progress` at the start of the existing `Result` and keep all earlier records in that line. Replace the leading unfinished state with actual evidence at check-off while retaining the starting workspace record, recorded check failures, superseded evidence, and failed-repair history within the same `Result:` line. A blocked result includes the failure and next action.]
+[`Blocked by` lists tasks above this one in this phase whose output it needs to implement or verify, or None; every task needs it. It sets order, not concurrency. For tasks that need them, add starting points, required packages or tools, concrete steps, and an estimate reason. Add `Risk: high` with its reason when the task changes consequential security behavior; build then requires a focused review before check-off. Use M or L for more complex work. IDs restart per phase. Before the first edit, replace a bare `Not started` placeholder with `In progress`; otherwise put `In progress` at the start of the existing `Result` and keep all earlier records in that line. Replace the leading unfinished state with actual evidence at check-off while retaining the starting workspace record, recorded check failures, superseded evidence, and failed-repair history within the same `Result:` line. Append dispatch records such as `{kaylo:v1 verify by=direct result=pass}` there as described in Kaylo's `WORKERS.md`. A blocked result includes the failure and next action.]
 
 ## Review
 
-[Target, coverage, who performed the review, and limitations; a direct plan review records that it lacked fresh context. Record None when there are no review comments; otherwise use stable IDs, with the label first and then ` — `, for example:]
+[Target, coverage, who performed the review, and limitations, with a dispatch or direct record naming `covers=`; a direct plan review records that it lacked fresh context. Record None when there are no review comments; otherwise use stable IDs, with the label first and then ` — `, for example:]
 
 - R1: [blocking / non-blocking] — [open / fixed / accepted by user]
   - Target and location: [Plan task or implementation file]
