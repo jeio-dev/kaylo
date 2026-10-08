@@ -150,6 +150,65 @@ test('an old plan with no records stays valid and reports every task as missing'
   assert.deepEqual(data.groups, []);
 });
 
+test('reviewer records in task Results are malformed and excluded from first-try rates', t => {
+  const direct = '{kaylo:v1 direct role=builder vendor=anthropic} {kaylo:v1 verify by=direct result=pass}';
+  const reviewer = '{kaylo:v1 dispatch id=D2 role=reviewer tier=Inherit fallback=tier-exception fallback-auth=user outcome=completed covers=T1}';
+  const root = fixture(t, [{ id: '01', closed: true, text: plan([
+    task('T1', `${direct} ${reviewer} {kaylo:v1 accept}`),
+    task('T2', `${direct} {kaylo:v1 direct role=reviewer covers=T2} {kaylo:v1 accept}`),
+    task('T3', pass)
+  ].join('')) }]);
+  // Placement diagnostics belong to the report; structural validation stays unchanged.
+  assert.deepEqual(validate(root, { closing: true }), []);
+  const data = report(root);
+  const tasks = byId(data);
+  for (const id of ['01-T1', '01-T2']) {
+    assert.equal(tasks[id].status, 'malformed');
+    assert.match(tasks[id].reason, /reviewer (dispatch|direct) record belongs under ## Review, not in task Result/);
+    assert.equal(tasks[id].success, undefined);
+  }
+  assert.equal(tasks['01-T3'].status, 'recorded');
+  assert.equal(tasks['01-T3'].success, true);
+  assert.equal(data.counts.malformed, 2);
+  assert.deepEqual(data.groups.map(g => [g.passed, g.total]), [[1, 1]]);
+  assert.match(format(data), /01-T1: malformed \(reviewer dispatch record belongs under ## Review/);
+});
+
+test('reviewer records under Review keep valid tasks recorded and dispatch IDs phase-unique', t => {
+  const direct = '{kaylo:v1 direct role=builder vendor=anthropic} {kaylo:v1 verify by=direct result=pass} {kaylo:v1 accept}';
+  const reviewer = '{kaylo:v1 dispatch id=D2 role=reviewer tier=Inherit fallback=tier-exception fallback-auth=user outcome=completed covers=T1}';
+  const review = `Independent task reviews. ${reviewer} {kaylo:v1 direct role=reviewer covers=T2}`;
+  const root = fixture(t, [{ id: '01', closed: true,
+    text: plan(task('T1', direct) + task('T2', direct) + task('T3', pass), review) }]);
+  const data = report(root);
+  assert.equal(data.counts.recorded, 3);
+  assert.equal(data.counts.malformed, 0);
+  assert.ok(data.tasks.every(t => t.success));
+  // Moving a reviewer record must not release its ID for use by a builder.
+  const duplicate = fixture(t, [{ id: '01', closed: true,
+    text: plan(task('T1', pass.replace(/D1/g, 'D2')) + task('T2', direct), review) }]);
+  const tasks = byId(report(duplicate));
+  assert.equal(tasks['01-T1'].status, 'malformed');
+  assert.match(tasks['01-T1'].reason, /dispatch ID D2 is not unique in the phase/);
+  assert.equal(tasks['01-T2'].status, 'recorded');
+});
+
+test('the build delegation tier table matches the canonical builder recommendations', () => {
+  const read = file => fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
+  const canonical = read('WORKERS.md');
+  const delegation = read('skills/build/references/delegation.md');
+  const rows = text => text.split('\n').filter(line => /^\| Builder, [SML] task \|/.test(line))
+    .map(line => line.split('|').slice(1, -1).map(cell => cell.trim()));
+  const expected = [
+    ['Builder, S task', 'Medium', 'Light', 'Light'],
+    ['Builder, M task', 'Strong', 'Medium', 'Medium'],
+    ['Builder, L task', 'Strong', 'Strong', 'Strong']
+  ];
+  for (const text of [canonical, delegation]) assert.match(text, /^\| Work \| Quality \| Balanced \| Budget \|$/m);
+  assert.deepEqual(rows(canonical), expected);
+  assert.deepEqual(rows(delegation), rows(canonical));
+});
+
 test('records and Risk fields do not affect structural plan validation', t => {
   const root = fixture(t, [{ id: '01', closed: true,
     text: plan(task('T1', pass, { extra: '  - Risk: high — changes session expiry enforcement\n' })) }]);

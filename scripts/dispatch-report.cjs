@@ -84,6 +84,9 @@ function classify(task, errors) {
   let builder = null;
   let builders = 0;
   for (const item of records) {
+    if (['dispatch', 'direct'].includes(item.type) && item.role === 'reviewer') {
+      problems.push(`reviewer ${item.type} record belongs under ## Review, not in task Result`);
+    }
     if (item.type === 'dispatch') {
       if (item.resumes && !dispatches.has(item.resumes)) problems.push(`${item.id} resumes unknown ${item.resumes}`);
       dispatches.set(item.id, item);

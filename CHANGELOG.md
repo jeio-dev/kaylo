@@ -4,6 +4,15 @@
 
 ### Notable Changes
 
+- **skills and tools**: Build now states explicitly that reviewer records,
+  including high-risk reviews and inherited exceptions, go under `## Review`.
+  The dispatch report marks a checked task with a reviewer record in its
+  `Result:` malformed instead of counting it in first-try rates. The build
+  delegation reference includes the S/M/L builder tier rows and asks for the
+  preference, estimate, tier choice, and any reason for an increase before
+  dispatch; a missing dependency alone does not justify raising the tier.
+  These changes address H2 and E1 from the corrected-package smoke set
+  ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
 - **skills**: When a check fails, the assistant now diagnoses it before
   choosing a stronger model. With a Quality, Balanced, or Budget preference
   and a host that can apply the choice, it may recommend Light → Medium or

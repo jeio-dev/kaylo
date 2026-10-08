@@ -143,6 +143,7 @@ Each record is `{kaylo:v1 <type> key=value ...}`. A value has no spaces, quotes,
 - Give a distinct failure a new `failure=` ID. Count `n` for the same failure across sessions, workers, and dispatches. A fix for a review finding on a task is a `repair` in that task's `Result:`; whoever unchecks accepted work appends `reopen`.
 - `outcome=completed` means the worker finished, not that the task passed; only `accept` records acceptance. A `pending` manual handoff or a `failed` dispatch is incomplete.
 - A reviewer dispatch or direct review names `covers=` with task IDs (`T1,T3`) or `phase`. Ordinary tasks get no reviewer record of their own.
+- Reviewer `dispatch` and `direct` records belong under `## Review`, including high-risk reviews requested by build; their later `update` records stay there too. The report marks a checked task with a reviewer record in its `Result:` malformed and excludes it from first-try rates. It checks closed phases when run, not records during a build.
 - `tier` records the tier requested for the dispatch, or `Inherit` when no tier applies; it is never `unknown`. Record a route the user chose because a required tier or vendor could not be established, with `fallback-auth=user` (or `session` for an authorization given earlier in the session):
   - Inherit chosen instead of an unavailable tier: `tier=Inherit fallback=inherit`.
   - Another model or host: `fallback=other-model`.
