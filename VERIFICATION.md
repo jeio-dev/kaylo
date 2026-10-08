@@ -53,6 +53,13 @@ Only the report script and its tests changed; no instruction text changed.
 The limits of the #83 record below still apply: no live model session, worker
 dispatch, host installation, or billing or access probe ran.
 
+Independent focused recheck of `6c78d24701f015f2ee51a7b13c86434af685c1a6`:
+both original findings are fixed, all 10 dispatch-report tests passed, and
+`git diff e4efe45 6c78d24 --check` was clean. No new findings in the fix diff.
+This recheck did not rerun the full suite or native manifest validators; the
+178-test and native validation results above remain author-reported. No live
+model, worker, host installation, or billing/access check ran in the recheck.
+
 ## PR #91 review — 2026-10-07
 
 Reviewed commit `e4efe45b4904b3efc9dc40f646fe6278d9740cf9` against the revised
