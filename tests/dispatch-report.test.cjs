@@ -225,3 +225,74 @@ test('the documented example and record types match the parser', () => {
   const template = fs.readFileSync(path.join(__dirname, '../templates/PHASE.md'), 'utf8').match(/\{kaylo:v1 [^}]*\}/)[0];
   assert.deepEqual(parseRecords(template).errors, []);
 });
+
+// Every complete record example in shipped guidance, by file. Grammar placeholders such
+// as `{kaylo:v1 <type> key=value ...}` are not examples.
+function shippedExamples() {
+  const root = path.join(__dirname, '..');
+  const files = ['WORKERS.md', 'README.md', 'GLOSSARY.md', 'templates/PHASE.md'];
+  for (const dir of ['skills', 'agents']) {
+    const walk = d => fs.readdirSync(d, { withFileTypes: true }).forEach(e => {
+      const p = path.join(d, e.name);
+      if (e.isDirectory()) walk(p); else if (e.name.endsWith('.md')) files.push(path.relative(root, p));
+    });
+    walk(path.join(root, dir));
+  }
+  const found = {};
+  for (const file of files) {
+    const text = fs.readFileSync(path.join(root, file), 'utf8');
+    found[file] = (text.match(/\{kaylo:v1 [^}]*\}/g) || []).filter(r => !/<type>|\.\.\./.test(r));
+  }
+  return found;
+}
+const examplesIn = (file, type) => shippedExamples()[file].filter(r => parseRecords(r).records[0]?.type === type);
+
+test('every record example in shipped guidance parses', () => {
+  const found = shippedExamples();
+  const all = Object.entries(found).flatMap(([file, records]) => records.map(r => [file, r]));
+  for (const [file, r] of all) assert.deepEqual(parseRecords(r).errors, [], `${file}: ${r}`);
+  // The entry points carry their own syntax, so a model need not open WORKERS.md.
+  const types = file => new Set(found[file].map(r => parseRecords(r).records[0].type));
+  assert.deepEqual([...types('skills/build/SKILL.md')].sort(), ['accept', 'direct', 'dispatch', 'reopen', 'repair', 'verify']);
+  assert.deepEqual([...types('skills/review/SKILL.md')].sort(), ['direct', 'dispatch']);
+  for (const file of ['skills/build/SKILL.md', 'skills/review/SKILL.md', 'skills/review/references/delegation.md']) {
+    for (const r of found[file]) {
+      const [item] = parseRecords(r).records;
+      if (item.tier) assert.match(item.tier, /^(Light|Medium|Strong|Inherit)$/);
+    }
+  }
+  const fallbacks = found['skills/review/references/delegation.md'].map(r => parseRecords(r).records[0].fallback).filter(Boolean);
+  assert.deepEqual(fallbacks, ['vendor-waived', 'tier-exception', 'manual-handoff']);
+});
+
+test('documented record sequences classify as the guidance intends', t => {
+  const build = 'skills/build/SKILL.md';
+  const [direct] = examplesIn(build, 'direct');
+  const [dispatch] = examplesIn(build, 'dispatch');
+  const [verify] = examplesIn(build, 'verify');
+  const repairs = examplesIn(build, 'repair');
+  const [accept] = examplesIn(build, 'accept');
+  const [reopen] = examplesIn(build, 'reopen');
+  const resumed = repairs.find(r => r.includes('by=direct'));
+  const firstRepair = repairs.find(r => r.includes('by=D1'));
+  assert(direct && dispatch && verify && firstRepair && resumed && accept && reopen);
+  const review = examplesIn('skills/review/references/delegation.md', 'dispatch')
+    .concat(examplesIn('skills/review/references/delegation.md', 'update')).join(' ');
+  const root = fixture(t, [{ id: '01', closed: true, text: plan([
+    // Direct work, first try.
+    task('T1', `Baseline clean. ${direct} {kaylo:v1 verify by=direct result=pass} Check passed. ${accept}`),
+    // A worker that failed its first check and passed after one repair.
+    task('T2', `Baseline clean. ${dispatch.replace('id=D1', 'id=D5')} ${verify.replace('D1', 'D5')} Failed. ${firstRepair.replace('D1', 'D5')} Passed. ${accept}`),
+    // E2's shape: seeded worker history, then a resumed direct repair continuing F1.
+    task('T3', `Baseline clean. ${dispatch.replace('id=D1', 'id=D6')} {kaylo:v1 verify by=D6 result=fail} {kaylo:v1 repair by=D6 failure=F1 n=1 result=fail} ${direct} ${resumed} Passed. ${accept}`, { estimate: 'M' }),
+    // Accepted, then unchecked again.
+    task('T4', `${direct} {kaylo:v1 verify by=direct result=pass} ${accept} Review found a defect. ${reopen}`, { checked: false })
+  ].join('\n'), `Reviews of T1 to T3 with the user's routing choices. ${review}`) }]);
+  const tasks = byId(report(root));
+  assert.deepEqual(tasks['01-T1'], { ...tasks['01-T1'], status: 'recorded', success: true });
+  assert.deepEqual(tasks['01-T2'], { ...tasks['01-T2'], status: 'recorded', success: false });
+  assert.deepEqual(tasks['01-T3'], { ...tasks['01-T3'], status: 'recorded', success: false });
+  assert.equal(tasks['01-T3'].group.tier, 'Light');
+  assert.equal(tasks['01-T4'].status, 'unchecked');
+  for (const id of ['01-T1', '01-T2', '01-T3']) assert.equal(tasks[id].reason, undefined, id);
+});

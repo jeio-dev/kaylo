@@ -48,7 +48,7 @@ For Quality, Balanced, or Budget on a host that can select a worker model, use t
 | High-risk task reviewer | Strong | Strong | Strong |
 | Difficult debugger | Strong | Strong | Strong |
 
-The task's consequence, uncertainty, large context, failed verification, or S/M/L estimate can raise a worker above the table's tier. Do not silently assign a consequential review below the tier it needs; Budget never lowers an L build below Strong. Keep the researcher, builder, and reviewer briefs for every tier. For Quality, Balanced, or Budget, select an available model whose capability meets or exceeds the required tier within the user's host, provider, and account. If availability or capability cannot be established, the required tier is unavailable, or the host cannot apply the choice to this dispatch, use Inherit only after stopping for the user's choice; explain the tier that cannot be met and that the inherited model may be weaker or unknown. The user may choose Inherit, another available host or model, or direct work. Record that decision and any fallback before dispatch. Never silently fall back to an inherited/default model, switch providers, accounts, paid APIs, or host settings. With no valid preference, Inherit still applies without a new question.
+The task's consequence, uncertainty, large context, failed verification, or S/M/L estimate can raise a worker above the table's tier. Do not silently assign a consequential review below the tier it needs; Budget never lowers an L build below Strong. Keep the researcher, builder, and reviewer briefs for every tier. For Quality, Balanced, or Budget, select an available model whose capability meets or exceeds the required tier within the user's host, provider, and account. If availability or capability cannot be established, the required tier is unavailable, or the host cannot apply the choice to this dispatch, use Inherit only after stopping for the user's choice; explain the tier that cannot be met and that the inherited model may be weaker or unknown. The user may choose Inherit, another available host or model, or direct work. Record that decision and any fallback before dispatch, using the `fallback=` values listed under [dispatch records](#dispatch-records). Never silently fall back to an inherited/default model, switch providers, accounts, paid APIs, or host settings. With no valid preference, Inherit still applies without a new question.
 
 For each dispatch, record the preference, table tier and any reason it was raised (or no tier for Inherit), the requested worker setting, the model the host actually used when known, and any fallback. Use the existing task `Result:` for a build, `## Review` for a reviewer, and the phase plan's research notes or the response for research without a plan. Builds and reviews also append the [dispatch records](#dispatch-records) below. A recommendation is not proof of the model that ran; if the host does not reveal it, record that it was not observed.
 
@@ -116,7 +116,7 @@ If a relevant vendor is unknown, or no reachable reviewer differs from all of th
 2. Perform a manual handoff and wait for its review evidence.
 3. Pause, recording the missing route, identity, or access.
 
-There is no choice to skip the review. Removing an agreed review requirement is a scope change the user must record; missing evidence never counts as a passed review, and required implementation review and blocking-comment rechecks still govern closure.
+Record the choice in the review's `dispatch` or `direct` record as listed under [dispatch records](#dispatch-records). A waiver covers only the vendor rule; establish the reviewer's tier separately. There is no choice to skip the review. Removing an agreed review requirement is a scope change the user must record; missing evidence never counts as a passed review, and required implementation review and blocking-comment rechecks still govern closure.
 
 Use only routes the user has already configured, within their authorization. A dispatch's actual result shows whether a route works: installation or configuration does not establish sign-in, quota, model identity, or completion. An authentication or quota failure leaves the review incomplete and leads to the choices above. A prepared handoff packet is not a completed review.
 
@@ -143,6 +143,15 @@ Each record is `{kaylo:v1 <type> key=value ...}`. A value has no spaces, quotes,
 - Give a distinct failure a new `failure=` ID. Count `n` for the same failure across sessions, workers, and dispatches. A fix for a review finding on a task is a `repair` in that task's `Result:`; whoever unchecks accepted work appends `reopen`.
 - `outcome=completed` means the worker finished, not that the task passed; only `accept` records acceptance. A `pending` manual handoff or a `failed` dispatch is incomplete.
 - A reviewer dispatch or direct review names `covers=` with task IDs (`T1,T3`) or `phase`. Ordinary tasks get no reviewer record of their own.
+- `tier` records the tier requested for the dispatch, or `Inherit` when no tier applies; it is never `unknown`. Record a route the user chose because a required tier or vendor could not be established, with `fallback-auth=user` (or `session` for an authorization given earlier in the session):
+  - Inherit chosen instead of an unavailable tier: `tier=Inherit fallback=inherit`.
+  - Another model or host: `fallback=other-model`.
+  - An explicit exception to an unmet tier constraint, such as an inherited reviewer for a `Risk: high` task: `fallback=tier-exception`, with `tier` naming what was actually requested.
+  - A different-vendor review waived for this review: `fallback=vendor-waived`.
+  - A manual handoff: a `dispatch` with `fallback=manual-handoff outcome=pending`, then `{kaylo:v1 update by=D4 outcome=completed}` naming that dispatch when its evidence returns.
+  - Direct work chosen instead of a worker: a `direct` record with `fallback=direct`.
+  - A pause: no record, because nothing ran. Record the pause and the missing route in prose.
+- `fallback=` holds one value. When the user granted more than one exception, record `tier-exception` and name every exception and its authorization in the prose beside the record.
 
 ```text
 - Result: Baseline: main at 1a2b3c4, clean. {kaylo:v1 dispatch id=D1 role=builder tier=Light setting=haiku host=claude-code route=claude-subscription vendor=anthropic model=unknown billing=subscription outcome=completed} {kaylo:v1 verify by=D1 result=fail} npm test failed: 2 of 14 tests, exit 1. {kaylo:v1 repair by=D1 failure=F1 n=1 result=pass} npm test passed, exit 0. {kaylo:v1 accept}

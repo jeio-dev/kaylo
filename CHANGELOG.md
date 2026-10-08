@@ -48,6 +48,22 @@
   flagged as advisory only; nothing changes preferences or the tier table
   automatically. The plan validator ignores the records, so existing plans
   stay valid ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
+- **skills**: The build and review skills now show the exact record forms
+  themselves, so the assistant no longer has to open `WORKERS.md` to write
+  them. Build shows `direct`, `dispatch`, `verify`, `repair`, and the keyless
+  `accept` and `reopen`. It also says how to resume a task with existing
+  records: keep them, add your own `direct` or new `dispatch` record first,
+  add no second `verify`, and continue the failure's repair count. Review and
+  `WORKERS.md` map each routing choice to a record. A vendor waiver is
+  `fallback=vendor-waived fallback-auth=user`, and an exception to an unmet
+  tier is `fallback=tier-exception`. A manual handoff stays `pending` until an
+  `update` records its result, and a pause writes no record. `tier` is never
+  `unknown`, and a vendor waiver does not settle the reviewer's tier. A
+  review comment is marked `fixed` only after a correction. When you decline
+  another repair, the next step no longer asks for it again. These changes
+  follow the first live trial of the #83 records, in which direct builds
+  wrote prose instead of records and a vendor waiver was recorded as
+  `fallback=none` ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
 
 ## 2026-10-06, Version 0.11.0
 
