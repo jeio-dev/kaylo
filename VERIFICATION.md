@@ -29,6 +29,100 @@ Codex grades are operator-reported. The PR #79 review spot-checked their saved
 command records and secret-token classifications but did not audit every
 transcript.
 
+## Issue #88 approved specification revision — 2026-10-07
+
+Following the maintainer's approval, revised #88's scope, acceptance criteria,
+dependencies, trade-offs and verification cases; recorded R1–R9 as addressed
+in the specification. Integrated #87's now-approved phase-local decision and
+close-promotion lifecycle. No finding remains unresolved at the specification
+level; implementation and behavioral verification remain pending.
+
+Published issue: https://github.com/jeio-dev/kaylo/issues/88
+Updated review: https://github.com/jeio-dev/kaylo/issues/88#issuecomment-6052142780
+The original proposal and review were preserved verbatim inside collapsed
+historical sections. The review is marked “Addressed in the revised
+specification; implementation and verification remain pending.”
+
+Observed: read back the issue and comment through GitHub and compared both
+exactly to prepared payloads; verified original-text preservation, all nine
+dispositions, 15 unchecked implementation acceptance criteria, unchanged title
+and open issue state. Checked remote baselines before editing to avoid
+overwriting intervening changes. This verifies specification publication only.
+
+No implementation, package/test suite, native manifest, install/update, live
+model/worker, database/browser/E2E, deployment or paid-operation trial was run
+for this revision. Earlier review checks remain historical evidence and were
+not reused to certify the concurrently changing local candidate. Pre-existing
+local implementation/documentation edits were preserved; only this evidence
+entry was appended locally. Specification approval authorizes no implementation
+or release.
+
+## Issue #88 specification review — 2026-10-07
+
+Direct review against local `7e5b4bd` on `issue-83-record-fix`, contributor
+guidance, current test/worker/report contracts, and linked issue dependencies.
+Findings and proposed verification cases:
+https://github.com/jeio-dev/kaylo/issues/88#issuecomment-6052142780
+The published comment was read back and matched the prepared text; the issue
+body was verified unchanged. GitHub resolved public baseline `07f6291821` but
+returned no commit for the local candidate SHA; evidence links distinguish
+public baseline contracts from local candidate behavior.
+
+Observed: `node scripts/validate-package.cjs` passed (five shared skills,
+matching v0.11.0 versions/catalogs); `node --test
+tests/dispatch-report.test.cjs` passed 12 tests, with zero failures/skips;
+`git diff --check` passed. Disposable report/parser probes showed that baseline
+red plus implemented green as two verify records is malformed; encoding the
+initial implementation as a repair produces a non-first-try result; separate
+negative-control prose plus one passing initial verify preserves first-try
+classification; `role=test-author` is rejected by the current grammar. These
+probe fixtures were removed. This verifies current report behavior, not #88.
+
+No implementation or issue-body changes; no full Node suite, native manifest
+validation, install/update trial, live model/worker trial, new test-diff scanner,
+real DB/browser/E2E environment, CI enforcement, deployment, or paid operation
+was exercised. Historical host evidence does not establish this proposal's
+behavior. Review lacked a fresh independent reviewer. Existing edits in this
+file were preserved; only this review evidence/limits entry was appended.
+
+## Issue #87 approved specification update — 2026-10-07
+
+Following explicit maintainer approval, updated only issue #87's specification
+and its original review comment. Recorded resolutions for R1–R7 and no unresolved
+specification findings; implementation and verification remain pending.
+Published issue: https://github.com/jeio-dev/kaylo/issues/87
+Addressed review: https://github.com/jeio-dev/kaylo/issues/87#issuecomment-6052056025
+
+Read back both published records through GitHub and checked their complete text
+against the prepared updates. Confirmed the original issue body and review are
+preserved verbatim inside collapsed historical sections, all seven dispositions
+are present, and the existing comment was edited without creating another.
+`git diff --check` passed after this record was appended. No implementation,
+release, or feature behavior checks were performed for this specification-only
+update. Prior local verification edits were preserved.
+
+## Issue #87 specification review — 2026-10-07
+
+Direct review of the ADR proposal against local `7e5b4bd` on
+`issue-83-record-fix`, contributor guidance, and linked dependency contracts.
+Findings and proposed verification cases:
+https://github.com/jeio-dev/kaylo/issues/87#issuecomment-6052056025
+The local candidate SHA was unavailable through GitHub's commit API; the review
+uses verified public baseline `07f6291821` links for unchanged relevant contracts.
+
+Observed: `node scripts/validate-package.cjs` passed (five shared skills,
+matching v0.11.0 versions/catalogs); `git diff --check` passed. A disposable
+structurally closable plan returned no validator errors both without an ADR
+directory and with a malformed/conflicting ADR index containing duplicate IDs
+and a nonexistent successor. The fixture was removed. This establishes that
+current structural validation does not validate ADRs, not proposed ADR behavior.
+
+No implementation or issue-body changes; no full Node suite, native manifest
+validation, install/update, live model/worker, migration, deployment, or paid
+operation trials. Existing host records do not establish ADR behavior. This
+review lacked an independent reviewer. Pre-existing edits in this file were
+preserved; only this review record was appended.
+
 ## PR #91 review fixes — 2026-10-07
 
 Both findings from the PR #91 review are fixed in `scripts/dispatch-report.cjs`.
