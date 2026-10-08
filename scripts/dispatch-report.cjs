@@ -49,7 +49,7 @@ function parseRecords(line) {
     if (!match) { errors.push(`unreadable record ${shown}`); continue; }
     const [, version, type, rest] = match;
     if (version !== 'v1') { errors.push(`unsupported record version ${version || '(none)'}`); continue; }
-    if (!schema[type]) { errors.push(`unknown record type ${type}`); continue; }
+    if (!Object.hasOwn(schema, type)) { errors.push(`unknown record type ${type}`); continue; }
     const [required, optional] = schema[type];
     const fields = {};
     let bad = false;
@@ -81,6 +81,7 @@ function classify(task, errors) {
   const dispatches = new Map();
   const counts = new Map();
   let verify = null;
+  let builder = null;
   let builders = 0;
   for (const item of records) {
     if (item.type === 'dispatch') {
@@ -97,7 +98,8 @@ function classify(task, errors) {
       if (!by || by.role !== 'builder') problems.push(`${item.type} by=${item.by} names no earlier builder record`);
       if (item.type === 'verify') {
         if (verify) problems.push('more than one verify record');
-        verify = verify || item;
+        // Later direct work replaces the 'direct' entry, so keep the initial builder now.
+        else { verify = item; builder = by; }
       } else {
         if (!verify) problems.push(`repair ${item.failure} precedes verify`);
         const expected = (counts.get(item.failure) || 0) + 1;
@@ -110,7 +112,6 @@ function classify(task, errors) {
   if (!builders) return { status: 'missing', reason: 'no builder dispatch or direct record' };
   if (!verify) return { status: 'missing', reason: 'no initial verify record' };
   if (!records.some(item => item.type === 'accept')) return { status: 'missing', reason: 'no accept record' };
-  const builder = dispatches.get(verify.by);
   const vendor = !builder.vendor || ['unknown', 'n/a'].includes(builder.vendor) ? 'unknown' : builder.vendor.toLowerCase();
   const success = verify.result === 'pass' && !records.some(item => item.type === 'repair' || item.type === 'reopen');
   return { status: 'recorded', success,

@@ -64,6 +64,8 @@ test('malformed records are diagnosed rather than skipped', () => {
   const cases = [
     ['{kaylo:v2 accept}', /unsupported record version v2/],
     ['{kaylo:v1 approve}', /unknown record type approve/],
+    ['{kaylo:v1 constructor}', /unknown record type constructor/],
+    ['{kaylo:v1 __proto__}', /unreadable record/],
     ['{kaylo:v1 verify by=D1 result=ok}', /invalid result=ok/],
     ['{kaylo:v1 verify by=D1 result=pass vendor=x}', /unknown key vendor/],
     ['{kaylo:v1 dispatch id=D1 role=builder outcome=completed}', /missing tier/],
@@ -85,6 +87,9 @@ test('first-try rates count closed phases only and disclose missing, malformed, 
     task('T3', escalated.replace(/D1/g, 'D4').replace(/D2/g, 'D5')),
     task('T4', `${D('D6').replace('vendor=anthropic', 'vendor=unknown')} {kaylo:v1 verify by=D6 result=pass} {kaylo:v1 accept}`),
     task('T5', '{kaylo:v1 direct role=builder host=codex vendor=OpenAI model=unknown} {kaylo:v1 verify by=direct result=pass} {kaylo:v1 accept}', { estimate: 'M' }),
+    // Direct work resumed under another vendor keeps the initial builder's attribution.
+    task('T12', '{kaylo:v1 direct role=builder vendor=anthropic} {kaylo:v1 verify by=direct result=fail} {kaylo:v1 direct role=builder vendor=openai} ' +
+      '{kaylo:v1 repair by=direct failure=F1 n=1 result=pass} {kaylo:v1 accept}'),
     task('T6', 'node greet.cjs printed Hello, exit 0'),
     task('T7', `${D('D7')} {kaylo:v1 accept}`),
     task('T8', `${D('D8')} {kaylo:v1 verify by=D8 result=pass}`),
@@ -105,7 +110,9 @@ test('first-try rates count closed phases only and disclose missing, malformed, 
   const tasksById = byId(data);
   assert.deepEqual(data.phases, ['01']);
   assert.equal(Object.keys(tasksById).some(id => id.startsWith('02-')), false);
-  assert.deepEqual(data.counts, { tasks: 11, recorded: 7, missing: 3, malformed: 1, unchecked: 0, unknownVendor: 1 });
+  assert.deepEqual(data.counts, { tasks: 12, recorded: 8, missing: 3, malformed: 1, unchecked: 0, unknownVendor: 1 });
+  assert.deepEqual([tasksById['01-T12'].group, tasksById['01-T12'].success],
+    [{ tier: 'direct', estimate: 'S', vendor: 'anthropic' }, false]);
   assert.equal(tasksById['01-T11'].success, false);
   assert.equal(tasksById['01-T1'].success, true);
   assert.equal(tasksById['01-T2'].success, false);
@@ -117,11 +124,22 @@ test('first-try rates count closed phases only and disclose missing, malformed, 
   assert.equal(tasksById['01-T9'].success, false);
   assert.match(tasksById['01-T10'].reason, /n=2, expected n=1/);
   assert.deepEqual(data.groups.map(g => [g.tier, g.estimate, g.vendor, g.passed, g.total]), [
-    ['Light', 'S', 'anthropic', 1, 5], ['Light', 'S', 'unknown', 1, 1], ['direct', 'M', 'openai', 1, 1]]);
+    ['Light', 'S', 'anthropic', 1, 5], ['Light', 'S', 'unknown', 1, 1], ['direct', 'M', 'openai', 1, 1], ['direct', 'S', 'anthropic', 0, 1]]);
   const text = format(data);
   assert.match(text, /Light\tS\tanthropic\t1\/5\t20% \(below ~60%, advisory\)/);
   assert.match(text, /01-T6: missing \(no records\)/);
   assert.match(text, /leave out blocked or abandoned work/);
+});
+
+test('an inherited property name as a record type marks only its task malformed', t => {
+  const root = fixture(t, [{ id: '01', closed: true,
+    text: plan(task('T1', pass) + task('T2', `${D('D2')} {kaylo:v1 constructor} {kaylo:v1 verify by=D2 result=pass} {kaylo:v1 accept}`)) }]);
+  const data = report(root);
+  assert.deepEqual(data.counts, { tasks: 2, recorded: 1, missing: 0, malformed: 1, unchecked: 0, unknownVendor: 0 });
+  assert.match(byId(data)['01-T2'].reason, /unknown record type constructor/);
+  const cli = spawnSync(process.execPath, [script, root], { encoding: 'utf8' });
+  assert.equal(cli.status, 0, cli.stderr);
+  assert.match(cli.stdout, /01-T2: malformed/);
 });
 
 test('an old plan with no records stays valid and reports every task as missing', t => {

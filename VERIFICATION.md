@@ -29,6 +29,44 @@ Codex grades are operator-reported. The PR #79 review spot-checked their saved
 command records and secret-token classifications but did not audit every
 transcript.
 
+## PR #91 review fixes — 2026-10-07
+
+Both findings from the PR #91 review are fixed in `scripts/dispatch-report.cjs`.
+The report now captures the builder named by the initial `verify` when it reads
+that record, so later direct work under another vendor no longer changes the
+task's group. Record types are checked as the schema's own properties, so
+`{kaylo:v1 constructor}` is reported as an unknown record type and marks only
+its task malformed instead of stopping the report. A `__proto__` type does not
+match the record pattern and was already reported as an unreadable record.
+
+| Check | Observed result |
+| --- | --- |
+| New fixtures against the unfixed script from `e4efe45` | 3 of 10 report tests failed: the resumed-direct-work attribution, the `constructor` parse case, and the report-level `constructor` case |
+| `node --test tests/dispatch-report.test.cjs` with the fix | 10 passed |
+| `node scripts/validate-package.cjs` | Passed |
+| `node --test tests/*.test.cjs` | 178 passed |
+| `claude plugin validate .claude-plugin/plugin.json --strict` and `.claude-plugin/marketplace.json --strict` | Passed (Claude Code 2.1.293) |
+| `agy plugin validate .` | Passed: five skills and three agents processed |
+| `git diff --check` | Clean |
+
+Only the report script and its tests changed; no instruction text changed.
+The limits of the #83 record below still apply: no live model session, worker
+dispatch, host installation, or billing or access probe ran.
+
+## PR #91 review — 2026-10-07
+
+Reviewed commit `e4efe45b4904b3efc9dc40f646fe6278d9740cf9` against the revised
+#83 requirements. The package validator, all 177 Node tests, both strict Claude
+manifest validators, Antigravity's native plugin validator, and
+`git diff 07f6291 HEAD --check` passed. Additional temporary fixtures reproduced
+two report bugs outside the existing tests: resumed direct work overwrites the
+initial builder vendor used for grouping, and an unknown `constructor` record
+throws instead of being counted as malformed. These findings require fixes;
+the passing suite does not establish report correctness for those cases.
+No live model session, worker dispatch, host installation, or billing/access
+probe ran. The review inspected instruction consistency but did not observe
+model compliance with the new routing or review rules.
+
 ## Escalation, dispatch records, review vendor, and high-risk review (#83) — 2026-10-07
 
 Uncommitted changes on `main` at `07f6291` implement the revised #83 contracts.
