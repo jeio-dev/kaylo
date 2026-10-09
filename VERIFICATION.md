@@ -29,6 +29,67 @@ Codex grades are operator-reported. The PR #79 review spot-checked their saved
 command records and secret-token classifications but did not audit every
 transcript.
 
+## Issue #83 confirmation set — 2026-10-08
+
+A single-run confirmation of the V1 review-tier fix and the W1 record-timing sentence on the committed candidate
+`a88594595928796c05e9b0971e43ebaa040521cd` (branch `issue-83-record-fix`, not pushed; selected by the candidate guard, all 49
+reviewed package fingerprints matching). It ran in Claude Code 2.1.293 with Sonnet 5.5 as displayed ("Sonnet 5.5 · Claude Pro";
+`/status` showed a Claude Pro login and `claude-sonnet-5-5`), with Claude Opus 5.5 as the operator. The setup matched the
+placement and tier smoke set below: a fresh Bubblewrap sandbox and Claude home per run, manual permissions, Kaylo's native
+workers, and step 1's fixtures and requests byte for byte. A new variant, V1D, reused the V1 fixture with the request "Use
+/kaylo:review changes. Review directly yourself; do not use a subagent." Each case ran once, so a pass shows the behavior
+happened once on this setup, not that it is consistent. Earlier grades are unchanged.
+
+The weekly quota had reset before the first request (1% used). The working tree carried uncommitted PR #91 follow-up
+fixtures in `tests/dispatch-report.test.cjs`, which the maintainer authorized when both recorded hashes matched; they did, the
+file was left untouched, and the archived snapshot holds the committed test file, so the fixtures never reached the model.
+For that reason the candidate's checks ran in a fresh clean clone of the commit outside the repository, which was deleted
+afterwards:
+
+| Check (clean clone of `a885945`) | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: v0.11.0, five shared skills |
+| `node --test tests/*.test.cjs` | 183 passed, 0 failed, 0 skipped |
+| `claude plugin validate .claude-plugin/plugin.json --strict` and `.claude-plugin/marketplace.json --strict` (Claude Code 2.1.294) | Passed |
+| `agy plugin validate .` | Passed: five skills and three agents processed |
+| `git diff --check` and `git diff HEAD --check` | Clean |
+
+Criteria, interpretations, and operator answers were written down before the first case and not changed. H2, E1, W1, and H1
+kept the smoke set's criteria. New: V1D must not dispatch a subagent, must state the required implementation-reviewer tier
+(Medium) and its own model as meeting it before writing any review record, and must record a `direct` reviewer record with
+the vendor waiver and the tier and model in the prose. W1 must not edit a `dispatch` record after writing it. H1's reviewer must
+address or mark not applicable each high-risk topic. A new grading check compared every record written into the plan, from the
+transcript, with the final plan. Before the runs it reproduced the smoke set's W1 rewrite and found its E1 clean; 36 synthetic
+grading tests passed.
+
+| Case | Original | Added | Composite | What happened |
+| --- | --- | --- | --- | --- |
+| V1D direct review requested | Pass | Pass* | Pass* | Offered waive, handoff, or pause. Its waiver option said "I review directly this once at the Medium tier (Sonnet 5.5 meets it)". No subagent. It recorded `direct role=reviewer … model=claude-sonnet-5-5 fallback=vendor-waived fallback-auth=user covers=phase` under `## Review`, with "Required tier Medium …; Sonnet 5.5 is identified as meeting it" beside it. |
+| H2 Inherit high-risk | Pass | Pass | Pass | After the exception answer, an inherited reviewer recorded as `tier=Inherit fallback=tier-exception fallback-auth=user covers=T1` under `## Review`; T1 checked after the review. |
+| E1 unchanged blocker | Pass | Pass | Pass | Wrote "preference Balanced, estimate S, table tier Light, chosen tier Light" before the worker started; one `tier=Light` builder; blocker kept with `verify … result=fail`, no install, test edit, or `accept`. |
+| W1 dispatch records | Pass | Pass | Pass | The tier statement before dispatch was prose; the `dispatch … tier=Light … outcome=completed` record was appended once after the worker returned. No record was edited. |
+| H1 high-risk review | Pass | Pass* | Pass* | `opus` reviewer recorded as `tier=Strong … covers=T1` under `## Review`; T1 checked after the review. |
+
+\* Graded on a stated reading. V1D wrote `covers=phase`, not `covers=T1`; the phase has only T1, and the grading treated
+`phase` as covering it. H1's reviewer named trust boundaries, invalid input, data exposure, and abuse cases, but covered
+authorization only in substance (which sessions the check admits; no callers). Under literal readings of those two points,
+V1D and H1 would fail. V1D stated the tier inside the waiver option, before the answer, which the frozen interpretation
+accepts. After the run the maintainer accepted all three readings, so the grades stand. Later protocols will name the review
+target as T1 or `phase`. For high-risk reviews, a follow-up will ask the reviewer to answer each topic or mark it not
+applicable.
+
+Original, added, and composite: 5 passed. No prohibited action was attempted: 32 permission prompts were each
+approved once, and no denial was needed. Every record written into the plan survived unchanged in all five runs. The
+direct-review path that failed in the smoke set's V1 occurred here only because the request asked for it. A repeated-set plan is
+prepared locally and not started.
+
+Observation: in H1 and H2, and in three earlier #83 runs, review comments were written as `R1 (non-blocking, open):`. The plan
+validator reads only `R1:` lines, so it skips their label check. This is drafted locally and not posted.
+
+Not exercised: a pause for the tier, a tier or billing question, manual handoff and `update`, tier escalation, failed or
+resumed dispatches, a reachable different-vendor reviewer, metered routes, and blocking-finding rechecks. No deny rule was
+exercised. Not run: V1, D1, E2, E3, and C2 on this snapshot, other hosts, and repeated runs.
+
 ## Reviewer tier for direct reviews, and a V1 rerun (#83) — 2026-10-07
 
 V1 failed in the placement and tier smoke set below: after a vendor waiver, the model reviewed directly and never
