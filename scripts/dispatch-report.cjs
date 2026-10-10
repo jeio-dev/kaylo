@@ -104,7 +104,8 @@ function classify(task, errors) {
     } else if (item.type === 'update') {
       if (!dispatches.has(item.by) || item.by === 'direct') problems.push(`update by=${item.by} names no earlier dispatch`);
       else Object.assign(state.get(item.by), item.outcome && { outcome: item.outcome },
-        ...['host', 'route', 'vendor', 'model'].filter(key => key in item).map(key => ({ [key]: item[key] })));
+        ...['host', 'route', 'vendor', 'model'].filter(key => key in item && !['unknown', 'n/a'].includes(item[key]))
+          .map(key => ({ [key]: item[key] })));
     } else if (item.type === 'verify' || item.type === 'repair') {
       const by = dispatches.get(item.by);
       if (!by || by.role !== 'builder') problems.push(`${item.type} by=${item.by} names no earlier builder record`);
@@ -133,7 +134,7 @@ function classify(task, errors) {
   if (!builders) return { status: 'missing', reason: 'no builder dispatch or direct record' };
   if (!verify) return { status: 'missing', reason: 'no initial verify record' };
   if (!records.some(item => item.type === 'accept')) return { status: 'missing', reason: 'no accept record' };
-  // A later update's observed vendor replaces an unknown or earlier one for grouping.
+  // A later update's known vendor replaces an unknown or earlier one for grouping.
   const observed = builder.type === 'dispatch' ? state.get(builder.id) : builder;
   const vendor = !observed.vendor || ['unknown', 'n/a'].includes(observed.vendor) ? 'unknown' : observed.vendor.toLowerCase();
   const success = verify.result === 'pass' && !records.some(item => item.type === 'repair' || item.type === 'reopen');
@@ -172,6 +173,8 @@ function report(project) {
     const phaseTasks = [];
     const errorsById = new Map();
     const owners = new Map();
+    const taskDispatchIds = new Set();
+    const reviewUpdates = [];
     const claim = (dispatchId, owner) => {
       if (owners.has(dispatchId)) {
         for (const who of [owners.get(dispatchId), owner]) {
@@ -188,6 +191,7 @@ function report(project) {
         for (const error of parsed.errors) reviewProblems.push({ phase: id, problem: error });
         for (const item of parsed.records) {
           if (item.type === 'dispatch') claim(item.id, null);
+          if (item.type === 'update') reviewUpdates.push(item);
           if (['dispatch', 'direct'].includes(item.type) ? item.role === 'builder' : item.type !== 'update') {
             reviewProblems.push({ phase: id, problem: `${item.type}${item.role ? ` role=${item.role}` : ''} record belongs in a task Result, not under ## Review` });
           }
@@ -207,8 +211,19 @@ function report(project) {
       const parsed = parseRecords(field('Result') || '');
       errorsById.set(name, [...parsed.errors]);
       const task = { id: name, checked: match[1].toLowerCase() === 'x', estimate: field('Estimate'), records: parsed.records };
-      for (const item of task.records) if (item.type === 'dispatch') claim(item.id, name);
+      for (const item of task.records) if (item.type === 'dispatch') {
+        claim(item.id, name);
+        taskDispatchIds.add(item.id);
+      }
       phaseTasks.push(task);
+    }
+    // Review may precede Tasks, so resolve update placement after all dispatch claims.
+    for (const item of reviewUpdates) {
+      if (taskDispatchIds.has(item.by)) {
+        reviewProblems.push({ phase: id, problem: `update by=${item.by} names a task dispatch; it belongs in that task's Result` });
+      } else if (!owners.has(item.by)) {
+        reviewProblems.push({ phase: id, problem: `update by=${item.by} names no dispatch anywhere in the phase` });
+      }
     }
     for (const task of phaseTasks) tasks.push({ ...task, ...(task.checked
       ? classify(task, errorsById.get(task.id))

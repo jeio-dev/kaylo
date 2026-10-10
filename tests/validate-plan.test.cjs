@@ -207,6 +207,10 @@ for (const entry of [
   '- R1 (non-blocking, open): `now` is not validated',
   '- R2 — blocking — open',
   '* R3 non-blocking, fixed: guard added',
+  '- R4 – BLOCKER — open',
+  '- R5, optional — open',
+  '- R6. blocking — open',
+  '- R7 - non-blocking — open',
 ]) test(`review comment without the R1: form is rejected: ${entry}`, t => {
   const text = phase(task('T1')).replace('None; inspected greeting and command output.', entry);
   const id = entry.match(/R\d+/)[0];
@@ -215,8 +219,22 @@ for (const entry of [
 
 test('Review prose that mentions comment IDs without a label still passes', t => {
   const text = phase(task('T1')).replace('None; inspected greeting and command output.',
-    '- R1: non-blocking — fixed\n  - Recheck: R1 rechecked with node greet.cjs\n- R1 and the earlier note were rechecked together.');
+    '- R1: non-blocking — fixed\n  - Recheck: R1 rechecked with node greet.cjs\n' +
+    '  - R1 recheck: blocking finding fixed; node greet.cjs exit 0\n' +
+    '- R1 and the earlier note were rechecked together.\n- R2 and R3 were non-blocking and stay open.\n' +
+    '- R4 — — blocking is mentioned after two separators.');
   assert.deepEqual(validate(fixture(t, text).root), []);
+});
+
+test('review comments with whitespace before the colon retain duplicate-ID and old-label checks', t => {
+  for (const space of [' ', '\t']) {
+    const review = `- R1: non-blocking — open\n- R1${space}: blocking — open\n* R2${space}: optional — open`;
+    const text = phase(task('T1')).replace('None; inspected greeting and command output.', review);
+    assert.deepEqual(validate(fixture(t, text).root), [
+      'Duplicate review comment ID: R1',
+      'R2: label optional is no longer supported; use non-blocking'
+    ]);
+  }
 });
 
 test('duplicate review comments only count entries in Review', t => {

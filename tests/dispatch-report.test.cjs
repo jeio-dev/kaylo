@@ -49,8 +49,7 @@ function fixture(t, phases) {
 }
 const byId = data => Object.fromEntries(data.tasks.map(t => [t.id, t]));
 
-// PR #91 follow-up: desired behavior for the open record/lifecycle findings.
-// Keep these executable so the gaps remain visible until implementation lands.
+// Regression fixtures for the PR #91 review findings; they must keep passing unchanged.
 test('a returned dispatch appends observed identity without rewriting its initial record', t => {
   const initial = '{kaylo:v1 dispatch id=D1 role=builder tier=Light vendor=unknown model=unknown outcome=pending}';
   const update = '{kaylo:v1 update by=D1 outcome=completed vendor=openai model="Observed model"}';
@@ -124,6 +123,27 @@ test('a completed handoff update followed by verification and acceptance counts 
   assert.equal(byId(data)['01-T1'].success, true);
   assert.deepEqual(data.counts, { tasks: 1, recorded: 1, missing: 0, malformed: 0, unchecked: 0, unknownVendor: 0 });
   assert.deepEqual(data.groups.map(g => [g.tier, g.vendor, g.passed, g.total]), [['Light', 'openai', 1, 1]]);
+});
+
+test('an interrupted pending handoff can be replaced by a resumed dispatch and accepted', t => {
+  const result = '{kaylo:v1 dispatch id=D1 role=builder tier=Light vendor=openai outcome=pending ' +
+    'fallback=manual-handoff fallback-auth=user} {kaylo:v1 update by=D1 outcome=interrupted} ' +
+    `${D('D2', ' resumes=D1')} {kaylo:v1 verify by=D2 result=pass} {kaylo:v1 accept}`;
+  const data = report(fixture(t, [{ id: '01', closed: true, text: plan(task('T1', result)) }]));
+  assert.equal(byId(data)['01-T1'].status, 'recorded');
+  assert.equal(byId(data)['01-T1'].success, true);
+  assert.deepEqual(data.groups.map(g => [g.vendor, g.passed, g.total]), [['anthropic', 1, 1]]);
+});
+
+test('unknown and n/a update identity values preserve a known dispatch vendor', t => {
+  for (const vendor of ['unknown', 'n/a']) {
+    const result = '{kaylo:v1 dispatch id=D1 role=builder tier=Light vendor=openai outcome=pending} ' +
+      `{kaylo:v1 update by=D1 outcome=completed vendor=${vendor}} {kaylo:v1 verify by=D1 result=pass} {kaylo:v1 accept}`;
+    const data = report(fixture(t, [{ id: '01', closed: true, text: plan(task('T1', result)) }]));
+    assert.equal(byId(data)['01-T1'].status, 'recorded');
+    assert.deepEqual(data.groups.map(g => [g.vendor, g.passed, g.total]), [['openai', 1, 1]]);
+    assert.equal(data.counts.unknownVendor, 0);
+  }
 });
 
 test('records parse with quoted values, explicit unknowns, and every type', () => {
@@ -298,6 +318,28 @@ test('review-section parse errors and misplaced build records are reported, rate
   assert.doesNotMatch(format(clean), /Review section records/);
 });
 
+for (const [name, review, problems] of [
+  ['task dispatch', '{kaylo:v1 update by=D1 outcome=completed}',
+    ["update by=D1 names a task dispatch; it belongs in that task's Result"]],
+  ['unknown dispatch', '{kaylo:v1 update by=D99 outcome=completed}',
+    ['update by=D99 names no dispatch anywhere in the phase']],
+  ['Review dispatch', '{kaylo:v1 dispatch id=D2 role=reviewer tier=Medium outcome=pending ' +
+    'fallback=manual-handoff fallback-auth=user covers=T1} {kaylo:v1 update by=D2 outcome=completed}', []]
+]) test(`Review updates naming a ${name} are resolved across the whole phase`, t => {
+  for (const reviewFirst of [false, true]) {
+    const text = reviewFirst
+      ? plan(task('T1', pass), review).replace(/## Tasks[^]*?(?=## Completion)/,
+        `## Review\n${review}\n\n## Tasks\n${task('T1', pass)}\n`)
+      : plan(task('T1', pass), review);
+    const data = report(fixture(t, [{ id: '01', closed: true, text }]));
+    assert.deepEqual(data.review, problems.map(problem => ({ phase: '01', problem })));
+    assert.equal(data.counts.recorded, 1);
+    assert.equal(data.counts.malformed, 0);
+    assert.deepEqual(data.groups.map(g => [g.vendor, g.passed, g.total]), [['anthropic', 1, 1]]);
+    for (const problem of problems) assert.ok(format(data).includes(`- 01: ${problem}`));
+  }
+});
+
 test('the build delegation tier table matches the canonical builder recommendations', () => {
   const read = file => fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
   const canonical = read('WORKERS.md');
@@ -417,7 +459,7 @@ test('every record example in shipped guidance parses', () => {
   for (const [file, r] of all) assert.deepEqual(parseRecords(r).errors, [], `${file}: ${r}`);
   // The entry points carry their own syntax, so a model need not open WORKERS.md.
   const types = file => new Set(found[file].map(r => parseRecords(r).records[0].type));
-  assert.deepEqual([...types('skills/build/SKILL.md')].sort(), ['accept', 'direct', 'dispatch', 'reopen', 'repair', 'verify']);
+  assert.deepEqual([...types('skills/build/SKILL.md')].sort(), ['accept', 'direct', 'dispatch', 'reopen', 'repair', 'update', 'verify']);
   assert.deepEqual([...types('skills/review/SKILL.md')].sort(), ['direct', 'dispatch']);
   for (const file of ['skills/build/SKILL.md', 'skills/review/SKILL.md', 'skills/review/references/delegation.md']) {
     for (const r of found[file]) {

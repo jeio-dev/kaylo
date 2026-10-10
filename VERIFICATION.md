@@ -840,30 +840,52 @@ exercised. Not run: V1, D1, E2, E3, and C2 on this snapshot, other hosts, and re
 These follow-ups come from the merged PR #91 review, issue #92, and the #83 confirmation set.
 
 - `dispatch-report` lists records under `## Review` that fail to parse, and builder, `verify`, `repair`, `accept`, or
-  `reopen` records placed there, without changing first-try rates (#92).
+  `reopen` records placed there, without changing first-try rates (#92). Review updates are collected and resolved
+  after all phase lines are read: an `update` naming a task dispatch belongs in that task's `Result`, and one naming
+  no dispatch anywhere in the phase is reported. Updates naming a Review dispatch, including manual-handoff
+  reviewers, stay unreported. Tests cover Review before and after Tasks.
 - `update` accepts the `host`, `route`, `vendor`, and `model` observed when a dispatch returns. The report groups by
-  that later vendor.
+  that later known vendor; `unknown` and `n/a` values are skipped when merging each identity field, preserving
+  earlier known values. A pending OpenAI dispatch followed by an unknown-vendor completion stays grouped under
+  `openai`, with `unknownVendor` at 0.
 - A task is malformed when it is accepted before a later initial `verify`, when a `verify` or `repair` names a dispatch
   that is still `pending`, or when it is accepted while a builder dispatch is still `pending`. A task with an `accept`
-  and no `verify` at all stays missing, not malformed.
-- The plan validator rejects a review comment that names a label but skips the `R1:` form.
+  and no `verify` at all stays missing, not malformed. The manual-handoff and resume guidance now tells the assistant
+  to append an `update` with the interrupted or actual outcome before replacement work. A pending handoff updated
+  to interrupted, then replaced by a completed `resumes=` dispatch, verified, and accepted is recorded.
+- The plan validator rejects a review comment without the `R1:` form only when the text immediately after the ID,
+  optional horizontal whitespace, and at most one separator (`(`, em dash, en dash, comma, period, or hyphen) starts
+  with `non-blocking`, `blocking`, `blocker`, or `optional`, case-insensitively. Prose such as an R1 recheck mentioning
+  a blocking finding or R2 and R3 mentioning non-blocking findings still passes. Spaces or tabs before a comment's
+  colon are accepted, retaining duplicate-ID and old-label checks.
 - The review skill and the reviewer brief ask a high-risk review to give each checklist topic's result, or why it does
-  not apply. The Claude adapter was regenerated.
+  not apply. The Claude adapter was regenerated in the original follow-up; regeneration now makes no changes.
 
-The four PR #91 regression fixtures recorded above now pass without changes to the fixtures themselves.
+The four PR #91 regression fixtures recorded above still pass without changes to the fixtures themselves; their
+introductory comment now describes them as regression fixtures.
+
+An independent review of PR #96 found F1–F7; all seven were fixed, including the missing handoff guidance, changelog
+record types, and stale test comment. Rerun checks were the full Node test suite, package validator, both strict Claude
+manifest validators, Antigravity plugin validator, Claude adapter generator with Git status, `git diff --check`, and
+isolated mutations reverting F1, F3, F4, and F5 individually.
 
 | Check | Observed result |
 | --- | --- |
-| `node --test tests/*.test.cjs` | 194 passed, 0 failed, 0 skipped. The 183 earlier tests, the four PR #91 fixtures, and seven new tests: #92, two pending-dispatch cases, three comment forms, and one prose case |
-| Mutations in a scratch copy, one at a time | Each made at least one test fail: removing the `update` identity keys, ignoring the update's vendor for grouping, removing the early-accept check, the pending-`verify` check, or the pending-`accept` check, dropping Review parse errors, removing the Review placement check, or disabling the comment-form check |
-| New validator on the earlier #83 trial projects (read only) | Flags exactly the five runs whose comments used `R1 (non-blocking, open):` (step-1 H1, record-retrial H2, placement-tier H2, confirmation H1 and H2); every other trial plan still passes |
-| `node scripts/validate-package.cjs` | Passed: v0.11.0, five shared skills |
-| `node scripts/sync-claude-agents.cjs` | Regenerated `claude-agents/reviewer.md`; brief body matches `agents/reviewer.md` |
-| `git diff --check` | Clean |
+| `node --test tests/*.test.cjs` | 204 tests passed, 0 failed, 0 cancelled, 0 skipped, 0 todo (57,719.323938 ms). All 194 earlier tests plus ten new regression tests; every shipped record example parses |
+| PR #96 mutations in a scratch copy outside the repo, one at a time | F1: exit 1, 92 passed / 1 failed; F3: exit 1, 26 passed / 1 failed; F4: exit 1, 25 passed / 2 failed; F5: exit 1, 92 passed / 1 failed. Each reverted only that fix. Scratch copy removed afterwards |
+| Earlier PR #91 follow-up mutations (not rerun for PR #96) | Each made at least one test fail: removing the `update` identity keys, ignoring the update's vendor for grouping, removing the early-accept check, the pending-`verify` check, or the pending-`accept` check, dropping Review parse errors, removing the Review placement check, or disabling the comment-form check |
+| Earlier validator check on #83 trial projects (read only; not rerun for PR #96) | Flagged exactly the five runs whose comments used `R1 (non-blocking, open):` (step-1 H1, record-retrial H2, placement-tier H2, confirmation H1 and H2); every other trial plan passed |
+| `node scripts/validate-package.cjs` | Exit 0: `Package v0.11.0: five shared skills, matching versions and release catalogs.` |
+| `claude plugin validate .claude-plugin/plugin.json --strict` | Exit 0: `✔ Validation passed` |
+| `claude plugin validate .claude-plugin/marketplace.json --strict` | Exit 0: `✔ Validation passed` |
+| `agy plugin validate .` | Exit 0: `[ok] .`; skills: 5 processed; agents: 3 processed; commands, mcpServers, hooks: skipped (not found) |
+| `node scripts/sync-claude-agents.cjs`, followed by Git status | Exit 0, no output; no changes to generated adapters or Git status from regeneration |
+| `git diff --check` | Exit 0, no output |
 
-Limits: these checks cover report classification, validator parsing, and guidance text. No live model session, worker
-dispatch, or host installation ran. Whether models now record each high-risk topic or use the `R1:` form is untested
-until the H1 and H2 smoke run.
+Limits: these checks cover report classification, validator parsing, guidance text, package structure, and native manifest
+validation. No live model session, worker dispatch, or host installation ran for these follow-ups. Antigravity's validator
+skipped commands, MCP servers, and hooks; it does not establish hook discovery or delivery. Whether models now record
+each high-risk topic or use the `R1:` form is untested until the H1 and H2 smoke run.
 
 ## Public installation 0.11.0 — 2026-10-06
 
