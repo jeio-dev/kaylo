@@ -49,6 +49,103 @@ function fixture(t, phases) {
 }
 const byId = data => Object.fromEntries(data.tasks.map(t => [t.id, t]));
 
+// Regression fixtures for the PR #91 review findings; they must keep passing unchanged.
+test('a returned dispatch appends observed identity without rewriting its initial record', t => {
+  const initial = '{kaylo:v1 dispatch id=D1 role=builder tier=Light vendor=unknown model=unknown outcome=pending}';
+  const update = '{kaylo:v1 update by=D1 outcome=completed vendor=openai model="Observed model"}';
+  const result = `${initial} ${update} {kaylo:v1 verify by=D1 result=pass} {kaylo:v1 accept}`;
+  const root = fixture(t, [{ id: '01', closed: true, text: plan(task('T1', result)) }]);
+  const file = path.join(root, '.kaylo/phases/01-greeting/01-PLAN.md');
+  const before = fs.readFileSync(file, 'utf8');
+  const data = report(root);
+  assert.equal(fs.readFileSync(file, 'utf8'), before, 'report must preserve append-only evidence');
+  assert.deepEqual(parseRecords(update).errors, [], 'later observed identity must be accepted');
+  const recorded = byId(data)['01-T1'];
+  assert.equal(recorded.status, 'recorded');
+  assert.equal(recorded.success, true);
+  assert.deepEqual(recorded.group, { tier: 'Light', estimate: 'S', vendor: 'openai' });
+  assert.equal(recorded.records[0].vendor, 'unknown');
+  assert.equal(recorded.records[0].model, 'unknown');
+  assert.equal(recorded.records[1].model, 'Observed model');
+  assert.deepEqual(data.groups.map(g => [g.vendor, g.passed, g.total]), [['openai', 1, 1]]);
+  assert.equal(data.counts.unknownVendor, 0);
+});
+
+for (const [name, result, diagnostic] of [
+  ['acceptance before verification',
+    '{kaylo:v1 direct role=builder vendor=openai} {kaylo:v1 accept} {kaylo:v1 verify by=direct result=pass}',
+    /accept|verif/i],
+  ['acceptance while the builder dispatch is pending',
+    '{kaylo:v1 dispatch id=D2 role=builder tier=Light vendor=openai outcome=pending} ' +
+      '{kaylo:v1 verify by=D2 result=pass} {kaylo:v1 accept}',
+    /pending|complet|outcome/i]
+]) {
+  test(`${name} is diagnosed and excluded from first-try rates`, t => {
+    const root = fixture(t, [{ id: '01', closed: true,
+      text: plan(task('T1', result) + task('T2', pass)) }]);
+    const data = report(root);
+    const invalid = byId(data)['01-T1'];
+    assert.equal(invalid.status, 'malformed');
+    assert.match(invalid.reason, diagnostic);
+    assert.equal(invalid.success, undefined);
+    assert.equal(data.counts.malformed, 1);
+    assert.equal(data.counts.recorded, 1);
+    assert.deepEqual(data.groups.map(g => [g.vendor, g.passed, g.total]), [['anthropic', 1, 1]]);
+    assert.match(format(data), /01-T1: malformed/);
+  });
+}
+
+test('a verify naming a still-pending dispatch is malformed even without an accept', t => {
+  const result = '{kaylo:v1 dispatch id=D2 role=builder tier=Light vendor=openai outcome=pending} {kaylo:v1 verify by=D2 result=pass}';
+  const data = report(fixture(t, [{ id: '01', closed: true, text: plan(task('T1', result)) }]));
+  const invalid = byId(data)['01-T1'];
+  assert.equal(invalid.status, 'malformed');
+  assert.match(invalid.reason, /verify by=D2 names a dispatch still outcome=pending/);
+});
+
+test('accepting while an earlier builder handoff is still pending is malformed', t => {
+  const result = '{kaylo:v1 dispatch id=D2 role=builder tier=Light vendor=openai outcome=pending fallback=manual-handoff fallback-auth=user} ' +
+    '{kaylo:v1 direct role=builder vendor=anthropic} {kaylo:v1 verify by=direct result=pass} {kaylo:v1 accept}';
+  const invalid = byId(report(fixture(t, [{ id: '01', closed: true, text: plan(task('T1', result)) }])))['01-T1'];
+  assert.equal(invalid.status, 'malformed');
+  assert.match(invalid.reason, /accept while builder dispatch D2 is still outcome=pending/);
+  // Closing the abandoned handoff with an update makes the same history valid.
+  const closed = result.replace('{kaylo:v1 direct', '{kaylo:v1 update by=D2 outcome=interrupted} {kaylo:v1 direct');
+  assert.equal(byId(report(fixture(t, [{ id: '01', closed: true, text: plan(task('T1', closed)) }])))['01-T1'].status, 'recorded');
+});
+
+test('a completed handoff update followed by verification and acceptance counts as a first-try pass', t => {
+  const result = '{kaylo:v1 dispatch id=D1 role=builder tier=Light vendor=openai outcome=pending ' +
+    'fallback=manual-handoff fallback-auth=user} {kaylo:v1 update by=D1 outcome=completed} ' +
+    '{kaylo:v1 verify by=D1 result=pass} {kaylo:v1 accept}';
+  const root = fixture(t, [{ id: '01', closed: true, text: plan(task('T1', result)) }]);
+  const data = report(root);
+  assert.equal(byId(data)['01-T1'].success, true);
+  assert.deepEqual(data.counts, { tasks: 1, recorded: 1, missing: 0, malformed: 0, unchecked: 0, unknownVendor: 0 });
+  assert.deepEqual(data.groups.map(g => [g.tier, g.vendor, g.passed, g.total]), [['Light', 'openai', 1, 1]]);
+});
+
+test('an interrupted pending handoff can be replaced by a resumed dispatch and accepted', t => {
+  const result = '{kaylo:v1 dispatch id=D1 role=builder tier=Light vendor=openai outcome=pending ' +
+    'fallback=manual-handoff fallback-auth=user} {kaylo:v1 update by=D1 outcome=interrupted} ' +
+    `${D('D2', ' resumes=D1')} {kaylo:v1 verify by=D2 result=pass} {kaylo:v1 accept}`;
+  const data = report(fixture(t, [{ id: '01', closed: true, text: plan(task('T1', result)) }]));
+  assert.equal(byId(data)['01-T1'].status, 'recorded');
+  assert.equal(byId(data)['01-T1'].success, true);
+  assert.deepEqual(data.groups.map(g => [g.vendor, g.passed, g.total]), [['anthropic', 1, 1]]);
+});
+
+test('unknown and n/a update identity values preserve a known dispatch vendor', t => {
+  for (const vendor of ['unknown', 'n/a']) {
+    const result = '{kaylo:v1 dispatch id=D1 role=builder tier=Light vendor=openai outcome=pending} ' +
+      `{kaylo:v1 update by=D1 outcome=completed vendor=${vendor}} {kaylo:v1 verify by=D1 result=pass} {kaylo:v1 accept}`;
+    const data = report(fixture(t, [{ id: '01', closed: true, text: plan(task('T1', result)) }]));
+    assert.equal(byId(data)['01-T1'].status, 'recorded');
+    assert.deepEqual(data.groups.map(g => [g.vendor, g.passed, g.total]), [['openai', 1, 1]]);
+    assert.equal(data.counts.unknownVendor, 0);
+  }
+});
+
 test('records parse with quoted values, explicit unknowns, and every type', () => {
   const { records, errors } = parseRecords(
     '{kaylo:v1 dispatch id=D1 role=builder tier=Inherit setting=n/a host=opencode route=openrouter vendor=unknown ' +
@@ -194,6 +291,55 @@ test('reviewer records under Review keep valid tasks recorded and dispatch IDs p
   assert.equal(tasks['01-T2'].status, 'recorded');
 });
 
+// #92: review records that fail to parse, or build records placed under Review, are disclosed
+// without changing task classification or first-try rates.
+test('review-section parse errors and misplaced build records are reported, rates unchanged', t => {
+  const review = 'Phase review. {kaylo:v1 dispatch id=D2 role=reviewer tier=unknown outcome=completed covers=T1} ' +
+    '{kaylo:v1 direct role=reviewer tier=Medium covers=T1} {kaylo:v1 bogus}\n\n' +
+    '{kaylo:v1 verify by=D1 result=pass} {kaylo:v1 direct role=builder vendor=anthropic}\n\n' +
+    '{kaylo:v1 dispatch id=D3 role=reviewer tier=Medium outcome=pending fallback=manual-handoff fallback-auth=user covers=T1} ' +
+    '{kaylo:v1 update by=D3 outcome=completed}';
+  const root = fixture(t, [{ id: '01', closed: true, text: plan(task('T1', pass), review) }]);
+  const data = report(root);
+  assert.deepEqual(data.counts, { tasks: 1, recorded: 1, missing: 0, malformed: 0, unchecked: 0, unknownVendor: 0 });
+  assert.deepEqual(data.review.map(r => [r.phase, r.problem]), [
+    ['01', 'dispatch: invalid tier=unknown'],
+    ['01', 'direct: unknown key tier'],
+    ['01', 'unknown record type bogus'],
+    ['01', 'verify record belongs in a task Result, not under ## Review'],
+    ['01', 'direct role=builder record belongs in a task Result, not under ## Review']
+  ]);
+  const text = format(data);
+  assert.match(text, /Review section records not counted \(first-try rates unaffected\):\n- 01: dispatch: invalid tier=unknown\n/);
+  assert.match(text, /Light\tS\tanthropic\t1\/1\t100%/);
+  // A clean Review section adds no review lines.
+  const clean = report(fixture(t, [{ id: '01', closed: true, text: plan(task('T1', pass), 'None.') }]));
+  assert.deepEqual(clean.review, []);
+  assert.doesNotMatch(format(clean), /Review section records/);
+});
+
+for (const [name, review, problems] of [
+  ['task dispatch', '{kaylo:v1 update by=D1 outcome=completed}',
+    ["update by=D1 names a task dispatch; it belongs in that task's Result"]],
+  ['unknown dispatch', '{kaylo:v1 update by=D99 outcome=completed}',
+    ['update by=D99 names no dispatch anywhere in the phase']],
+  ['Review dispatch', '{kaylo:v1 dispatch id=D2 role=reviewer tier=Medium outcome=pending ' +
+    'fallback=manual-handoff fallback-auth=user covers=T1} {kaylo:v1 update by=D2 outcome=completed}', []]
+]) test(`Review updates naming a ${name} are resolved across the whole phase`, t => {
+  for (const reviewFirst of [false, true]) {
+    const text = reviewFirst
+      ? plan(task('T1', pass), review).replace(/## Tasks[^]*?(?=## Completion)/,
+        `## Review\n${review}\n\n## Tasks\n${task('T1', pass)}\n`)
+      : plan(task('T1', pass), review);
+    const data = report(fixture(t, [{ id: '01', closed: true, text }]));
+    assert.deepEqual(data.review, problems.map(problem => ({ phase: '01', problem })));
+    assert.equal(data.counts.recorded, 1);
+    assert.equal(data.counts.malformed, 0);
+    assert.deepEqual(data.groups.map(g => [g.vendor, g.passed, g.total]), [['anthropic', 1, 1]]);
+    for (const problem of problems) assert.ok(format(data).includes(`- 01: ${problem}`));
+  }
+});
+
 test('the build delegation tier table matches the canonical builder recommendations', () => {
   const read = file => fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
   const canonical = read('WORKERS.md');
@@ -313,7 +459,7 @@ test('every record example in shipped guidance parses', () => {
   for (const [file, r] of all) assert.deepEqual(parseRecords(r).errors, [], `${file}: ${r}`);
   // The entry points carry their own syntax, so a model need not open WORKERS.md.
   const types = file => new Set(found[file].map(r => parseRecords(r).records[0].type));
-  assert.deepEqual([...types('skills/build/SKILL.md')].sort(), ['accept', 'direct', 'dispatch', 'reopen', 'repair', 'verify']);
+  assert.deepEqual([...types('skills/build/SKILL.md')].sort(), ['accept', 'direct', 'dispatch', 'reopen', 'repair', 'update', 'verify']);
   assert.deepEqual([...types('skills/review/SKILL.md')].sort(), ['direct', 'dispatch']);
   for (const file of ['skills/build/SKILL.md', 'skills/review/SKILL.md', 'skills/review/references/delegation.md']) {
     for (const r of found[file]) {

@@ -4,6 +4,33 @@
 
 ### Notable Changes
 
+- **tools**: The dispatch report now lists records under `## Review` that fail
+  to parse, and build records (`verify`, `repair`, `accept`, `reopen`, a builder
+  `dispatch` or `direct`) placed there. Before, those were silently ignored.
+  They appear under "Review section records not counted" and do not change
+  first-try rates. Review updates naming a task dispatch or no dispatch in the phase
+  are also reported ([#92](https://github.com/jeio-dev/kaylo/issues/92)).
+- **tools**: An `update` record may now carry the `host`, `route`, `vendor`,
+  and `model` observed when a dispatch returns, so a pending handoff can gain
+  its identity without editing the original record. The report groups by that
+  later known vendor; `unknown` and `n/a` updates preserve earlier known
+  identity values. A task is now malformed, and left out of first-try rates, when
+  it is accepted before its initial `verify`, when a `verify` or `repair`
+  names a dispatch that is still `pending`, or when it is accepted while a
+  builder dispatch is still `pending`. These address the two open findings
+  from the merged PR #91 review
+  ([#91](https://github.com/jeio-dev/kaylo/pull/91)).
+- **tools**: The plan validator rejects a review comment that names a label
+  but skips the `R1:` form, such as `- R1 (non-blocking, open): …`. These
+  lines escaped the duplicate-ID and old-label checks. Only a label immediately
+  after the ID, with at most one separator, triggers this rule; prose mentioning
+  labels later still passes. Spaces or tabs before the colon retain duplicate-ID
+  and old-label checks. Fix the line as
+  `- R1: non-blocking — open`.
+- **skills and workers**: A high-risk task review now records, for each
+  checklist topic (trust boundaries, authorization, invalid input,
+  sensitive-data exposure, and relevant abuse cases), what was found or why it
+  does not apply. This applies in the review skill and the reviewer brief.
 - **skills**: Under a Quality, Balanced, or Budget preference, review now
   applies the reviewer tier to direct reviews too. Before reviewing directly,
   the assistant states the required tier and its own model, and reviews

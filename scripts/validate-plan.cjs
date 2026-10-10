@@ -214,8 +214,15 @@ function validate(project, { closing = false } = {}) {
     if (records.length > 1) fail(`Duplicate ${name} sections; consolidate history under one heading`);
   }
   const review = sections.get('Review').join('\n');
+  // A comment written without the colon, such as "- R1 (non-blocking, open): ...", escapes the
+  // checks below; flag only a label at the head, allowing one separator after the ID.
+  for (const match of review.matchAll(/^[ \t]*[-*][ \t]+(R\d+)\b(?![ \t]*:)(.*)$/gm)) {
+    if (/^[ \t]*(?:[(\u2014\u2013,.-][ \t]*)?(?:non-blocking|blocking|blocker|optional)\b/i.test(match[2])) {
+      fail(`${match[1]}: write review comments as "- ${match[1]}: <blocking or non-blocking> — <resolution>"`);
+    }
+  }
   const comments = new Set();
-  for (const match of review.matchAll(/^[ \t]*[-*][ \t]+(R\d+):(.*)$/gm)) {
+  for (const match of review.matchAll(/^[ \t]*[-*][ \t]+(R\d+)[ \t]*:(.*)$/gm)) {
     if (comments.has(match[1])) fail(`Duplicate review comment ID: ${match[1]}`);
     comments.add(match[1]);
     // The label comes before the resolution, which follows a dash.
