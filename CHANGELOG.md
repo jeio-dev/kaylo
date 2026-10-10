@@ -4,6 +4,28 @@
 
 ### Notable Changes
 
+- **skills**: Under a Quality, Balanced, or Budget preference, review now
+  applies the reviewer tier to direct reviews too. Before reviewing directly,
+  the assistant states the required tier and its own model, and reviews
+  directly only if that model meets the tier; otherwise it uses a fresh
+  reviewer at that tier or asks you. A vendor waiver does not settle the tier.
+  On a host without reviewer subagents, a session whose model cannot be
+  identified as meeting the tier now stops for your choice. `direct` records
+  still take no `tier` key; the tier goes in the prose beside them
+  ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
+- **skills**: Build delegation now says the tier statement before a dispatch
+  is prose, and the builder `dispatch` record is appended when the worker
+  returns. A record written earlier is not edited; its later outcome is an
+  appended `update` ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
+- **skills and tools**: Build now states explicitly that reviewer records,
+  including high-risk reviews and inherited exceptions, go under `## Review`.
+  The dispatch report marks a checked task with a reviewer record in its
+  `Result:` malformed instead of counting it in first-try rates. The build
+  delegation reference includes the S/M/L builder tier rows and asks for the
+  preference, estimate, tier choice, and any reason for an increase before
+  dispatch; a missing dependency alone does not justify raising the tier.
+  These changes address H2 and E1 from the corrected-package smoke set
+  ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
 - **skills**: When a check fails, the assistant now diagnoses it before
   choosing a stronger model. With a Quality, Balanced, or Budget preference
   and a host that can apply the choice, it may recommend Light → Medium or
@@ -48,6 +70,22 @@
   flagged as advisory only; nothing changes preferences or the tier table
   automatically. The plan validator ignores the records, so existing plans
   stay valid ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
+- **skills**: The build and review skills now show the exact record forms
+  themselves, so the assistant no longer has to open `WORKERS.md` to write
+  them. Build shows `direct`, `dispatch`, `verify`, `repair`, and the keyless
+  `accept` and `reopen`. It also says how to resume a task with existing
+  records: keep them, add your own `direct` or new `dispatch` record first,
+  add no second `verify`, and continue the failure's repair count. Review and
+  `WORKERS.md` map each routing choice to a record. A vendor waiver is
+  `fallback=vendor-waived fallback-auth=user`, and an exception to an unmet
+  tier is `fallback=tier-exception`. A manual handoff stays `pending` until an
+  `update` records its result, and a pause writes no record. `tier` is never
+  `unknown`, and a vendor waiver does not settle the reviewer's tier. A
+  review comment is marked `fixed` only after a correction. When you decline
+  another repair, the next step no longer asks for it again. These changes
+  follow the first live trial of the #83 records, in which direct builds
+  wrote prose instead of records and a vendor waiver was recorded as
+  `fallback=none` ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
 
 ## 2026-10-06, Version 0.11.0
 
