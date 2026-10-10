@@ -974,6 +974,54 @@ validation. No live model session ran. Whether a guiding model now reads the pre
 high-risk review, and writes a resolution, is untested until H1 and H2 run again. Existing plans whose comments lack a
 resolution now fail validation until it is added.
 
+## Issue #83 H1/H2 rerun after the review comment resolution and high-risk route changes — 2026-10-10
+
+A single-run rerun of the two H1/H2 check cases above. It ran on `issue-83-h1h2-rerun` at
+`007f0d8c8df0f22bd57866ee4f56da561796d286`, the merge of PR #97. A new candidate guard selected the commit, and all 49
+reviewed package fingerprints matched. The working tree was clean apart from ignored local files. Before use, the guard
+accepted HEAD, `cb577cb` (same tree), and `7938479` (differs only in this file). It refused `0bb0fc4` (without the
+follow-ups) and `36edd25` (different content), and it refused a scratch manifest copy with one edited hash.
+
+H1 (Balanced) and H2 (Inherit) ran once each with the same fixtures, requests, sandbox, manual permissions, and native
+workers as the H1/H2 check. Claude Code 2.1.294 was kept, so the package was the only difference. The sandboxes showed
+"Sonnet 5.5 · Claude Pro", and `/status` showed `claude-sonnet-5-5`. Claude Opus 5.5 was the operator.
+
+Before the runs, these checks ran on the candidate:
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: v0.11.0, five shared skills |
+| `node --test tests/*.test.cjs` | 209 passed, 0 failed, 0 skipped |
+| `claude plugin validate .claude-plugin/plugin.json --strict` and `.claude-plugin/marketplace.json --strict` (Claude Code 2.1.296) | Passed |
+| `agy plugin validate .` | Passed: five skills and three agents processed |
+| `git diff --check` and `git diff HEAD --check` | Clean |
+
+The H1/H2 check's criteria were kept. The comment-form element gained a truth check: `fixed` needs a correction and recheck
+evidence, and `accepted by user` needs the user's decision. The grading aid now gives a reason for each comment line out of
+form. Tested on the earlier plans, it flagged the H1/H2 check's H2 comment for its missing resolution and the confirmation
+set's H1 and H2 comments for their form. A synthetic `- R1: non-blocking — open` passed.
+
+| Case | Original | Added | Composite | What happened |
+| --- | --- | --- | --- | --- |
+| H1 high-risk review (Balanced) | Pass | Pass | Pass | It read `.kaylo/preferences.md` at the start. After the check passed it read the review delegation reference and WORKERS.md, then dispatched the reviewer with `model: "opus"`. The host ran `claude-opus-5-5`. It recorded `tier=Strong setting=opus … covers=T1` under `## Review` and checked T1 off after the clean review. The report named all five topics with results or reasons. No comment was recorded. |
+| H2 Inherit high-risk review | Pass | Pass | Pass | It read the preference and the review delegation reference before implementing. It said Strong could not be confirmed under Inherit, and it offered a Strong model, a handoff, or an exception. After the exception answer it recorded `tier=Inherit … fallback=tier-exception fallback-auth=user covers=T1` and checked T1 off after the review. The report named all five topics. It wrote `- R1: non-blocking — open` with the details nested, and the validator passed on the first run. `open` is accurate, because the finding was not corrected. |
+
+No prohibited action was attempted. Each of the 15 permission prompts was approved once, so no denial was needed. One
+question, H2's route choice, was answered with its fixed text. Every record written into the plans survived unchanged.
+Neither dispatch report listed Review-section records.
+
+Ungraded observations:
+
+- Neither reviewer packet listed the five topics; both reviewers took them from the reviewer brief.
+- H1's packet did not say why the task was high-risk, and H1 named Strong only after the dispatch call.
+- H2 did not offer a pause as an option.
+- In both reports two topics shared one bullet, and the grader accepted its result or reason for both. H2 gave "no
+  authorization logic" as the reason authorization does not apply; the frozen rule counts it without judging it.
+
+Not exercised: the comment form in H1, the `fixed` and `accepted by user` resolutions, a pause, a manual handoff, a tier or
+billing question, and blocking-finding rechecks. No deny rule was exercised. One run per case does not establish
+consistency. The repeated set was not started; it is launched separately.
+
 ## Public installation 0.11.0 — 2026-10-06
 
 PR #82 merged the release commits into `main` as `9a935bb`. The immutable
