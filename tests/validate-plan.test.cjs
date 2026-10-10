@@ -203,6 +203,22 @@ for (const [entry, expected] of [
   assert.deepEqual(validate(fixture(t, text).root), [expected]);
 });
 
+for (const entry of [
+  '- R1 (non-blocking, open): `now` is not validated',
+  '- R2 — blocking — open',
+  '* R3 non-blocking, fixed: guard added',
+]) test(`review comment without the R1: form is rejected: ${entry}`, t => {
+  const text = phase(task('T1')).replace('None; inspected greeting and command output.', entry);
+  const id = entry.match(/R\d+/)[0];
+  assert.deepEqual(validate(fixture(t, text).root), [`${id}: write review comments as "- ${id}: <blocking or non-blocking> — <resolution>"`]);
+});
+
+test('Review prose that mentions comment IDs without a label still passes', t => {
+  const text = phase(task('T1')).replace('None; inspected greeting and command output.',
+    '- R1: non-blocking — fixed\n  - Recheck: R1 rechecked with node greet.cjs\n- R1 and the earlier note were rechecked together.');
+  assert.deepEqual(validate(fixture(t, text).root), []);
+});
+
 test('duplicate review comments only count entries in Review', t => {
   const text = phase(task('T1')).replace('None; inspected greeting and command output.', '- R1: non-blocking — open\n- R1: blocking — open');
   assert.match(validate(fixture(t, text).root).join('\n'), /Duplicate review comment ID: R1/);

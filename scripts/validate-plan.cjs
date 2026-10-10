@@ -214,6 +214,13 @@ function validate(project, { closing = false } = {}) {
     if (records.length > 1) fail(`Duplicate ${name} sections; consolidate history under one heading`);
   }
   const review = sections.get('Review').join('\n');
+  // A comment written without the colon, such as "- R1 (non-blocking, open): ...", escapes the
+  // checks below; flag list items that name an R ID and a label but are not in the R1: form.
+  for (const match of review.matchAll(/^[ \t]*[-*][ \t]+(R\d+)\b(?![ \t]*:)(.*)$/gm)) {
+    if (/\b(?:non-)?blocking\b|\bblocker\b|\boptional\b/i.test(match[2])) {
+      fail(`${match[1]}: write review comments as "- ${match[1]}: <blocking or non-blocking> — <resolution>"`);
+    }
+  }
   const comments = new Set();
   for (const match of review.matchAll(/^[ \t]*[-*][ \t]+(R\d+):(.*)$/gm)) {
     if (comments.has(match[1])) fail(`Duplicate review comment ID: ${match[1]}`);
