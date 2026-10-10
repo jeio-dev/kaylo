@@ -226,11 +226,14 @@ function validate(project, { closing = false } = {}) {
     if (comments.has(match[1])) fail(`Duplicate review comment ID: ${match[1]}`);
     comments.add(match[1]);
     // The label comes before the resolution, which follows a dash.
-    const label = match[2].split(/\s-\s|[\u2013\u2014]/)[0];
+    const [label, ...rest] = match[2].split(/\s-\s|[\u2013\u2014]/);
     for (const [old, replacement] of renamedLabels) {
       if (new RegExp(`\\b${old}\\b`, 'i').test(label)) {
         fail(`${match[1]}: label ${old} is no longer supported; use ${replacement}`);
       }
+    }
+    if (!/^[ \t]*(?:open|fixed|accepted by user)\b/i.test(rest.join('-'))) {
+      fail(`${match[1]}: follow the label with " — " and a resolution (open, fixed, or accepted by user), as in "- ${match[1]}: blocking — open"`);
     }
   }
   if (closing || closed) {

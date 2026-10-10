@@ -189,7 +189,7 @@ test('Estimate values are instructions only', t => {
 
 test('blocking and non-blocking review comments pass', t => {
   const text = phase(task('T1', true)).replace('None; inspected greeting and command output.',
-    '- R1: blocking — fixed\n  - Recheck: node greet.cjs printed Hello\n- R2: non-blocking — optional follow-up accepted by user\n- R3: non-blocking - fixed; the flag is optional now\n- R4: blocking—fixed; optional flag removed\n- R5: non-blocking–fixed; optional flag kept\n- R6: non-blocking – fixed; optional flag kept');
+    '- R1: blocking — fixed\n  - Recheck: node greet.cjs printed Hello\n- R2: non-blocking — accepted by user; optional follow-up\n- R7: non-blocking — Accepted by user\n- R3: non-blocking - fixed; the flag is optional now\n- R4: blocking—fixed; optional flag removed\n- R5: non-blocking–fixed; optional flag kept\n- R6: non-blocking – fixed; optional flag kept');
   assert.deepEqual(validate(fixture(t, text).root, { closing: true }), []);
 });
 
@@ -215,6 +215,18 @@ for (const entry of [
   const text = phase(task('T1')).replace('None; inspected greeting and command output.', entry);
   const id = entry.match(/R\d+/)[0];
   assert.deepEqual(validate(fixture(t, text).root), [`${id}: write review comments as "- ${id}: <blocking or non-blocking> — <resolution>"`]);
+});
+
+for (const entry of [
+  '- R1: non-blocking — `now` is not validated; left as an observation.',
+  '- R1: blocking',
+  '- R1: non-blocking —',
+  '- R1: blocking — opened a follow-up',
+  '- R1: blocking — not fixed',
+]) test(`review comment without a resolution is rejected: ${entry}`, t => {
+  const text = phase(task('T1')).replace('None; inspected greeting and command output.', entry);
+  assert.deepEqual(validate(fixture(t, text).root),
+    ['R1: follow the label with " — " and a resolution (open, fixed, or accepted by user), as in "- R1: blocking — open"']);
 });
 
 test('Review prose that mentions comment IDs without a label still passes', t => {

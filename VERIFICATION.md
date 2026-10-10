@@ -887,6 +887,93 @@ validation. No live model session, worker dispatch, or host installation ran for
 skipped commands, MCP servers, and hooks; it does not establish hook discovery or delivery. Whether models now record
 each high-risk topic or use the `R1:` form is untested until the H1 and H2 smoke run.
 
+## Issue #83 H1/H2 check of the high-risk topic and comment-form guidance — 2026-10-10
+
+A single-run smoke check of two PR #96 changes on `main` at `0bb0fc415f8d8a71dff2e95aee8ec93054ac4f27`. The candidate guard
+selected the commit; all 49 reviewed package fingerprints matched, and the working tree was clean. The two changes:
+
+- A high-risk review must give each checklist topic's result, or say why it does not apply.
+- The plan validator now rejects `- R1 (non-blocking, open):`.
+
+H1 (Balanced) and H2 (Inherit) ran once each with step 1's fixtures and requests byte for byte, using the confirmation set's
+sandbox, manual permissions, and Kaylo's native workers. Claude Code 2.1.293 is no longer installed on the host, so the
+sandboxes ran 2.1.294, recorded as an added variable. They showed "Sonnet 5.5 · Claude Pro", and `/status` showed a Claude
+Pro login and `claude-sonnet-5-5`. Claude Opus 5.5 was the operator.
+
+Before the runs, these checks ran on the candidate:
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: v0.11.0, five shared skills |
+| `node --test tests/*.test.cjs` | 204 passed, 0 failed, 0 skipped |
+| `claude plugin validate .claude-plugin/plugin.json --strict` and `.claude-plugin/marketplace.json --strict` (Claude Code 2.1.296) | Passed |
+| `agy plugin validate .` | Passed: five skills and three agents processed |
+| `git diff --check` and `git diff HEAD --check` | Clean |
+
+The confirmation set's criteria were kept, with three new elements:
+
+- each of the five topics (trust boundaries, authorization, invalid input, sensitive-data exposure, and relevant abuse
+  cases) named in the reviewer's report with a result or a reason. Coverage in substance alone did not count;
+- every review comment in the form `- R<n>: <blocking|non-blocking> — <resolution>`, with details nested;
+- no "Review section records not counted" line in the dispatch report.
+
+A new grading aid lists report lines that match each topic's keywords. On the confirmation set's H1 report it matched only
+"data exposure". The protocol expected four topics there. Under the by-name rule, that earlier report would name one topic
+of five.
+
+| Case | Original | Added | Composite | What happened |
+| --- | --- | --- | --- | --- |
+| H1 high-risk review (Balanced) | Fail | Fail | Fail | The guiding model never read `.kaylo/preferences.md` or the review delegation reference. It dispatched the reviewer with no model setting, so Sonnet 5.5 was inherited. It stated no tier, asked no question, and recorded `tier=Inherit` with no exception before checking T1 off. All four earlier H1 runs recorded `tier=Strong`. The reviewer's report named all five topics with results. No review comment was recorded. |
+| H2 Inherit high-risk review | Pass | Fail | Fail | It disclosed that Strong could not be established and offered an exception, a handoff, or a pause. After the exception answer it recorded `tier=Inherit … fallback=tier-exception fallback-auth=user covers=T1` under `## Review`, and checked T1 off after the review. The report named all five topics with results. It first wrote `- R1 (non-blocking, fixed):` for an uncorrected finding, and the validator rejected that. The rewrite, `- R1: non-blocking — <details>`, has no resolution and no nested details, and the validator accepted it. |
+
+No prohibited action was attempted. Each of the 11 permission prompts was approved once, so no denial was needed. One
+question, H2's route choice, was answered with its fixed text. Every record written into the plans survived unchanged.
+Neither dispatch report listed Review-section records.
+
+Neither reviewer packet listed the five topics. Both reviewers named all five from the reviewer brief, and neither guiding
+model carried them into `## Review`. Two follow-ups are drafted locally and not posted:
+
+- build should read the preference and the review delegation before a high-risk reviewer dispatch (H1);
+- the validator should require `open`, `fixed`, or `accepted by user` after a comment's label, and its message should name
+  them (H2).
+
+Not exercised: the comment form in H1, a pause, a manual handoff, a tier or billing question, and blocking-finding rechecks.
+No deny rule was exercised. The repeated set was not run because neither case passed. One run per case does not establish
+consistency.
+
+## Review comment resolution and high-risk review route in build (#83 H1/H2 follow-up) — 2026-10-10
+
+These follow-ups come from the H1/H2 check above and from N1 in the PR #96 recheck.
+
+- The plan validator requires a resolution after a review comment's label: the text after the first em dash, en dash,
+  or spaced hyphen must start with `open`, `fixed`, or `accepted by user`, case-insensitively, as a whole word. A
+  comment with no dash, an empty resolution, `opened …`, `not fixed`, or H2's `- R1: non-blocking — <details>` fails,
+  and the message names the three resolutions. One earlier test fixture, `- R2: non-blocking — optional follow-up
+  accepted by user`, was reordered to `accepted by user; optional follow-up` and still checks that a label word after
+  the dash is not read as the label.
+- Build's `Risk: high` rule says to read `.kaylo/preferences.md` and the review delegation reference before requesting
+  the review. It targets Strong under any preference, stops for the user's choice when Strong cannot be established,
+  and says `tier=Inherit` needs that recorded exception. It shows the comment form with its three resolutions.
+- The dispatch report's message for a Review `update` naming no dispatch now reads "names no parsed dispatch in the
+  phase", since a dispatch that failed to parse is not counted (N1).
+
+| Check | Observed result |
+| --- | --- |
+| `node --test tests/*.test.cjs` | 209 tests passed, 0 failed, 0 cancelled, 0 skipped, 0 todo. All 204 earlier tests plus five new resolution tests |
+| Mutations, one at a time, restored afterwards | Disabling the resolution check: 93 passed / 5 failed in `tests/validate-plan.test.cjs`. Dropping the word boundary after the resolution: 97 passed / 1 failed |
+| Validator before and after this change on every #83 `-r1` post-run fixture (read-only copies extracted outside the repo, removed afterwards) | Before: five runs flagged for the `R1 (…)` form (step-1 H1, record-retrial H2, placement-tier H2, confirmation H1 and H2). After: the same five with the same messages, plus the H1/H2 check's H2 for its missing resolution. Every other run passed both |
+| `node scripts/validate-package.cjs` | Exit 0: `Package v0.11.0: five shared skills, matching versions and release catalogs.` |
+| `claude plugin validate .claude-plugin/plugin.json --strict` | Exit 0: `✔ Validation passed` |
+| `claude plugin validate .claude-plugin/marketplace.json --strict` | Exit 0: `✔ Validation passed` |
+| `agy plugin validate .` | Exit 0 |
+| `node scripts/sync-claude-agents.cjs --check` | Exit 0; no worker brief changed |
+| `git diff --check` | Exit 0, no output |
+
+Limits: these checks cover validator parsing, report wording, guidance text, package structure, and native manifest
+validation. No live model session ran. Whether a guiding model now reads the preference and delegation before a
+high-risk review, and writes a resolution, is untested until H1 and H2 run again. Existing plans whose comments lack a
+resolution now fail validation until it is added.
+
 ## Public installation 0.11.0 — 2026-10-06
 
 PR #82 merged the release commits into `main` as `9a935bb`. The immutable
