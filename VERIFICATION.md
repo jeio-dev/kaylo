@@ -3198,3 +3198,170 @@ none failed or skipped), and `git diff f37d842...fcc1a449 --check` passed.
 No model call, new sandbox probe, full transcript audit, native manifest
 validation, or installation check was run. These checks establish package
 structure and documentation consistency, not additional model behavior.
+
+## Issue #89 specification review — 2026-10-08
+
+Reviewed secrets/environment proposal #89 against local HEAD
+`a88594595928796c05e9b0971e43ebaa040521cd`, contributor guidance, the five skills,
+shared briefs and delegation packets, phase template, relevant worker/README
+and verification guidance, hook implementation, plan/package validators,
+adapter generator, package manifest, and release instructions. Read the full
+issue (no existing comments), full direct dependency discussions #84/#85/#87/#88,
+#90 compatibility, and relevant #83/#86 integration passages. Only #89 was
+reviewed. This was direct review without a fresh independent reviewer.
+
+GitHub's commit API did not resolve the local merge; the review links verified
+public baseline `07f6291821de309b2bad5d1e503c421f314eeac9` and distinguishes
+compared local changes. Official Claude permissions/sandbox, Gitleaks/Action,
+and Vite configuration documentation informed the specific external claims.
+
+Observed checks:
+
+- `node scripts/validate-package.cjs`: passed, five shared skills and matching
+  v0.11.0 versions/catalogs.
+- `node --test tests/session-start.test.cjs tests/validate-package.test.cjs`:
+  27 passed, zero failed/skipped.
+- `git diff --check`: passed before the review record and after it.
+- Gitleaks 8.30.1, disposable Git repository, custom synthetic-only detector:
+  staged `.kaylo` marker with a clean working copy produced one finding/exit 1;
+  clean index with marker only in the working copy produced zero/exit 0;
+  a marker committed then removed produced zero/exit 0 in an empty staged scan
+  but one/exit 1 when scanning the outgoing `base..HEAD`. Explicit
+  `--redact=100` kept the marker out of stdout, stderr and JSON reports in all
+  four cases. Assertions passed; disposable repositories were removed.
+
+These checks establish current package/reminder behavior and narrow scanner
+input/output behavior, not Kaylo secret enforcement or general detector
+accuracy. No real credential file/value was inspected or used in the probes.
+Full Node suite, native manifest validation, install/update trials, live model
+or host-permission trials, actual CI/branch enforcement, runtime/deployment
+validation, credential rotation, paid operations and release were not run.
+No new enforcement support is established for any host. No implementation or
+issue-body changes were made; this evidence entry is the only repository edit.
+The issue review records open findings R1-R9, proposed corrections and acceptance
+cases. Specification approval does not authorize implementation or release.
+
+Published [review comment](https://github.com/jeio-dev/kaylo/issues/89#issuecomment-6063825774)
+was read back and matched the prepared text exactly; issue title/body remained
+unchanged. All findings remain open for discussion.
+
+## Issue #89 approved specification update — 2026-10-08
+
+The maintainer approved review recommendations R1-R9. Updated only
+[issue #89](https://github.com/jeio-dev/kaylo/issues/89) and its existing
+[review comment](https://github.com/jeio-dev/kaylo/issues/89#issuecomment-6063825774),
+plus this evidence record. Revised scope, acceptance criteria, dependencies,
+trade-offs and verification cases reflect all nine findings. No specification
+finding remains open; implementation planning, implementation and verification
+remain pending. Approval was not treated as implementation/release authority.
+
+The original complete issue body and review were preserved unchanged inside
+collapsed historical sections. The review is marked "Addressed in the revised
+specification; implementation and verification remain pending." Compared the
+remote body/comment with the captured originals before publication to avoid
+replacing intervening edits. Read back the revised issue before collapsing the
+review, then read back both: exact prepared-text matches, all nine disposition
+rows present, original texts preserved exactly, and title/comment count
+unchanged. `git diff --check` passed after this record was appended. Earlier
+uncommitted VERIFICATION.md work was preserved.
+
+No implementation file, linked issue, repository commit, push, deployment or
+release changed. No package/Node/native-manifest/install/model/host/scanner
+trial was rerun for this specification-only update. Earlier review probes
+remain narrow historical evidence, not verification of the revised feature.
+
+## Plan-format migration proposal review (#90) — 2026-10-08
+
+Reviewed issue #90 without implementing changes or revising its body. Local HEAD
+was `a88594595928796c05e9b0971e43ebaa040521cd`; public repository evidence uses
+`721930d14573100f3d3fd2fcc40cf8e34f7979dc`. The plan skill, structural validator,
+define skill, roadmap template and package validator match that public baseline.
+Read #90 in full (no existing comments at inspection), relevant revised dependency
+contracts/discussions in #83–#89, contributor guidance and relevant workflow,
+worker, template, validator, hook, packaging, release and historical rename files.
+
+Observed checks:
+
+- `node scripts/validate-package.cjs` passed: five shared skills, matching v0.11.0
+  versions/catalogs.
+- `node --test tests/validate-plan.test.cjs tests/session-start.test.cjs
+  tests/validate-package.test.cjs` passed: 111 tests, zero failures or skips.
+- Seven disposable validator probes passed their assertions: otherwise valid
+  plans with no marker, marker 2, marker 999, or a nonnumeric marker all passed;
+  a linked non-current closed legacy phase passed, but the same file as Current
+  failed current-schema checks; a closed Current phase set to Needs revision
+  failed closure validation. Temporary fixtures were removed.
+- `git diff --check` passed, including after this evidence entry.
+
+The probes establish current parser behavior, not observed model corruption or
+migration support. Full Node suite, native manifest validation, install/update,
+live host/model/worker trials, actual migration, cross-platform recovery, CI
+controls, paid operations and release were not run. No new five-host behavioral
+claim is established. Existing unrelated VERIFICATION.md edits were preserved;
+this review record is the only repository-file edit for #90. The issue comment
+records open recommendations; specification approval will not authorize
+implementation or release.
+
+## Approved plan-format specification update (#90) — 2026-10-08
+
+After the maintainer approved the review recommendations, revised only
+[issue #90](https://github.com/jeio-dev/kaylo/issues/90) and its
+[existing review comment](https://github.com/jeio-dev/kaylo/issues/90#issuecomment-6064100037).
+The scope, acceptance criteria, dependency contracts, trade-offs and verification
+cases now incorporate R1–R9; every finding has an explicit disposition and none
+remains unresolved at the specification level. Implementation acceptance boxes
+remain unchecked. Original proposal/body and review text are preserved intact
+inside collapsed historical sections; the review is marked “Addressed in the
+revised specification; implementation and verification remain pending.”
+
+GitHub read-back matched the prepared body/comment, including the preserved
+original texts, all nine dispositions, collapsed sections and addressed status.
+The comment count was unchanged. `git diff --check` passed after this entry.
+Existing unrelated VERIFICATION.md edits were preserved.
+
+No implementation, linked issue, repository commit, push, tag, project migration
+or release changed. No package/Node/native-manifest/install/model/host/migration
+trial was rerun for this specification-only publication. Earlier review probes
+remain evidence of existing behavior, not verification of the revised feature.
+
+## Merged PR #91 independent review — 2026-10-08
+
+Reviewed PR #91 (the requested issue number resolves to a merged pull request)
+against revised issue #83, using its final head
+`c12f18f3f4843b032755e9f389f24f663b5253d0` and base
+`07f6291821de309b2bad5d1e503c421f314eeac9`. Compared the report with local HEAD
+`a88594595928796c05e9b0971e43ebaa040521cd` to distinguish subsequent fixes.
+The already-fixed reviewer-record placement issue is not a new finding.
+
+Two open P2 findings remain in both snapshots:
+
+- The append-only record schema cannot append observed vendor/model identity
+  learned when a pending dispatch returns. `update` permits only `by` and
+  `outcome`; adding `vendor=openai model=gpt-6` produces unknown-key errors.
+  A dispatch initially recorded with unknown identity therefore cannot acquire
+  its observed attribution without rewriting history or inventing a dispatch.
+  Extend the update contract and report resolution for later observations.
+- The report checks for any acceptance record, without validating its order or
+  dispatch completion. Disposable closed-phase fixtures for `direct builder →
+  accept → verify pass`, and `dispatch pending → verify pass → accept`, each
+  reported 1/1 first-try passes and zero malformed records. Diagnose inconsistent
+  lifecycle evidence and exclude it from rates rather than accepting token
+  presence alone; valid completed handoff updates must remain supported.
+
+Observed checks in a disposable export of the PR head:
+
+- Full Node suite: 175 passed, three package-inventory tests failed because the
+  Git archive had no Git metadata. Initialized and indexed only that disposable
+  export, then reran those three tests: all passed. This is a split successful
+  verification of all 178 tests, not a clean single full-suite pass.
+- Separate dispatch-report suite: all 10 tests passed.
+- Package validator, both strict Claude plugin/marketplace manifest validators,
+  Antigravity native plugin validator, and the PR diff whitespace check passed.
+- Three additional probes above reproduced on both the PR head and current
+  checkout; their temporary project fixtures were removed.
+
+These checks establish parser/package behavior and instruction inspection only.
+No live model session, worker dispatch, real host install/update, billing/quota
+probe, or release readiness check ran. No implementation was changed and no
+GitHub comment, issue edit, commit, push or publication was performed. Existing
+uncommitted VERIFICATION.md entries were preserved.
