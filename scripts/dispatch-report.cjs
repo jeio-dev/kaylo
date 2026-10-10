@@ -222,7 +222,7 @@ function report(project) {
       if (taskDispatchIds.has(item.by)) {
         reviewProblems.push({ phase: id, problem: `update by=${item.by} names a task dispatch; it belongs in that task's Result` });
       } else if (!owners.has(item.by)) {
-        reviewProblems.push({ phase: id, problem: `update by=${item.by} names no dispatch anywhere in the phase` });
+        reviewProblems.push({ phase: id, problem: `update by=${item.by} names no parsed dispatch in the phase` });
       }
     }
     for (const task of phaseTasks) tasks.push({ ...task, ...(task.checked

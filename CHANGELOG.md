@@ -8,8 +8,9 @@
   to parse, and build records (`verify`, `repair`, `accept`, `reopen`, a builder
   `dispatch` or `direct`) placed there. Before, those were silently ignored.
   They appear under "Review section records not counted" and do not change
-  first-try rates. Review updates naming a task dispatch or no dispatch in the phase
-  are also reported ([#92](https://github.com/jeio-dev/kaylo/issues/92)).
+  first-try rates. Review updates naming a task dispatch or no parsed
+  dispatch in the phase are also reported
+  ([#92](https://github.com/jeio-dev/kaylo/issues/92)).
 - **tools**: An `update` record may now carry the `host`, `route`, `vendor`,
   and `model` observed when a dispatch returns, so a pending handoff can gain
   its identity without editing the original record. The report groups by that
@@ -27,6 +28,18 @@
   labels later still passes. Spaces or tabs before the colon retain duplicate-ID
   and old-label checks. Fix the line as
   `- R1: non-blocking — open`.
+- **tools**: The plan validator now also requires a resolution after a
+  comment's label: `open`, `fixed`, or `accepted by user`, following ` — `.
+  A comment such as `- R1: non-blocking — left as an observation` now fails,
+  and the message names the three resolutions. Existing plans with such a
+  comment fail validation until the resolution is added. Put other details in
+  nested items, as before.
+- **skills**: Build's `Risk: high` rule now says to read
+  `.kaylo/preferences.md` and the review delegation reference before
+  requesting the review. It targets Strong under any preference, stops for
+  your choice when Strong cannot be established, and shows the review comment
+  form. In one #83 check, a model skipped both reads and recorded an inherited
+  reviewer with no exception.
 - **skills and workers**: A high-risk task review now records, for each
   checklist topic (trust boundaries, authorization, invalid input,
   sensitive-data exposure, and relevant abuse cases), what was found or why it

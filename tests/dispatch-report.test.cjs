@@ -322,7 +322,7 @@ for (const [name, review, problems] of [
   ['task dispatch', '{kaylo:v1 update by=D1 outcome=completed}',
     ["update by=D1 names a task dispatch; it belongs in that task's Result"]],
   ['unknown dispatch', '{kaylo:v1 update by=D99 outcome=completed}',
-    ['update by=D99 names no dispatch anywhere in the phase']],
+    ['update by=D99 names no parsed dispatch in the phase']],
   ['Review dispatch', '{kaylo:v1 dispatch id=D2 role=reviewer tier=Medium outcome=pending ' +
     'fallback=manual-handoff fallback-auth=user covers=T1} {kaylo:v1 update by=D2 outcome=completed}', []]
 ]) test(`Review updates naming a ${name} are resolved across the whole phase`, t => {
