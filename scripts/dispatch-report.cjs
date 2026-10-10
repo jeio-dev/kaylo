@@ -31,7 +31,7 @@ const schema = {
   dispatch: [['id', 'role', 'tier', 'outcome'], ['setting', 'host', 'route', 'vendor', 'model', 'billing',
     'billing-auth', 'fallback', 'fallback-auth', 'resumes', 'covers']],
   direct: [['role'], ['host', 'vendor', 'model', 'fallback', 'fallback-auth', 'covers']],
-  update: [['by', 'outcome'], []],
+  update: [['by', 'outcome'], ['host', 'route', 'vendor', 'model']],
   verify: [['by', 'result'], []],
   repair: [['by', 'failure', 'n', 'result'], ['basis']],
   accept: [[], []],
@@ -79,10 +79,16 @@ function classify(task, errors) {
   if (!records.length) return { status: 'missing', reason: 'no records' };
   const problems = [];
   const dispatches = new Map();
+  // Latest known outcome and observed identity per dispatch; updates add to it without
+  // changing the records themselves.
+  const state = new Map();
   const counts = new Map();
   let verify = null;
   let builder = null;
   let builders = 0;
+  // An accept before the initial verify is out of order only when a verify follows;
+  // with no verify at all the task is missing evidence instead.
+  let earlyAccept = false;
   for (const item of records) {
     if (['dispatch', 'direct'].includes(item.type) && item.role === 'reviewer') {
       problems.push(`reviewer ${item.type} record belongs under ## Review, not in task Result`);
@@ -90,15 +96,21 @@ function classify(task, errors) {
     if (item.type === 'dispatch') {
       if (item.resumes && !dispatches.has(item.resumes)) problems.push(`${item.id} resumes unknown ${item.resumes}`);
       dispatches.set(item.id, item);
+      state.set(item.id, { ...item });
       if (item.role === 'builder') builders++;
     } else if (item.type === 'direct' && item.role === 'builder') {
       builders++;
       dispatches.set('direct', item);
     } else if (item.type === 'update') {
       if (!dispatches.has(item.by) || item.by === 'direct') problems.push(`update by=${item.by} names no earlier dispatch`);
+      else Object.assign(state.get(item.by), item.outcome && { outcome: item.outcome },
+        ...['host', 'route', 'vendor', 'model'].filter(key => key in item).map(key => ({ [key]: item[key] })));
     } else if (item.type === 'verify' || item.type === 'repair') {
       const by = dispatches.get(item.by);
       if (!by || by.role !== 'builder') problems.push(`${item.type} by=${item.by} names no earlier builder record`);
+      else if (by.type === 'dispatch' && state.get(item.by).outcome === 'pending') {
+        problems.push(`${item.type} by=${item.by} names a dispatch still outcome=pending; its returned outcome needs an update first`);
+      }
       if (item.type === 'verify') {
         if (verify) problems.push('more than one verify record');
         // Later direct work replaces the 'direct' entry, so keep the initial builder now.
@@ -109,13 +121,21 @@ function classify(task, errors) {
         if (Number(item.n) !== expected) problems.push(`repair ${item.failure} n=${item.n}, expected n=${expected}`);
         counts.set(item.failure, Number(item.n));
       }
+    } else if (item.type === 'accept') {
+      if (!verify) earlyAccept = true;
+      for (const [id, current] of state) {
+        if (current.role === 'builder' && current.outcome === 'pending') problems.push(`accept while builder dispatch ${id} is still outcome=pending`);
+      }
     }
   }
+  if (earlyAccept && verify) problems.push('accept precedes the initial verify');
   if (problems.length) return { status: 'malformed', reason: problems.join('; ') };
   if (!builders) return { status: 'missing', reason: 'no builder dispatch or direct record' };
   if (!verify) return { status: 'missing', reason: 'no initial verify record' };
   if (!records.some(item => item.type === 'accept')) return { status: 'missing', reason: 'no accept record' };
-  const vendor = !builder.vendor || ['unknown', 'n/a'].includes(builder.vendor) ? 'unknown' : builder.vendor.toLowerCase();
+  // A later update's observed vendor replaces an unknown or earlier one for grouping.
+  const observed = builder.type === 'dispatch' ? state.get(builder.id) : builder;
+  const vendor = !observed.vendor || ['unknown', 'n/a'].includes(observed.vendor) ? 'unknown' : observed.vendor.toLowerCase();
   const success = verify.result === 'pass' && !records.some(item => item.type === 'repair' || item.type === 'reopen');
   return { status: 'recorded', success,
     group: { tier: builder.type === 'direct' ? 'direct' : builder.tier, estimate: task.estimate || 'unknown', vendor } };
@@ -134,6 +154,7 @@ function report(project) {
   const phases = [];
   const unlinked = [];
   const tasks = [];
+  const reviewProblems = [];
   for (const line of read('ROADMAP.md').split('\n')) {
     const entry = line.match(closedPhase);
     if (!entry) continue;
@@ -163,8 +184,13 @@ function report(project) {
       if (review) {
         let end = i + 1;
         while (end < lines.length && !/^ {0,3}#{1,2}[ \t]+/.test(lines[end])) end++;
-        for (const item of parseRecords(lines.slice(i + 1, end).join('\n')).records) {
+        const parsed = parseRecords(lines.slice(i + 1, end).join('\n'));
+        for (const error of parsed.errors) reviewProblems.push({ phase: id, problem: error });
+        for (const item of parsed.records) {
           if (item.type === 'dispatch') claim(item.id, null);
+          if (['dispatch', 'direct'].includes(item.type) ? item.role === 'builder' : item.type !== 'update') {
+            reviewProblems.push({ phase: id, problem: `${item.type}${item.role ? ` role=${item.role}` : ''} record belongs in a task Result, not under ## Review` });
+          }
         }
         i = end - 1;
         continue;
@@ -198,7 +224,7 @@ function report(project) {
   }
   const count = status => tasks.filter(t => t.status === status).length;
   return {
-    phases, unlinked, tasks,
+    phases, unlinked, tasks, review: reviewProblems,
     groups: [...groups.values()].sort((a, b) => [a.tier, a.estimate, a.vendor].join() < [b.tier, b.estimate, b.vendor].join() ? -1 : 1),
     counts: { tasks: tasks.length, recorded: count('recorded'), missing: count('missing'), malformed: count('malformed'),
       unchecked: count('unchecked'), unknownVendor: tasks.filter(t => t.status === 'recorded' && t.group.vendor === 'unknown').length }
@@ -206,7 +232,7 @@ function report(project) {
 }
 
 function format(data) {
-  const { phases, unlinked, groups, counts, tasks } = data;
+  const { phases, unlinked, groups, counts, tasks, review = [] } = data;
   const out = ['First-try pass rates among recorded tasks in closed phases (read-only; preferences and the tier table are unchanged).'];
   out.push(phases.length ? `Closed phases: ${phases.join(', ')}. Open phases are not counted.` : 'No closed phases; nothing to report.');
   if (unlinked.length) out.push(`Closed phases without a plan link, not counted: ${unlinked.join(', ')}.`);
@@ -222,6 +248,10 @@ function format(data) {
   if (excluded.length) {
     out.push('', 'Not counted:');
     for (const t of excluded) out.push(`- ${t.id}: ${t.status} (${t.reason})`);
+  }
+  if (review.length) {
+    out.push('', 'Review section records not counted (first-try rates unaffected):');
+    for (const r of review) out.push(`- ${r.phase}: ${r.problem}`);
   }
   out.push('', 'Limits: closed phases leave out blocked or abandoned work; missing history never counts as a pass. These are observations of recorded tasks, not model reliability or vendor quality.');
   return out.join('\n') + '\n';
