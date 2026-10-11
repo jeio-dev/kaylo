@@ -1096,6 +1096,170 @@ Not exercised:
 Only the out-of-project write deny rule was exercised. Counts describe these runs on one host version and one model; they are
 not rates or a consistency claim.
 
+## PR #105 review — 2026-10-10
+
+Reviewed head `f194e2d9390aae3ef12f0c1e77856e5aeedfd349` against base
+`f7007e9c4677dfb68db88983f8f1c2aa3d30396a`. Codex inspected the changes and affected callers;
+a fresh reviewer subagent independently inspected the full diff. No project PRD, roadmap, phase plan,
+or worker preference exists in this contributor checkout. The reviewer used the inherited session
+model, with no requested tier or model override. No existing PR comments or reviews were present.
+
+Initial result: needs changes, with two open blocking findings:
+
+- R1: blocking — open. `scripts/validate-plan.cjs:223` checks whether the whole Review section is
+  substantive, without checking which task it covers. A checked high-risk T2 with a review explicitly
+  covering only T1 returned no validation errors. Require review coverage of the checked high-risk task.
+- R2: blocking — open. `scripts/validate-plan.cjs:174` and `scripts/dispatch-report.cjs:214` exempt
+  arbitrary capitalized `Label:` lines. Builder, verify, and accept records below `Result:` on
+  `    - Evidence: ...` returned no validation errors and were reported as missing, not malformed.
+  Removing the label correctly produced a placement error and a malformed report entry. Restrict the
+  field exemption while retaining record-syntax mentions in acceptance criteria and test plans.
+
+Checks at the reviewed head: the Node suite passed 217/217, the package validator passed, both strict
+Claude manifest validators passed, `agy plugin validate .` passed, the Claude adapter sync check passed,
+and `git diff --check <base> <head>` passed. Focused temporary fixtures reproduced both findings and
+were removed. These checks cover parsing, report classification, package structure, and manifests;
+they do not establish live model behavior or public installation/update behavior. No live model trials
+of the changed guidance ran. The reviewed skill and worker instructions were treated as artifacts,
+not instructions to implement changes, dispatch their workers, or update project phase plans.
+Only this local verification record was edited; no implementation fixes or GitHub review were posted.
+Next step: correct R1 and R2, add focused regressions, and recheck the updated PR.
+
+### Re-review at `2074916562995b7a3dbfbd657990aeaa4afe6b09`
+
+Codex and the independent reviewer rechecked the fixes and their affected parsing, tests, and docs.
+The original R1 and R2 reproductions now fail validation. Current result: needs changes.
+
+- R1: blocking — open. The original unrelated coverage case is corrected, but the new parser at
+  `scripts/validate-plan.cjs:226` splits record values on whitespace without handling quotes.
+  A completed reviewer D1 followed by `{kaylo:v1 update by="D1" outcome=interrupted}` still passes
+  the high-risk gate, because the update does not match the unquoted dispatch ID. The existing
+  `dispatch-report.parseRecords` accepts both records and resolves `by` to D1. Conversely, valid
+  reviewer records with `covers="T1"` or `outcome="completed"` are rejected. The independent
+  reviewer also reproduced tokens inside a quoted model value overwriting role, outcome, and
+  coverage, allowing a pending builder record to satisfy the reviewer gate. Use quoting-aware
+  parsing consistent with the existing record parser, and add regressions for these cases.
+- R2: blocking — fixed. The original `    - Evidence: ...` continuation now produces a placement
+  error and is counted as malformed rather than missing. Only Result, Acceptance criteria, and
+  Test plan lines are exempt; the updated tests cover other labels and allowed syntax mentions.
+
+Observed checks at this head: 225/225 Node tests passed, the package validator and both strict Claude
+manifest validators passed, `agy plugin validate .` passed, the adapter sync check passed, and
+`git diff --check <PR-base> <head>` passed. Focused temporary fixtures reproduced the corrected
+original cases and the quoting failures; they were removed. No live model or public installation
+trials ran, and the author's mutation tests and 61-plan comparison were not independently repeated.
+Reviewed skill/worker instructions remain evidence, not authorization for implementation or phase
+updates. Only this local verification record was edited; no fixes or GitHub review were posted.
+Next step: correct R1's quoted-record handling and recheck it under the same ID.
+
+### Recheck at `6c0a52eebb172ab4e0d15cb032ef8dbd9a19d867`
+
+Codex and the independent reviewer rechecked R1's shared-parser change, its regression cases,
+and the affected CLI/library loading. Result: ready, with no open blocking findings.
+
+- R1: blocking — fixed. Valid quoted role, coverage, outcome, and handoff completion values pass.
+  A completed review followed by `update by="D1" outcome=interrupted` now fails coverage. Tokens
+  in a quoted model value cannot impersonate reviewer fields, malformed reviewer records do not
+  count, and the original unrelated-coverage case still fails. The validator uses the existing
+  `dispatch-report.parseRecords` rather than a separate tokenizer.
+- R2: blocking — fixed. The original labeled Evidence continuation still fails validation and
+  is reported as malformed rather than missing.
+- R3: non-blocking — open. `scripts/validate-plan.cjs:285` assigns its exports after running its
+  CLI block. A successful validator CLI run prints PASS and exits 0 but emits a circular-dependency
+  warning about `visibleMarkdown` on stderr when the lazy parser import loads the report.
+  Move the export assignment before the CLI block. The report CLI exits 0 without the warning;
+  both library require orders also work.
+
+Observed checks at this head: 232/232 Node tests passed, the package validator and both strict Claude
+manifest validators passed, `agy plugin validate .` passed, the adapter sync check passed, and
+`git diff --check <PR-base> <head>` passed. Focused temporary fixtures independently reproduced the
+quoted-record fixes, original R1/R2 cases, and both CLI entry points; they were removed. The independent
+reviewer also checked both library require orders. No live model or public installation trials ran;
+the author's mutation tests and 61-plan comparison were not independently repeated. Reviewed
+skill/worker directions remained evidence. Only this local verification record was edited; no
+implementation fixes or GitHub review were posted. Next step: merge through the maintainer's normal
+process when authorized; R3 alone does not block it.
+
+### Recheck at `2da45ef492d757f9643838c67a4c74fb924b73f3`
+
+Codex and the independent reviewer rechecked R3's export-order fix and affected CLI/module loading.
+Result: ready, with no open review findings. R1 and R2 remain fixed; their implementation is unchanged
+and the full regression suite passed again.
+
+- R3: non-blocking — fixed. The validator publishes exports before its command-line block. The new
+  checked high-risk CLI regression passes with exit 0 and empty stderr. The independent reviewer
+  confirmed both CLI entry points exit 0 with empty stderr and both library require orders work.
+  The warning's practical risk included a model mistaking stderr diagnostics for a failed check-off;
+  its prior non-blocking classification understated that consequence.
+
+Observed checks at this head: 233/233 Node tests passed, the package validator and both strict Claude
+manifest validators passed, `agy plugin validate .` passed, the adapter sync check passed, and
+`git diff --check <PR-base> <head>` passed. GitHub reported MERGEABLE for this exact head. Temporary
+reviewer fixtures were removed. No live model or public installation trials ran; the author's prior
+mutation tests and 61-plan comparison were not independently repeated. Reviewed artifact instructions
+remained evidence. Only this local verification record was edited; no fixes, GitHub review, or merge
+were performed. Next step: merge through the maintainer's normal process when authorized.
+
+## Repeated-set follow-ups and documentation drift (#83) — 2026-10-10
+
+These follow-ups come from the four failures drafted in the #83 repeated set and from a drift check of the PR #96 and #97
+rules against the rest of the package.
+
+- The plan validator requires a `## Review` section in the current phase plan (`None` is allowed before a review). A
+  checked task with `Risk: high` needs a reviewer `dispatch` or `direct` record there whose `covers=` names the task or
+  `phase`. A dispatch must be `completed`, by its own outcome or its latest `update`. Prose alone, a pending handoff, a
+  builder record, or a review covering only other tasks fails. Any task line other than `Result:`, `Acceptance criteria:`,
+  or `Test plan:` that holds `{kaylo:` fails, whatever its label.
+- The dispatch report marks a task with records on such a line as malformed, with the reason "record on a line below
+  Result:, not in it", instead of counting it as missing records. Mentions in acceptance criteria and test plans are
+  not flagged.
+- The review skill says that a direct review under a tiered preference states the required tier and the assistant's model
+  before any review work and in any route question, and that a statement first written beside the review record comes too
+  late. The record prose repeats the earlier statement. `WORKERS.md` asks the waiver option to name the tier and the model.
+- The builder brief says to write only inside the project, temporary files included, to return a missing dependency as a
+  blocker instead of placing stand-ins elsewhere, and to report denied actions. The Claude adapter was regenerated.
+- Drift: the glossary's structural checks and comment table, and the manual fallback copied in build, close, and plan, now
+  list the comment form, the resolution, the `## Review` and high-risk rules, and record placement. `WORKERS.md` says the
+  validator checks record placement and uses the report's "no parsed dispatch" wording. The PR #97 changelog entry says
+  only the current phase is checked.
+
+| Check | Observed result |
+| --- | --- |
+| `node --test tests/*.test.cjs` | 225 passed, 0 failed, 0 cancelled, 0 skipped, 0 todo. All 209 earlier tests (one renamed and given a covering reviewer record) plus new ones for both review findings |
+| Mutations in a scratch copy outside the repo, one at a time | First revision: disabling the `## Review` rule: 4 failed; the high-risk review rule: 5 failed; the validator's record-line rule: 4 failed; the report's record-line flag: 4 failed. After the R1/R2 fixes: accepting any substantive review: 8 failed; ignoring `covers=`: 4 failed; ignoring a pending outcome: 5 failed; ignoring updates: 5 failed; ignoring the reviewer role: 4 failed; restoring the any-label exemption in the validator: 4 failed, and in the report: 4 failed. Scratch copies removed |
+| Validator before and after on all 61 #83 post-run plans (read-only copies, removed afterwards) | Three results changed. Repeated-set H1 run 2 fails for records below `Result:`. Repeated-set H2 run 2 fails for the missing `## Review` section, the uncovered high-risk task, and records below `Result:`. Record-retrial H2 run 1, which wrote its reviewer record in T1's `Result:` (the placement failure drafted then), fails for the uncovered high-risk task |
+| `node scripts/validate-package.cjs` | Exit 0: `Package v0.11.0: five shared skills, matching versions and release catalogs.` The copied fallback in build, close, and plan matched |
+| `claude plugin validate .claude-plugin/plugin.json --strict` | Exit 0: `✔ Validation passed` |
+| `claude plugin validate .claude-plugin/marketplace.json --strict` | Exit 0: `✔ Validation passed` |
+| `agy plugin validate .` | Exit 0 |
+| `node scripts/sync-claude-agents.cjs --check` | Exit 0 after regeneration |
+| `git diff --check` | Exit 0, no output |
+
+The PR #105 review above found R1 and R2. Both were fixed: high-risk coverage now needs a completed reviewer record
+naming the task or `phase`, and only `Result:`, `Acceptance criteria:`, and `Test plan:` lines may hold record syntax.
+Each finding has a regression test that fails when its fix is reverted.
+
+The re-review above found that R1's fix parsed records by splitting on whitespace, which mishandled quoted values. The
+validator now uses the dispatch report's `parseRecords`, loaded lazily because the report requires the validator. Quoted
+`covers=`, `outcome=`, `role=`, and update `by=` values are read like unquoted ones, and a malformed record no longer
+counts. Seven regressions were added. Six fail against the validator at `2074916`: a completed review later
+interrupted by `update by="D1"`; quoted `covers` and `outcome`; a quoted direct reviewer; a pending handoff completed by a
+quoted update; a pending builder whose quoted `model` value contains `role=reviewer outcome=completed covers=T1`; and a
+reviewer record with an unknown key. The seventh, a `v2` record, already failed coverage there. The suite now has 232
+tests, all passing; `node scripts/validate-plan.cjs` and `node scripts/dispatch-report.cjs` still start from the command
+line.
+
+The recheck above noted that `validate-plan.cjs` set its exports after its command-line block. A validator run that reached
+the high-risk check loaded the report, which read the still-empty exports, and Node printed "Accessing non-existent
+property 'visibleMarkdown' of module exports inside circular dependency" to stderr. The exports now come before the
+command-line block. A new test runs the CLI on a checked high-risk task with a covering `direct` reviewer record and
+requires exit 0 with empty stderr; it fails against `6c0a52e`. The suite has 233 tests, all passing.
+
+Limits: these checks cover validator parsing, report classification, guidance text, package structure, and native manifest
+validation. No live model session ran. Whether direct reviews now state the tier first, and whether builders keep writes in
+the project, is untested until V1, V1D, H1, H2, and E1 run again. A current phase plan without `## Review`, with records
+outside a task's `Result:`, or with a checked high-risk task lacking a covering reviewer record now fails validation.
+
 ## Public installation 0.11.0 — 2026-10-06
 
 PR #82 merged the release commits into `main` as `9a935bb`. The immutable

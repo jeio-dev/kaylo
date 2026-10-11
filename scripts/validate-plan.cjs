@@ -47,6 +47,7 @@ const statusLike = /^[ \t]*Status:[ \t]*(.*?)[ \t]*$/gm;
 // Older names are rejected rather than read, so each diagnostic names the replacement.
 const renamedFields = [['Complexity', 'Estimate'], ['Depends on', 'Blocked by'],
   ['Acceptance', 'Acceptance criteria'], ['Verify', 'Test plan']];
+const recordLine = /^[ \t]*[-*]?[ \t]*(?:Result|Acceptance criteria|Test plan):/;
 const renamedLabels = [['blocker', 'blocking'], ['optional', 'non-blocking']];
 
 function meaningful(value) {
@@ -170,9 +171,14 @@ function validate(project, { closing = false } = {}) {
     for (const [old, replacement] of renamedFields) {
       if (fields(old).length) fail(`${match[2]}: ${old}: is no longer supported; use ${replacement}:`);
     }
+    // Reports read records from the Result: line only; a record on any other line is lost.
+    // Acceptance criteria and test plans may still mention record syntax.
+    if (body.split('\n').some(line => line.includes('{kaylo:') && !recordLine.test(line))) {
+      fail(`${match[2]}: put {kaylo:v1 ...} records on the task's Result: line, not on a line below it`);
+    }
     tasks.push({ id: match[2], checked: match[1].toLowerCase() === 'x', title: match[3],
       acceptance: field('Acceptance criteria'), testPlan: field('Test plan'), result: field('Result'),
-      blockedBy: field('Blocked by') });
+      blockedBy: field('Blocked by'), risk: field('Risk') });
     i = end - 1;
   }
   if (!tasks.length) fail('Current phase has no recognizable task entries');
@@ -213,7 +219,21 @@ function validate(project, { closing = false } = {}) {
   for (const [name, records] of sections) {
     if (records.length > 1) fail(`Duplicate ${name} sections; consolidate history under one heading`);
   }
+  if (!sections.get('Review').length) fail('Phase plan needs a ## Review section (None is allowed before a review)');
   const review = sections.get('Review').join('\n');
+  // A checked high-risk task needs a completed reviewer record covering it; a dispatch completes
+  // through its own outcome or its latest update. Use the report's parser so quoted values and
+  // malformed records are read the same way; required lazily because the report requires this file.
+  const { records } = require('./dispatch-report.cjs').parseRecords(review);
+  const outcome = record => records.filter(r => r.type === 'update' && r.by === record.id).pop()?.outcome || record.outcome;
+  const covered = id => records.some(r => r.role === 'reviewer' &&
+    (r.type === 'direct' || (r.type === 'dispatch' && outcome(r) === 'completed')) &&
+    (r.covers === 'phase' || (r.covers || '').split(',').includes(id)));
+  for (const task of tasks) {
+    if (task.checked && /^high\b/i.test(task.risk || '') && !covered(task.id)) {
+      fail(`${task.id}: a checked Risk: high task needs a completed reviewer record under ## Review with covers=${task.id} or covers=phase`);
+    }
+  }
   // A comment written without the colon, such as "- R1 (non-blocking, open): ...", escapes the
   // checks below; flag only a label at the head, allowing one separator after the ID.
   for (const match of review.matchAll(/^[ \t]*[-*][ \t]+(R\d+)\b(?![ \t]*:)(.*)$/gm)) {
@@ -248,6 +268,9 @@ function validate(project, { closing = false } = {}) {
   return errors;
 }
 
+// Export before the CLI runs: validate() loads dispatch-report.cjs, which requires this file back.
+module.exports = { validate, visibleMarkdown };
+
 if (require.main === module) {
   const args = process.argv.slice(2);
   const positional = args.filter(arg => !arg.startsWith('--'));
@@ -261,5 +284,3 @@ if (require.main === module) {
     process.exitCode = errors.length ? 1 : 0;
   }
 }
-
-module.exports = { validate, visibleMarkdown };

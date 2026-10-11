@@ -356,9 +356,25 @@ test('the build delegation tier table matches the canonical builder recommendati
   assert.deepEqual(rows(delegation), rows(canonical));
 });
 
-test('records and Risk fields do not affect structural plan validation', t => {
+test('records on a line below Result: make the task malformed', t => {
+  const text = plan(task('T1', 'node greet.cjs printed Hello, exit 0\n    {kaylo:v1 direct role=builder} {kaylo:v1 verify by=direct result=pass} {kaylo:v1 accept}'));
+  const data = report(fixture(t, [{ id: '01', closed: true, text }]));
+  assert.deepEqual(data.counts, { tasks: 1, recorded: 0, missing: 0, malformed: 1, unchecked: 0, unknownVendor: 0 });
+  assert.equal(data.tasks[0].reason, 'record on a line below Result:, not in it');
+  // A label on the continuation line does not hide the records.
+  const labelled = plan(task('T1', 'node greet.cjs printed Hello, exit 0\n    - Evidence: {kaylo:v1 direct role=builder} {kaylo:v1 verify by=direct result=pass} {kaylo:v1 accept}'));
+  const evidence = report(fixture(t, [{ id: '01', closed: true, text: labelled }]));
+  assert.equal(evidence.counts.malformed, 1);
+  assert.equal(evidence.tasks[0].reason, 'record on a line below Result:, not in it');
+  // Acceptance criteria and test plans may mention record syntax.
+  const mention = plan(task('T1', pass).replace('Output Hello', 'Output Hello and list {kaylo:v1 accept} records'));
+  assert.equal(report(fixture(t, [{ id: '01', closed: true, text: mention }])).counts.recorded, 1);
+});
+
+test('records and a reviewed Risk field pass structural plan validation', t => {
   const root = fixture(t, [{ id: '01', closed: true,
-    text: plan(task('T1', pass, { extra: '  - Risk: high — changes session expiry enforcement\n' })) }]);
+    text: plan(task('T1', pass, { extra: '  - Risk: high — changes session expiry enforcement\n' }),
+      'None; reviewed expiry handling. {kaylo:v1 dispatch id=D2 role=reviewer tier=Strong outcome=completed covers=T1}') }]);
   assert.deepEqual(validate(root, { closing: true }), []);
 });
 

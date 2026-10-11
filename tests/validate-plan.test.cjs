@@ -229,6 +229,69 @@ for (const entry of [
     ['R1: follow the label with " — " and a resolution (open, fixed, or accepted by user), as in "- R1: blocking — open"']);
 });
 
+test('a phase plan without a ## Review section fails', t => {
+  const text = phase(task('T1')).replace('## Review\nNone; inspected greeting and command output.\n', '');
+  assert.deepEqual(validate(fixture(t, text).root), ['Phase plan needs a ## Review section (None is allowed before a review)']);
+});
+
+const uncovered = id => `${id}: a checked Risk: high task needs a completed reviewer record under ## Review with covers=${id} or covers=phase`;
+const reviewer = (more, id = 'D1') => `None; reviewed session expiry. {kaylo:v1 dispatch id=${id} role=reviewer tier=Strong ${more}}`;
+for (const [name, checked, risk, review, expected] of [
+  ['bare None review', true, 'high — changes session expiry', 'None', [uncovered('T1')]],
+  ['placeholder review', true, 'High', '[Record later]', [uncovered('T1')]],
+  ['prose review without a reviewer record', true, 'high', 'None; reviewed T1 session expiry handling.', [uncovered('T1')]],
+  ['completed reviewer covering the task', true, 'high', reviewer('outcome=completed covers=T1'), []],
+  ['completed reviewer covering a task list', true, 'high', reviewer('outcome=completed covers=T3,T1'), []],
+  ['direct reviewer covering the phase', true, 'high', 'None. {kaylo:v1 direct role=reviewer covers=phase}', []],
+  ['pending handoff', true, 'high', reviewer('fallback=manual-handoff fallback-auth=user outcome=pending covers=T1'), [uncovered('T1')]],
+  ['pending handoff later completed', true, 'high',
+    reviewer('fallback=manual-handoff fallback-auth=user outcome=pending covers=T1') + ' {kaylo:v1 update by=D1 outcome=completed}', []],
+  ['completed reviewer later interrupted', true, 'high',
+    reviewer('outcome=completed covers=T1') + ' {kaylo:v1 update by=D1 outcome=interrupted}', [uncovered('T1')]],
+  ['builder record covering the task', true, 'high', 'None. {kaylo:v1 direct role=builder covers=T1}', [uncovered('T1')]],
+  ['quoted covers and outcome', true, 'high', reviewer('outcome="completed" covers="T1"'), []],
+  ['quoted direct reviewer', true, 'high', 'None. {kaylo:v1 direct role="reviewer" covers="phase"}', []],
+  ['completed reviewer later interrupted by a quoted update', true, 'high',
+    reviewer('outcome=completed covers=T1') + ' {kaylo:v1 update by="D1" outcome=interrupted}', [uncovered('T1')]],
+  ['pending handoff later completed by a quoted update', true, 'high',
+    reviewer('fallback=manual-handoff fallback-auth=user outcome=pending covers=T1') + ' {kaylo:v1 update by="D1" outcome="completed"}', []],
+  ['pending builder whose quoted model mentions reviewer fields', true, 'high',
+    'None. {kaylo:v1 dispatch id=D1 role=builder tier=Light outcome=pending model="x role=reviewer outcome=completed covers=T1 y"}', [uncovered('T1')]],
+  ['malformed reviewer record', true, 'high', reviewer('outcome=completed covers=T1 bogus=1'), [uncovered('T1')]],
+  ['unsupported record version', true, 'high', 'None. {kaylo:v2 direct role=reviewer covers=T1}', [uncovered('T1')]],
+  ['unchecked task before its review', false, 'high', 'None', []],
+  ['checked task with another risk value', true, 'low', 'None', []],
+]) test(`Risk: high review requirement: ${name}`, t => {
+  const body = task('T1', checked).replace('  - Result:', `  - Risk: ${risk}\n  - Result:`);
+  const text = phase(body).replace('None; inspected greeting and command output.', review);
+  assert.deepEqual(validate(fixture(t, text).root), expected);
+});
+
+test('a review covering another task does not satisfy a checked high-risk task', t => {
+  const tasks = task('T1', true) + task('T2', true).replace('  - Result:', '  - Risk: high — changes session expiry\n  - Result:');
+  const text = phase(tasks).replace('None; inspected greeting and command output.', reviewer('outcome=completed covers=T1'));
+  assert.deepEqual(validate(fixture(t, text).root), [uncovered('T2')]);
+});
+
+test('records must stay on the task Result line', t => {
+  const below = task('T1', true).replace(/(  - Result: .*\n)/, '$1    {kaylo:v1 direct role=builder host=claude-code}\n');
+  assert.deepEqual(validate(fixture(t, phase(below)).root),
+    ["T1: put {kaylo:v1 ...} records on the task's Result: line, not on a line below it"]);
+  const inline = task('T1', true).replace('printed Hello, exit 0', 'printed Hello, exit 0 {kaylo:v1 direct role=builder} {kaylo:v1 accept}');
+  assert.match(inline, /Result: .*\{kaylo:v1 accept\}/);
+  assert.deepEqual(validate(fixture(t, phase(inline)).root), []);
+  const fields = task('T1').replace('Output Hello', 'Output Hello and parse {kaylo:v1 accept} records')
+    .replace('exit 0\n', 'exit 0; then node report.cjs lists {kaylo:v1 verify} lines\n');
+  assert.deepEqual(validate(fixture(t, phase(fields)).root), []);
+  const message = ["T1: put {kaylo:v1 ...} records on the task's Result: line, not on a line below it"];
+  for (const label of ['Evidence', 'Notes', 'Estimate']) {
+    const labelled = label === 'Estimate'
+      ? task('T1', true).replace('Estimate: S', 'Estimate: S {kaylo:v1 accept}')
+      : task('T1', true).replace(/(  - Result: .*\n)/, `$1    - ${label}: {kaylo:v1 direct role=builder} {kaylo:v1 accept}\n`);
+    assert.deepEqual(validate(fixture(t, phase(labelled)).root), message, label);
+  }
+});
+
 test('Review prose that mentions comment IDs without a label still passes', t => {
   const text = phase(task('T1')).replace('None; inspected greeting and command output.',
     '- R1: non-blocking — fixed\n  - Recheck: R1 rechecked with node greet.cjs\n' +
@@ -355,6 +418,15 @@ test('CLI returns 0, 1, and 2 for valid plan, invalid plan, and usage', t => {
   assert.equal(run([f.root, '--closing']).status, 1);
   assert.equal(run([]).status, 2);
   assert.equal(run([f.root, '--unknown']).status, 2);
+});
+
+test('CLI checks a high-risk review record without a circular-dependency warning', t => {
+  const body = task('T1', true).replace('  - Result:', '  - Risk: high\n  - Result:');
+  const f = fixture(t, phase(body).replace('None; inspected greeting and command output.',
+    'None; reviewed T1. {kaylo:v1 direct role=reviewer covers=T1}'));
+  const result = spawnSync(process.execPath, [path.resolve(__dirname, '../scripts/validate-plan.cjs'), f.root], { encoding: 'utf8' });
+  assert.equal(result.status, 0);
+  assert.equal(result.stderr, '');
 });
 
 test('supported whitespace keeps unfinished tasks visible at closure', t => {
