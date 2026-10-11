@@ -1397,6 +1397,70 @@ refusal. No live model gate or native host install/update trial was run. The gat
 trial and issue closures remain pending. The 50 pre-existing #107–#112 additions
 are excluded from this PR's commit and retained byte-identically with their stash.
 
+## Issue #83 acceptance gate trial (stopped) — 2026-10-11
+
+The live acceptance-gate trial on candidate `8326270a08bcbd9c53ff66999f257c8ce062a1e3`
+(PR #119) stopped on a live harness fault after two of 40 guiding slots. H1-r1 and
+H2-r1 passed the declared gates; there were zero gated failures. H1/H2 each have
+1/10 observations; E1 0/10, V1/V1D each 0/5. All 38 remaining slots are not run,
+not failures or not-exercised runs. No case-level acceptance claim or planned
+N-specific probability bound is supported. No gated-failure issue drafts were needed.
+
+H2's completed inherited reviewer report was delivered as a system attachment,
+with queue removal `absorbed_mid_turn`, before the model recorded review coverage
+and checked off T1. Frozen `bg.cjs` ignores attachment notifications and incorrectly
+kept the worker outstanding; the frozen report extractor also missed that delivery.
+Raw attachment, full tool history and subsequent matching model actions support
+the completed-review gate. The fault stopped the set without a harness fix, retry,
+replacement request or nudge. The subject's separate record-helper refusals were
+correctly recovered and are not the operator harness fault.
+
+Live preflight ran in protocol order: candidate guard and 51/51 package fingerprints,
+package validator, 250/250 Node tests, both strict Claude manifest validators, agy,
+and working/staged diff checks passed. Fixture hashes 19/19 and step-1 hashes 18/18,
+synthetic grading 49/49, decide/background tests 12/12, answer tests 11/11 and prose
+tests 12/12 passed. Intended sandbox restrictions, helper snapshot/refusal/restoration
+and covered check-off outcomes were inspected; H1/V1D dry starts made zero assistant
+turns. These checks establish mechanical/preflight behavior, not full model coverage.
+
+Both live runs passed 8/8 agreed checks, actual same-run review/route gates, final
+record parsing/placement and append-only history, with no prohibited attempts.
+Supplemental full-history audit found eight successful helper record events retained
+verbatim across both runs: append 4/4, review 2/4 (two invalid-prose refusals), check-off
+2/2; manual prose edits preserved existing records. The old grader detects none of
+those helper writes, so its result alone is insufficient. Advisory repaired-edit damage
+was 0/2 check-offs; preference/delegation reads before review dispatch 2/2. Blocked
+verify (#114) and direct-review tier disclosure (#115) were not exercised. Supplemental
+high-risk topics were met in both reports; H2 had an unnumbered non-blocking coverage
+note. No invented acceptance or authorization was observed.
+
+Subject: Claude Code 2.1.294 / Sonnet 5.5, pinned subscription-only sandbox; H1's
+reviewer used Opus 5.5, H2's inherited reviewer used Sonnet 5.5 after the exact frozen
+user exception. Operator: this Codex/GPT-6 session (exact serving model ID unavailable),
+changed from earlier Claude Opus 5.5 operators. Candidate/helper, gate split and N also
+changed; prior composite grades were not revised and comparisons cannot isolate effects.
+The recorded reset waiver applied: start weekly <95%, session <=90%; stop weekly >=95%,
+pause session >90%. Measured start 82% weekly/9% session, final 82%/11%, credits off;
+no usage threshold was reached. Normal-host settings were only hashed.
+
+Evidence: `.local/trials/issue83-gate/REPORT.md`, per-run grades and helper audits,
+`evidence/H2-r1/delivered-review-attachment.json`, `harness-fault.txt`, full transcripts,
+and `setup-checks/`. #113 was not reproduced in these two runs, #114/#115 are not
+exercised, and #116 has positive mechanical/placement/history evidence with only two
+live check-offs; this incomplete set does not support closing #113–#116. The declared
+set remains stopped; correcting/testing attachment handling and any later trial need
+a separate maintainer decision. Original and live freezes, prior evidence, the 50
+preexisting #107–#112 verification additions and backup stash are preserved.
+At trial exit, this record was uncommitted; no issues were posted/closed and no
+#84 work occurred. The maintainer subsequently authorized committing only this
+trial record and keeping #113–#116 open.
+
+Normal-host hash limitation at exit: `settings.json` is unchanged, but
+`/home/jeio/.claude.json` differs from the preflight hash (mtime 11:44:26 PT).
+Its cause is unestablished; the frozen sandbox mounts it read only. No contents
+or diff were read and no restoration attempted. Host integrity cannot be certified;
+hash/metadata evidence is in `setup-checks/host-config-hash-mismatch.txt`.
+
 ## Public installation 0.11.0 — 2026-10-06
 
 PR #82 merged the release commits into `main` as `9a935bb`. The immutable
