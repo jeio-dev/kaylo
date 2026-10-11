@@ -4,6 +4,21 @@
 
 ### Notable Changes
 
+- **tools**: Optional `scripts/plan-record.cjs` appends one task or reviewer record
+  and checks off a task with its `accept` record. It reuses the record parser and
+  structural validator, preserves earlier text, and restores caught validation
+  failures. Anchored Markdown targeting prevents the #116 edit failure when the
+  helper is used ([#116](https://github.com/jeio-dev/kaylo/issues/116)). No record
+  grammar or validator rule changes; existing plans remain valid.
+- **skills**: Build now presents high-risk completion as numbered steps: check,
+  request review or ask the route in the same run, record, then check off through
+  the helper. Review uses the helper for reviewer records; targeted manual edits
+  remain the fallback. These instructions have not yet passed the model gate
+  ([#113](https://github.com/jeio-dev/kaylo/issues/113)).
+- **docs**: Correct the glossary's stale claim that validation ignores records:
+  it checks placement and completed high-risk reviewer coverage. Record PR #118's
+  checks and independent review separately from live model behavior.
+
 - **skills**: Build's instructions now say to request a `Risk: high` task's
   focused review in the same run once its checks pass, or to ask the route
   question when Strong cannot be established, rather than ending the turn by
