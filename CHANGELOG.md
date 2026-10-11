@@ -4,6 +4,29 @@
 
 ### Notable Changes
 
+- **skills**: Build's instructions now say to request a `Risk: high` task's
+  focused review in the same run once its checks pass, or to ask the route
+  question when Strong cannot be established, rather than ending the turn by
+  pointing to `/kaylo:review`. The turn may end before that review only when
+  you choose a pause or a manual handoff, while the review is pending, or under
+  another stop rule such as the repair limit
+  ([#113](https://github.com/jeio-dev/kaylo/issues/113)). They also tell build
+  to record the first check after builder work as `verify` even when the task
+  stays blocked: `result=fail` when the check ran and failed, and
+  `result=unavailable` when it could not run. A prose description of the
+  failure does not replace the record, and build shows a blocked-task example
+  ([#114](https://github.com/jeio-dev/kaylo/issues/114)). At check-off, build
+  is told to make targeted edits, reread the edited `Result:` line and
+  `## Review`, and record `accepted by user` only for a decision you made
+  ([#116](https://github.com/jeio-dev/kaylo/issues/116)).
+- **skills**: For a direct review under a tiered preference, review's
+  instructions now put the required tier and the observed model in the route
+  question's own text, not only in one of its options, with an example
+  sentence. `WORKERS.md`'s vendor choices say the same
+  ([#115](https://github.com/jeio-dev/kaylo/issues/115)). These two entries
+  change instructions only; no model trial has run on them yet. The plan
+  validator and the dispatch report are unchanged, so existing plans validate
+  and report as before.
 - **tools**: The dispatch report now lists records under `## Review` that fail
   to parse, and build records (`verify`, `repair`, `accept`, `reopen`, a builder
   `dispatch` or `direct`) placed there. Before, those were silently ignored.
@@ -53,10 +76,10 @@
   another wrote builder records where the report could not read them.
 - **skills**: A direct review under a Quality, Balanced, or Budget preference
   now states the required tier and the assistant's model before any review
-  work and in any route question, such as the vendor waiver option; a statement
-  first written beside the review record comes too late. In the #83 repeated
-  set, five of six V1 and V1D runs reviewed first and named the tier only in
-  the record.
+  work and in the text of any route question, such as the vendor choices; a
+  statement first written beside the review record comes too late. In the #83
+  repeated set, five of six V1 and V1D runs reviewed first and named the tier
+  only in the record.
 - **workers**: The builder brief says to write only inside the project,
   temporary files included, and to return a missing dependency as a blocker
   instead of placing stand-ins elsewhere. It also asks the builder to report

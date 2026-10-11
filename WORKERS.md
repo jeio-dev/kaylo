@@ -110,9 +110,9 @@ The guiding assistant chooses each review route and sends the reviewer brief, re
 
 With `Review vendor: different`, the reviewer's model vendor must be known to differ from every builder model vendor whose changes are in the review target: for a task review, that task's builders; for a phase review, every builder whose changes it covers. For direct implementation, use the implementing model's vendor when it can be observed. A model vendor is the company whose model ran. A tool, account, or gateway is not a model vendor, and two tool names do not establish two vendors. Keep fresh context where available; a different vendor alone does not provide independent context or prove a better review.
 
-If a relevant vendor is unknown, or no reachable reviewer differs from all of them, say the requirement cannot be established. Never compare against one builder only or call unknown identity different. Offer these choices and record the one the user makes:
+If a relevant vendor is unknown, or no reachable reviewer differs from all of them, say the requirement cannot be established. Never compare against one builder only or call unknown identity different. In the question text before these choices, name the required reviewer tier and the model that would review; option 1 repeats them. Offer these choices and record the one the user makes:
 
-1. Waive the different-vendor requirement for this review, then perform the required review at the required reviewer tier through an available authorized route. Name that tier and the model that would review in this option.
+1. Waive the different-vendor requirement for this review, then perform the required review at the required reviewer tier through an available authorized route. Name that tier and that model in this option too.
 2. Perform a manual handoff and wait for its review evidence.
 3. Pause, recording the missing route, identity, or access.
 
@@ -133,7 +133,7 @@ Each record is `{kaylo:v1 <type> key=value ...}`. A value has no spaces, quotes,
 | `dispatch` | One actual worker dispatch | `id` (`D1`, `D2`, … unique in the phase), `role` (`builder`, `reviewer`, `researcher`), `tier` (`Light`, `Medium`, `Strong`, `Inherit`), `outcome` (`completed`, `failed`, `interrupted`, `blocked`, `pending`) | `setting` (requested worker setting), `host`, `route` (service or provider), `vendor`, `model`, `billing` (`subscription`, `metered`, `unknown`, `n/a`), `billing-auth` (`preference`, `session`, `n/a`), `fallback` (`none`, `inherit`, `other-model`, `vendor-waived`, `tier-exception`, `manual-handoff`, `direct`, `pause`), `fallback-auth` (`user`, `session`, `n/a`), `resumes` (an earlier dispatch ID), `covers` |
 | `direct` | Work done by the guiding assistant without a worker | `role` | `host`, `vendor`, `model`, `fallback`, `fallback-auth`, `covers` |
 | `update` | A later outcome of an earlier dispatch, such as a returned manual handoff, and any identity observed then | `by` (the dispatch ID), `outcome` | `host`, `route`, `vendor`, `model` |
-| `verify` | The first check of the initial implementation, before any corrective repair; one per task | `by` (a dispatch ID or `direct`), `result` (`pass`, `fail`, `unavailable`) | — |
+| `verify` | The first check of the initial implementation, before any corrective repair; one per task, recorded even when the task stays blocked (`fail` or `unavailable`) | `by` (a dispatch ID or `direct`), `result` (`pass`, `fail`, `unavailable`) | — |
 | `repair` | One corrective change and its verification | `by`, `failure` (`F1`, `F2`, … per task), `n` (this failure's repair count), `result` | `basis` (`new-evidence`, `changed-condition`, `authorized`; required when `n` exceeds 2) |
 | `accept` | The guiding assistant accepted the task | — | — |
 | `reopen` | Accepted work was unchecked again | — | — |
