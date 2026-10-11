@@ -47,6 +47,7 @@ const statusLike = /^[ \t]*Status:[ \t]*(.*?)[ \t]*$/gm;
 // Older names are rejected rather than read, so each diagnostic names the replacement.
 const renamedFields = [['Complexity', 'Estimate'], ['Depends on', 'Blocked by'],
   ['Acceptance', 'Acceptance criteria'], ['Verify', 'Test plan']];
+const recordLine = /^[ \t]*[-*]?[ \t]*(?:Result|Acceptance criteria|Test plan):/;
 const renamedLabels = [['blocker', 'blocking'], ['optional', 'non-blocking']];
 
 function meaningful(value) {
@@ -170,8 +171,9 @@ function validate(project, { closing = false } = {}) {
     for (const [old, replacement] of renamedFields) {
       if (fields(old).length) fail(`${match[2]}: ${old}: is no longer supported; use ${replacement}:`);
     }
-    // Reports read records from the Result: line only; a record on a continuation line is lost.
-    if (body.split('\n').some(line => line.includes('{kaylo:') && !/^[ \t]*[-*]?[ \t]*[A-Z][A-Za-z ]*:/.test(line))) {
+    // Reports read records from the Result: line only; a record on any other line is lost.
+    // Acceptance criteria and test plans may still mention record syntax.
+    if (body.split('\n').some(line => line.includes('{kaylo:') && !recordLine.test(line))) {
       fail(`${match[2]}: put {kaylo:v1 ...} records on the task's Result: line, not on a line below it`);
     }
     tasks.push({ id: match[2], checked: match[1].toLowerCase() === 'x', title: match[3],
@@ -219,9 +221,19 @@ function validate(project, { closing = false } = {}) {
   }
   if (!sections.get('Review').length) fail('Phase plan needs a ## Review section (None is allowed before a review)');
   const review = sections.get('Review').join('\n');
+  // A checked high-risk task needs a completed reviewer record covering it; a dispatch completes
+  // through its own outcome or its latest update.
+  const records = [...review.matchAll(/\{kaylo:v1[ \t]+([^}]*)\}/g)].map(m => {
+    const [type, ...pairs] = m[1].trim().split(/[ \t]+/);
+    return { type, ...Object.fromEntries(pairs.map(pair => pair.split('=')).filter(pair => pair.length === 2)) };
+  });
+  const outcome = record => records.filter(r => r.type === 'update' && r.by === record.id).pop()?.outcome || record.outcome;
+  const covered = id => records.some(r => r.role === 'reviewer' &&
+    (r.type === 'direct' || (r.type === 'dispatch' && outcome(r) === 'completed')) &&
+    (r.covers === 'phase' || (r.covers || '').split(',').includes(id)));
   for (const task of tasks) {
-    if (task.checked && /^high\b/i.test(task.risk || '') && !meaningful(review)) {
-      fail(`${task.id}: a checked Risk: high task needs its review recorded under ## Review`);
+    if (task.checked && /^high\b/i.test(task.risk || '') && !covered(task.id)) {
+      fail(`${task.id}: a checked Risk: high task needs a completed reviewer record under ## Review with covers=${task.id} or covers=phase`);
     }
   }
   // A comment written without the colon, such as "- R1 (non-blocking, open): ...", escapes the

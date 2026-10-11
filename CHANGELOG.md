@@ -41,11 +41,14 @@
   form. In one #83 check, a model skipped both reads and recorded an inherited
   reviewer with no exception.
 - **tools**: The plan validator now requires a `## Review` section in the
-  current phase plan (`None` is allowed before a review), a substantive review
-  record before a `Risk: high` task is checked, and `{kaylo:v1 ...}` records on
-  a task's `Result:` line rather than a line below it. The dispatch report
-  marks a task with records below its `Result:` line as malformed instead of
-  counting it as missing records. In the #83 repeated set, one run deleted its
+  current phase plan (`None` is allowed before a review). A checked
+  `Risk: high` task needs a completed reviewer `dispatch` or `direct` record
+  under `## Review` whose `covers=` names the task or `phase`; a pending
+  handoff counts once a later `update` completes it. `{kaylo:v1 ...}` records
+  belong on a task's `Result:` line; `Acceptance criteria:` and `Test plan:`
+  may mention record syntax, and any other task line holding one fails. The
+  dispatch report marks such a task as malformed instead of counting it as
+  missing records. In the #83 repeated set, one run deleted its
   `## Review` heading and `accept` record and still passed validation, and
   another wrote builder records where the report could not read them.
 - **skills**: A direct review under a Quality, Balanced, or Budget preference
