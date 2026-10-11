@@ -518,3 +518,25 @@ test('documented record sequences classify as the guidance intends', t => {
   assert.equal(tasks['01-T4'].status, 'unchecked');
   for (const id of ['01-T1', '01-T2', '01-T3']) assert.equal(tasks[id].reason, undefined, id);
 });
+
+// #114: a blocked check still gets its verify record; prose alone leaves the task without one.
+test('build shows a blocked task keeping its failing verify record', t => {
+  const text = fs.readFileSync(path.join(__dirname, '../skills/build/SKILL.md'), 'utf8');
+  const example = text.match(/`(\{kaylo:v1 dispatch [^`]*\} \{kaylo:v1 verify by=D1 result=fail\}) Blocked: …`/);
+  assert(example, 'build needs an inline blocked-task example');
+  const blocked = example[1];
+  assert.deepEqual(parseRecords(blocked).errors, []);
+  assert.deepEqual(parseRecords(blocked).records.map(r => r.type), ['dispatch', 'verify']);
+  // The blocked task in an open phase passes the structural check unchanged.
+  const open = fixture(t, [{ id: '01', closed: false,
+    text: plan(task('T1', `${blocked} Blocked: node greet.cjs exits 1, missing dependency.`, { checked: false }), 'None.') }]);
+  assert.deepEqual(validate(open), []);
+  // Once fixed and accepted, the example's verify keeps the task's first try a failure; without it the task has no counted try.
+  const root = fixture(t, [{ id: '01', closed: true, text: plan([
+    task('T1', `${blocked} Blocked: missing dependency. {kaylo:v1 repair by=D1 failure=F1 n=1 result=pass} Passed. {kaylo:v1 accept}`),
+    task('T2', `${D('D2')} Blocked: missing dependency. Passed after it was supplied. {kaylo:v1 accept}`)
+  ].join('\n')) }]);
+  const tasks = byId(report(root));
+  assert.deepEqual(tasks['01-T1'], { ...tasks['01-T1'], status: 'recorded', success: false });
+  assert.deepEqual(tasks['01-T2'], { ...tasks['01-T2'], status: 'missing', reason: 'no initial verify record' });
+});
