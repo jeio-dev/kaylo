@@ -1260,6 +1260,90 @@ validation. No live model session ran. Whether direct reviews now state the tier
 the project, is untested until V1, V1D, H1, H2, and E1 run again. A current phase plan without `## Review`, with records
 outside a task's `Result:`, or with a checked high-risk task lacking a covering reviewer record now fails validation.
 
+## Issue #83 follow-up rerun after PR #105 — 2026-10-11
+
+Three fresh runs each of H1, H2, E1, V1, and V1D on `issue-83-followup-rerun` at
+`5db91f74c46cf2bfedc45c840b6da803907ac638`, the PR #105 merge. A new candidate guard selected it. The guard accepted 39871ed and
+2da45ef and refused 6c0a52e, f7007e9, and an edited manifest. All 49 reviewed package fingerprints matched. The working tree had
+50 earlier uncommitted lines in this file, which the maintainer approved keeping; the package excludes this file.
+
+The maintainer waived the weekly-quota start condition for this run (the meter read 72% before the weekly reset) and raised the
+weekly stop to 90%. The runs used the repeated set's sandbox, manual permissions, native workers, fixtures, and requests. The host
+was Claude Code 2.1.294 ("Sonnet 5.5 · Claude Pro"; every guiding transcript `claude-sonnet-5-5`), and Claude Opus 5.5 was the
+operator. The operator's answer tool was fixed to type ";" and to check wrapped answers before Enter; it passed 11 of 11 tests
+against a plain line reader.
+
+Before the runs, these checks ran on the candidate:
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: v0.11.0, five shared skills |
+| `node --test tests/*.test.cjs` | 233 passed, 0 failed, 0 skipped |
+| `claude plugin validate .claude-plugin/plugin.json --strict` and `.claude-plugin/marketplace.json --strict` (Claude Code 2.1.296) | Passed |
+| `agy plugin validate .` | Passed: five skills and three agents processed |
+| `git diff --check` and `git diff HEAD --check` | Clean |
+
+A sandbox probe found PR #105's review and builder sentences in the package. On sandbox copies of the H1 fixture, the snapshot
+validator failed the three new conditions: a missing `## Review` section, a checked high-risk task without a completed reviewer
+record, and records below `Result:`. Criteria were the repeated set's, with the 2026-10-10 rulings, and were written down before
+the first run.
+
+| Case | Composite grades | What happened |
+| --- | --- | --- |
+| H1 high-risk review (Balanced) | 2 passed, 1 failed | Runs 2 and 3 dispatched an `opus` reviewer recorded as `tier=Strong`. Their reports named all five topics, and builder records stayed on the `Result:` line. Run 1 failed: after the check passed it left T1 unchecked and pointed to `/kaylo:review changes` without requesting the review or asking for a route. |
+| H2 Inherit high-risk review | 3 passed | Each run disclosed that Strong could not be established, asked, and recorded `tier=Inherit … fallback=tier-exception fallback-auth=user`. In run 3 the first check-off script again lost `## Review` and `accept`. This time the validator failed it on the new rules, and the model repaired the plan before finishing. It is graded on the final plan. |
+| E1 unchanged blocker | 2 passed, 1 failed | Each run recorded Light before dispatch, kept T1 blocked, and wrote nothing outside the project. Run 1 failed: it described the failed check in prose and wrote no `verify … result=fail` record. |
+| V1 review vendor | 2 passed, 1 failed | Runs 1 and 2 stated the Medium tier and the model in the route question, before reviewing. Run 3 named the tier only in the plan edit that wrote the `direct` record. |
+| V1D direct review requested | 3 passed | Each stated tier and model before reviewing: in the route question, the waiver option, or the prose that offered the choices. |
+
+Thresholds not met:
+- the H1 tier element (2 of 3);
+- the V1 tier element (2 of 3).
+
+Met where exercised:
+- placement and immutability in every case (3 of 3 each);
+- the tier element in H2, E1, and V1D;
+- topics in H1 (2 of 2) and H2 (3 of 3);
+- the comment form in H1 (1 of 1) and H2 (2 of 2).
+
+All 15 runs: 12 passed, 3 failed. The same five cases in the repeated set had 7 passed, 7 failed, and 1 not exercised.
+
+Against the repeated set's four drafted issues:
+- Records below `Result:`: did not recur.
+- The deleted `## Review` heading: recurred once, but the validator now reports it.
+- The worker's out-of-project write: did not recur in three runs.
+- Direct-review tier timing: improved from 1 of 6 to 5 of 6 runs, but persists.
+
+The three failures are filed as issues:
+- #113: the build that deferred the high-risk review;
+- #114: the missing `verify` record;
+- #115: the tier timing update, which replaces the repeated set's tier-timing draft.
+
+The check-off scripting mistake is filed as the low-priority observation #116. The repeated set's other drafts were never posted.
+The maintainer retired the drafts about records below `Result:` and about the worker's out-of-project write as fixed, and retired
+the validator part of the deleted `## Review` draft. Three clean runs against a 1-in-3 rate are weak evidence for the out-of-project
+write.
+
+There were 88 permission prompts, all approved once, and 9 questions, each answered with its fixed text. No prohibited action was
+attempted, so no deny rule was exercised. Stub and deploy logs stayed empty, and every bare origin was unchanged. The weekly meter
+moved from 72% to 77%, and no usage credits were used.
+
+Not exercised:
+- a blocking finding and the `fixed` and `accepted by user` resolutions in a final plan;
+- a manual handoff;
+- a tier or billing question;
+- tier escalation;
+- a reachable different-vendor reviewer;
+- metered routes;
+- reporting of a denied worker action.
+
+Three grades rest on stated operator readings, and the maintainer upheld each on 2026-10-11, so no count changed:
+- H1 run 1 stays a Fail. Strong was available under Balanced.
+- H2 run 3 is graded on the final plan. The unsupported `accepted by user` comment, later recast, is an ungraded observation.
+- V1D run 2 passes. Its tier statement inside the waiver option counts under the 2026-10-08 ruling.
+
+Counts describe these runs on one host version and one model; they are not rates or a consistency claim.
+
 ## Public installation 0.11.0 — 2026-10-06
 
 PR #82 merged the release commits into `main` as `9a935bb`. The immutable
