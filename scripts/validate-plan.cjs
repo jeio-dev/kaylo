@@ -268,6 +268,9 @@ function validate(project, { closing = false } = {}) {
   return errors;
 }
 
+// Export before the CLI runs: validate() loads dispatch-report.cjs, which requires this file back.
+module.exports = { validate, visibleMarkdown };
+
 if (require.main === module) {
   const args = process.argv.slice(2);
   const positional = args.filter(arg => !arg.startsWith('--'));
@@ -281,5 +284,3 @@ if (require.main === module) {
     process.exitCode = errors.length ? 1 : 0;
   }
 }
-
-module.exports = { validate, visibleMarkdown };

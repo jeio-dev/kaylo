@@ -420,6 +420,15 @@ test('CLI returns 0, 1, and 2 for valid plan, invalid plan, and usage', t => {
   assert.equal(run([f.root, '--unknown']).status, 2);
 });
 
+test('CLI checks a high-risk review record without a circular-dependency warning', t => {
+  const body = task('T1', true).replace('  - Result:', '  - Risk: high\n  - Result:');
+  const f = fixture(t, phase(body).replace('None; inspected greeting and command output.',
+    'None; reviewed T1. {kaylo:v1 direct role=reviewer covers=T1}'));
+  const result = spawnSync(process.execPath, [path.resolve(__dirname, '../scripts/validate-plan.cjs'), f.root], { encoding: 'utf8' });
+  assert.equal(result.status, 0);
+  assert.equal(result.stderr, '');
+});
+
 test('supported whitespace keeps unfinished tasks visible at closure', t => {
   const unfinished = task('T2').replace('- [ ] T2:', '  -\t[ ]  T2:');
   const f = fixture(t, phase(task('T1', true) + unfinished));
