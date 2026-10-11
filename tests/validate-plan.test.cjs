@@ -229,6 +229,34 @@ for (const entry of [
     ['R1: follow the label with " — " and a resolution (open, fixed, or accepted by user), as in "- R1: blocking — open"']);
 });
 
+test('a phase plan without a ## Review section fails', t => {
+  const text = phase(task('T1')).replace('## Review\nNone; inspected greeting and command output.\n', '');
+  assert.deepEqual(validate(fixture(t, text).root), ['Phase plan needs a ## Review section (None is allowed before a review)']);
+});
+
+for (const [name, checked, risk, review, expected] of [
+  ['checked high-risk task with a bare None review', true, 'high — changes session expiry', 'None', ['T1: a checked Risk: high task needs its review recorded under ## Review']],
+  ['checked high-risk task with a placeholder review', true, 'High', '[Record later]', ['T1: a checked Risk: high task needs its review recorded under ## Review']],
+  ['checked high-risk task with a recorded review', true, 'high', 'None; reviewed T1 session expiry handling.', []],
+  ['unchecked high-risk task before its review', false, 'high', 'None', []],
+  ['checked task with another risk value', true, 'low', 'None', []],
+]) test(`Risk: high review requirement: ${name}`, t => {
+  const body = task('T1', checked).replace('  - Result:', `  - Risk: ${risk}\n  - Result:`);
+  const text = phase(body).replace('None; inspected greeting and command output.', review);
+  assert.deepEqual(validate(fixture(t, text).root), expected);
+});
+
+test('records must stay on the task Result line', t => {
+  const below = task('T1', true).replace(/(  - Result: .*\n)/, '$1    {kaylo:v1 direct role=builder host=claude-code}\n');
+  assert.deepEqual(validate(fixture(t, phase(below)).root),
+    ["T1: put {kaylo:v1 ...} records on the task's Result: line, not on a line below it"]);
+  const inline = task('T1', true).replace('printed Hello, exit 0', 'printed Hello, exit 0 {kaylo:v1 direct role=builder} {kaylo:v1 accept}');
+  assert.match(inline, /Result: .*\{kaylo:v1 accept\}/);
+  assert.deepEqual(validate(fixture(t, phase(inline)).root), []);
+  const field = task('T1').replace('Output Hello', 'Output Hello and parse {kaylo:v1 accept} records');
+  assert.deepEqual(validate(fixture(t, phase(field)).root), []);
+});
+
 test('Review prose that mentions comment IDs without a label still passes', t => {
   const text = phase(task('T1')).replace('None; inspected greeting and command output.',
     '- R1: non-blocking — fixed\n  - Recheck: R1 rechecked with node greet.cjs\n' +

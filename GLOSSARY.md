@@ -34,7 +34,7 @@ The last column is a summary. The exact rules are in [For contributors: format c
 | `Test plan:` | `Verify:` | Test plan | Required. The old field is rejected. |
 | `Result:` | — | (Kaylo's own word) | Required |
 | Review comment (`R1`) | Finding | Review comment | Duplicate IDs are rejected. |
-| `blocking` / `non-blocking` | `blocker` / `optional` | Blocking / non-blocking; a nit is one kind of non-blocking comment | The old labels are rejected. |
+| `blocking` / `non-blocking` | `blocker` / `optional` | Blocking / non-blocking; a nit is one kind of non-blocking comment | The old labels are rejected, and each comment needs the form `- R1: blocking — open` with the resolution `open`, `fixed`, or `accepted by user`. |
 
 ### PRD (product requirements document)
 
@@ -193,7 +193,7 @@ Older formats removed:
 - Reject a task without `Blocked by:`.
 - Reject an old name when a new one is expected: `PLAN.md` without `ROADMAP.md`, `OBJECTIVE.md`, and the old task fields and review labels, including mixtures of old and new. Each diagnostic names the replacement.
 - Keep: unlinked one-line entries for future phases in `ROADMAP.md`. These are valid, not legacy.
-- Instruction-only (not validated): `Estimate:` values, the `## Design` heading, and linked plan paths matching `.kaylo/phases/NN-slug/NN-PLAN.md`. `## Next step`, the optional `Risk:` field, and `{kaylo:v1 ...}` dispatch records are also instruction-only; `scripts/dispatch-report.cjs` reads the records separately.
+- Instruction-only (not validated): `Estimate:` values, the `## Design` heading, and linked plan paths matching `.kaylo/phases/NN-slug/NN-PLAN.md`. `## Next step` is also instruction-only. The optional `Risk:` field and `{kaylo:v1 ...}` dispatch records are checked only as listed below; `scripts/dispatch-report.cjs` reads the records separately.
 
 Structural checks:
 
@@ -203,6 +203,9 @@ Structural checks:
 - Tasks use `- [ ] T1: title`, and task IDs are unique. Each task has a substantive title, `Acceptance criteria:`, and `Test plan:`, and a nonempty `Result:`. A checked task needs a substantive `Result:` without a leading unfinished state marker: `Not started`, `In progress`, `Pending`, `TODO`, `TBD`, or `Blocked` (case-insensitive), followed by optional horizontal whitespace and `.`, `!`, `:`, `;`, `,`, an en/em dash (`–`, `—`), or a hyphen (`-`) with whitespace on at least one side, or the end of the record. Notes appended to a marker do not make it complete; historical progress or failures may follow current evidence. Bare whitespace and attached hyphens do not mark a state, so ordinary prose such as `TODO list renders`, `In progress bar renders`, and `Blocked-user filter works` passes. The same structural limit allows `Pending verification.` and `In progress with baseline notes.`; skills must still assess the evidence and leave unresolved work open.
 - `Blocked by:` is `None` or comma-separated, distinct IDs of earlier tasks in the same phase.
 - `Acceptance criteria:`, `Test plan:`, `Result:`, and `Blocked by:` each appear at most once per task. `## Review` and `## Completion` each appear at most once. Review comment IDs (`R1`) are unique.
+- The current phase plan has a `## Review` section (`None` is allowed before a review). A checked task with `Risk: high` needs a substantive record there; a bare `None` or a placeholder fails.
+- Review comments use `- R1: <blocking or non-blocking> — <resolution>`, where the resolution starts with `open`, `fixed`, or `accepted by user`. A label right after the ID without the colon, as in `- R1 (non-blocking, open):`, or a comment without one of those resolutions fails.
+- `{kaylo:v1 ...}` records in a task sit on its `Result:` line, not on a line below it.
 - Closure (`--closing`, or a checked current phase) requires every task checked, no `Status: Needs revision`, a record under `## Review` (`None` is allowed), and a substantive record under `## Completion`. A bare `Not complete` (case-insensitive, with an optional period or exclamation mark) is a placeholder; an open phase may retain it before closure.
 
 Parsing:

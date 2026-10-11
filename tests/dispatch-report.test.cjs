@@ -356,6 +356,13 @@ test('the build delegation tier table matches the canonical builder recommendati
   assert.deepEqual(rows(delegation), rows(canonical));
 });
 
+test('records on a line below Result: make the task malformed', t => {
+  const text = plan(task('T1', 'node greet.cjs printed Hello, exit 0\n    {kaylo:v1 direct role=builder} {kaylo:v1 verify by=direct result=pass} {kaylo:v1 accept}'));
+  const data = report(fixture(t, [{ id: '01', closed: true, text }]));
+  assert.deepEqual(data.counts, { tasks: 1, recorded: 0, missing: 0, malformed: 1, unchecked: 0, unknownVendor: 0 });
+  assert.equal(data.tasks[0].reason, 'record on a line below Result:, not in it');
+});
+
 test('records and Risk fields do not affect structural plan validation', t => {
   const root = fixture(t, [{ id: '01', closed: true,
     text: plan(task('T1', pass, { extra: '  - Risk: high — changes session expiry enforcement\n' })) }]);

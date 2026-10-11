@@ -210,6 +210,10 @@ function report(project) {
       const name = `${id}-${match[2]}`;
       const parsed = parseRecords(field('Result') || '');
       errorsById.set(name, [...parsed.errors]);
+      // Records on a continuation line below Result: are not read; say so rather than count them missing.
+      if (body.some(l => l.includes('{kaylo:') && !/^[ \t]*[-*]?[ \t]*[A-Z][A-Za-z ]*:/.test(l))) {
+        errorsById.get(name).push('record on a line below Result:, not in it');
+      }
       const task = { id: name, checked: match[1].toLowerCase() === 'x', estimate: field('Estimate'), records: parsed.records };
       for (const item of task.records) if (item.type === 'dispatch') {
         claim(item.id, name);

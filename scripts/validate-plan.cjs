@@ -170,9 +170,13 @@ function validate(project, { closing = false } = {}) {
     for (const [old, replacement] of renamedFields) {
       if (fields(old).length) fail(`${match[2]}: ${old}: is no longer supported; use ${replacement}:`);
     }
+    // Reports read records from the Result: line only; a record on a continuation line is lost.
+    if (body.split('\n').some(line => line.includes('{kaylo:') && !/^[ \t]*[-*]?[ \t]*[A-Z][A-Za-z ]*:/.test(line))) {
+      fail(`${match[2]}: put {kaylo:v1 ...} records on the task's Result: line, not on a line below it`);
+    }
     tasks.push({ id: match[2], checked: match[1].toLowerCase() === 'x', title: match[3],
       acceptance: field('Acceptance criteria'), testPlan: field('Test plan'), result: field('Result'),
-      blockedBy: field('Blocked by') });
+      blockedBy: field('Blocked by'), risk: field('Risk') });
     i = end - 1;
   }
   if (!tasks.length) fail('Current phase has no recognizable task entries');
@@ -213,7 +217,13 @@ function validate(project, { closing = false } = {}) {
   for (const [name, records] of sections) {
     if (records.length > 1) fail(`Duplicate ${name} sections; consolidate history under one heading`);
   }
+  if (!sections.get('Review').length) fail('Phase plan needs a ## Review section (None is allowed before a review)');
   const review = sections.get('Review').join('\n');
+  for (const task of tasks) {
+    if (task.checked && /^high\b/i.test(task.risk || '') && !meaningful(review)) {
+      fail(`${task.id}: a checked Risk: high task needs its review recorded under ## Review`);
+    }
+  }
   // A comment written without the colon, such as "- R1 (non-blocking, open): ...", escapes the
   // checks below; flag only a label at the head, allowing one separator after the ID.
   for (const match of review.matchAll(/^[ \t]*[-*][ \t]+(R\d+)\b(?![ \t]*:)(.*)$/gm)) {

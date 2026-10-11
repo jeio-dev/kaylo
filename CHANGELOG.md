@@ -31,15 +31,37 @@
 - **tools**: The plan validator now also requires a resolution after a
   comment's label: `open`, `fixed`, or `accepted by user`, following ` — `.
   A comment such as `- R1: non-blocking — left as an observation` now fails,
-  and the message names the three resolutions. Existing plans with such a
-  comment fail validation until the resolution is added. Put other details in
-  nested items, as before.
+  and the message names the three resolutions. A current phase plan with such
+  a comment fails validation until the resolution is added; closed phases are
+  not checked. Put other details in nested items, as before.
 - **skills**: Build's `Risk: high` rule now says to read
   `.kaylo/preferences.md` and the review delegation reference before
   requesting the review. It targets Strong under any preference, stops for
   your choice when Strong cannot be established, and shows the review comment
   form. In one #83 check, a model skipped both reads and recorded an inherited
   reviewer with no exception.
+- **tools**: The plan validator now requires a `## Review` section in the
+  current phase plan (`None` is allowed before a review), a substantive review
+  record before a `Risk: high` task is checked, and `{kaylo:v1 ...}` records on
+  a task's `Result:` line rather than a line below it. The dispatch report
+  marks a task with records below its `Result:` line as malformed instead of
+  counting it as missing records. In the #83 repeated set, one run deleted its
+  `## Review` heading and `accept` record and still passed validation, and
+  another wrote builder records where the report could not read them.
+- **skills**: A direct review under a Quality, Balanced, or Budget preference
+  now states the required tier and the assistant's model before any review
+  work and in any route question, such as the vendor waiver option; a statement
+  first written beside the review record comes too late. In the #83 repeated
+  set, five of six V1 and V1D runs reviewed first and named the tier only in
+  the record.
+- **workers**: The builder brief says to write only inside the project,
+  temporary files included, and to return a missing dependency as a blocker
+  instead of placing stand-ins elsewhere. It also asks the builder to report
+  denied actions.
+- **docs**: The glossary's structural checks and the manual fallback in build,
+  close, and plan now list the review comment form, the resolution, the
+  `## Review` and high-risk review rules, and record placement. `WORKERS.md`
+  uses the report's "no parsed dispatch" wording.
 - **skills and workers**: A high-risk task review now records, for each
   checklist topic (trust boundaries, authorization, invalid input,
   sensitive-data exposure, and relevant abuse cases), what was found or why it
