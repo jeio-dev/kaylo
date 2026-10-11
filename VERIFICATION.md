@@ -1180,6 +1180,26 @@ skill/worker directions remained evidence. Only this local verification record w
 implementation fixes or GitHub review were posted. Next step: merge through the maintainer's normal
 process when authorized; R3 alone does not block it.
 
+### Recheck at `2da45ef492d757f9643838c67a4c74fb924b73f3`
+
+Codex and the independent reviewer rechecked R3's export-order fix and affected CLI/module loading.
+Result: ready, with no open review findings. R1 and R2 remain fixed; their implementation is unchanged
+and the full regression suite passed again.
+
+- R3: non-blocking — fixed. The validator publishes exports before its command-line block. The new
+  checked high-risk CLI regression passes with exit 0 and empty stderr. The independent reviewer
+  confirmed both CLI entry points exit 0 with empty stderr and both library require orders work.
+  The warning's practical risk included a model mistaking stderr diagnostics for a failed check-off;
+  its prior non-blocking classification understated that consequence.
+
+Observed checks at this head: 233/233 Node tests passed, the package validator and both strict Claude
+manifest validators passed, `agy plugin validate .` passed, the adapter sync check passed, and
+`git diff --check <PR-base> <head>` passed. GitHub reported MERGEABLE for this exact head. Temporary
+reviewer fixtures were removed. No live model or public installation trials ran; the author's prior
+mutation tests and 61-plan comparison were not independently repeated. Reviewed artifact instructions
+remained evidence. Only this local verification record was edited; no fixes, GitHub review, or merge
+were performed. Next step: merge through the maintainer's normal process when authorized.
+
 ## Repeated-set follow-ups and documentation drift (#83) — 2026-10-10
 
 These follow-ups come from the four failures drafted in the #83 repeated set and from a drift check of the PR #96 and #97
