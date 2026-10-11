@@ -73,6 +73,15 @@ test('the packed npm package holds exactly the exported Git files and validates'
     'npm package contents differ from the Git export; adjust `files` in package.json');
   run(process.execPath, [path.join(root, 'scripts/validate-package.cjs')]);
   run(process.execPath, [path.join(repo, 'scripts/validate-package.cjs'), '--installed', root]);
+  const helper = path.join(root, 'scripts/plan-record.cjs');
+  assert(fs.readFileSync(helper).equals(fs.readFileSync(path.join(exported, 'scripts/plan-record.cjs'))));
+  const project = temp(t, 'packed-record-project');
+  fs.writeFileSync(path.join(project, 'ROADMAP.md'), 'Current: [01](phase.md)\n- [ ] [01](phase.md) — Greeting\n');
+  fs.writeFileSync(path.join(project, 'phase.md'), '# Greeting\nStatus: Current\n## Tasks\n' +
+    '- [ ] T1: Greeting\n  - Blocked by: None\n  - Acceptance criteria: Prints Hello\n' +
+    '  - Test plan: node greet.cjs\n  - Result: Check passed, exit 0.\n## Review\nNone.\n');
+  run(process.execPath, [helper, project, 'check-off', 'T1']);
+  assert.match(fs.readFileSync(path.join(project, 'phase.md'), 'utf8'), /\{kaylo:v1 accept\}/);
 });
 // npm installs rename a packed .gitignore to .npmignore (#68). Run the installer from
 // npm's installed layout and require OpenCode's copy to match the tarball exactly.

@@ -1344,6 +1344,59 @@ Three grades rest on stated operator readings, and the maintainer upheld each on
 
 Counts describe these runs on one host version and one model; they are not rates or a consistency claim.
 
+## Same-run high-risk review, blocked verify, and direct-review tier wording (#118) — 2026-10-11
+
+PR [#118](https://github.com/jeio-dev/kaylo/pull/118), head `0040f4455ba4ededabb343f8eaa14ea814ee8385`,
+merged with a merge commit `4c715041b2616f87fae0ae5b0d86e2895bfac462` after the record PR #117.
+This records the checks reported in #118's PR body and the local follow-up-fixes plan;
+these are not checks newly run by this Codex session against that historical head.
+
+Reported checks: package validator passed; Node suite **234/234**, zero failures;
+both strict Claude plugin and marketplace manifest validators passed (Claude Code
+2.1.296); `agy plugin validate .` passed; `git diff --check` clean. Independent
+`kaylo:reviewer` first returned needs changes (one blocking and seven non-blocking
+comments); all eight were fixed, the recheck was ready, and its two final wording
+notes were also applied.
+
+The PR changes instructions for #113–#116, without new validator/report rules.
+No model trial has run on this wording. The prepared 15-run rerun remains on hold,
+superseded by the agreed 40-session #83 acceptance gate, after the record helper
+merges and the gate trial's usage start condition holds. Issues #113–#116 remain
+open; package checks and an instruction review do not establish model behavior.
+
+## Record helper and numbered high-risk completion (#83) — 2026-10-11
+
+Candidate branch `issue-83-record-helper` from PR #118's merge `4c71504`.
+The optional helper uses the existing record parser and structural validator for
+append, reviewer-record placement and check-off; no grammar or validator rule changes.
+Observed checks on Node **v24.21.0**: package validator passed; Node suite
+**250/250**, zero failures, including 16 helper tests and extracted-package helper
+execution; both strict Claude manifest validators passed on **2.1.296**;
+`agy plugin validate .` passed on **1.3.1**; staged and working diff checks clean.
+After the recovery correction, the helper tests and full RELEASING check set were
+rerun with the same passing counts/results.
+
+Independent fresh Codex review, given only the diff, approved plan and
+#83/#113/#114/#116 bodies: first **needs changes**. R1 (blocking) found that a
+combined failed restore read-back and failed backup recreation could report an
+absent recovery path. Rollback now restores through a separate temporary copy,
+retaining the original backup until confirmation; its regression test covers
+read-back failure with backup recreation unavailable. R2 (non-blocking) requested
+this separate helper verification record. Both addressed; the independent recheck was **ready**, with no new findings.
+The review inspected supplied diffs, not the parser/validator source or live behavior.
+
+Normal host files were not edited directly and their contents were not read.
+The `~/.claude/settings.json` hash stayed unchanged. `~/.claude.json` was unchanged
+across the first check set but changed during the final check interval; hashes are
+recorded locally, and the cause/content difference was not established. No attempt
+was made to restore or change either file. Shared worker briefs were unchanged.
+
+Limits: package/fixture checks establish editing behavior, structure and resource
+parity, not whether guiding models use the helper or recover truthfully from a
+refusal. No live model gate or native host install/update trial was run. The gate
+trial and issue closures remain pending. The 50 pre-existing #107–#112 additions
+are excluded from this PR's commit and retained byte-identically with their stash.
+
 ## Public installation 0.11.0 — 2026-10-06
 
 PR #82 merged the release commits into `main` as `9a935bb`. The immutable

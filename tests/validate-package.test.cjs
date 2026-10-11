@@ -310,6 +310,8 @@ test('development staging preserves the shared package and refreshes edited sour
   const dir = fixture(t);
   const stage = () => spawnSync(process.execPath, [path.join(dir, 'scripts/stage-development.cjs')]);
   assert.equal(stage().status, 0);
+  assert(fs.readFileSync(path.join(dir, 'scripts/plan-record.cjs')).equals(
+    fs.readFileSync(path.join(dir, 'development/package/scripts/plan-record.cjs'))));
   assert.equal(check(dir, ['--installed', path.join(dir, 'development/package')]).status, 0);
   fs.appendFileSync(path.join(dir, 'templates/PHASE.md'), '\nLocal development edit\n');
   assert.equal(check(dir, ['--installed', path.join(dir, 'development/package')]).status, 1);
