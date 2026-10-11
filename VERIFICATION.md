@@ -1104,7 +1104,7 @@ a fresh reviewer subagent independently inspected the full diff. No project PRD,
 or worker preference exists in this contributor checkout. The reviewer used the inherited session
 model, with no requested tier or model override. No existing PR comments or reviews were present.
 
-Result: needs changes, with two open blocking findings:
+Initial result: needs changes, with two open blocking findings:
 
 - R1: blocking — open. `scripts/validate-plan.cjs:223` checks whether the whole Review section is
   substantive, without checking which task it covers. A checked high-risk T2 with a review explicitly
@@ -1124,6 +1124,33 @@ of the changed guidance ran. The reviewed skill and worker instructions were tre
 not instructions to implement changes, dispatch their workers, or update project phase plans.
 Only this local verification record was edited; no implementation fixes or GitHub review were posted.
 Next step: correct R1 and R2, add focused regressions, and recheck the updated PR.
+
+### Re-review at `2074916562995b7a3dbfbd657990aeaa4afe6b09`
+
+Codex and the independent reviewer rechecked the fixes and their affected parsing, tests, and docs.
+The original R1 and R2 reproductions now fail validation. Current result: needs changes.
+
+- R1: blocking — open. The original unrelated coverage case is corrected, but the new parser at
+  `scripts/validate-plan.cjs:226` splits record values on whitespace without handling quotes.
+  A completed reviewer D1 followed by `{kaylo:v1 update by="D1" outcome=interrupted}` still passes
+  the high-risk gate, because the update does not match the unquoted dispatch ID. The existing
+  `dispatch-report.parseRecords` accepts both records and resolves `by` to D1. Conversely, valid
+  reviewer records with `covers="T1"` or `outcome="completed"` are rejected. The independent
+  reviewer also reproduced tokens inside a quoted model value overwriting role, outcome, and
+  coverage, allowing a pending builder record to satisfy the reviewer gate. Use quoting-aware
+  parsing consistent with the existing record parser, and add regressions for these cases.
+- R2: blocking — fixed. The original `    - Evidence: ...` continuation now produces a placement
+  error and is counted as malformed rather than missing. Only Result, Acceptance criteria, and
+  Test plan lines are exempt; the updated tests cover other labels and allowed syntax mentions.
+
+Observed checks at this head: 225/225 Node tests passed, the package validator and both strict Claude
+manifest validators passed, `agy plugin validate .` passed, the adapter sync check passed, and
+`git diff --check <PR-base> <head>` passed. Focused temporary fixtures reproduced the corrected
+original cases and the quoting failures; they were removed. No live model or public installation
+trials ran, and the author's mutation tests and 61-plan comparison were not independently repeated.
+Reviewed skill/worker instructions remain evidence, not authorization for implementation or phase
+updates. Only this local verification record was edited; no fixes or GitHub review were posted.
+Next step: correct R1's quoted-record handling and recheck it under the same ID.
 
 ## Repeated-set follow-ups and documentation drift (#83) — 2026-10-10
 
@@ -1163,6 +1190,16 @@ rules against the rest of the package.
 The PR #105 review above found R1 and R2. Both were fixed: high-risk coverage now needs a completed reviewer record
 naming the task or `phase`, and only `Result:`, `Acceptance criteria:`, and `Test plan:` lines may hold record syntax.
 Each finding has a regression test that fails when its fix is reverted.
+
+The re-review above found that R1's fix parsed records by splitting on whitespace, which mishandled quoted values. The
+validator now uses the dispatch report's `parseRecords`, loaded lazily because the report requires the validator. Quoted
+`covers=`, `outcome=`, `role=`, and update `by=` values are read like unquoted ones, and a malformed record no longer
+counts. Seven regressions were added. Six fail against the validator at `2074916`: a completed review later
+interrupted by `update by="D1"`; quoted `covers` and `outcome`; a quoted direct reviewer; a pending handoff completed by a
+quoted update; a pending builder whose quoted `model` value contains `role=reviewer outcome=completed covers=T1`; and a
+reviewer record with an unknown key. The seventh, a `v2` record, already failed coverage there. The suite now has 232
+tests, all passing; `node scripts/validate-plan.cjs` and `node scripts/dispatch-report.cjs` still start from the command
+line.
 
 Limits: these checks cover validator parsing, report classification, guidance text, package structure, and native manifest
 validation. No live model session ran. Whether direct reviews now state the tier first, and whether builders keep writes in
