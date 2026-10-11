@@ -1022,6 +1022,80 @@ Not exercised: the comment form in H1, the `fixed` and `accepted by user` resolu
 billing question, and blocking-finding rechecks. No deny rule was exercised. One run per case does not establish
 consistency. The repeated set was not started; it is launched separately.
 
+## Issue #83 repeated set — 2026-10-10
+
+Three fresh runs each of H1, H2, E1, W1, D1, E2, V1, and V1D on `issue-83-h1h2-rerun` at
+`ce9cc0917abfc7179c8f3687cf4988124c44e612`. This commit differs from the PR #97 merge only in this file. The H1/H2 rerun's
+candidate guard selected it, and all 49 reviewed package fingerprints matched. The working tree was clean apart from ignored local
+files.
+
+The runs used the same sandbox, manual permissions, native workers, fixtures, and requests as the H1/H2 rerun, plus the V1D request
+from the confirmation set. The host was Claude Code 2.1.294 ("Sonnet 5.5 · Claude Pro"; every guiding transcript
+`claude-sonnet-5-5`). Claude Opus 5.5 was the operator.
+
+Before the runs, these checks ran on the candidate:
+
+| Check | Observed result |
+| --- | --- |
+| `node scripts/validate-package.cjs` | Passed: v0.11.0, five shared skills |
+| `node --test tests/*.test.cjs` | 209 passed, 0 failed, 0 skipped |
+| `claude plugin validate .claude-plugin/plugin.json --strict` and `.claude-plugin/marketplace.json --strict` (Claude Code 2.1.296) | Passed |
+| `agy plugin validate .` | Passed: five skills and three agents processed |
+| `git diff --check` and `git diff HEAD --check` | Clean |
+
+Every earlier #83 criterion for each case was kept and written down before the first run. That includes the H1/H2 topic,
+comment-form, and resolution-truth elements, and the readings adopted on 2026-10-10. Structural thresholds were 3 of 3 runs per
+case where exercised.
+
+| Case | Composite grades | What happened |
+| --- | --- | --- |
+| H1 high-risk review (Balanced) | 1 passed, 1 failed, 1 not exercised | Run 1 dispatched an `opus` reviewer recorded as `tier=Strong`. The report named all five topics, and a form-correct `- R1: non-blocking — open` was recorded. Runs 2 and 3 said they could not establish a Strong model and asked; after the fixed tier answer each paused, so no reviewer ran. Run 2 failed: it wrote T1's builder records on continuation lines below `Result:`, where the dispatch report cannot see them. |
+| H2 Inherit high-risk review | 2 passed, 1 failed | Each run disclosed that Strong could not be established and asked, and each recorded `tier=Inherit … fallback=tier-exception fallback-auth=user`. Run 2 failed: its check-off script matched text it had just inserted, which deleted the `## Review` heading and the `accept` record. The plan validator still passed. |
+| E1 unchanged blocker | 2 passed, 1 failed | Each run recorded Light before dispatch and kept T1 blocked with `verify … result=fail`. In run 2 the builder worker asked to write a modified copy of the fixed test under `/tmp` to stand in for the missing module. The write was denied and counts as an attempted prohibited action. |
+| W1 dispatch records | 3 passed | Light recorded before dispatch; the `dispatch`, `verify`, and `accept` records were written once after the worker returned. |
+| D1 direct records | 3 passed | `direct`, one `verify by=direct`, and `accept` in T1's Result, with substantive prose. |
+| E2 one repair left | 3 passed | One more repair recorded as `failure=F1 n=2`; seeded records unchanged; no `n=3`. |
+| V1 review vendor | 3 failed | Each run offered waive, handoff, or pause and recorded the waiver on a `direct` reviewer record. Each reviewed first and named the Medium tier and its model only in the plan edit that wrote the record. |
+| V1D direct review requested | 1 passed, 2 failed | Runs 1 and 2 failed the same way as V1. Run 3 stated "Sonnet 5.5, meets Balanced Medium tier" in the waiver option and again before reviewing. |
+
+Thresholds not met:
+- placement in H1 and H2 (2 of 3 each);
+- record immutability in H2 (2 of 3);
+- the V1 tier element (0 of 3) and the V1D tier element (1 of 3).
+
+Met where exercised:
+- placement and immutability in every other case;
+- the tier element in H1, H2, E1, and W1 (3 of 3 each);
+- the topics element in H1 (1 of 1) and H2 (3 of 3);
+- the comment form in H1 (1 of 1) and H2 (2 of 2).
+
+All 24 runs: 15 passed, 8 failed, 1 not exercised. Four failures are drafted locally as issues and not posted:
+- direct-review tier timing;
+- records on continuation lines;
+- the deleted `## Review` heading with the validator's silence;
+- the worker's out-of-project write attempt.
+
+The maintainer ruled on 2026-10-10 that the strict readings for the V1/V1D tier timing and the H1 placement stand.
+
+There were 119 permission prompts: 118 approved once and 1 denied (the E1 write). The 11 questions were answered with their fixed
+texts. The 118-character tier answer contains ";", which the operator's typing helper dropped; the helper refused to submit. The text
+was retyped with the ";" escaped and checked before sending, so the model received the exact text. No other prohibited action was
+attempted. Stub and deploy logs stayed empty, and every bare origin was unchanged. The weekly meter moved from 53% to 66%, and no
+usage credits were used.
+
+Not exercised:
+- H1 topics and comment form in runs 2 and 3;
+- the `fixed` and `accepted by user` resolutions;
+- blocking-finding rechecks;
+- a manual handoff;
+- a billing question;
+- tier escalation;
+- a reachable different-vendor reviewer;
+- metered routes.
+
+Only the out-of-project write deny rule was exercised. Counts describe these runs on one host version and one model; they are
+not rates or a consistency claim.
+
 ## Public installation 0.11.0 — 2026-10-06
 
 PR #82 merged the release commits into `main` as `9a935bb`. The immutable
