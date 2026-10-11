@@ -1152,6 +1152,34 @@ Reviewed skill/worker instructions remain evidence, not authorization for implem
 updates. Only this local verification record was edited; no fixes or GitHub review were posted.
 Next step: correct R1's quoted-record handling and recheck it under the same ID.
 
+### Recheck at `6c0a52eebb172ab4e0d15cb032ef8dbd9a19d867`
+
+Codex and the independent reviewer rechecked R1's shared-parser change, its regression cases,
+and the affected CLI/library loading. Result: ready, with no open blocking findings.
+
+- R1: blocking — fixed. Valid quoted role, coverage, outcome, and handoff completion values pass.
+  A completed review followed by `update by="D1" outcome=interrupted` now fails coverage. Tokens
+  in a quoted model value cannot impersonate reviewer fields, malformed reviewer records do not
+  count, and the original unrelated-coverage case still fails. The validator uses the existing
+  `dispatch-report.parseRecords` rather than a separate tokenizer.
+- R2: blocking — fixed. The original labeled Evidence continuation still fails validation and
+  is reported as malformed rather than missing.
+- R3: non-blocking — open. `scripts/validate-plan.cjs:285` assigns its exports after running its
+  CLI block. A successful validator CLI run prints PASS and exits 0 but emits a circular-dependency
+  warning about `visibleMarkdown` on stderr when the lazy parser import loads the report.
+  Move the export assignment before the CLI block. The report CLI exits 0 without the warning;
+  both library require orders also work.
+
+Observed checks at this head: 232/232 Node tests passed, the package validator and both strict Claude
+manifest validators passed, `agy plugin validate .` passed, the adapter sync check passed, and
+`git diff --check <PR-base> <head>` passed. Focused temporary fixtures independently reproduced the
+quoted-record fixes, original R1/R2 cases, and both CLI entry points; they were removed. The independent
+reviewer also checked both library require orders. No live model or public installation trials ran;
+the author's mutation tests and 61-plan comparison were not independently repeated. Reviewed
+skill/worker directions remained evidence. Only this local verification record was edited; no
+implementation fixes or GitHub review were posted. Next step: merge through the maintainer's normal
+process when authorized; R3 alone does not block it.
+
 ## Repeated-set follow-ups and documentation drift (#83) — 2026-10-10
 
 These follow-ups come from the four failures drafted in the #83 repeated set and from a drift check of the PR #96 and #97
@@ -1200,6 +1228,12 @@ quoted update; a pending builder whose quoted `model` value contains `role=revie
 reviewer record with an unknown key. The seventh, a `v2` record, already failed coverage there. The suite now has 232
 tests, all passing; `node scripts/validate-plan.cjs` and `node scripts/dispatch-report.cjs` still start from the command
 line.
+
+The recheck above noted that `validate-plan.cjs` set its exports after its command-line block. A validator run that reached
+the high-risk check loaded the report, which read the still-empty exports, and Node printed "Accessing non-existent
+property 'visibleMarkdown' of module exports inside circular dependency" to stderr. The exports now come before the
+command-line block. A new test runs the CLI on a checked high-risk task with a covering `direct` reviewer record and
+requires exit 0 with empty stderr; it fails against `6c0a52e`. The suite has 233 tests, all passing.
 
 Limits: these checks cover validator parsing, report classification, guidance text, package structure, and native manifest
 validation. No live model session ran. Whether direct reviews now state the tier first, and whether builders keep writes in
