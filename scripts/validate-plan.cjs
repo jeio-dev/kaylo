@@ -222,11 +222,9 @@ function validate(project, { closing = false } = {}) {
   if (!sections.get('Review').length) fail('Phase plan needs a ## Review section (None is allowed before a review)');
   const review = sections.get('Review').join('\n');
   // A checked high-risk task needs a completed reviewer record covering it; a dispatch completes
-  // through its own outcome or its latest update.
-  const records = [...review.matchAll(/\{kaylo:v1[ \t]+([^}]*)\}/g)].map(m => {
-    const [type, ...pairs] = m[1].trim().split(/[ \t]+/);
-    return { type, ...Object.fromEntries(pairs.map(pair => pair.split('=')).filter(pair => pair.length === 2)) };
-  });
+  // through its own outcome or its latest update. Use the report's parser so quoted values and
+  // malformed records are read the same way; required lazily because the report requires this file.
+  const { records } = require('./dispatch-report.cjs').parseRecords(review);
   const outcome = record => records.filter(r => r.type === 'update' && r.by === record.id).pop()?.outcome || record.outcome;
   const covered = id => records.some(r => r.role === 'reviewer' &&
     (r.type === 'direct' || (r.type === 'dispatch' && outcome(r) === 'completed')) &&
