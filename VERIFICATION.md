@@ -4019,3 +4019,76 @@ none failed or skipped), and `git diff f37d842...fcc1a449 --check` passed.
 No model call, new sandbox probe, full transcript audit, native manifest
 validation, or installation check was run. These checks establish package
 structure and documentation consistency, not additional model behavior.
+
+
+## 2026-10-11 — #83 corrected-harness acceptance gate stopped on native access
+
+- Protocol: `.local/trials/issue83-gate-rerun/PROTOCOL.md`, unchanged base gate/answers
+  and recorded waiver (weekly >=95% stop; session >90% pause; credits off). Authorized
+  by the maintainer's “Let's finish issue 83”; prior stopped trial kept separate/read only.
+- Subject package `8326270a08bcbd9c53ff66999f257c8ce062a1e3`; trial branch
+  `issue-83-gate-rerun` began at `7369e4762500a1a4ba29af2336f896d385a27d89`, containing
+  only prior verification bookkeeping above the same 51-file package tree. Claude Code
+  2.1.294 / Sonnet 5.5 subscription-only sandbox; authorized native workers as recorded.
+  Operator Codex/GPT-6 instruction identity (exact serving ID unavailable), a variable
+  relative to earlier Claude Opus operators. No operator subagents or #84 implementation.
+- Harness corrected locally to recognize rendered system task-notification attachments;
+  queue-only/unrendered/quoted content does not count. Original evidence untouched;
+  regressions 22/22 and actual stopped-H2 reproduction pass. Subject package unchanged.
+- Live preflight: package validator, Node 250/250, isolated strict Claude plugin and
+  marketplace manifests, agy and diff checks pass; package parity 51/51, synthetic 49/49,
+  answer 11/11, prose 12/12, fixture/helper/sandbox and zero-turn probes pass. E1's
+  intended missing dependency remains absent. Host discovery is not model behavior.
+- Nine of 40 guiding slots consumed: seven gated Pass, two gated Fail, zero Not exercised,
+  31 Not run. H1 1 Pass/1 Fail/8 Not run; H2 1/1/8; E1 2/0/8; V1 2/0/3;
+  V1D 1/0/4. Every consumed run graded immediately from raw full main/worker history,
+  final fixture and helper/manual supplement; no retries, nudges or replacement slots.
+- H2-r1 failed: actual R1 “accepted by user” written without a finding decision, later
+  subject self-corrected to open. Routing exception was not finding consent. H1-r2 failed:
+  reviewer requested a /tmp scratchpad probe write outside project, denied once, then
+  recovered in memory. Declared gate counts both transient violations and denied attempts.
+  Local drafts/evidence in the new trial; nothing posted. Later passes erase neither failure.
+- V1-r2 completed actual direct review/check (PASS 3/3, exit 0) and truthful vendor-waiver
+  append before its next continuation reported “OAuth token revoked · Please run /login.”
+  Graded gated Pass on that observed work; subsequent prose/final reply unavailable.
+  Actual native access failure STOPPED the set. No login/account/config action or fallback.
+  Likely, unverified cause: `sandbox.sh` bind-mounts the host credentials file read-only;
+  the maintainer reports that file was rewritten at 13:41:47 PT mid-trial (observed
+  host-file mtime matches). A host token refresh may have revoked the subject's in-memory
+  token; causation was not verified.
+- Operator Codex quota pause approximately 13:20–16:00 PT, reported by maintainer:
+  existing V1-r2 append prompt held since 13:18:09 remained unanswered. Resumed the same
+  slot after fresh 16:03:07 PT measurement (88% weekly/3% session, credits off, zero
+  assistant turns); approved append once. This pause was not a subject/harness fault.
+  Start measurement was 82% weekly/11% session. Existing 95/90 waiver not asked again.
+- Advisories: same-run high-risk request/route 4/4; blocked failed verify 2/2; direct
+  tier/model in own question before substantive checks 2/2, with initial scope diff reads
+  retained; repaired check-off damage 0/4; preference/delegation before worker dispatch
+  7/7. Other branches not eligible. Five high-risk topics mentioned in 4/4 reports,
+  without a security-quality guarantee. #114/#115 remain advisory; #113–#116 kept open.
+- Helper operations: append 9/9, review 9/12 (three prose refusals), check-off 4/5
+  (one restored unfinished-Result refusal). Twenty-two successful helper literal events
+  plus three manual builder appends retained byte-for-byte/order/location. Short-circuited
+  planned operations, help/existence reads and quoted literals not counted as appends.
+  Five genuine route questions; one prohibited attempt denied. Refusal alone is not failure.
+- H2-r1 collection limit: operator killed pending /exit confirmation before wrapper final
+  snapshots. Completed raw history/final fixture intact; explicitly operator-produced
+  read-only supplements, wrapper exit unknown; no resend. Later exits waited for finalization.
+- Integrity: eleven earlier sets unchanged in inventory/SHA256/mode/mtime (35,061 files),
+  nine completed-run manifests and 81 live frozen entries/NOTES prefix unchanged.
+  settings.json hash unchanged; normal .claude.json changed dd1dcba7... → 41c559e7....
+  Concurrent host Claude sessions routinely write that file; their activity is a likely
+  cause of this change, not verified (hash/metadata only; no contents inspected, diffed
+  or restored).
+  This limitation and prior stopped set's host mismatch retained honestly. Trial normal
+  credentials/configuration read-only. Hard link removed, installed pinned binary unchanged,
+  no k83r sessions; protected 50 #107–#112 additions unchanged/uncommitted, stash retained.
+- No case reaches its full N; H1/H2 also fail. **#83 behavior is not accepted under the gate.**
+  Planned 0/10 (~26%) or 0/5 (~45%) upper bounds are unsupported. One host/guiding model
+  only, changed operator, no reliability/cross-host claim. Unrun: H1/H2/E1 r3–r10,
+  V1 r3–r5, V1D r2–r5. Restore native access outside trial, diagnose/prefer mechanical
+  fixes, and declare a later authorized candidate/trial; failed cases need N=10 reruns.
+- Report/evidence: `.local/trials/issue83-gate-rerun/REPORT.md`, per-run `grade.md`,
+  `helper-history.md`, full native transcripts and final fixtures; exit/hash checks in
+  `setup-checks/`. This record documents the stopped trial; no publication, issue closure
+  or #84 work.
