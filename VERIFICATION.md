@@ -1096,6 +1096,44 @@ Not exercised:
 Only the out-of-project write deny rule was exercised. Counts describe these runs on one host version and one model; they are
 not rates or a consistency claim.
 
+## Repeated-set follow-ups and documentation drift (#83) — 2026-10-10
+
+These follow-ups come from the four failures drafted in the #83 repeated set and from a drift check of the PR #96 and #97
+rules against the rest of the package.
+
+- The plan validator requires a `## Review` section in the current phase plan (`None` is allowed before a review). A
+  checked task with `Risk: high` needs a substantive record there; a bare `None` or a placeholder fails. A task line
+  below `Result:` that holds `{kaylo:` and is not a field line fails. A field line such as `Acceptance criteria:` that
+  mentions a record still passes.
+- The dispatch report marks a task with records on a line below its `Result:` as malformed, with the reason "record on a
+  line below Result:, not in it", instead of counting it as missing records.
+- The review skill says that a direct review under a tiered preference states the required tier and the assistant's model
+  before any review work and in any route question, and that a statement first written beside the review record comes too
+  late. The record prose repeats the earlier statement. `WORKERS.md` asks the waiver option to name the tier and the model.
+- The builder brief says to write only inside the project, temporary files included, to return a missing dependency as a
+  blocker instead of placing stand-ins elsewhere, and to report denied actions. The Claude adapter was regenerated.
+- Drift: the glossary's structural checks and comment table, and the manual fallback copied in build, close, and plan, now
+  list the comment form, the resolution, the `## Review` and high-risk rules, and record placement. `WORKERS.md` says the
+  validator checks record placement and uses the report's "no parsed dispatch" wording. The PR #97 changelog entry says
+  only the current phase is checked.
+
+| Check | Observed result |
+| --- | --- |
+| `node --test tests/*.test.cjs` | 217 passed, 0 failed, 0 cancelled, 0 skipped, 0 todo. All 209 earlier tests plus eight new ones |
+| Mutations in a scratch copy outside the repo, one at a time | Disabling the `## Review` rule: 4 failed. The high-risk review rule: 5 failed. The validator's record-line rule: 4 failed. The report's record-line flag: 4 failed. Scratch copy removed |
+| Validator before and after on all 61 #83 post-run plans (read-only copies, removed afterwards) | Only two results changed. Repeated-set H1 run 2 now fails for records below `Result:`. Repeated-set H2 run 2 now fails for the missing `## Review` section, the unrecorded high-risk review, and records below `Result:` |
+| `node scripts/validate-package.cjs` | Exit 0: `Package v0.11.0: five shared skills, matching versions and release catalogs.` The copied fallback in build, close, and plan matched |
+| `claude plugin validate .claude-plugin/plugin.json --strict` | Exit 0: `✔ Validation passed` |
+| `claude plugin validate .claude-plugin/marketplace.json --strict` | Exit 0: `✔ Validation passed` |
+| `agy plugin validate .` | Exit 0 |
+| `node scripts/sync-claude-agents.cjs --check` | Exit 0 after regeneration |
+| `git diff --check` | Exit 0, no output |
+
+Limits: these checks cover validator parsing, report classification, guidance text, package structure, and native manifest
+validation. No live model session ran. Whether direct reviews now state the tier first, and whether builders keep writes in
+the project, is untested until V1, V1D, H1, H2, and E1 run again. A current phase plan without `## Review`, or with records
+below a task's `Result:`, now fails validation.
+
 ## Public installation 0.11.0 — 2026-10-06
 
 PR #82 merged the release commits into `main` as `9a935bb`. The immutable
