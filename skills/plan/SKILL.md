@@ -40,7 +40,7 @@ Guide the user toward the simplest approach that meets the outcome. Work in the 
 - Current phase closed: detail the next unchecked phase, then link it and move `Current:`. Recheck the remaining one-liners against what was learned. Consider open optional follow-ups from the closed phase.
 - Current phase open: revise only its phase plan, plus index lines when phase order, names, or goals change.
 - Write the phase plan before moving `Current:`. Never create a later phase's folder or file while the current phase is open.
-- Read [foundation assessment](references/foundation.md) when writing a project's first roadmap, when adopting Kaylo in a project with existing code or plans, or when a fact a recorded assessment relied on has changed. Reuse an unchanged assessment. A clear small change assesses only the areas it touches.
+- Read [foundation assessment](references/foundation.md) when writing a project's first roadmap, when adopting Kaylo in a project with existing code or plans, or when a fact a recorded assessment relied on has changed. A first roadmap assesses all ten areas, briefly for a small change, and proposes work only for gaps that matter to the outcome. Reuse an unchanged assessment.
 - Build routes work for another phase, or any ID while no phase is open, here. Reopen a closed phase only for unmet acceptance or insufficient evidence while no phase is open: uncheck it and move `Current:` back. Otherwise plan the work in the current or a new phase.
 
 ## Decisions and readiness

@@ -4,7 +4,7 @@ Read this when planning a project's first roadmap, when adopting Kaylo in an exi
 
 ## When and where
 
-- **No plan yet:** assess all ten areas below before detailing the first phase. A clear small change needs only the areas it touches; record that the rest were not assessed.
+- **No plan yet:** assess all ten areas below before detailing the first phase, a small change included. Keep it brief, one line of evidence or reason per area. Giving an area a disposition does not make it work: propose tasks only as described under [proposing work](#proposing-work).
 - **Existing project or plan:** inspect the existing plan, its recorded evidence, and the relevant controls. Do not restart the roadmap or renumber phases.
 - **Repeat planning:** reuse a recorded assessment while its facts are unchanged. Recheck only the areas whose facts changed, such as a new CI provider or a new kind of sensitive data; never add a second setup task for something already set up or planned.
 
