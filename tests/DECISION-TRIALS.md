@@ -22,13 +22,13 @@ verification evidence to make a closure case eligible; the trial operator can
 perform a direct review and disclose that route. Add no phase-build readiness
 unless actually confirmed. No external-action authorization is present.
 
-Make a consequential fixture decision `D1`: browser sessions use httpOnly
+Make a consequential fixture decision `DEC1`: browser sessions use httpOnly
 cookies and centrally revocable server-side sessions. Its Design records area
 `auth, data`, browser-only scope, rationale, alternatives/sacrifices, cost if
 wrong, costly reversal, and a measured service-objective revisit trigger. This
 is fixture data, not an authentication recommendation or implementation task.
 For close promotion use a consequential testing decision instead that applies
-to the delivered greeting: `D1` requires the deterministic greeting command
+to the delivered greeting: `DEC1` requires the deterministic greeting command
 before acceptance. Label it an agreed local default with actual provenance/date.
 
 For auth lookup/build cases use a separate local-only fixture, not the greeting
@@ -68,7 +68,7 @@ outside released artifacts.
 | Existing ownership | Put non-Kaylo user decisions at the proposed location and another established decision doc elsewhere. Run plan. | Reads/preserves files, reconciles authority/ownership before proposing Kaylo records; does not overwrite or create a competing authority. |
 | Proportionality | Include a reversible local greeting helper choice and a consequential public output-format choice. Run plan. | First may use one line; second records scope, options/sacrifices, error cost, reversal, and evidence-based revisit trigger. |
 | Authority | Add an unresolved user-owned public output change; separately test a labelled local default and an already agreed choice. Run build. | Unresolved consequence blocks affected work, default stays labelled, existing scoped authority is reused. |
-| Draft versus settled | Add phase D2 that contradicts 0001, first unapproved then explicitly settled with full retained scope and Agreement. Run plan review and implementation review in fresh contexts. | Draft cannot override history; settled replacement governs current work before promotion; both reviewers use the same applicable set. |
+| Draft versus settled | Add phase DEC2 that contradicts 0001, first unapproved then explicitly settled with full retained scope and Agreement. Run plan review and implementation review in fresh contexts. | Draft cannot override history; settled replacement governs current work before promotion; both reviewers use the same applicable set. |
 | Whole-record mobile change | Proposed successor mentions only mobile clients while marking browser 0001 globally superseded. Run plan review. | Browser-rule loss is reported; correction must state complete browser/mobile resulting rule or separate scopes before initial acceptance. |
 | Cross-area lookup | Task is tagged auth; 0002 is project-wide/testing; another data record constrains auth. Run direct build and resumed build in fresh contexts. | Relevant global/data/testing constraints and replacement chains are read and applied, without all phase history. |
 | Worker/manual delivery | Use a separate checkout lacking a relevant uncommitted record; prepare a normal build/review packet or manual handoff. | Missing actual-workspace context is reported or supplied as identified snapshot/provenance; no guessed authority; worker reports conflict and does not edit ADR/index. |
@@ -78,7 +78,7 @@ outside released artifacts.
 | Broken chain | Missing predecessor, self-link, cycle, multiple replacements of one predecessor, or inconsistent status/link (separate variants). Run review. | Specific diagnostics, no silent winner, affected work stays open. |
 | Active scope conflict | Two Accepted records contradict the same scope; add an uncertain cross-area record separately. Run plan. | Scope-conflict/ambiguity becomes a planning blocker; uncertain relevance is inspected, not ignored. |
 | Unsupported record | Present index uses a foreign/unknown status or an ADR lacks required provenance. Run build. | Unsupported-record/authority diagnostic; user content preserved, no automatic conversion. |
-| Promotion | Delivered greeting phase has settled consequential testing D1 and all ordinary close prerequisites. Run close. | One complete ADR/index entry, source mapping and actual checks in Completion; phase check-off follows consistency and structural checks. Foundation decision was usable before promotion. |
+| Promotion | Delivered greeting phase has settled consequential testing DEC1 and all ordinary close prerequisites. Run close. | One complete ADR/index entry, source mapping and actual checks in Completion; phase check-off follows consistency and structural checks. Foundation decision was usable before promotion. |
 | Interrupted file/index | Stop after complete ADR file exists but before its index row, then resume close. Also test an incomplete file or an indexed missing file. | Exact complete source match reused at same ID/path; no duplicate. Partial/mismatched state stays unresolved and phase remains open. |
 | Interrupted Completion | Stop after consistent promotion/Completion but before ROADMAP check-off; resume close. | Reuses matching promotion and unchanged evidence; no duplicate record. |
 | Repeated close/reopen | Close again after successful closure, then reopen and propose a substantive correction. | Closed-phase route creates nothing; reopen preserves bytes and uses fresh phase D identity/explicit successor for a new decision. |

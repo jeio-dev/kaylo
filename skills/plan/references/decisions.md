@@ -9,7 +9,8 @@ an assignment. No command, worker role, provider, runtime, or hook is added.
 
 Inspect existing project decision documents and user edits first. A missing
 `.kaylo/decisions/` preserves existing behavior, including no-PRD small changes;
-read applicable established decisions where they exist. Do not backfill history,
+read applicable established decisions where they exist. Close creates the
+directory and index from the templates at the first required promotion. Do not backfill history,
 rewrite closed phases, or create a competing authority. Before introducing
 Kaylo records into an existing decision location, reconcile ownership and
 competing authorities under the existing planning/agreement rules. Never
@@ -25,12 +26,12 @@ than technology names. There is no ADR quota. Defaults remain labelled defaults;
 user-owned consequences follow ordinary agreement rules. An unresolved
 consequential choice blocks affected work and cannot be settled during close.
 
-Use `D1`, `D2`, etc. for phase-local decisions; identity is the source phase plus
-decision, with the authoritative plan link. These are separate from worker
-`D1` dispatch IDs; add no task field. For example:
+Use `DEC1`, `DEC2`, etc. for phase-local decisions; identity is the source
+phase plus decision, with the authoritative plan link. The `DEC` prefix keeps
+them distinct from worker `D1` dispatch IDs; add no task field. For example:
 
 ```text
-- D1: Browser sessions use httpOnly cookies and server-side sessions.
+- DEC1: Browser sessions use httpOnly cookies and server-side sessions.
   - Areas / applicability: auth, data; this application's browser sessions.
   - Why: centrally revocable sessions under the agreed browser requirements.
   - Alternatives / sacrifices: DB sessions add store operations and availability
@@ -70,7 +71,7 @@ this reference. Templates are not accepted records: replace all placeholders.
   `Supersedes:`. Areas are comma-separated useful tags; `project-wide` denotes
   constraints every consumer inspects. Scope prose, not tags alone, determines
   applicability. Multiple tags are allowed, including `testing`/`environments`.
-- `Source:` names phase `NN`, phase-local `D<n>`, and a relative Markdown link
+- `Source:` names phase `NN`, phase-local `DEC<n>`, and a relative Markdown link
   to its authoritative plan. `Acceptance:` records the actual date
   `YYYY-MM-DD`, authority (labelled local default or actual user decision), and
   a relative link to its Agreement/provenance. Never invent user approval or
@@ -122,8 +123,8 @@ acceptance. Unsupported existing syntax is not permission to rewrite it.
    evidence when relevant records, scope, or phase agreement change. Reuse
    unchanged checks only with established unchanged inputs; a record-only change
    does not require unrelated product checks to repeat.
-5. In existing relevant-decisions/interface-contract packet fields, supply links
-   and necessary content, source phase/decision identity, accepted scope and
+5. In the build packet's relevant-decisions content or the review packet's
+   applicable-decisions item, supply links and necessary content, source phase/decision identity, accepted scope and
    settled phase overrides. Confirm required files and provenance are present in
    the worker's **actual** workspace, including manual handoffs. A separate
    checkout may lack uncommitted records. If links cannot be made available,
@@ -151,7 +152,8 @@ For each relevant record and its chain, and global index/identity consistency:
 - Provenance: source plan/decision and actual acceptance date/authority resolve;
   defaults are labelled, unresolved user decisions are blockers. A record cannot
   grant authority to an external action. Foundation decisions can use phase-local
-  identity until close; final ADRs are not their own task prerequisites.
+  identity until close; final ADRs are never prerequisites for their own
+  phase's tasks.
 - Supersession: predecessor and successor links resolve and agree with index
   status; no missing predecessor, self-link, cycle, multiple replacements of one
   predecessor, or conflicting active scope. Replacement prose retains the full
@@ -195,22 +197,26 @@ runtimes or change host settings.
 
 First preserve ordinary close's implementation review, task/product evidence,
 structural check, Completion and ROADMAP requirements. Resolve applicable
-records at entry; once delivered work and required review/verification are
-established, the guiding assistant promotes only final consequential decisions
+records at entry. Promote only after delivered work, required
+review/verification, and the phase's agreed goal are established and no closure
+rule routes elsewhere; a close that routes to plan, build, or review promotes
+nothing. Then the guiding assistant promotes only final consequential decisions
 applicable to that delivered work. Do not promote unresolved drafts, abandoned
 choices, or convert defaults to user approval. Promotion records settled
 acceptance; it does not make the choice retrospectively.
 
 1. Inspect all existing index/files and current user changes. For each source
-   `(phase NN, decision D<n>, authoritative plan path)`, find an existing
+   `(phase NN, decision DEC<n>, authoritative plan path)`, find an existing
    promotion, including unindexed files. Compare its complete acceptance snapshot
    with the intended result. Reuse an exact match at its existing ID/path;
    do not allocate another. A mismatched body/source or duplicate mapping is a
    `source-conflict`; stop and reconcile without editing accepted bytes. For a
    subsequent substantive change in reopened work, give the new phase-local
-   decision a fresh D ID and explicitly supersede the previous ADR.
+   decision a fresh DEC ID and explicitly supersede the previous ADR.
 2. If new, choose an unused ID after inspecting both files and index. Prepare
-   the complete snapshot and intended index changes before writing. Create the
+   the complete snapshot and intended index changes before writing. When
+   `.kaylo/decisions/` is absent, this first promotion creates it with an index
+   from the template; reconcile any competing decision location first. Create the
    new file only at an absent path using exclusive creation where available;
    never overwrite an existing or concurrently created file. If no safe creation
    facility is available, stop with a concrete recording handoff. No generic
@@ -222,7 +228,7 @@ acceptance; it does not make the choice retrospectively.
    not permission to replace concurrent work. Do not claim atomic multi-file
    writes. On interruption, inspect persisted state at the next invocation.
 4. Run the full applicable manual checklist, check mappings, links and body
-   preservation, and record `Decision promotion: phase NN D<n> -> <ADR link>`
+   preservation, and record `Decision promotion: phase NN DEC<n> -> <ADR link>`
    in Completion with actual checks and historical-baseline limits. Foundation
    testing/environment decisions use this same mapping and lifecycle, not a
    separate promotion mechanism. External issue/ADR prerequisites belong in
@@ -231,8 +237,9 @@ acceptance; it does not make the choice retrospectively.
    ordinary close's structural check before checking ROADMAP. Missing/partial
    promotion leaves closure incomplete; record the precise resume action in
    Completion/Next step. Preserve unaffected passing product-test evidence; do
-   not relabel it failed because recording failed. Promotion is a close
-   postcondition, not a circular prerequisite for its own phase's tasks.
+   not relabel it failed because recording failed. Promotion is required
+   before close checks off the phase, but never a prerequisite for that
+   phase's own tasks.
 
 Recovery: a complete unindexed exact match can be indexed at its existing ID;
 an indexed missing file, partial body, or mismatched snapshot is unresolved,

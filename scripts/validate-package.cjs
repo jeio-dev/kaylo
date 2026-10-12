@@ -134,36 +134,33 @@ try {
     assert(/\bKaylo\b/.test(text), `skills/${name}/SKILL.md description must name Kaylo`);
     skillLines[name] = body.split(/\r?\n/);
   }
-  for (const resource of ['skills/close/references/release.md', 'skills/close/references/release-notes.md',
-    'scripts/release-notes.cjs']) {
-    const target = path.join(root, resource);
-    assert(fs.existsSync(target) && fs.statSync(target).isFile(), `Required release resource is missing: ${resource}`);
-  }
   // Optional project records still need their canonical contract and templates
   // in every shipped package. This checks resources, never project ADR semantics.
-  const decisionResources = ['skills/plan/references/decisions.md',
-    'templates/DECISION.md', 'templates/DECISION-INDEX.md'];
-  for (const resource of decisionResources) {
+  const decisionContract = 'skills/plan/references/decisions.md';
+  const decisionTemplates = ['templates/DECISION.md', 'templates/DECISION-INDEX.md'];
+  const requiredResources = [
+    ...['skills/close/references/release.md', 'skills/close/references/release-notes.md',
+      'scripts/release-notes.cjs'].map(resource => ['release', resource]),
+    ...[decisionContract, ...decisionTemplates].map(resource => ['decision', resource])
+  ];
+  for (const [kind, resource] of requiredResources) {
     const target = path.join(root, resource);
-    assert(fs.existsSync(target) && fs.statSync(target).isFile(),
-      `Required decision resource is missing: ${resource}`);
+    assert(fs.existsSync(target) && fs.statSync(target).isFile(), `Required ${kind} resource is missing: ${resource}`);
   }
-  const decisionConsumers = ['skills/plan/SKILL.md', 'skills/build/SKILL.md',
+  // Resolved link targets of a Markdown file, relative to the package root.
+  const linkTargets = file => new Set([...fs.readFileSync(path.join(root, file), 'utf8')
+    .matchAll(/\]\(([^)]+)\)/g)].map(match => path.relative(root,
+    path.resolve(root, path.dirname(file), match[1].split('#')[0]))));
+  for (const consumer of ['skills/plan/SKILL.md', 'skills/build/SKILL.md',
     'skills/review/SKILL.md', 'skills/close/SKILL.md',
     'skills/build/references/delegation.md', 'skills/review/references/delegation.md',
-    'skills/plan/references/foundation.md', 'WORKERS.md'];
-  for (const consumer of decisionConsumers) {
-    const body = fs.readFileSync(path.join(root, consumer), 'utf8');
-    const links = [...body.matchAll(/\]\(([^)]+)\)/g)].map(match => match[1].split('#')[0]);
-    assert(links.some(link => path.resolve(root, path.dirname(consumer), link) ===
-      path.join(root, decisionResources[0])),
-    `Missing canonical decision reference: ${consumer}`);
+    'skills/plan/references/foundation.md', 'WORKERS.md']) {
+    assert(fs.existsSync(path.join(root, consumer)), `Decision consumer is missing: ${consumer}`);
+    assert(linkTargets(consumer).has(decisionContract), `Missing canonical decision reference: ${consumer}`);
   }
-  const contract = fs.readFileSync(path.join(root, decisionResources[0]), 'utf8');
-  for (const template of decisionResources.slice(1)) {
-    const links = [...contract.matchAll(/\]\(([^)]+)\)/g)].map(match => match[1].split('#')[0]);
-    assert(links.some(link => path.resolve(root, path.dirname(decisionResources[0]), link) ===
-      path.join(root, template)), `Missing decision template reference: ${template}`);
+  const contractLinks = linkTargets(decisionContract);
+  for (const template of decisionTemplates) {
+    assert(contractLinks.has(template), `Missing decision template reference: ${template}`);
   }
   // Each SKILL.md must work when pasted alone, so these blocks are copied
   // rather than shared. Copies must stay byte-identical; a listed variant is a
@@ -177,6 +174,10 @@ try {
       omitted: { define: 'define runs no checks' } },
     { block: 'working-changes guardrail', start: '- Inspect staged, unstaged, and untracked changes',
       in: ['close', 'define', 'plan', 'review'], extended: { build: 'adds the workspace record' } },
+    { block: 'project-decisions entry', start: 'At entry, including direct/resumed work', in: ['build', 'review', 'close'],
+      omitted: { define: 'define does not consume ADR records' },
+      // Plan links its own references directory.
+      reworded: { plan: [['../plan/references/decisions.md', 'references/decisions.md']] } },
     { block: 'decision-resource fallback', start: 'If the decision reference', in: ['plan', 'build', 'review', 'close'],
       omitted: { define: 'define does not consume ADR records' } },
     { block: 'Node-unavailable fallback', start: 'If Node or the script is unavailable', in: ['build', 'close'],

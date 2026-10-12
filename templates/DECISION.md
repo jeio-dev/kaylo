@@ -16,7 +16,7 @@ Reversal: [effort, migration, disruption, and operational cost]
 
 Revisit when: [evidence-based trigger for reassessment, not automatic revocation]
 
-Source: phase [NN], decision [D1]; [plan](../phases/NN-slug/NN-PLAN.md#design).
+Source: phase [NN], decision [DEC1]; [plan](../phases/NN-slug/NN-PLAN.md#design).
 
 Acceptance: [YYYY-MM-DD]; [labelled local default or actual user decision and provenance]; [agreement](../phases/NN-slug/NN-PLAN.md#agreement).
 

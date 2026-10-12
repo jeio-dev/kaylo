@@ -404,7 +404,7 @@ Delegated builds record the starting workspace state, confirm dependencies are p
 
 - `skills/`: five command entrypoints with optional references: build and review delegation, build's Git workflow and pull request guidance, plan's project gates, foundation assessment, and project-decisions contract, and close's CI evidence, release metadata, and lazily loaded guided-release procedure.
 - `agents/`: three shared worker briefs; `claude-agents/`: generated native Claude adapters with identical instruction bodies.
-- `templates/`: optional PRD, roadmap, and phase plan starting points.
+- `templates/`: optional PRD, roadmap, and phase plan starting points, plus the ADR and decision-index templates close uses when promoting project decisions.
 - `.claude-plugin/`, `.codex-plugin/`, `plugin.json`, `.agents/plugins/`: native packaging for Claude, Codex, and Antigravity, and the released Codex catalog. OpenCode loads the shared skills directory directly.
 - `gemini-extension.json`: native Gemini packaging of the shared skills.
 - `development/`: the separate local Codex catalog and ignored generated package.

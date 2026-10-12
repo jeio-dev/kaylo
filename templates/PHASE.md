@@ -12,10 +12,10 @@ Status: Current
 
 [The simplest sufficient approach, what existing capability it reuses, and why it meets the criteria. When relevant, the foundation assessment and draft testing or environment decisions. Changed trust boundaries with their abuse or failure cases, mitigations, and the tasks and checks that establish them, or one line saying no boundary changes.]
 
-[Consequential decisions use phase-local D1, D2, etc. with area/applicability,
-rationale, alternatives/sacrifices, cost if wrong, reversal effort, revisit
-trigger, and explicit whole-record supersession when applicable. Their identity
-includes this phase and plan path, separate from dispatch D IDs. Ordinary
+[Consequential decisions use phase-local DEC1, DEC2, etc. with
+area/applicability, rationale, alternatives/sacrifices, cost if wrong, reversal
+effort, revisit trigger, and explicit whole-record supersession when applicable.
+Their identity includes this phase and plan path. Ordinary
 reversible local choices may remain one line. Accepted project ADRs plus settled
 phase changes govern current work; promotion happens at close.]
 
@@ -51,4 +51,4 @@ phase changes govern current work; promotion happens at close.]
 
 ## Completion
 
-[Delivered outcome, verification, known limitations, and optional follow-ups. When consequential decisions are promoted, record Decision promotion: phase NN D1 -> ADR link, consistency checks, and historical-baseline limits before phase check-off. Call a limitation accepted only with the user's actual recorded decision naming it; cite that decision.]
+[Delivered outcome, verification, known limitations, and optional follow-ups. When consequential decisions are promoted, record Decision promotion: phase NN DEC1 -> ADR link, consistency checks, and historical-baseline limits before phase check-off. Call a limitation accepted only with the user's actual recorded decision naming it; cite that decision.]

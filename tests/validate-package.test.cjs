@@ -383,3 +383,22 @@ test('pasted decision consumers retain an aligned standalone resource fallback',
     assert.match(result.stderr, /decision-resource fallback/);
   }
 });
+test('a missing decision consumer is named rather than reported as a raw read failure', t => {
+  const dir = fixture(t);
+  fs.unlinkSync(path.join(dir, 'skills/plan/references/foundation.md'));
+  const result = check(dir);
+  assert.equal(result.status, 1);
+  assert(result.stderr.includes('Decision consumer is missing: skills/plan/references/foundation.md'));
+  assert.doesNotMatch(result.stderr, /ENOENT/);
+});
+test('pasted decision consumers keep an aligned project-decisions entry paragraph', t => {
+  const dir = fixture(t);
+  const target = path.join(dir, 'skills/build/SKILL.md');
+  const original = fs.readFileSync(target, 'utf8');
+  const rule = 'A missing\nreferenced record is a diagnostic. ';
+  assert(original.includes(rule));
+  fs.writeFileSync(target, original.replace(rule, ''));
+  const result = check(dir);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /project-decisions entry in skills\/build\/SKILL\.md/);
+});

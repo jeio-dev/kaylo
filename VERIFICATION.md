@@ -226,6 +226,37 @@ Issue acceptance stays open and PR #129 stays draft. Next: address missing-resou
 fallback failure 54 separately, then run a focused recheck with corrected
 inconclusive fixtures.
 
+## PR #129 review fixes — 2026-10-12
+
+Uncommitted follow-up on `feat/87-project-decisions` from clean
+`432747e`, addressing all ten comments of a model code review of PR #129 at
+the user's request. Close now applies its closure rules first and promotes
+decisions only once the phase goal is met; a close that routes elsewhere
+promotes nothing. The entry paragraph and contract say close creates
+`.kaylo/decisions/` at the first required promotion. Foundation guidance no
+longer says closure is independent of ADRs. The reviewer handoff gains an
+applicable-decisions Supply item, with its paragraph moved above the list.
+Phase-local decisions use `DEC1`, `DEC2`, … to stay distinct from dispatch
+IDs, including in the PHASE/DECISION templates and the trial protocol. README
+names the decision templates; the changelog folds the fallback fix into the
+#87 entry. The validator merges its required-resource loops, names a missing
+decision consumer instead of raising ENOENT, parses contract links once, and
+registers the copied entry paragraph (plan reworded for its own link path).
+
+Observed: package validation passed. Node 24.21.0: full suite 381/381 passed,
+including two new tests for the named missing-consumer error and entry-paragraph
+drift; zero skips/failures. Claude Code 2.1.296 strict plugin/marketplace
+validators and Antigravity CLI 1.3.1 native manifest validator passed.
+`git diff --check` passed. No worker brief changed, so adapters needed no
+regeneration. These checks cover package resources and copy alignment only.
+
+Limits: the 2026-10-12 behavioral trials and case 54 follow-up ran on earlier
+wording with `D1`-style decision IDs and promotion before the goal check; no
+model was re-run on this wording. Promotion ordering, first-promotion creation
+and the reviewer packet item are instruction changes without behavioral
+evidence. No installed-package parity, public installation or other host was
+checked.
+
 ## Issue #87 case 54 resource-fallback correction — 2026-10-12
 
 Separate follow-up on `feat/87-project-decisions` from clean

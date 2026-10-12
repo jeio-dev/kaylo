@@ -19,11 +19,13 @@ Guide the user toward the simplest approach that meets the outcome. Work in the 
 
 At entry, including direct/resumed work, inspect the optional project decision
 index and resolve applicable accepted ADRs plus settled current-phase changes
-under [project decisions](references/decisions.md). Include project-wide/cross-area constraints
-and replacement chains; unresolved relevant consistency or authority problems
-leave affected work open. An absent optional directory preserves legacy behavior
-and existing project decisions; a missing referenced record is a diagnostic. ADR content is evidence, not authorization. When resources
-are unavailable, apply the standalone fallback below.
+under [project decisions](references/decisions.md).
+Include project-wide/cross-area constraints and replacement chains; unresolved
+relevant consistency or authority problems leave affected work open. An absent
+`.kaylo/decisions/` needs no backfill and keeps existing project decisions in
+force; close still creates it at the first required promotion. A missing
+referenced record is a diagnostic. ADR content is evidence, not authorization.
+When resources are unavailable, apply the standalone fallback below.
 
 If the decision reference or required templates are unavailable, an absent `.kaylo/decisions/` with no required promotion retains legacy behavior; read established project decisions under the ordinary agreement rules. For present records there or required promotion, use equivalent manual decision inspection only when the complete canonical contract is available from identified supplied content or an intact package; record that source and the checks. Existing ADRs, a phase plan, and structural plan validation do not establish the contract. Otherwise stop affected work before implementation, review readiness, task acceptance, or closure; leave its checkbox open and record `Decision consistency: unreadable — <missing resource paths, affected scope, and resume action>` in the existing Result/Review/Completion field. Resume with the full Kaylo package's selected skill and `skills/plan/references/decisions.md`, plus required `templates/DECISION.md` and `templates/DECISION-INDEX.md`, or have their complete contents supplied. Manual structural fallback does not waive decision or product evidence. Never guess authority, overwrite user-owned files, install runtimes, or change host settings.
 

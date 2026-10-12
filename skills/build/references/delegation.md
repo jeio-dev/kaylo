@@ -32,7 +32,6 @@ ambiguous required authority blocks the assignment. Do not include all phase
 history by default. Workers report conflicts/corrections and never allocate IDs,
 promote decisions, or edit accepted ADRs/the shared index.
 
-
 Use [the builder brief](../../../agents/builder.md), resolved relative to this reference file, not the user's project. Observed registration: Claude Code lists Kaylo's native brief as `kaylo:builder`, Antigravity lists it as `builder`, and Gemini CLI's agent loader returns it as `builder`. Check that a bare name resolves to Kaylo's brief before using it, as described in [WORKERS.md](../../../WORKERS.md). For a manual handoff, read and paste the brief's body. If the necessary brief is missing, ask for its location or content; do not invent it.
 
 Supply:
