@@ -73,6 +73,9 @@ test('the packed npm package holds exactly the exported Git files and validates'
     'npm package contents differ from the Git export; adjust `files` in package.json');
   run(process.execPath, [path.join(root, 'scripts/validate-package.cjs')]);
   run(process.execPath, [path.join(repo, 'scripts/validate-package.cjs'), '--installed', root]);
+  assert.equal(fs.existsSync(path.join(root, 'AGENTS.md')), false, 'Contributor guidance must stay out of packages');
+  assert(fs.readFileSync(path.join(root, 'skills/close/references/release.md')).equals(
+    fs.readFileSync(path.join(exported, 'skills/close/references/release.md'))));
   const helper = path.join(root, 'scripts/plan-record.cjs');
   assert(fs.readFileSync(helper).equals(fs.readFileSync(path.join(exported, 'scripts/plan-record.cjs'))));
   const project = temp(t, 'packed-record-project');
@@ -82,6 +85,17 @@ test('the packed npm package holds exactly the exported Git files and validates'
     '  - Test plan: node greet.cjs\n  - Result: Check passed, exit 0.\n## Review\nNone.\n');
   run(process.execPath, [helper, project, 'check-off', 'T1']);
   assert.match(fs.readFileSync(path.join(project, 'phase.md'), 'utf8'), /\{kaylo:v1 accept\}/);
+  fs.writeFileSync(path.join(project, 'ROADMAP.md'), 'Current: [01](phase.md)\n- [x] [01](phase.md) — Greeting\n');
+  fs.appendFileSync(path.join(project, 'phase.md'), 'Release note: feature (reviewed) — Greeting.\nRelease contribution: first / initial\n');
+  fs.writeFileSync(path.join(project, 'CHANGELOG.md'), '## [Unreleased]\n### Notable Changes\n');
+  const selection = path.join(project, 'selection.json');
+  fs.writeFileSync(selection, JSON.stringify({ format: 1, project: 'packed-fixture', boundary: 'first',
+    notes: 'CHANGELOG.md', phases: [{ id: '01', plan: 'phase.md' }] }));
+  const proposal = JSON.parse(run(process.execPath, [path.join(root, 'scripts/release-notes.cjs'), project, selection]).stdout);
+  assert.equal(proposal.counts.feature, 1);
+  assert.match(proposal.notes, /kaylo-release/);
+  assert.doesNotMatch(fs.readFileSync(path.join(project, 'CHANGELOG.md'), 'utf8'), /kaylo-release/);
+
 });
 // npm installs rename a packed .gitignore to .npmignore (#68). Run the installer from
 // npm's installed layout and require OpenCode's copy to match the tarball exactly.

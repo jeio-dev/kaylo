@@ -14,6 +14,11 @@ records from the first draft through 0.5.2 are in
 
 ## Current status — 0.11.0
 
+The #86 guided-release implementation adds local metadata/reconciliation and
+manual preparation guidance. Its parsing/Git/package checks are recorded below;
+live host/model behavior remains deferred with the #84–#90 series. The released
+0.11.0 host observations in this table do not establish the new behavior.
+
 A summary of the records below and the archived ones. Every live-model result
 is one run per case, or a few, on the host and model named; none is a
 consistency claim.
@@ -2040,3 +2045,92 @@ establish parser/Git behavior and package structure, not model behavior.
 Automatic Git execution remains intentionally gated on #89. Prior evidence
 was preserved; only this recheck record was appended locally, without
 committing or pushing it.
+
+## Guided manual releases through close (#86) — 2026-10-12
+
+Implementation on `issue-86-guided-releases` from clean `main` at
+`d3f312e5cfc0336ad494838838a38901359a558d`, following the revised #86 scope.
+The user's instruction authorizes implementation, a feature-branch commit/push,
+and a pull request; it does not authorize a Kaylo release. No staged, unstaged,
+or untracked work was present at the start. Contributor AGENTS.md was local,
+ignored, and untracked, and is excluded from staging/distribution.
+
+Close keeps ordinary acceptance/review/check-off and treats an explicit release
+request before its checked-current-phase route. Ordinary closure aggregates
+reviewed summaries and shows advisory counts/pending classification. Only guided
+preparation loads release.md. The implementation chooses an additive
+`Release contribution: <boundary> / <delta>` record under Review, stable
+project/phase/delta identity, and optional provenance blocks inside the existing
+notes destination. Existing Release note syntax is retained. No mandatory PR,
+ledger, new skill, migration, provider, deployment trigger, or publishing runner.
+The optional release-notes helper reads authoritative roadmap/phase records
+and returns a proposal; it writes nothing and cannot certify evidence truth,
+complete history selection, authorization, readiness, or publication.
+
+Focused boundaries: close and its two references; local metadata guidance in
+the shared PR reference/phase template; the optional proposal helper; package
+resource requirements and packed-helper coverage; notes/Git fixtures and bounded
+behavioral trial cases; README/changelog/this evidence. No shared worker brief
+changed, so no Claude adapter regeneration was needed. #84/#85 gate, exact-CI,
+metadata, attribution and explicit Git-action contracts are present. Automatic
+Git-preference actions remain gated on #89's unavailable candidate/outgoing
+scan contract. Kaylo's approved pre/post-1.0 policy is encoded without claiming
+#90's migration engine or #89's deployment/scanning contracts delivered.
+
+Observed on Linux (WSL2), Node 24.21.0:
+
+- `node scripts/validate-package.cjs` passed: five skills, matching v0.11.0
+  versions/catalogs, required relative release references/helper present.
+- `node --test tests/*.test.cjs`: 368 tests, 368 passed, 0 skipped. New
+  release-notes tests cover local reviewed/provisional/pending/missing/repeated
+  metadata, real Review boundaries versus fences/comments, mixed phase counts,
+  optional PRs, repeat/reclassification/reopen, selected versus retained entries,
+  immutable published summaries, later same-phase deltas, human-edited blocks,
+  authoritative links/path moves, hardlink/symlink containment, invalid UTF-8,
+  malformed/duplicate markers, CRLF/no-final-newline, schema/CLI/FIFO errors,
+  and Kaylo's highest-impact SemVer matrix. An early CRLF fixture mistakenly
+  doubled carriage returns and was corrected. A nested HTML-comment probe
+  correctly refused an orphan marker; its expectation was corrected, not the
+  parser weakened. Final focused release tests: 27 passed.
+- Disposable Git fixtures use a local bare remote, annotated candidate tag,
+  unrelated tag, branch-only commit, dirty artifact, and human staged/unstaged/
+  untracked contents. An explicit single-tag ref pushes exactly the candidate;
+  blanket tag dry-run includes the unrelated tag. Mismatched remote tags refuse
+  replacement. Actual archive content and released ancestry exclude dirty and
+  branch-only content. Notes proposals preserve index, worktree, refs, and files.
+  These are local fixtures, not real provider or registry publication trials.
+- The package inventory test packs/exports the working tree, proves exact
+  inventory/parity, excludes contributor guidance, and runs the extracted helper
+  with its sibling validator against a disposable project. The helper's output
+  leaves notes unchanged. Missing guided-release resources fail validation.
+- `claude plugin validate .claude-plugin/plugin.json --strict` and
+  `claude plugin validate .claude-plugin/marketplace.json --strict` passed on
+  Claude Code 2.1.296. `agy plugin validate .` passed on Antigravity CLI 1.3.1
+  (five skills, three agents).
+- `node scripts/stage-development.cjs` followed by
+  `node scripts/validate-package.cjs --installed development/package` passed:
+  38 shared resources match and contributor guidance is absent. This is local
+  package staging/byte parity, not an installed native host trial.
+- `git diff --check` passed. 31 non-example relative Markdown links resolve.
+  The direct size review initially counted 962 added and 8 deleted lines from
+  the starting SHA, excluding no generated/lock/binary files: advisory over-600
+  band, so smaller future deliveries are recommended; size is not acceptance.
+
+Direct review by the implementing Codex session covered entry/routing, preserved
+closure lifecycle, metadata grammar/identity/reconciliation, read-only helper
+failure paths, compatibility/version policy, exact candidate/evidence timing,
+scoped authority/tag immutability, project/Kaylo ordering, resume, fallback/apps,
+notes/history parity, hotfix/reintegration, dependency honesty, and resource
+paths. This review lacked an independent/fresh context. No unresolved finding
+is claimed as independently cleared.
+
+Not run: live model/worker behavioral trials, five-host native install/update
+or discovery trials, real required CI/protection/scan enforcement, remote tag,
+registry/GitHub release publication, deployment, billing, or real hotfix
+reintegration. Live behavioral trials follow the maintainer's recorded
+2026-10-11 decision to defer them until #84–#90 are built and known findings
+resolved. `tests/RELEASE-TRIALS.md` specifies the bounded ordinary-close,
+explicit-preparation, missing-mechanics/evidence, existing/missing/changed
+scope, timing, resume, notes/history, and hotfix cases. No unobserved host/model
+behavior is claimed; #86 remains open for that verification. Versions/catalogs
+remain 0.11.0; no release/tag/package publication is part of this PR.

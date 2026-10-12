@@ -318,3 +318,11 @@ test('development staging preserves the shared package and refreshes edited sour
   assert.equal(stage().status, 0);
   assert.equal(check(dir, ['--installed', path.join(dir, 'development/package')]).status, 0);
 });
+
+test('guided-release resources are required and retain relative layout in installed packages', t => {
+  const dir = fixture(t);
+  const resource = 'skills/close/references/release.md';
+  fs.unlinkSync(path.join(dir, resource));
+  assert.equal(check(dir).status, 1);
+  assert.match(check(repo, ['--installed', dir]).stderr, /release\.md/);
+});

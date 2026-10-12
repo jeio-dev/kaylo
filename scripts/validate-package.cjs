@@ -134,6 +134,10 @@ try {
     assert(/\bKaylo\b/.test(text), `skills/${name}/SKILL.md description must name Kaylo`);
     skillLines[name] = body.split(/\r?\n/);
   }
+  for (const resource of ['skills/close/references/release.md', 'skills/close/references/release-notes.md',
+    'scripts/release-notes.cjs']) {
+    assert(fs.statSync(path.join(root, resource)).isFile(), `Required release resource is missing: ${resource}`);
+  }
   // Each SKILL.md must work when pasted alone, so these blocks are copied
   // rather than shared. Copies must stay byte-identical; a listed variant is a
   // deliberate difference: omitted, extended (the shared copy plus more), or

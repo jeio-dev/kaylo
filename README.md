@@ -12,9 +12,11 @@ Kaylo is an early `0.11.0` package; see [verification](VERIFICATION.md) for what
 | `/kaylo:plan` | Inspect the project, settle the decisions only you can make, and choose a simple approach | Ordered phases in `ROADMAP.md`; executable tasks in the current phase plan |
 | `/kaylo:build` | Implement and verify an agreed task | A working change and recorded evidence |
 | `/kaylo:review` | Get a second opinion on a plan or change | Review comments, labelled blocking or non-blocking, in the current phase plan |
-| `/kaylo:close` | Check the promised outcome and finish the phase | Phase checked off, usage guidance, and remaining limitations |
+| `/kaylo:close` | Check the promised outcome and finish the phase; request `release` for guided preparation | Phase checked off, usage guidance, unreleased summary, or a prepared release with explicit pending actions |
 
 Start with define, then plan. A concrete small change can start with plan. Substantial or uncertain plans, and every plan headed for `/kaylo:build phase`, get a plan check before building. `/kaylo:build phase` builds the current phase's remaining agreed tasks one at a time after plan records phase build readiness; each task is verified and checked off, or it stops with one recorded blocker and resume action. Review implementation before close. Revise through plan and build. Each response should explain what matters and give one clear next step.
+
+After closure, close reconciles reviewed phase release notes and recommends releasing or waiting. Request `/kaylo:close release`, where supported, or select Kaylo close and ask for guided release. It works with a closed current phase and future planned phases; an open current phase must close first. The procedure loads only on request and follows your project's version policy and release mechanics. Confirming a version or entering preparation does not authorize tags, pushes, publication, or deployment. Legacy plans stay valid without release metadata; incomplete classification remains pending. See [release guidance](skills/close/references/release.md) and [metadata/reconciliation](skills/close/references/release-notes.md).
 
 The assistant investigates repository facts, recommends an approach, and asks a short numbered round only for consequential decisions. Tasks include acceptance criteria and a test plan with meaningful checks. After two unsuccessful repairs of the same failure, the assistant preserves the work and recommends a different next action. Unverified work stays open, and a known limitation is accepted only with your recorded decision.
 
@@ -391,7 +393,7 @@ Delegated builds record the starting workspace state, confirm dependencies are p
 
 ## Package and scope
 
-- `skills/`: five command entrypoints with optional references: build and review delegation, build's Git workflow and pull request guidance, plan's project gates and foundation assessment, and close's CI evidence.
+- `skills/`: five command entrypoints with optional references: build and review delegation, build's Git workflow and pull request guidance, plan's project gates and foundation assessment, and close's CI evidence, release metadata, and lazily loaded guided-release procedure.
 - `agents/`: three shared worker briefs; `claude-agents/`: generated native Claude adapters with identical instruction bodies.
 - `templates/`: optional PRD, roadmap, and phase plan starting points.
 - `.claude-plugin/`, `.codex-plugin/`, `plugin.json`, `.agents/plugins/`: native packaging for Claude, Codex, and Antigravity, and the released Codex catalog. OpenCode loads the shared skills directory directly.
