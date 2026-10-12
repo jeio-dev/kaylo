@@ -105,12 +105,18 @@ function readGates(projectRoot, io = fs) {
   try { real = io.realpathSync(gates); }
   catch { return invalid([diagnostic('GATES_READ')]); }
   if (!inside(root, real)) return invalid([diagnostic('GATES_ESCAPE')]);
+  // Opening a FIFO with no writer blocks, so refuse special files before opening. The
+  // nonblocking open and descriptor identity check cover a replacement in between.
   let bytes;
   let fd;
   try {
-    fd = io.openSync(real, 'r');
+    const before = io.statSync(real);
+    if (!before.isFile() || before.size > maxBytes) throw new Error('unsuitable');
+    fd = io.openSync(real, fs.constants.O_RDONLY | (fs.constants.O_NONBLOCK || 0));
     const stat = io.fstatSync(fd);
-    if (!stat.isFile() || stat.size > maxBytes) throw new Error('unsuitable');
+    if (!stat.isFile() || stat.dev !== before.dev || stat.ino !== before.ino || stat.size > maxBytes) {
+      throw new Error('unsuitable');
+    }
     bytes = io.readFileSync(fd);
   } catch {
     return invalid([diagnostic('GATES_READ')]);

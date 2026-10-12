@@ -6,7 +6,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { checkCiEvidence, states } = require('../scripts/check-ci-evidence.cjs');
+const { checkCiEvidence, readSnapshot, states } = require('../scripts/check-ci-evidence.cjs');
 const script = path.resolve(__dirname, '../scripts/check-ci-evidence.cjs');
 const repo = 'github.com/example/project';
 const head = '3f1c0de2a9b84c7e5d6f7a8b9c0d1e2f3a4b5c6d';
@@ -160,6 +160,30 @@ test('the CLI distinguishes read failures, blockers and invocation errors', t =>
     assert.equal(result.status, 2);
     assert.equal(result.stderr, 'CI_USAGE: Expected exactly one CI snapshot argument\n');
   }
+});
+
+// Bounded: a regression that blocks on open fails by timeout instead of hanging the suite.
+test('a FIFO snapshot is refused promptly as a read failure', t => {
+  if (process.platform === 'win32') return t.skip('no FIFOs');
+  const fifo = path.join(path.dirname(file(t, '{}')), 'fifo.json');
+  if (spawnSync('mkfifo', [fifo]).status !== 0) return t.skip('mkfifo is unavailable');
+  const result = spawnSync(process.execPath, [script, fifo], { encoding: 'utf8', timeout: 5000 });
+  assert.equal(result.signal, null, 'checker blocked on the FIFO');
+  assert.equal(result.status, 1);
+  assert.equal(result.stdout, '');
+  assert.equal(result.stderr, 'CI_READ: Cannot read CI snapshot as a regular UTF-8 JSON file\n');
+});
+
+test('a snapshot replaced between inspection and open is a read failure', t => {
+  const target = file(t, snapshot());
+  const io = Object.create(fs);
+  io.openSync = (name, flags) => {
+    fs.writeFileSync(target + '.new', JSON.stringify(snapshot()));
+    fs.renameSync(target + '.new', target);
+    return fs.openSync(name, flags);
+  };
+  assert.deepEqual(codes(readSnapshot(target, io)), ['CI_READ']);
+  assert.ok(readSnapshot(target).snapshot, 'the replacement itself is readable');
 });
 
 test('check names in diagnostics are bounded and printable', () => {

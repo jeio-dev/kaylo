@@ -130,6 +130,30 @@ test('invalid encoding, oversized files, directories and dangling links are read
   assert.deepEqual(codes(readGates(fileKaylo)), ['GATES_READ@.kaylo/gates']);
 });
 
+// Bounded: a regression that blocks on open fails by timeout instead of hanging the suite.
+test('a FIFO reference is refused promptly as a read failure', t => {
+  if (process.platform === 'win32') return t.skip('no FIFOs');
+  const root = project(t, undefined, ['.kaylo']);
+  if (spawnSync('mkfifo', [path.join(root, '.kaylo/gates')]).status !== 0) return t.skip('mkfifo is unavailable');
+  const result = spawnSync(process.execPath, [script, root], { encoding: 'utf8', timeout: 5000 });
+  assert.equal(result.signal, null, 'reader blocked on the FIFO');
+  assert.equal(result.status, 1);
+  assert.equal(result.stdout, '');
+  assert.equal(result.stderr, 'GATES_READ: .kaylo/gates: Cannot read .kaylo/gates as a regular UTF-8 file\n');
+});
+
+test('a reference replaced between inspection and open is a read failure', t => {
+  const root = project(t, valid);
+  const gates = path.join(root, '.kaylo/gates');
+  const io = Object.create(fs);
+  io.openSync = (target, flags) => {
+    fs.writeFileSync(gates + '.new', valid);
+    fs.renameSync(gates + '.new', gates);
+    return fs.openSync(target, flags);
+  };
+  assert.deepEqual(codes(readGates(root, io)), ['GATES_READ@.kaylo/gates']);
+});
+
 test('an unreadable reference is a read failure', t => {
   if (process.getuid && process.getuid() === 0) return t.skip('root can read mode 000 files');
   const root = project(t, valid);

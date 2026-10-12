@@ -132,11 +132,17 @@ function checkCiEvidence(snapshot) {
 }
 
 function readSnapshot(file, io = fs) {
+  // Opening a FIFO with no writer blocks, so refuse special files before opening. The
+  // nonblocking open and descriptor identity check cover a replacement in between.
   let fd;
   try {
-    fd = io.openSync(file, 'r');
+    const before = io.statSync(file);
+    if (!before.isFile() || before.size > maxBytes) throw new Error('unsuitable');
+    fd = io.openSync(file, fs.constants.O_RDONLY | (fs.constants.O_NONBLOCK || 0));
     const stat = io.fstatSync(fd);
-    if (!stat.isFile() || stat.size > maxBytes) throw new Error('unsuitable');
+    if (!stat.isFile() || stat.dev !== before.dev || stat.ino !== before.ino || stat.size > maxBytes) {
+      throw new Error('unsuitable');
+    }
     const bytes = io.readFileSync(fd);
     if (bytes.length >= 3 && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) throw new Error('bom');
     return { snapshot: JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes)) };
