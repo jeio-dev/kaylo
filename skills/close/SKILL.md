@@ -47,7 +47,7 @@ Help the user understand what is complete and how to use it. Work in the user's 
 - Open non-blocking review comments do not block closure. Record actual user decisions for accepted comments. Deferring an unmet requirement changes scope; it does not make the requirement pass.
 - Repairs or unresolved task verification → `/kaylo:build <task ID>`, naming the affected task (for example `/kaylo:build T1`) so automatic selection does not skip its recorded blocker. Close does not implement fixes.
 - After two unsuccessful repairs of the same unresolved failure, hand back the blocker and attempt history. A session, task ID, or worker change does not reset the limit. Another correction requires material new evidence, a changed blocking condition, or explicit user authorization, without a fresh two-attempt allowance.
-- Commit, push, deploy, post publicly, or tag a release only when already requested. If included in the agreed task, verify the action's actual outcome before claiming completion.
+- Commit, push, deploy, post publicly, or tag a release only when already requested. For a commit or push, follow [Git workflow](../build/references/git.md). If included in the agreed task, verify the action's actual outcome before claiming completion.
 
 ## Structural plan check
 

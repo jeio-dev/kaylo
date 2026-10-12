@@ -21,7 +21,7 @@ Format: 1
 Worker models: Inherit
 ```
 
-`Worker models:` accepts exactly `Inherit`, `Quality`, `Balanced`, or `Budget`. The skills read the file; no validator parses it. A missing file, a format other than `Format: 1`, or a missing or unknown value means Inherit; say which occurred. Build and review never ask for a preference. Inherit uses the host's normal worker model behavior, including when no file exists, so existing projects continue without a routing change.
+`Worker models:` accepts exactly `Inherit`, `Quality`, `Balanced`, or `Budget`. The skills read the file. `scripts/read-preferences.cjs` reports its usable values without changing anything, and [Git workflow](skills/build/references/git.md#preferences) gives the record syntax and the optional Git keys. A missing file, a format other than `Format: 1`, or a missing, repeated, or unknown value means Inherit; say which occurred. Build and review never ask for a preference. Inherit uses the host's normal worker model behavior, including when no file exists, so existing projects continue without a routing change.
 
 The user may add two optional keys. Plan never asks for them and keeps them when it writes the file; a missing key keeps the behavior described without it:
 
