@@ -4,6 +4,14 @@
 
 ### Notable Changes
 
+- **docs**: The #83 behavioral gate trial was not completed. Its second
+  attempt stopped at preflight, and #113–#116 were closed on package checks
+  alone by maintainer decision. When the validator or record helper runs, it
+  enforces completed review coverage for checked `Risk: high` tasks, cited
+  `accepted by user` resolutions, and record placement. Whether a model
+  requests the high-risk review in the same run, records a blocked check, or
+  states a direct reviewer's tier in time is unmeasured; see `VERIFICATION.md`
+  ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
 - **tools**: The plan validator now requires an `accepted by user` review
   resolution to cite your decision, as in
   `- R1: non-blocking — accepted by user; decision: <the question asked and your answer, or where it is recorded>`.
@@ -18,7 +26,7 @@
 - **skills**: Build, review, and plan now say that agreeing to a review route
   exception or waiver resolves no review finding. Only your explicit decision on
   that finding allows `accepted by user`, and a reply that leaves the choice to
-  the assistant is not that decision. Instructions only; not yet trialed
+  the assistant is not that decision. Instructions only; not trialed on a model
   ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
 - **docs**: `tests/GUARDRAIL-TRIALS.md` operator rules, for runs after
   2026-10-11, approve a throwaway probe in the session's named scratch
@@ -33,8 +41,8 @@
 - **skills**: Build now presents high-risk completion as numbered steps: check,
   request review or ask the route in the same run, record, then check off through
   the helper. Review uses the helper for reviewer records; targeted manual edits
-  remain the fallback. These instructions have not yet passed the model gate
-  ([#113](https://github.com/jeio-dev/kaylo/issues/113)).
+  remain the fallback. These instructions were not trialed on a model; #113 was
+  closed on package checks alone ([#113](https://github.com/jeio-dev/kaylo/issues/113)).
 - **docs**: Correct the glossary's stale claim that validation ignores records:
   it checks placement and completed high-risk reviewer coverage. Record PR #118's
   checks and independent review separately from live model behavior.
@@ -60,7 +68,7 @@
   sentence. `WORKERS.md`'s vendor choices say the same
   ([#115](https://github.com/jeio-dev/kaylo/issues/115)). These two entries
   change instructions only and neither the plan validator nor the dispatch
-  report; no model trial has run on them yet.
+  report; no model trial has run on them.
 - **tools**: The dispatch report now lists records under `## Review` that fail
   to parse, and build records (`verify`, `repair`, `accept`, `reopen`, a builder
   `dispatch` or `direct`) placed there. Before, those were silently ignored.
@@ -121,7 +129,7 @@
   stand-ins for missing modules or dependencies, and changes to your other files
   outside the project stay prohibited, and the builder returns a missing
   dependency as a blocker. Both briefs ask workers to report denied actions.
-  Instructions only; no model trial has run on them yet
+  Instructions only; no model trial has run on them
   ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
 - **docs**: The glossary's structural checks and the manual fallback in build,
   close, and plan now list the review comment form, the resolution, the
