@@ -1832,6 +1832,30 @@ Not run: the foundation wording change was checked by inspection against the
 isolated host install trials, and real CI-provider integration remain deferred
 as recorded above.
 
+## PR #126 focused re-review — 2026-10-12
+
+Direct Codex re-review at `88a5546d9279dacf0af492da92a7e403091e7124`
+inspected the three commits since the first review, the maintainer's reply,
+and the affected reader, test, foundation, changelog, and verification paths.
+Both original findings are fixed; no new findings in this focused re-review.
+No implementation edits were made.
+
+Observed on Linux: package validation passed; the Node suite passed 301/301
+with no skips; strict Claude plugin and marketplace validation, Antigravity
+plugin validation, and `git diff main...HEAD --check` passed. Disposable
+scratch probes independently confirmed both readers return their read-failure
+diagnostic for a FIFO with no writer and for a regular file replaced by a FIFO
+between stat and open, within a 1.5-second bound. The revised foundation
+instructions require all ten areas on first planning, including small changes;
+partial reassessment reuses an established assessment.
+
+Limits: foundation behavior was inspected statically. No live model/worker
+trial, Windows execution, isolated host install/update trial, or real
+CI-provider/branch-protection integration ran. Package resource and native
+manifest checks do not establish host loading or worker behavior. Deferred
+behavioral verification and release readiness remain separate from this
+finding recheck.
+
 ## Public installation 0.11.0 — 2026-10-06
 
 PR #82 merged the release commits into `main` as `9a935bb`. The immutable
