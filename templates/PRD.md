@@ -20,6 +20,10 @@
 
 - [Existing stack, available tools/accounts, budget, or other applicable requirement; do not assume API or native subagent access. Workflow preferences, such as how a phase will be built or reviewed, do not belong in a PRD]
 
+## Data sensitivity
+
+[Kinds of sensitive data handled (for example personal data, payments, credentials), or None or Unknown; where it flows and is stored; third parties it reaches; open questions. Descriptions only, never real values.]
+
 ## Success criteria
 
 - [Observable behavior proving the outcome]
