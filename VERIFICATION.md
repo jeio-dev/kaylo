@@ -1706,6 +1706,23 @@ behavior was observed.
   hand and never validates can still skip a review or invent an acceptance. No reliability or cross-host claim is
   made, and the README and CHANGELOG must not describe this behavior as verified.
 
+## Documentation drift fixes and verification archive — 2026-10-11
+
+Documentation only; no skill, worker brief, script, template, or manifest
+changed. Records already present byte for byte in `v0.11.0:VERIFICATION.md`
+were removed from this file: a section-by-section comparison found every
+removed section identical to the tag copy, and the only other changed lines
+were four reworded headings. The CHANGELOG `[Unreleased]` notes were
+consolidated to describe the net change since 0.11.0, removing a superseded
+claim that the plan validator ignores dispatch records. README, `WORKERS.md`,
+`GLOSSARY.md`, and `tests/GUARDRAIL-TRIALS.md` were corrected for the record
+helper, the `## Review` requirement, the review comment form, the model trials
+of earlier #83 instructions, and the archived record locations.
+
+`node scripts/validate-package.cjs` passed, `node --test tests/*.test.cjs`
+passed 264 of 264, and `git diff --check` passed. Native manifest validators
+were not run because no manifest changed. No model behavior was checked.
+
 ## Public installation 0.11.0 — 2026-10-06
 
 PR #82 merged the release commits into `main` as `9a935bb`. The immutable

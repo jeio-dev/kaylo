@@ -57,11 +57,10 @@ every selected host. Codex `status` reports its listed version without a file
 comparison because its read-only listing does not expose the active path.
 Start a new host session after installing or updating.
 
-Before the 0.10.0 release, the installer was checked from a packed tarball on
-one Linux (WSL2) machine, with isolated profiles and a local release mirror;
-after publication, fresh installs and an update from v0.9.3 were also checked
-against the public npm registry and GitHub. No Kaylo skill or worker has been
-run with a Gemini model in Gemini CLI; its model behavior remains untested. See [verification](VERIFICATION.md).
+For each release since 0.10.0, fresh installs and an update from the previous
+release were checked on one Linux (WSL2) machine against the public npm
+registry and GitHub. No Kaylo skill or worker has been run with a Gemini model
+in Gemini CLI; its model behavior remains untested. See [verification](VERIFICATION.md).
 
 Every host uses the same five skill files and supporting resources.
 Installation includes the full package; copying only `SKILL.md` loses
@@ -329,9 +328,13 @@ inspection and disclosure of that limit.
 It checks the `Current:` link in `ROADMAP.md`, phase and task entries, required
 task fields, unique IDs, and `Blocked by:` references. A checked task needs a
 substantive `Result:`, not an unfinished marker such as `TODO` or `Blocked`.
-Closure checks run with `--closing` or when the current phase is checked; they
-require every task checked, no `Needs revision` status, and `## Review` and
-`## Completion` records. Older Kaylo formats are rejected with a diagnostic
+The current phase plan needs a `## Review` section (`None` before a review).
+Review comments use the form `- R1: blocking — open`, and an `accepted by user`
+resolution must cite your decision. `{kaylo:v1 ...}` records belong on a task's
+`Result:` line, and a checked `Risk: high` task needs a completed reviewer
+record covering it. Closure checks run with `--closing` or when the current
+phase is checked; they require every task checked, no `Needs revision` status,
+and `## Review` and `## Completion` records. Older Kaylo formats are rejected with a diagnostic
 naming the replacement. The glossary's
 [validation rules](GLOSSARY.md#validation-rules) give the exact contract.
 
@@ -378,7 +381,7 @@ on Linux only; macOS and Windows (Git for Windows' `sh`) are untested.
 
 Claude and Codex can guide a project. Seven guardrail and routing cases each passed three runs on Claude Code with Sonnet 5.5 and on Codex CLI with its default model. That result covers only those setups; see [verification](VERIFICATION.md). Antigravity can receive research work; Gemini CLI loads the same briefs, but no worker has been run there, and OpenCode with an available DeepSeek model can receive implementation work. Read [working with a worker](WORKERS.md) for a copyable handoff and model-selection guidance. When a plan expects workers for which Kaylo can choose a model at dispatch, plan asks once for a project preference and writes `Format: 1` and a `Worker models:` choice of Inherit, Quality, Balanced, or Budget to `.kaylo/preferences.md`. The user can edit that file later. A missing or unknown preference uses Inherit; build never asks for a preference. Gemini CLI and Antigravity use Inherit for their packaged workers, so plan does not ask for their model preference. When a requested tier is unavailable, dispatch waits for a user choice rather than silently using a weaker model.
 
-You can add two optional keys to that file. `Review vendor: different` requires a reviewer whose model vendor is known to differ from every builder in the review target; when that cannot be established, the assistant offers to waive the requirement for that review, hand off manually, or pause, but never to skip the review. `Metered: allowed (<route>)` authorizes one named pay-per-use route, such as OpenRouter; an explicit authorization in the session for that route also counts, and unknown billing is never presumed covered. A task marked `Risk: high` gets a focused review, requested in the same build run, after its checks pass and before it is checked off. When a check fails, the assistant diagnoses it first and recommends a stronger tier only when capability matters; a model change never adds repairs. Builds and reviews append compact `{kaylo:v1 ...}` records to the phase plan, and `node /absolute/path/to/kaylo/scripts/dispatch-report.cjs /absolute/path/to/project` prints first-try pass rates from closed phases. The report is read-only and advisory. These paths are written instructions with fixture-tested parsing; none has been run with a model yet.
+The same file accepts two optional keys, `Review vendor: different` and `Metered: allowed (<route>)`; see [review vendor and metered routes](WORKERS.md#review-vendor-and-metered-routes). A task marked `Risk: high` gets a focused review, requested in the same build run, after its checks pass and before it is checked off. When a check fails, the assistant diagnoses it first and recommends a stronger tier only when capability matters; a model change never adds repairs. Builds and reviews append compact `{kaylo:v1 ...}` records to the phase plan, through `scripts/plan-record.cjs` when Node is available, and `node /absolute/path/to/kaylo/scripts/dispatch-report.cjs /absolute/path/to/project` prints first-try pass rates from closed phases. The report is read-only and advisory. Earlier versions of these instructions ran in single-run and three-run trials on Claude Code with Sonnet 5.5; the current instructions and the record helper have not been run with a model. See [verification](VERIFICATION.md).
 
 Work directly when that is sufficient; use one worker at a time when helpful. Plain `/kaylo:build phase` stays sequential. On Claude Code, an explicit request to build the phase in parallel may run up to two ready tasks together when their files and mutable check resources are disjoint; uncertain or overlapping work stays sequential. Other hosts keep the sequential loop. The guiding assistant maintains `ROADMAP.md` and the phase plans, inspects each worker's actual changes, and runs shared checks after a parallel wave. Native delegation is optional and never implies cross-vendor subscription access. Narrow uncertain work before giving it to a smaller model; no prompt guarantees every model can complete every task.
 
@@ -393,7 +396,7 @@ Delegated builds record the starting workspace state, confirm dependencies are p
 - `gemini-extension.json`: native Gemini packaging of the shared skills.
 - `development/`: the separate local Codex catalog and ignored generated package.
 - `hooks/`: the optional reminder; no workflow runtime or persistent state.
-- `scripts/`: plan/package validators, the read-only dispatch report, the Claude agent adapter generator, and local development staging; `tests/`: validator fixtures and behavioral trial prompts.
+- `scripts/`: plan/package validators, the plan record helper, the read-only dispatch report, the Claude agent adapter generator, and local development staging; `tests/`: validator fixtures and behavioral trial prompts.
 
 The installer runs native host commands, with one verified package copy and one
 global config entry for OpenCode. It adds no model router or terminal

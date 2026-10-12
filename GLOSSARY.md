@@ -177,7 +177,7 @@ This section is the exact contract for Kaylo's files, for people changing the va
 | `Result:` | Kaylo convention; no single team field matches. | Nonempty on every task; substantive on a checked task, with no leading unfinished state marker (see Validation rules). |
 | `Status:` (`Current`, `Needs revision: <reason>`) | Kaylo convention for plan validity. | Required; see the rules below. |
 | `Current:` | Kaylo convention for index selection. | Required; exactly one, matching one phase entry. |
-| `## Review` | Already the plain word. | Checked at closure. |
+| `## Review` | Already the plain word. | Required in the current phase plan (`None` before a review); checked at closure. |
 | `## Next step` | Already the plain word. | Instructions only |
 | `## Completion` | Records phase closure, not a release. | Checked at closure. |
 | Repair limit | Counts attempts, so it is not a timebox. | Instructions only |
