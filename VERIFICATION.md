@@ -18,8 +18,10 @@ The #87 decision-record implementation adds a canonical optional ADR/index
 contract, manual consistency/promotion rules, and existing-entry-point/worker
 integration. The 2026-10-12 behavioral pass below has 55 manifest entries:
 49 executed once (42 PASS, 2 FAIL, 5 INCONCLUSIVE) and 6 dependent cases BLOCKED.
-Issue acceptance remains open and PR #129 remains draft. Project ADR checks are
-instructional, not part of the structural plan/package validators.
+Issue acceptance remains open and PR #129 remains draft. Case 54 has the separate
+correction and three passing focused observations recorded below; original trial
+grades remain historical. Project ADR checks are instructional, not part of the
+structural plan/package validators.
 
 The #86 guided-release implementation adds local metadata/reconciliation and
 manual preparation guidance. Its parsing/Git/package checks are recorded below;
@@ -223,6 +225,63 @@ as current behavioral evidence. `git diff --check` passed for these records.
 Issue acceptance stays open and PR #129 stays draft. Next: address missing-resource
 fallback failure 54 separately, then run a focused recheck with corrected
 inconclusive fixtures.
+
+## Issue #87 case 54 resource-fallback correction — 2026-10-12
+
+Separate follow-up on `feat/87-project-decisions` from clean
+`b7e485c02af36a21bd397cf1c11041d8dc7206b2`, authorized by the user's request to
+address case 54. The pasted skill previously referred to a missing contract's
+fallback, so a model accepted work using structural inspection alone. The four
+decision-consuming skills now include the stopping rule directly: present records
+or required promotion need an identified complete canonical contract; otherwise
+leave affected work open before implementation/readiness/acceptance/closure,
+record missing resources, and name the full package/reference/template-content
+handoff. Existing ADRs or structural validation cannot establish that contract.
+Optional absence keeps the legacy path. The canonical reference matches it.
+
+Package validation now enforces presence/alignment of these copied paragraphs;
+a new mutation test rejects missing and drifted fallback copies. That checks
+package instructions, not model behavior. No worker brief changed; generated
+adapter parity passed without regeneration. No versions/catalogs/hooks changed.
+Only attributable implementation, tests, changelog and verification records were
+edited; no unrelated work was present or discarded.
+
+Observed: package validation and extracted full-package parity passed with
+41 matching shared resources. Node 24.21.0: all 378 pre-existing full-suite tests
+passed, then the expanded package suite passed 26/26 including the new mutation
+test; zero skips/failures. Claude Code 2.1.296 strict plugin/marketplace validators
+and Antigravity CLI 1.3.1 native manifest validator passed. `git diff --check`
+passed. Package/manifest checks do not establish instruction following.
+
+**Three focused fresh model executions, one each: 3 PASS, no failures/limits
+preventing the checkpoints.** Present ADRs plus missing contract kept T1 open
+with a concrete unreadable diagnostic and full-package/content handoff; no product
+edit or acceptance occurred. Clean absent records retained the legacy build;
+complete supplied contract/templates allowed manual decision/structure inspection
+when helpers were unavailable. Product commands passed for both positive cases,
+and all existing ADR/index bytes stayed unchanged. An optional nested spawnSync
+probe in the absence case failed EPERM; the direct command and equivalent
+in-process assertion passed. No nested-process support is claimed.
+
+Codex CLI 0.162.1, CLI-selected gpt-6.1-sol (low), existing ChatGPT login;
+backend resolved model/snapshot unknown because not exposed. At most two subjects
+concurrently, fresh ephemeral contexts and isolated temporary profiles with
+separate mutable fixtures; normal settings and account routes unchanged. Credential
+copies deleted afterward. Full candidate package:
+`/tmp/kaylo-87-fallback-ju87h0x8/package`, base b7e485c plus the private recorded
+candidate patch/inventory. Raw prompts/events/outcomes, fixture snapshots and
+candidate evidence are private in
+`.local/trials/decision-87-case54-followup-20261012/`. The
+[focused report](tests/decision-trials/2026-10-12-codex/CASE54-FOLLOWUP.md) and
+[receipts](tests/decision-trials/2026-10-12-codex/case54-followup.json) record exact
+scope, hashes, outputs and limits without publishing transcripts.
+
+This follow-up is separate from the completed pass; its original grades are
+preserved. Live observations cover build, while other entry points have instruction
+parity only. No independent code review, native candidate install/update/discovery,
+other model/host, public installation or interrupted/reopened closure was tested.
+One observation is not reliability. Failure 25 and other original coverage gaps
+remain open; issue #87 remains open and PR #129 draft.
 
 ## Issue #87 specification review — 2026-10-07
 

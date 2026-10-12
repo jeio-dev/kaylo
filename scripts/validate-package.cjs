@@ -177,6 +177,8 @@ try {
       omitted: { define: 'define runs no checks' } },
     { block: 'working-changes guardrail', start: '- Inspect staged, unstaged, and untracked changes',
       in: ['close', 'define', 'plan', 'review'], extended: { build: 'adds the workspace record' } },
+    { block: 'decision-resource fallback', start: 'If the decision reference', in: ['plan', 'build', 'review', 'close'],
+      omitted: { define: 'define does not consume ADR records' } },
     { block: 'Node-unavailable fallback', start: 'If Node or the script is unavailable', in: ['build', 'close'],
       reworded: { plan: [
         // Plan lists older formats in its own section.

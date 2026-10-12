@@ -4,6 +4,12 @@
 
 ### Notable Changes
 
+- **skills**: Pasted plan/build/review/close instructions now carry the missing
+  decision-resource stopping rule. Present records require an identified complete
+  contract before affected work can be accepted; manual plan validation alone
+  cannot substitute for it. Projects without records retain the existing path
+  ([#129](https://github.com/jeio-dev/kaylo/pull/129)).
+
 - **skills**: Optional indexed ADRs preserve consequential project decisions.
   Plan, build, both review targets, and worker packets consume applicable records
   and settled phase changes; close promotes final decisions with retry recovery

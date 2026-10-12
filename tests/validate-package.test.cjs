@@ -370,3 +370,16 @@ test('decision template links cannot drift while files remain packaged', t => {
     assert(result.stderr.includes(`Missing decision template reference: templates/${template}`));
   }
 });
+test('pasted decision consumers retain an aligned standalone resource fallback', t => {
+  const dir = fixture(t);
+  const target = path.join(dir, 'skills/build/SKILL.md');
+  const original = fs.readFileSync(target, 'utf8');
+  const fallback = /^If the decision reference.*\n/m;
+  assert(fallback.test(original));
+  for (const replacement of ['', 'If the decision reference is unavailable, infer its contract from existing ADRs.\n']) {
+    fs.writeFileSync(target, original.replace(fallback, replacement));
+    const result = check(dir);
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /decision-resource fallback/);
+  }
+});

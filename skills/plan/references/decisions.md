@@ -175,11 +175,21 @@ observed conflict, affected scope, and resume action>`. Kinds are `unreadable`,
 in existing blocker/review fields and leave affected work open. Resolve
 consequential ambiguity through planning/agreement, never a guessed winner.
 
-When the reference/templates are unavailable, retain optional-absence behavior.
-For present records or required promotion, use equivalent manual inspection only
-if the complete contract can be established from available content; otherwise
-report missing resources and a full-package/reference handoff as the resume
-step. Do not install runtimes, change host settings, or waive product verification.
+When the reference/templates are unavailable, retain optional-absence behavior
+when `.kaylo/decisions/` is absent and no promotion is required; read established
+project decisions under ordinary agreement rules. For present records there or
+required promotion, use equivalent manual decision inspection only when the
+complete canonical contract is available from identified supplied content or
+an intact package; record that source and the checks. Existing ADRs, a phase
+plan, and structural validation do not establish the contract. Otherwise stop
+affected implementation, review readiness, task acceptance, or closure and
+leave its checkbox open. Record `Decision consistency: unreadable` with missing
+resource paths, affected scope, and a resume action in Result/Review/Completion.
+The handoff is the full package's selected skill and
+`skills/plan/references/decisions.md`, plus required `templates/DECISION.md` and
+`templates/DECISION-INDEX.md`, or their complete supplied contents. Manual
+structural fallback does not waive decision or product evidence. Do not install
+runtimes or change host settings.
 
 ## Promote during close, before phase check-off
 
