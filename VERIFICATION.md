@@ -2653,4 +2653,4 @@ Observed with Node 24.21.0 on Linux:
 These checks establish the written workflow order and validator modes, not
 model instruction following. No live model or worker trial, collision
 reconciliation trial, native install/update, or public installation ran. The
-fixes are not yet re-reviewed, committed, or pushed.
+fixes were pushed in `0dfee51` and are not yet re-reviewed.
