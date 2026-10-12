@@ -2654,3 +2654,79 @@ These checks establish the written workflow order and validator modes, not
 model instruction following. No live model or worker trial, collision
 reconciliation trial, native install/update, or public installation ran. The
 fixes were pushed in `0dfee51` and are not yet re-reviewed.
+
+## PR #129 focused re-review of P1/P2 — 2026-10-12
+
+Rechecked the two blocking findings against correction commit `0dfee51` and
+local HEAD `32cb1b1c3543eaa017a17bd5a3cba74f0c7003ae`. The checkout was clean;
+GitHub reported the same head for draft PR #129. Although the preceding user
+message described uncommitted/unpushed changes, observed repository and remote
+state contained the committed corrections. This re-review performed no commit,
+push, or GitHub publication.
+
+- P1: fixed. Close explicitly uses ordinary structural validation before
+  promotion, keeps task completion, valid phase status and Review as separate
+  prerequisites, then uses `--closing` after writing Completion. The canonical
+  reference agrees; manual pre-promotion inspection omits only Completion.
+  Independently reran the disposable six-invocation probe: empty and
+  `Not complete.` Completion passed ordinary mode and failed `--closing` with
+  the substantive-Completion diagnostic; substantive Completion passed both.
+- P2: fixed. The canonical collision rule no longer moves, renumbers, edits, or
+  renames either accepted record or incoming links. It reports the collision and
+  leaves affected work open pending an agreed preservation policy. This resolves
+  the earlier instruction to mutate accepted history; no executable
+  reconciliation algorithm or behavioral success is inferred.
+
+Package validation and both working-tree and correction-diff whitespace checks
+passed independently. Reused the recorded 386 passing tests and native manifest
+results from the correction record above: the correction changes instructions
+and evidence only, with validator/test code, dependencies and manifests
+unchanged. Those full/native checks were not rerun during this focused review.
+The disposable probe was removed; whitespace was checked after this record.
+
+No new blocking finding was identified in these corrections. This is a direct
+recheck in the earlier review conversation, without a fresh delegated reviewer,
+live model/worker trial, or collision-reconciliation execution. Prior #87
+behavioral coverage gaps and overall acceptance remain unchanged. Only this
+evidence record was added locally.
+
+## PR #129 last-pass review against issue #87 — 2026-10-12
+
+Reviewed the full current diff at
+`32cb1b1c3543eaa017a17bd5a3cba74f0c7003ae` against base
+`0c815d85d9e1d203002bb3e0b88ca29372de3912` and issue #87's approved
+revised specification. GitHub confirmed these same head/base commits, draft
+state, and no reported CI checks. The pre-existing local focused re-review
+addition to this file was preserved. Implementation resources matched the PR
+head; this pass added only this local evidence record.
+
+Inspected the canonical contract, ADR/index/phase templates, all changed skill
+entry points, worker briefs/adapters and handoff references, foundation mapping,
+package validator and mutation tests, user documentation, and published trial
+receipts/limits. Previous close-order and accepted-collision findings remain
+corrected: ordinary validation precedes promotion, full closing validation
+follows Completion, and accepted collisions cannot rewrite bodies, IDs, paths,
+or incoming links. No new blocking implementation finding was identified.
+
+Fresh observed checks on Node 24.21.0, Linux:
+
+- `node scripts/validate-package.cjs`: passed, including generated adapter and
+  copied-instruction parity checks.
+- `node --test tests/*.test.cjs`: 386 passed, 0 failed, 0 skipped. This includes
+  packed-resource inventory/parity and isolated installer fixtures; it does
+  not establish native host discovery or model behavior.
+- Claude Code 2.1.296: both strict plugin/marketplace manifest checks passed.
+- Antigravity CLI 1.3.1: native manifest validation passed (5 skills, 3 agents;
+  commands, mcpServers, and hooks reported skipped).
+- `git diff origin/main...HEAD --check` and `git diff --check`: passed;
+  working-tree whitespace rechecked after this evidence addition.
+
+This was a direct review in a new invoking conversation, without a delegated
+reviewer. No fresh live model/worker trial, native candidate install/update/
+discovery, public installation, race/crash, interrupted/reopened close, or
+historical immutability audit ran. Gemini CLI remains unavailable on PATH.
+Historical diagnostic failure 25 and incomplete behavioral coverage remain
+open; earlier trial observations do not verify the latest changed instructions.
+Issue #87 acceptance remains open. PR #129 was still a draft during this review;
+the maintainer later merged it as `51901a5`. The review itself made no
+implementation edit, commit, push, or GitHub review/comment publication.
