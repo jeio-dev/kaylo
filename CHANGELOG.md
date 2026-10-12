@@ -4,174 +4,33 @@
 
 ### Notable Changes
 
-- **docs**: The #83 behavioral gate trial was not completed. Its second
-  attempt stopped at preflight, and #113–#116 were closed on package checks
-  alone by maintainer decision. When the validator or record helper runs, it
-  enforces completed review coverage for checked `Risk: high` tasks, cited
-  `accepted by user` resolutions, and record placement. Whether a model
-  requests the high-risk review in the same run, records a blocked check, or
-  states a direct reviewer's tier in time is unmeasured; see `VERIFICATION.md`
+- **docs**: Earlier versions of the instructions below ran in single-run and
+  three-run trials on Claude Code with Sonnet 5.5. The #83 behavioral gate
+  trial was not completed: its second attempt stopped at preflight, and
+  #113–#116 were closed on package checks alone by maintainer decision. The
+  final instructions and the record helper have not been run with a model.
+  When the validator or record helper runs, it enforces completed review
+  coverage for checked `Risk: high` tasks, cited `accepted by user`
+  resolutions, and record placement; whether a model follows the rest is
+  unmeasured. See `VERIFICATION.md`
   ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
-- **tools**: The plan validator now requires an `accepted by user` review
-  resolution to cite your decision, as in
-  `- R1: non-blocking — accepted by user; decision: <the question asked and your answer, or where it is recorded>`.
-  A missing, placeholder, or punctuation-only citation fails. The record helper
-  therefore refuses any operation while the current phase has an uncited
-  acceptance, restores the file, and prints the accepted form. Only the plan
-  that `Current:` links is checked; earlier phases are not. To migrate, the
-  assistant asks you about each uncited acceptance in the current phase and
-  cites your answer, or sets the comment back to `open` if you don't confirm
-  it. A validator cannot prove you made the decision; it only makes a missing
-  one visible ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
-- **skills**: Build, review, and plan now say that agreeing to a review route
-  exception or waiver resolves no review finding. Only your explicit decision on
-  that finding allows `accepted by user`, and a reply that leaves the choice to
-  the assistant is not that decision. Instructions only; not trialed on a model
-  ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
-- **docs**: `tests/GUARDRAIL-TRIALS.md` operator rules, for runs after
-  2026-10-11, approve a throwaway probe in the session's named scratch
-  directory and still deny every other write outside the project.
-
-- **tools**: Optional `scripts/plan-record.cjs` appends one task or reviewer record
-  and checks off a task with its `accept` record. It reuses the record parser and
-  structural validator, preserves earlier text, and restores caught validation
-  failures. Anchored Markdown targeting prevents the #116 edit failure when the
-  helper is used ([#116](https://github.com/jeio-dev/kaylo/issues/116)). The helper
-  itself changes no record grammar or validator rule.
-- **skills**: Build now presents high-risk completion as numbered steps: check,
-  request review or ask the route in the same run, record, then check off through
-  the helper. Review uses the helper for reviewer records; targeted manual edits
-  remain the fallback. These instructions were not trialed on a model; #113 was
-  closed on package checks alone ([#113](https://github.com/jeio-dev/kaylo/issues/113)).
-- **docs**: Correct the glossary's stale claim that validation ignores records:
-  it checks placement and completed high-risk reviewer coverage. Record PR #118's
-  checks and independent review separately from live model behavior.
-
-- **skills**: Build's instructions now say to request a `Risk: high` task's
-  focused review in the same run once its checks pass, or to ask the route
-  question when Strong cannot be established, rather than ending the turn by
-  pointing to `/kaylo:review`. The turn may end before that review only when
-  you choose a pause or a manual handoff, while the review is pending, or under
-  another stop rule such as the repair limit
-  ([#113](https://github.com/jeio-dev/kaylo/issues/113)). They also tell build
-  to record the first check after builder work as `verify` even when the task
-  stays blocked: `result=fail` when the check ran and failed, and
-  `result=unavailable` when it could not run. A prose description of the
-  failure does not replace the record, and build shows a blocked-task example
-  ([#114](https://github.com/jeio-dev/kaylo/issues/114)). At check-off, build
-  is told to make targeted edits, reread the edited `Result:` line and
-  `## Review`, and record `accepted by user` only for a decision you made
-  ([#116](https://github.com/jeio-dev/kaylo/issues/116)).
-- **skills**: For a direct review under a tiered preference, review's
-  instructions now put the required tier and the observed model in the route
-  question's own text, not only in one of its options, with an example
-  sentence. `WORKERS.md`'s vendor choices say the same
-  ([#115](https://github.com/jeio-dev/kaylo/issues/115)). These two entries
-  change instructions only and neither the plan validator nor the dispatch
-  report; no model trial has run on them.
-- **tools**: The dispatch report now lists records under `## Review` that fail
-  to parse, and build records (`verify`, `repair`, `accept`, `reopen`, a builder
-  `dispatch` or `direct`) placed there. Before, those were silently ignored.
-  They appear under "Review section records not counted" and do not change
-  first-try rates. Review updates naming a task dispatch or no parsed
-  dispatch in the phase are also reported
-  ([#92](https://github.com/jeio-dev/kaylo/issues/92)).
-- **tools**: An `update` record may now carry the `host`, `route`, `vendor`,
-  and `model` observed when a dispatch returns, so a pending handoff can gain
-  its identity without editing the original record. The report groups by that
-  later known vendor; `unknown` and `n/a` updates preserve earlier known
-  identity values. A task is now malformed, and left out of first-try rates, when
-  it is accepted before its initial `verify`, when a `verify` or `repair`
-  names a dispatch that is still `pending`, or when it is accepted while a
-  builder dispatch is still `pending`. These address the two open findings
-  from the merged PR #91 review
-  ([#91](https://github.com/jeio-dev/kaylo/pull/91)).
-- **tools**: The plan validator rejects a review comment that names a label
-  but skips the `R1:` form, such as `- R1 (non-blocking, open): …`. These
-  lines escaped the duplicate-ID and old-label checks. Only a label immediately
-  after the ID, with at most one separator, triggers this rule; prose mentioning
-  labels later still passes. Spaces or tabs before the colon retain duplicate-ID
-  and old-label checks. Fix the line as
-  `- R1: non-blocking — open`.
-- **tools**: The plan validator now also requires a resolution after a
-  comment's label: `open`, `fixed`, or `accepted by user`, following ` — `.
-  A comment such as `- R1: non-blocking — left as an observation` now fails,
-  and the message names the three resolutions. A current phase plan with such
-  a comment fails validation until the resolution is added; closed phases are
-  not checked. Put other details in nested items, as before.
-- **skills**: Build's `Risk: high` rule now says to read
-  `.kaylo/preferences.md` and the review delegation reference before
-  requesting the review. It targets Strong under any preference, stops for
-  your choice when Strong cannot be established, and shows the review comment
-  form. In one #83 check, a model skipped both reads and recorded an inherited
-  reviewer with no exception.
-- **tools**: The plan validator now requires a `## Review` section in the
-  current phase plan (`None` is allowed before a review). A checked
-  `Risk: high` task needs a completed reviewer `dispatch` or `direct` record
-  under `## Review` whose `covers=` names the task or `phase`; a pending
-  handoff counts once a later `update` completes it. `{kaylo:v1 ...}` records
-  belong on a task's `Result:` line; `Acceptance criteria:` and `Test plan:`
-  may mention record syntax, and any other task line holding one fails. The
-  dispatch report marks such a task as malformed instead of counting it as
-  missing records. In the #83 repeated set, one run deleted its
-  `## Review` heading and `accept` record and still passed validation, and
-  another wrote builder records where the report could not read them.
-- **skills**: A direct review under a Quality, Balanced, or Budget preference
-  now states the required tier and the assistant's model before any review
-  work and in the text of any route question, such as the vendor choices; a
-  statement first written beside the review record comes too late. In the #83
-  repeated set, five of six V1 and V1D runs reviewed first and named the tier
-  only in the record.
-- **workers**: The builder and reviewer briefs share one write-location rule.
-  Workers write only inside the project, except a throwaway probe or scratch
-  file, such as an edge-case script, in the scratch or temporary directory the
-  host's instructions name for the session. Modified copies of project files,
-  stand-ins for missing modules or dependencies, and changes to your other files
-  outside the project stay prohibited, and the builder returns a missing
-  dependency as a blocker. Both briefs ask workers to report denied actions.
-  Instructions only; no model trial has run on them
-  ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
-- **docs**: The glossary's structural checks and the manual fallback in build,
-  close, and plan now list the review comment form, the resolution, the
-  `## Review` and high-risk review rules, and record placement. `WORKERS.md`
-  uses the report's "no parsed dispatch" wording.
-- **skills and workers**: A high-risk task review now records, for each
-  checklist topic (trust boundaries, authorization, invalid input,
-  sensitive-data exposure, and relevant abuse cases), what was found or why it
-  does not apply. This applies in the review skill and the reviewer brief.
-- **skills**: Under a Quality, Balanced, or Budget preference, review now
-  applies the reviewer tier to direct reviews too. Before reviewing directly,
-  the assistant states the required tier and its own model, and reviews
-  directly only if that model meets the tier; otherwise it uses a fresh
-  reviewer at that tier or asks you. A vendor waiver does not settle the tier.
-  On a host without reviewer subagents, a session whose model cannot be
-  identified as meeting the tier now stops for your choice. `direct` records
-  still take no `tier` key; the tier goes in the prose beside them
-  ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
-- **skills**: Build delegation now says the tier statement before a dispatch
-  is prose, and the builder `dispatch` record is appended when the worker
-  returns. A record written earlier is not edited; its later outcome is an
-  appended `update` ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
-- **skills and tools**: Build now states explicitly that reviewer records,
-  including high-risk reviews and inherited exceptions, go under `## Review`.
-  The dispatch report marks a checked task with a reviewer record in its
-  `Result:` malformed instead of counting it in first-try rates. The build
-  delegation reference includes the S/M/L builder tier rows and asks for the
-  preference, estimate, tier choice, and any reason for an increase before
-  dispatch; a missing dependency alone does not justify raising the tier.
-  These changes address H2 and E1 from the corrected-package smoke set
-  ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
-- **skills**: When a check fails, the assistant now diagnoses it before
-  choosing a stronger model. With a Quality, Balanced, or Budget preference
-  and a host that can apply the choice, it may recommend Light → Medium or
-  Medium → Strong within the remaining repairs; Strong stays Strong, and
-  Inherit stays Inherit unless you choose otherwise. A model change never adds
-  repairs: the limit is still two unsuccessful repairs of the same failure,
-  across sessions, workers, and models. A missing dependency, unavailable
-  check, quota limit, or access problem is reported as a blocker rather than
-  escalated. Failing with a Strong model no longer implies the plan is wrong;
-  only scope, acceptance, decision, or task-split problems go back to plan
-  ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
+- **skills**: Tasks may carry `Risk: high` with a reason, classified by the
+  behavior changed (for example session enforcement or authorization), not by
+  incidental mentions. A missing `Risk:` does not mean low risk, and older
+  plans need no change. Build completes such a task in numbered steps: run and
+  record its checks; once they pass, read `.kaylo/preferences.md` and the
+  review delegation reference and request a focused review in the same run,
+  targeting a Strong reviewer in a fresh context under any preference; record
+  the reviewer under `## Review`; then check the task off. When Strong cannot
+  be established, including an Inherit model of unknown capability, build asks
+  you in that run to choose another qualifying route, a manual handoff, a
+  recorded exception, or a pause, instead of ending the turn by pointing to
+  `/kaylo:review`. The review records, for each of trust boundaries,
+  authorization, invalid input, sensitive-data exposure, and relevant abuse
+  cases, what was found or why it does not apply. A phase review reuses that
+  review only while its inputs are unchanged
+  ([#83](https://github.com/jeio-dev/kaylo/issues/83),
+  [#113](https://github.com/jeio-dev/kaylo/issues/113)).
 - **skills**: `.kaylo/preferences.md` accepts two optional keys.
   `Review vendor: different` requires a reviewer whose model vendor is known to
   differ from every builder in the review target. If that cannot be
@@ -184,43 +43,111 @@
   and unknown billing is not treated as covered by a subscription. Plan does
   not ask for these keys and keeps them when it writes the file
   ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
-- **skills**: Tasks may carry `Risk: high` with a reason, classified by the
-  behavior changed (for example session enforcement or authorization), not by
-  incidental mentions. Build requests a focused review of such a task after
-  its checks pass and before check-off, targeting a Strong reviewer in a fresh
-  context; when that cannot be established, including an Inherit model of
-  unknown capability, you choose another qualifying route, a manual handoff, a
-  recorded exception, or a pause. The reviewer brief adds a checklist for
-  trust boundaries, authorization, invalid input, data exposure, and abuse
-  cases. Phase review reuses that review only while its inputs are unchanged.
-  A missing `Risk:` does not mean low risk, and older plans need no change
+- **skills**: Under a Quality, Balanced, or Budget preference, the reviewer
+  tier now applies to direct reviews too. Before any review work, the
+  assistant states the required tier and its observed model, including in the
+  text of any route question such as the vendor choices, and repeats that
+  statement beside the `direct` record, which takes no `tier` key. It reviews
+  directly only if its model meets the tier; otherwise it uses a fresh
+  reviewer at that tier or asks you. A vendor waiver does not settle the tier.
+  On a host without reviewer subagents, a session whose model cannot be
+  identified as meeting the tier stops for your choice
+  ([#83](https://github.com/jeio-dev/kaylo/issues/83),
+  [#115](https://github.com/jeio-dev/kaylo/issues/115)).
+- **skills**: Agreeing to a route exception or waiver resolves no review
+  finding. Only your explicit decision on that finding allows
+  `accepted by user`, and a reply that leaves the choice to the assistant is
+  not that decision. A review comment is marked `fixed` only after a
+  correction ([#83](https://github.com/jeio-dev/kaylo/issues/83),
+  [#116](https://github.com/jeio-dev/kaylo/issues/116)).
+- **skills**: When a check fails, the assistant now diagnoses it before
+  choosing a stronger model. With a Quality, Balanced, or Budget preference
+  and a host that can apply the choice, it may recommend Light → Medium or
+  Medium → Strong within the remaining repairs; Strong stays Strong, and
+  Inherit stays Inherit unless you choose otherwise. A model change never adds
+  repairs: the limit is still two unsuccessful repairs of the same failure,
+  across sessions, workers, and models. A missing dependency, unavailable
+  check, quota limit, or access problem is reported as a blocker rather than
+  escalated. Failing with a Strong model no longer implies the plan is wrong;
+  only scope, acceptance, decision, or task-split problems go back to plan.
+  The build delegation reference includes the S/M/L builder tier rows and asks
+  for the preference, estimate, tier choice, and any reason for an increase
+  before dispatch ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
+- **tools**: Builds and reviews append compact `{kaylo:v1 ...}` records: build
+  records on the task's `Result:` line, reviewer records under `## Review`.
+  `WORKERS.md` documents them, and the build and review skills show their
+  exact forms. They keep dispatches, repairs, requested and observed model
+  identity, billing, and fallbacks separate, with explicit `unknown` values;
+  `tier` is never `unknown`. Each routing choice maps to a record: a vendor
+  waiver is `fallback=vendor-waived fallback-auth=user`, an exception to an
+  unmet tier is `fallback=tier-exception`, a manual handoff stays `pending`
+  until an `update` records its result and any identity observed then, and a
+  pause writes no record. Build records the first check after builder work as
+  `verify` even when the task stays blocked (`result=fail` or
+  `result=unavailable`), and appends a builder `dispatch` when the worker
+  returns. On resume it keeps existing records, adds its own `direct` or new
+  `dispatch` first, adds no second `verify`, and continues the failure's repair
+  count ([#83](https://github.com/jeio-dev/kaylo/issues/83),
+  [#114](https://github.com/jeio-dev/kaylo/issues/114)).
+- **tools**: The new read-only `scripts/dispatch-report.cjs` prints first-try
+  pass rates among recorded tasks in closed phases, grouped by requested tier,
+  estimate, and builder vendor, including a vendor first observed in a later
+  `update`, with missing and malformed counts. A task is malformed, and left
+  out of the rates, when it holds records on a task line other than `Result:`
+  (mentions in `Acceptance criteria:` or `Test plan:` aside), is checked with
+  a reviewer record in its `Result:`, is accepted before its initial `verify`,
+  has a `verify` or `repair` naming a still-`pending` dispatch, or is accepted
+  while a builder dispatch is still `pending`. Records under `## Review` that
+  fail to parse, belong in a task, or update no parsed dispatch are listed
+  separately. A rate below about
+  60% is flagged as advisory only; nothing changes preferences or the tier
+  table automatically ([#83](https://github.com/jeio-dev/kaylo/issues/83),
+  [#91](https://github.com/jeio-dev/kaylo/pull/91),
+  [#92](https://github.com/jeio-dev/kaylo/issues/92)).
+- **tools**: The plan validator checks more of the current phase plan;
+  closed phases are not checked:
+  - A `## Review` section is required (`None` is allowed before a review).
+  - Review comments use `- R1: <blocking or non-blocking> — <resolution>`,
+    where the resolution is `open`, `fixed`, or
+    `accepted by user; decision: <the question asked and your answer, or where it is recorded>`.
+    A label right after the ID without the colon, as in
+    `- R1 (non-blocking, open): …`, a missing resolution, or an acceptance
+    without a real citation fails.
+  - `{kaylo:v1 ...}` records sit on a task's `Result:` line;
+    `Acceptance criteria:` and `Test plan:` may mention record syntax.
+  - A checked `Risk: high` task needs a completed reviewer `dispatch` or
+    `direct` record under `## Review` whose `covers=` names the task or
+    `phase`.
+
+  To migrate a current phase plan, add `## Review` with `None` if it is
+  missing and give each review comment a resolution. For each uncited
+  acceptance, the assistant asks whether you decided that finding and cites
+  your answer, or sets the comment back to `open`. A validator cannot prove
+  you made the decision; it only makes a missing one visible
   ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
-- **tools**: Builds and reviews append compact `{kaylo:v1 ...}` records to the
-  existing `Result:` line or `## Review`, documented in `WORKERS.md`. They keep
-  dispatches, repairs, requested and observed model identity, billing, and
-  fallbacks separate, with explicit `unknown` values. The new read-only
-  `scripts/dispatch-report.cjs` prints first-try pass rates among recorded
-  tasks in closed phases, grouped by requested tier, estimate, and builder
-  vendor, with missing and malformed counts. A rate below about 60% is
-  flagged as advisory only; nothing changes preferences or the tier table
-  automatically. The plan validator ignores the records, so existing plans
-  stay valid ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
-- **skills**: The build and review skills now show the exact record forms
-  themselves, so the assistant no longer has to open `WORKERS.md` to write
-  them. Build shows `direct`, `dispatch`, `verify`, `repair`, and the keyless
-  `accept` and `reopen`. It also says how to resume a task with existing
-  records: keep them, add your own `direct` or new `dispatch` record first,
-  add no second `verify`, and continue the failure's repair count. Review and
-  `WORKERS.md` map each routing choice to a record. A vendor waiver is
-  `fallback=vendor-waived fallback-auth=user`, and an exception to an unmet
-  tier is `fallback=tier-exception`. A manual handoff stays `pending` until an
-  `update` records its result, and a pause writes no record. `tier` is never
-  `unknown`, and a vendor waiver does not settle the reviewer's tier. A
-  review comment is marked `fixed` only after a correction. When you decline
-  another repair, the next step no longer asks for it again. These changes
-  follow the first live trial of the #83 records, in which direct builds
-  wrote prose instead of records and a vendor waiver was recorded as
-  `fallback=none` ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
+- **tools**: Optional `scripts/plan-record.cjs` appends one task or reviewer
+  record and checks off a task with its `accept` record. It reuses the record
+  parser and structural validator, preserves earlier text, and restores the
+  file on a caught validation failure, so it refuses any operation while the
+  current phase fails validation, such as with an uncited acceptance. Build
+  and review use it when Node is available; targeted manual edits remain the
+  fallback, and build rereads the edited `Result:` line and `## Review`
+  afterward ([#116](https://github.com/jeio-dev/kaylo/issues/116)).
+- **workers**: The builder and reviewer briefs share one write-location rule.
+  Workers write only inside the project, except a throwaway probe or scratch
+  file, such as an edge-case script, in the scratch or temporary directory the
+  host's instructions name for the session. Modified copies of project files,
+  stand-ins for missing modules or dependencies, and changes to your other
+  files outside the project stay prohibited, and the builder returns a missing
+  dependency as a blocker. Both briefs ask workers to report denied actions
+  ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
+- **docs**: The glossary's validation rules and the manual fallback in build,
+  close, and plan list the new validator rules. `VERIFICATION.md` now keeps
+  only records since the 0.11.0 release; earlier records are in the
+  [v0.11.0 copy](https://github.com/jeio-dev/kaylo/blob/v0.11.0/VERIFICATION.md).
+  `tests/GUARDRAIL-TRIALS.md` operator rules, for runs after 2026-10-11,
+  approve a throwaway probe in the session's named scratch directory and
+  still deny every other write outside the project.
 
 ## 2026-10-06, Version 0.11.0
 

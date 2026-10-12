@@ -124,7 +124,7 @@ A metered route bills per use, such as a per-token API key or a gateway like Ope
 
 ## Dispatch records
 
-Compact, versioned records let a later report count outcomes without rereading prose. They add to the existing prose, which stays: workspace baseline, verification, failed attempts, and superseded evidence. Build records go in the task's single `Result:` line; review records go under `## Review`. Plans without records remain valid; the structural plan validator checks only that a task's records sit on its `Result:` line and that a checked `Risk: high` task has a completed reviewer record covering it.
+Compact, versioned records let a later report count outcomes without rereading prose. They add to the existing prose, which stays: workspace baseline, verification, failed attempts, and superseded evidence. Build records go in the task's single `Result:` line; review records go under `## Review`. When Node is available, `scripts/plan-record.cjs` appends one record at a time and checks a task off with its `accept` record; see the build skill's structural plan check. Plans without records remain valid; the structural plan validator checks only that a task's records sit on its `Result:` line and that a checked `Risk: high` task has a completed reviewer record covering it.
 
 Each record is `{kaylo:v1 <type> key=value ...}`. A value has no spaces, quotes, or braces unless double-quoted, as in `model="Gemini 3.8 Flash"`. Write `unknown` for a value that was not observed and `n/a` for one that does not apply; write vendor names in lowercase. Requested settings are not observed identity: `host`, `route`, `vendor`, and `model` record what actually ran.
 
