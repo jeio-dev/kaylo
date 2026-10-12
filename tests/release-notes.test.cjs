@@ -382,3 +382,52 @@ test('area metadata remains optional and rejects malformed or repeated labels as
     assert.equal(result.counts.feature, 0);
   }
 });
+
+test('nested roadmap links and release markers use the same POSIX paths under Windows normalization', t => {
+  const f = fixture(t);
+  const plan = '.kaylo/phases/01-export/01-PLAN.md';
+  fs.mkdirSync(path.join(f.root, path.dirname(plan)), { recursive: true });
+  fs.renameSync(path.join(f.root, 'phase.md'), path.join(f.root, plan));
+  f.write('ROADMAP.md', f.read('ROADMAP.md').replaceAll('(phase.md)', `(./${plan})`));
+  f.selection.phases[0].plan = './' + plan;
+  f.selection.notes = './CHANGELOG.md';
+  const native = f.run();
+  const selectionFile = path.join(f.root, 'selection.json');
+  fs.writeFileSync(selectionFile, JSON.stringify(f.selection));
+  // Isolated module loader: Windows normalize/sep, real POSIX normalize, and
+  // native file access. This exercises path representation, not Windows I/O.
+  const script = `
+    const Module = require('node:module');
+    const nativePath = require('node:path');
+    const fs = require('node:fs');
+    const windows = { ...nativePath, normalize: nativePath.win32.normalize,
+      sep: nativePath.win32.sep, posix: nativePath.posix };
+    const original = Module._load;
+    Module._load = function(request, parent, main) {
+      return request === 'node:path' ? windows : original.call(this, request, parent, main);
+    };
+    const { propose } = require(process.argv[1]);
+    const { linkTarget } = require(process.argv[2]);
+    const selection = JSON.parse(fs.readFileSync(process.argv[4], 'utf8'));
+    const result = propose(process.argv[3], selection);
+    let escape;
+    try { propose(process.argv[3], { ...selection, notes: '../outside.md' }); }
+    catch (error) { escape = error.code; }
+    console.log(JSON.stringify({ result, escape,
+      link: linkTarget('- [x] [01](./.kaylo/phases/01-export/01-PLAN.md)') }));
+  `;
+  const run = () => {
+    const child = spawnSync(process.execPath, ['-e', script, helper,
+      path.resolve(__dirname, '../scripts/validate-plan.cjs'), f.root, selectionFile], { encoding: 'utf8' });
+    assert.equal(child.status, 0, child.stderr);
+    return JSON.parse(child.stdout);
+  };
+  const simulated = run();
+  assert.equal(simulated.link, plan);
+  assert.equal(simulated.escape, 'RELEASE_PATH');
+  assert.deepEqual(simulated.result, native);
+  assert.equal(simulated.result.entries[0].plan, plan);
+  assert.match(simulated.result.notes, /\[01\]\(\.kaylo\/phases\/01-export\/01-PLAN\.md\)/);
+  fs.writeFileSync(path.join(f.root, 'CHANGELOG.md'), native.notes);
+  assert.equal(run().result.notes, native.notes);
+});

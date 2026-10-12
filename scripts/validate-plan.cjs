@@ -65,7 +65,7 @@ function linkTarget(line, fail = () => {}) {
     fail(`Expected a relative project file link: ${target}`);
     return null;
   }
-  return path.normalize(target);
+  return path.posix.normalize(target);
 }
 
 function validate(project, { closing = false } = {}) {

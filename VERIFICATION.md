@@ -2185,3 +2185,43 @@ the recorded series timing decision. Real release/registry publication,
 CI/protection/scan enforcement, deployment and hotfix reintegration were not
 run. These limitations and #89's automatic-Git scan gate remain unchanged;
 #86 stays open for the deferred behavioral verification.
+
+## PR #128 POSIX path correction — 2026-10-12
+
+Addressed inline comment 4248510709 on `26ea65971f88642937ef05ca8322c9d5f8799e26`.
+Started on `issue-86-guided-releases` with a clean index/worktree. Both the
+shared roadmap link parser and release helper now use `path.posix.normalize`
+for Markdown/marker paths, with `../` for the POSIX parent-path guard. Native
+filesystem resolution and containment continue using the host path operations.
+The release reference also documents that an unexpected crash normally exits
+1 with stderr and no JSON proposal; consumers must inspect stdout as well as
+the exit status to distinguish it from a pending proposal.
+
+A new isolated-process regression uses Windows normalization and separator
+rules while preserving the real POSIX normalizer and native Linux file access.
+It failed before the change with RELEASE_PATH for a selected nested phase.
+After correction it compares the complete proposal with the native result,
+including `.kaylo/phases/01-export/01-PLAN.md`, the shared link target, stored
+marker/bullet path, repeated aggregation bytes, and parent-path rejection.
+This establishes path representation under simulation, not actual Windows
+filesystem/runtime support. Actual Windows remains untested.
+
+Observed with Node 24.21.0 on Linux:
+
+- `node --test tests/release-notes.test.cjs tests/validate-plan.test.cjs`:
+  169 passed, 0 failed.
+- `node --test tests/*.test.cjs`: 375 passed, 0 failed, 0 skipped.
+- `node scripts/validate-package.cjs` and `git diff --check` passed.
+- Both strict Claude plugin/marketplace manifest validators passed on
+  Claude Code 2.1.296; `agy plugin validate .` passed on Antigravity CLI 1.3.1.
+
+The maintainer rechecked the original nine findings at 26ea659 and explicitly
+requested resolving their threads. The new Windows thread awaits a focused
+review of this correction. The maintainer also observed that bare
+`node --test` scans the ignored local `development/package/` copy and reports
+38 failures; this run uses the declared scoped command from RELEASING.md.
+That local-discovery behavior was not rerun or changed. Live model/worker,
+five-host native install/update, real publication/CI/scan/deployment and hotfix
+reintegration trials remain unrun/deferred as previously recorded. No worker
+brief or release version/catalog changed; local contributor guidance remains
+ignored and excluded from staging/distribution.

@@ -22,8 +22,8 @@ function relative(value) {
       /^[a-z][a-z\d+.-]*:/i.test(value) || path.isAbsolute(value)) {
     refuse('RELEASE_PATH', 'Expected a project-relative file path');
   }
-  const normalized = path.normalize(value);
-  if (normalized === '.' || normalized === '..' || normalized.startsWith('..' + path.sep)) {
+  const normalized = path.posix.normalize(value);
+  if (normalized === '.' || normalized === '..' || normalized.startsWith('../')) {
     refuse('RELEASE_PATH', 'File path leaves the project or names its root');
   }
   return normalized;
