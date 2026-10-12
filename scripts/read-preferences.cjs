@@ -39,8 +39,8 @@ const bodies = {
 };
 
 // Diagnostics name the key and line, never a value.
-const diagnostic = (code, line, detail = '') =>
-  ({ code, location: line ? `${file}:${line}` : file, message: bodies[code] + detail });
+const diagnostic = (code, line, key) => ({ code, location: line ? `${file}:${line}` : file,
+  message: bodies[code] + (key || ''), ...(key ? { key } : {}) });
 const inside = (root, target) => {
   const relative = path.relative(root, target);
   return relative === '' || (relative !== '..' && !relative.startsWith('..' + path.sep) && !path.isAbsolute(relative));
