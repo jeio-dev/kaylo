@@ -74,6 +74,7 @@ Record the chosen approach under the phase plan's `## Design`.
 - Prefer extending existing patterns. Recommend a more elaborate option only for a concrete requirement.
 - Preserve requested behavior, readability, security, and accessibility; fewest lines is not the goal.
 - Size tasks so a worker can complete one without designing the rest. Split L work where useful; keep remaining architectural judgment with a capable guiding model.
+- A phase with more than five tasks or any L task gets a note in the response suggesting a smaller phase or task, with the reason. It is advisory: the consequence-based judgment above decides, and existing IDs and history stay.
 - Reason about threats the phase changes. Record the affected assets and trust boundaries, plausible abuse or failure cases, the mitigations, and the tasks and checks that establish them; a phase that changes no boundary says so in one line. Use the PRD's data sensitivity notes when present. A PRD or small-change request without them means inspecting the changed behavior, not assuming no risk, and needs no migration. When a boundary changes later, reassess the evidence it affects. This is targeted planning, not a security audit or compliance claim.
 
 ## Plan contents
