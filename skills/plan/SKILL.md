@@ -40,6 +40,7 @@ Guide the user toward the simplest approach that meets the outcome. Work in the 
 - Current phase closed: detail the next unchecked phase, then link it and move `Current:`. Recheck the remaining one-liners against what was learned. Consider open optional follow-ups from the closed phase.
 - Current phase open: revise only its phase plan, plus index lines when phase order, names, or goals change.
 - Write the phase plan before moving `Current:`. Never create a later phase's folder or file while the current phase is open.
+- Read [foundation assessment](references/foundation.md) when writing a project's first roadmap, when adopting Kaylo in a project with existing code or plans, or when a fact a recorded assessment relied on has changed. A first roadmap assesses all ten areas, briefly for a small change, and proposes work only for gaps that matter to the outcome. Reuse an unchanged assessment.
 - Build routes work for another phase, or any ID while no phase is open, here. Reopen a closed phase only for unmet acceptance or insufficient evidence while no phase is open: uncheck it and move `Current:` back. Otherwise plan the work in the current or a new phase.
 
 ## Decisions and readiness
@@ -72,6 +73,7 @@ Record the chosen approach under the phase plan's `## Design`.
 - Prefer extending existing patterns. Recommend a more elaborate option only for a concrete requirement.
 - Preserve requested behavior, readability, security, and accessibility; fewest lines is not the goal.
 - Size tasks so a worker can complete one without designing the rest. Split L work where useful; keep remaining architectural judgment with a capable guiding model.
+- Reason about threats the phase changes. Record the affected assets and trust boundaries, plausible abuse or failure cases, the mitigations, and the tasks and checks that establish them; a phase that changes no boundary says so in one line. Use the PRD's data sensitivity notes when present. A PRD or small-change request without them means inspecting the changed behavior, not assuming no risk, and needs no migration. When a boundary changes later, reassess the evidence it affects. This is targeted planning, not a security audit or compliance claim.
 
 ## Plan contents
 
@@ -98,6 +100,7 @@ Estimate: **S** = clear local edit following an existing pattern; **M** = bounde
 - In `Test plan:`, name only commands that exist; label proposed checks still needing creation.
 - Checks must establish acceptance, not repeat implementation. Use existing project checks; do not add a testing framework for a small change.
 - Include a user-facing check when automated tests do not establish the feature works.
+- When the project has `.kaylo/gates`, or a task would create one, read [project gates](references/gates.md). Task test plans name scoped checks for the task's behavior and affected integration; the full check runs before phase implementation review. Label a gate a task still has to create as proposed; the plan that creates it can be reviewed before it exists.
 
 ## Status and revision
 

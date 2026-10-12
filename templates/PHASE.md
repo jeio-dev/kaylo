@@ -10,7 +10,7 @@ Status: Current
 
 ## Design
 
-[The simplest sufficient approach, what existing capability it reuses, and why it meets the criteria.]
+[The simplest sufficient approach, what existing capability it reuses, and why it meets the criteria. When relevant, the foundation assessment and draft testing or environment decisions. Changed trust boundaries with their abuse or failure cases, mitigations, and the tasks and checks that establish them, or one line saying no boundary changes.]
 
 ## Agreement
 

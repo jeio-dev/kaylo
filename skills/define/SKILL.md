@@ -28,6 +28,7 @@ Help a beginner decide what to build and why. Work in the user's project, not th
 - Problem and intended user; desired outcome and essential user journey.
 - Included capabilities, exclusions, and constraints.
 - Observable success criteria and unresolved questions.
+- Data sensitivity: the kinds of sensitive data the product handles, such as personal data, payments, or credentials, or `None` or `Unknown`; where that data flows and is stored; the third parties it reaches; and consequential unanswered questions. Describe it from the user's answers and the code; never open real customer records or credential values to fill it in. An existing PRD without this section stays valid; add it when the outcome changes or the user asks.
 
 Use plain Markdown and preserve an existing equivalent format. The optional [PRD template](../../templates/PRD.md) resolves relative to this skill directory; its absence does not block the command.
 

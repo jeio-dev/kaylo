@@ -389,14 +389,14 @@ Delegated builds record the starting workspace state, confirm dependencies are p
 
 ## Package and scope
 
-- `skills/`: five command entrypoints with optional build/review delegation references.
+- `skills/`: five command entrypoints with optional references: build and review delegation, plan's project gates and foundation assessment, and close's CI evidence.
 - `agents/`: three shared worker briefs; `claude-agents/`: generated native Claude adapters with identical instruction bodies.
 - `templates/`: optional PRD, roadmap, and phase plan starting points.
 - `.claude-plugin/`, `.codex-plugin/`, `plugin.json`, `.agents/plugins/`: native packaging for Claude, Codex, and Antigravity, and the released Codex catalog. OpenCode loads the shared skills directory directly.
 - `gemini-extension.json`: native Gemini packaging of the shared skills.
 - `development/`: the separate local Codex catalog and ignored generated package.
 - `hooks/`: the optional reminder; no workflow runtime or persistent state.
-- `scripts/`: plan/package validators, the plan record helper, the read-only dispatch report, the Claude agent adapter generator, and local development staging; `tests/`: validator fixtures and behavioral trial prompts.
+- `scripts/`: plan/package validators, the plan record helper, the read-only dispatch report, the read-only `.kaylo/gates` reader and CI evidence checker, the Claude agent adapter generator, and local development staging; `tests/`: validator fixtures and behavioral trial prompts.
 
 The installer runs native host commands, with one verified package copy and one
 global config entry for OpenCode. It adds no model router or terminal

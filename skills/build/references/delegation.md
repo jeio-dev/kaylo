@@ -29,7 +29,7 @@ Supply:
 - Project location and task or review comment, with its phase.
 - Steps, constraints, starting files, and required packages or tools.
 - Contracts the task uses from completed tasks, such as interfaces, formats, or commands, and where they live; not whole `Result` histories.
-- Acceptance criteria and test plan.
+- Acceptance criteria and test plan, with each check's exact command, working directory, and what it covers. The guiding assistant keeps the project's full gate check and other shared checks unless the packet assigns one.
 - Earlier failed repair attempts and outcomes.
 
 Supply relevant decisions and interface contracts, rather than the full conversation. `Blocked by` sets order only; it does not authorize running tasks concurrently without the Phase mode ownership check. Keep the assignment within the selected task or review comment; implementing, testing, and debugging it does not authorize the rest of the phase. In phase mode, prepare a separate packet for each task; outside an approved parallel wave, dispatch the next only after the current task is checked off and the structural plan check has passed. For a wave, name each worker's planned files and focused checks; keep shared checks with the guiding assistant.

@@ -4,6 +4,57 @@
 
 ### Notable Changes
 
+- **skills**: An optional `.kaylo/gates` file names a project's own
+  full-check command and the directory to run it from, as three lines:
+  `Format: 1`, `Directory:`, and `Full check:`. Task acceptance still runs the
+  task's scoped checks, and a scoped pass no longer counts as a full-suite
+  pass. When the file is present, phase mode runs the full check after the
+  last task, implementation review needs its result, and close needs it to
+  pass on the delivered changes. Without the file, today's checks apply
+  unchanged. A present but malformed or unusable file blocks the checks that
+  need it instead of passing silently. A plan that creates the file can be
+  reviewed before the file exists
+  ([#84](https://github.com/jeio-dev/kaylo/issues/84)).
+- **tools**: `scripts/read-gates.cjs` reads `.kaylo/gates` without running
+  anything. It prints JSON, reports stable `GATES_*` diagnostics with file and
+  line but never the command text, refuses paths that leave the project and
+  special files such as FIFOs without blocking on them, and takes
+  `--expect <digest>` to detect a change between reading the file and
+  running the check ([#84](https://github.com/jeio-dev/kaylo/issues/84)).
+- **skills**: Plan assesses ten development foundations from
+  `skills/plan/references/foundation.md` when it writes a project's first
+  roadmap or adopts an existing project: CI, branch protection, dependency
+  updates, secret scanning, static analysis, environment files, issue and PR
+  templates, commit-message checks, test strategy, and secret access and
+  environments. Each is recorded under `## Design` as satisfied with evidence,
+  missing, not applicable with a reason, or unknown with a next action. Only
+  relevant gaps the user agrees to become tasks. Existing tools count, no
+  provider or default branch is assumed, and the assessment authorizes no
+  installs, settings changes, accounts, or paid features. Its environment-file
+  example ignores `.env*` while keeping `.env.example` and a fake-only
+  `.env.test` addable, and it does not untrack or delete committed files
+  ([#84](https://github.com/jeio-dev/kaylo/issues/84)).
+- **skills**: The PRD gains an optional data sensitivity section: the kinds
+  of sensitive data handled, or none or unknown, plus flows, storage, third
+  parties, and open questions, written as descriptions only. Plan records
+  changed trust boundaries, abuse or failure cases, mitigations, and the
+  tasks and checks that establish them under `## Design`, or one line when
+  nothing changes. Existing PRDs and plans need no migration
+  ([#84](https://github.com/jeio-dev/kaylo/issues/84)).
+- **skills**: When required CI applies, close establishes that every required
+  check passed on the exact delivered revision, following
+  `skills/close/references/ci-evidence.md`. Failed, pending, missing, or
+  unobservable required checks, a stale or shortened revision, or delivered
+  changes outside that revision leave the phase open with one resume action.
+  `scripts/check-ci-evidence.cjs` checks a JSON snapshot of that evidence for
+  exact identity, required-set completeness, and conclusions without contacting
+  any provider, and refuses a snapshot that is not a regular file without
+  blocking on it. Close does not commit, push, or start workflows to obtain
+  evidence ([#84](https://github.com/jeio-dev/kaylo/issues/84)).
+- **docs**: The #84 instructions have not been run with a model. Their
+  behavioral trials are deferred until the #84–#90 series is built; the
+  parsers and ignore example are covered by package tests only. See
+  `VERIFICATION.md` ([#84](https://github.com/jeio-dev/kaylo/issues/84)).
 - **docs**: Earlier versions of the instructions below ran in single-run and
   three-run trials on Claude Code with Sonnet 5.5. The #83 behavioral gate
   trial was not completed: its second attempt stopped at preflight, and
