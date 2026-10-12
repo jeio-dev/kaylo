@@ -14,6 +14,11 @@ records from the first draft through 0.5.2 are in
 
 ## Current status — 0.11.0
 
+The #86 guided-release implementation adds local metadata/reconciliation and
+manual preparation guidance. Its parsing/Git/package checks are recorded below;
+live host/model behavior remains deferred with the #84–#90 series. The released
+0.11.0 host observations in this table do not establish the new behavior.
+
 A summary of the records below and the archived ones. Every live-model result
 is one run per case, or a few, on the host and model named; none is a
 consistency claim.
@@ -2040,3 +2045,183 @@ establish parser/Git behavior and package structure, not model behavior.
 Automatic Git execution remains intentionally gated on #89. Prior evidence
 was preserved; only this recheck record was appended locally, without
 committing or pushing it.
+
+## Guided manual releases through close (#86) — 2026-10-12
+
+Implementation on `issue-86-guided-releases` from clean `main` at
+`d3f312e5cfc0336ad494838838a38901359a558d`, following the revised #86 scope.
+The user's instruction authorizes implementation, a feature-branch commit/push,
+and a pull request; it does not authorize a Kaylo release. No staged, unstaged,
+or untracked work was present at the start. Contributor AGENTS.md was local,
+ignored, and untracked, and is excluded from staging/distribution.
+
+Close keeps ordinary acceptance/review/check-off and treats an explicit release
+request before its checked-current-phase route. Ordinary closure aggregates
+reviewed summaries and shows advisory counts/pending classification. Only guided
+preparation loads release.md. The implementation chooses an additive
+`Release contribution: <boundary> / <delta>` record under Review, stable
+project/phase/delta identity, and optional provenance blocks inside the existing
+notes destination. Existing Release note syntax is retained. No mandatory PR,
+ledger, new skill, migration, provider, deployment trigger, or publishing runner.
+The optional release-notes helper reads authoritative roadmap/phase records
+and returns a proposal; it writes nothing and cannot certify evidence truth,
+complete history selection, authorization, readiness, or publication.
+
+Focused boundaries: close and its two references; local metadata guidance in
+the shared PR reference/phase template; the optional proposal helper; package
+resource requirements and packed-helper coverage; notes/Git fixtures and bounded
+behavioral trial cases; README/changelog/this evidence. No shared worker brief
+changed, so no Claude adapter regeneration was needed. #84/#85 gate, exact-CI,
+metadata, attribution and explicit Git-action contracts are present. Automatic
+Git-preference actions remain gated on #89's unavailable candidate/outgoing
+scan contract. Kaylo's approved pre/post-1.0 policy is encoded without claiming
+#90's migration engine or #89's deployment/scanning contracts delivered.
+
+Observed on Linux (WSL2), Node 24.21.0:
+
+- `node scripts/validate-package.cjs` passed: five skills, matching v0.11.0
+  versions/catalogs, required relative release references/helper present.
+- `node --test tests/*.test.cjs`: 368 tests, 368 passed, 0 skipped. New
+  release-notes tests cover local reviewed/provisional/pending/missing/repeated
+  metadata, real Review boundaries versus fences/comments, mixed phase counts,
+  optional PRs, repeat/reclassification/reopen, selected versus retained entries,
+  immutable published summaries, later same-phase deltas, human-edited blocks,
+  authoritative links/path moves, hardlink/symlink containment, invalid UTF-8,
+  malformed/duplicate markers, CRLF/no-final-newline, schema/CLI/FIFO errors,
+  and Kaylo's highest-impact SemVer matrix. An early CRLF fixture mistakenly
+  doubled carriage returns and was corrected. A nested HTML-comment probe
+  correctly refused an orphan marker; its expectation was corrected, not the
+  parser weakened. Final focused release tests: 27 passed.
+- Disposable Git fixtures use a local bare remote, annotated candidate tag,
+  unrelated tag, branch-only commit, dirty artifact, and human staged/unstaged/
+  untracked contents. An explicit single-tag ref pushes exactly the candidate;
+  blanket tag dry-run includes the unrelated tag. Mismatched remote tags refuse
+  replacement. Actual archive content and released ancestry exclude dirty and
+  branch-only content. Notes proposals preserve index, worktree, refs, and files.
+  These are local fixtures, not real provider or registry publication trials.
+- The package inventory test packs/exports the working tree, proves exact
+  inventory/parity, excludes contributor guidance, and runs the extracted helper
+  with its sibling validator against a disposable project. The helper's output
+  leaves notes unchanged. Missing guided-release resources fail validation.
+- `claude plugin validate .claude-plugin/plugin.json --strict` and
+  `claude plugin validate .claude-plugin/marketplace.json --strict` passed on
+  Claude Code 2.1.296. `agy plugin validate .` passed on Antigravity CLI 1.3.1
+  (five skills, three agents).
+- `node scripts/stage-development.cjs` followed by
+  `node scripts/validate-package.cjs --installed development/package` passed:
+  38 shared resources match and contributor guidance is absent. This is local
+  package staging/byte parity, not an installed native host trial.
+- `git diff --check` passed. 31 non-example relative Markdown links resolve.
+  The direct size review initially counted 962 added and 8 deleted lines from
+  the starting SHA, excluding no generated/lock/binary files: advisory over-600
+  band, so smaller future deliveries are recommended; size is not acceptance.
+
+Direct review by the implementing Codex session covered entry/routing, preserved
+closure lifecycle, metadata grammar/identity/reconciliation, read-only helper
+failure paths, compatibility/version policy, exact candidate/evidence timing,
+scoped authority/tag immutability, project/Kaylo ordering, resume, fallback/apps,
+notes/history parity, hotfix/reintegration, dependency honesty, and resource
+paths. This review lacked an independent/fresh context. No unresolved finding
+is claimed as independently cleared.
+
+Not run: live model/worker behavioral trials, five-host native install/update
+or discovery trials, real required CI/protection/scan enforcement, remote tag,
+registry/GitHub release publication, deployment, billing, or real hotfix
+reintegration. Live behavioral trials follow the maintainer's recorded
+2026-10-11 decision to defer them until #84–#90 are built and known findings
+resolved. `tests/RELEASE-TRIALS.md` specifies the bounded ordinary-close,
+explicit-preparation, missing-mechanics/evidence, existing/missing/changed
+scope, timing, resume, notes/history, and hotfix cases. No unobserved host/model
+behavior is claimed; #86 remains open for that verification. Versions/catalogs
+remain 0.11.0; no release/tag/package publication is part of this PR.
+
+## PR #128 review corrections — 2026-10-12
+
+Addressed the nine inline comments on `67d25ec940b1d09b2d93f9370b3c11b09ff781a1`
+in the existing `issue-86-guided-releases` branch. Starting index/worktree was
+clean; local ignored contributor guidance was preserved. Existing user authority
+covers corrective commits and pushing this PR branch, not a Kaylo release.
+The comments were read from GitHub; their IDs are recorded below for recheck.
+
+| Finding / inline comment ID | Correction and evidence |
+| --- | --- |
+| 1 / 4248206939 | A provisional note retains its parsed boundary/delta. Invalidation removes only that identified pending contribution, preserving an earlier delta, unknown identity, or a mismatched selection boundary. The regression compares the entire earlier notes string, not only a count. |
+| 2 / 4248207143 | Export/reuse the validator's phase-entry regex and link parser. Normalize selection links and parse only selected roadmap links. A fixture passes structural plan validation with `./` links and produces complete proposals with canonical or `./` selection paths; an unselected external link does not abort aggregation. |
+| 3 / 4248207337 | Optional reviewed `Release area: skills` metadata renders a concrete area label independently of `feature` classification. Markers without area remain compatible. Curated published presentation is retained byte-for-byte and no longer causes permanent RELEASE_EDITED diagnostics; changed published impact/description still blocks. Tests cover area generation, repeat proposals, curated published labels, and malformed/repeated area metadata. |
+| 4 / 4248207562 | Removal consumes a managed block's trailing blank-line separator. Three reopen/close cycles in both LF and CRLF compare exact reopened baseline and closed bytes; human/history text remains intact. |
+| 5 / 4248207764 | Strip the literal Pull request prefix then trim, preserving the entire URL with zero, one, several spaces, or a tab after the colon. |
+| 6 / 4248207972 | Malformed selection JSON reports RELEASE_SCHEMA. Expected filesystem/UTF-8 failures retain RELEASE_READ, while unexpected helper errors propagate for diagnosis. CLI tests distinguish malformed JSON and missing files; an injected TypeError is rethrown. |
+| 7 / 4248208255 | Check resource existence before stat. A missing release reference produces the custom required-resource diagnostic, with no raw ENOENT, asserted by the package test. |
+| 8 / 4248208452 | Both new Notable Changes entries link the verified PR #128; the issue link is retained. Inspected the two rendered Markdown source entries. |
+| 9 / 4248208680 | Removed the three automated stock-Git probes and their bare-remote setup. Their observed tag/archive/ancestry facts remain in the original implementation record above. The remaining Git fixture calls Kaylo's propose helper and asserts unchanged index, dirty artifact, refs and human files. |
+
+Before correction, the new regression cases produced seven failures covering
+findings 1–5 (two separate cases for area presentation and LF/CRLF spacing).
+The supplied review had reproduced 1, 2, 4 and 5; it described the other five
+as code inspection. Tests that previously expected wholesale invalidation or
+RELEASE_READ for malformed JSON were corrected to the reviewed contract;
+missing/ambiguous identities retain their earlier notes with pending evidence.
+
+Observed after correction on Node 24.21.0:
+
+- `node --test tests/release-notes.test.cjs tests/release-workflow.test.cjs`:
+  33 passed. The broader focused validator/package set also passed before
+  the final additional area/normalization cases.
+- `node --test tests/*.test.cjs`: 374 passed, 0 failed, 0 skipped. Nine new
+  release-helper tests were added; three Git-only tests were removed. Existing
+  plan-validator tests passed after sharing its parser, and npm inventory
+  checks include the modified scripts, references and template.
+- `node scripts/validate-package.cjs` and staged-package validation passed,
+  with 38 shared resources matching and local contributor guidance excluded.
+- Both strict Claude plugin/marketplace manifest validations passed on
+  Claude Code 2.1.296; `agy plugin validate .` passed on Antigravity CLI 1.3.1.
+- `git diff --check` passed. No worker brief changed or generated adapter
+  required regeneration. Package versions/catalogs remain unchanged.
+
+This was a direct corrective recheck in the implementing context, not an
+independent approval or resolution of the remote review threads. Live
+model/worker and five-host native install/update trials remain deferred under
+the recorded series timing decision. Real release/registry publication,
+CI/protection/scan enforcement, deployment and hotfix reintegration were not
+run. These limitations and #89's automatic-Git scan gate remain unchanged;
+#86 stays open for the deferred behavioral verification.
+
+## PR #128 POSIX path correction — 2026-10-12
+
+Addressed inline comment 4248510709 on `26ea65971f88642937ef05ca8322c9d5f8799e26`.
+Started on `issue-86-guided-releases` with a clean index/worktree. Both the
+shared roadmap link parser and release helper now use `path.posix.normalize`
+for Markdown/marker paths, with `../` for the POSIX parent-path guard. Native
+filesystem resolution and containment continue using the host path operations.
+The release reference also documents that an unexpected crash normally exits
+1 with stderr and no JSON proposal; consumers must inspect stdout as well as
+the exit status to distinguish it from a pending proposal.
+
+A new isolated-process regression uses Windows normalization and separator
+rules while preserving the real POSIX normalizer and native Linux file access.
+It failed before the change with RELEASE_PATH for a selected nested phase.
+After correction it compares the complete proposal with the native result,
+including `.kaylo/phases/01-export/01-PLAN.md`, the shared link target, stored
+marker/bullet path, repeated aggregation bytes, and parent-path rejection.
+This establishes path representation under simulation, not actual Windows
+filesystem/runtime support. Actual Windows remains untested.
+
+Observed with Node 24.21.0 on Linux:
+
+- `node --test tests/release-notes.test.cjs tests/validate-plan.test.cjs`:
+  169 passed, 0 failed.
+- `node --test tests/*.test.cjs`: 375 passed, 0 failed, 0 skipped.
+- `node scripts/validate-package.cjs` and `git diff --check` passed.
+- Both strict Claude plugin/marketplace manifest validators passed on
+  Claude Code 2.1.296; `agy plugin validate .` passed on Antigravity CLI 1.3.1.
+
+The maintainer rechecked the original nine findings at 26ea659 and explicitly
+requested resolving their threads. The new Windows thread awaits a focused
+review of this correction. The maintainer also observed that bare
+`node --test` scans the ignored local `development/package/` copy and reports
+38 failures; this run uses the declared scoped command from RELEASING.md.
+That local-discovery behavior was not rerun or changed. Live model/worker,
+five-host native install/update, real publication/CI/scan/deployment and hotfix
+reintegration trials remain unrun/deferred as previously recorded. No worker
+brief or release version/catalog changed; local contributor guidance remains
+ignored and excluded from staging/distribution.
