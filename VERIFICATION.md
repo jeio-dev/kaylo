@@ -2564,3 +2564,93 @@ five-host native install/update, real publication/CI/scan/deployment and hotfix
 reintegration trials remain unrun/deferred as previously recorded. No worker
 brief or release version/catalog changed; local contributor guidance remains
 ignored and excluded from staging/distribution.
+
+## PR #129 review against issue #87 — 2026-10-12
+
+Reviewed draft PR #129 at `6f8736c61ece5bc8570a46b96f5e500b9b60d9c0`
+against base `0c815d85d9e1d203002bb3e0b88ca29372de3912` and issue #87's
+approved revised specification. GitHub metadata and the local HEAD matched;
+the initial index/worktree was clean. Read the canonical decision contract,
+templates, skill entry points, worker briefs and delegation, package validator
+and mutation tests, public behavioral receipts and stated limits. This was a
+direct review in a new invoking conversation, without a delegated reviewer or
+fresh worker/model behavioral trial. No implementation corrections or GitHub
+review/comment publication were performed.
+
+Two blocking findings remain on the reviewed head:
+
+- Close workflow step 4 runs its `--closing` structural check before writing
+  Completion. A disposable otherwise-valid phase with a checked task and Review
+  passed ordinary validation but exited 1 under `--closing` with either empty
+  Completion or `Not complete.`: `Phase closure needs a substantive Completion
+  record`. The identical fixture with substantive Completion passed both modes.
+  This reproduces the prerequisite cycle in the written workflow, including
+  legacy phases with no ADR promotion. The pre-promotion check must not require
+  the Completion that subsequent steps create; retain full closing validation
+  after that record is written.
+- The accepted-branch ID-collision recovery moves an already accepted file and
+  changes its heading ID, contrary to permanent IDs/paths and immutable bodies.
+  A disposable link probe applied the specified move from `0003-beta.md` to
+  `0005-beta.md` while preserving an accepted `0004` successor: the original
+  accepted path disappeared, the moved body differed, and the successor's
+  predecessor link no longer resolved. Index/Completion-only updates cannot
+  repair that immutable incoming link. Keep the conflict open for an explicitly
+  agreed reconciliation policy rather than prescribe mutation of accepted
+  history. The probe checks the documented filesystem/link consequences, not
+  model instruction following or a complete ADR parser.
+
+Observed with Node 24.21.0 on Linux:
+
+- `node scripts/validate-package.cjs`: passed.
+- `node --test tests/*.test.cjs`: 386 passed, 0 failed, 0 skipped.
+- Claude Code 2.1.296: both strict plugin/marketplace manifest validators passed.
+- Antigravity CLI 1.3.1: `agy plugin validate .` passed (5 skills, 3 agents;
+  commands, mcpServers and hooks reported skipped).
+- `git diff --check` and `git diff origin/main...HEAD --check`: passed before
+  this evidence-only edit; whitespace rechecked afterward.
+
+Disposable probes were removed. These checks establish structural/resource and
+specific workflow/link facts, not live adherence or overall acceptance of #87.
+No native candidate install/update/discovery, public installation, live model
+or worker trial, race/crash, interrupted/reopened closure, or historical
+immutability audit ran. Gemini CLI was unavailable on PATH. Existing behavioral
+grades and coverage gaps remain historical; the PR still needs changes.
+
+## PR #129 fourth review fixes — 2026-10-12
+
+Applied both blocking findings from the review above on top of `6f8736c`:
+
+- Close now runs a pre-promotion structural check in ordinary mode (without
+  `--closing`) before promotion, because Completion is not written yet; the
+  closure rules separately establish finished tasks, no `Status: Needs
+  revision`, and a Review record. After writing Completion, close runs the full
+  `--closing` check before checking `ROADMAP.md`. `skills/close/SKILL.md` steps
+  4–5, its structural-check section, and the decisions contract's promotion
+  prerequisites and step 5 now name the two modes. The shared Node-unavailable
+  fallback paragraph is unchanged (the package validator requires it to match
+  build); close's own paragraph says a manual pre-promotion inspection omits only
+  the Completion requirement.
+- The accepted-branch ID-collision recovery no longer moves, renumbers, or edits
+  either accepted record or its incoming links. With no reconciliation policy in
+  this version, close records `Decision consistency: identity-collision` and
+  keeps work that needs either record, or trustworthy selection, open until
+  the user agrees a policy that preserves accepted bodies, paths, and links.
+
+Observed with Node 24.21.0 on Linux:
+
+- Disposable P1 probe (one checked task, Review record, unchecked phase): with
+  empty or `Not complete.` Completion, ordinary mode exited 0 and `--closing`
+  exited 1 with `Phase closure needs a substantive Completion record`; with a
+  substantive Completion both modes exited 0. The probe was removed.
+- `node scripts/validate-package.cjs`: passed (after keeping the shared
+  fallback paragraph identical to build's; the first run failed on that drift).
+- `node --test tests/*.test.cjs`: 386 passed, 0 failed, 0 skipped.
+- Claude Code 2.1.296: plugin and marketplace manifest validators passed.
+- Antigravity CLI 1.3.1: `agy plugin validate .` passed (5 skills, 3 agents;
+  commands, mcpServers and hooks reported skipped).
+- `git diff --check`: passed.
+
+These checks establish the written workflow order and validator modes, not
+model instruction following. No live model or worker trial, collision
+reconciliation trial, native install/update, or public installation ran. The
+fixes are not yet re-reviewed, committed, or pushed.

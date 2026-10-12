@@ -102,13 +102,13 @@ Independent branches can allocate the same next ID. Inspect files/user edits
 before allocation; never overwrite a collision or silently renumber an accepted
 record. Report both identities and reconcile the conflict explicitly before
 acceptance. When both records were already accepted, for example after merging
-branches that each promoted, keep the record accepted first in merged history
-(ask the user when that is unclear) at its ID. Move the other to the next ID
-above the largest, at a new path, changing only its heading ID; update its index
-row and record `Decision consistency: identity-collision — <old ID/path> -> <new
-ID/path>` with a new `Decision promotion:` mapping in its phase's Completion.
-This explicit, recorded move is the only permitted renumbering; earlier mappings
-stay as history. Unsupported existing syntax is not permission to rewrite it.
+branches that each promoted, this version has no reconciliation policy: do not
+move, rename, renumber, or edit either accepted file or the links that reach it.
+Record `Decision consistency: identity-collision — <both IDs/paths, source
+phases/decisions, affected scope, and resume action>` and keep work that needs
+either record, or trustworthy selection, open until the user agrees a
+reconciliation policy that preserves accepted bodies, paths, and links.
+Unsupported existing syntax is not permission to rewrite it.
 
 ## Resolve the applicable set at every entry point
 
@@ -207,7 +207,8 @@ First preserve ordinary close's implementation review, task/product evidence,
 structural check, Completion and ROADMAP requirements. Resolve applicable
 records at entry. Promote only after delivered work, required
 review/verification, and the phase's agreed goal are established, the plan
-passes ordinary close's structural check, and no closure rule routes elsewhere; a close that routes to plan, build, or review promotes
+passes ordinary close's pre-promotion structural check (without `--closing`,
+because Completion is not yet written), and no closure rule routes elsewhere; a close that routes to plan, build, or review promotes
 nothing. Then the guiding assistant promotes only final consequential decisions
 applicable to that delivered work. Do not promote unresolved drafts, abandoned
 choices, or convert defaults to user approval. Promotion records settled
@@ -248,7 +249,7 @@ acceptance; it does not make the choice retrospectively.
    separate promotion mechanism. External issue/ADR prerequisites belong in
    constraints/starting points, never task `Blocked by:` (same-phase tasks only).
 5. Only after promotion/consistency pass, write the proposed Completion and run
-   ordinary close's structural check again before checking ROADMAP; correct a
+   ordinary close's full `--closing` structural check before checking ROADMAP; correct a
    failure in the Completion record without changing promoted decisions. Missing/partial
    promotion leaves closure incomplete; record the precise resume action in
    Completion/Next step. Preserve unaffected passing product-test evidence; do
