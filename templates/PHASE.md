@@ -31,7 +31,7 @@ Status: Current
 
 [Target, coverage, who performed the review, and limitations, with a dispatch or direct record naming `covers=`; a direct plan review records that it lacked fresh context. Record None when there are no review comments; otherwise use stable IDs, with the label first and then ` — `, for example:]
 
-- R1: [blocking / non-blocking] — [open / fixed / accepted by user]
+- R1: [blocking / non-blocking] — [open / fixed / accepted by user; decision: question asked and the user's answer, or where it is recorded]
   - Target and location: [Plan task or implementation file]
   - Consequence: [Observable failure or unmet requirement]
   - Correction: [Smallest useful correction]

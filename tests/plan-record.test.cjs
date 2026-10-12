@@ -128,6 +128,27 @@ test('high-risk missing/pending coverage and unfinished Result roll back; task/p
   assert.match(bytes(blocked).toString(), /\[ \] T1:/);
 });
 
+test('an uncited acceptance makes every operation refuse, restore and show the accepted form', t => {
+  const accepted = 'R1: "accepted by user" must cite the user\'s decision on this finding, as in "- R1: non-blocking — accepted by user; decision: <question asked and the user\'s answer, or where it is recorded>"; a route exception or waiver is not that decision, so otherwise keep it open';
+  const finding = resolution => `${reviewer}\n\n- R1: non-blocking — ${resolution}\n  - No test for a non-finite now.`;
+  const f = fixture(t, phase(task('T1', 'Checks passed. ' + builder, 'high'), finding('accepted by user')));
+  for (const args of [['review', '{kaylo:v1 update by=D2 outcome=completed}'], ['append', 'T1', verify], ['check-off', 'T1']]) {
+    const before = bytes(f);
+    const result = cli(f, ...args);
+    assert.equal(result.status, 1, result.stdout + result.stderr);
+    assert.equal(result.stderr, `FAIL ${accepted}\n`);
+    assert.deepEqual(bytes(f), before);
+    assert.deepEqual(leftovers(f), []);
+  }
+  const cited = fixture(t, phase(task('T1', 'Checks passed. ' + builder, 'high'),
+    finding('accepted by user; decision: asked "Accept R1 without a NaN test?"; the user answered "Yes"')));
+  for (const args of [['review', '{kaylo:v1 update by=D2 outcome=completed}'], ['append', 'T1', verify], ['check-off', 'T1']]) {
+    const result = cli(cited, ...args);
+    assert.equal(result.status, 0, result.stderr);
+  }
+  assert.deepEqual(validate(cited.root), []);
+});
+
 test('visible Markdown ignores fenced and commented decoys; ambiguous raw targets refuse', t => {
   const f = fixture(t, '```md\n## Review\n' + task('T1') + '```\n<!--\n## Review\n' + task('T1') + '-->\n' + phase());
   assert.equal(cli(f, 'review', reviewer).status, 0);

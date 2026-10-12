@@ -34,7 +34,7 @@ The last column is a summary. The exact rules are in [For contributors: format c
 | `Test plan:` | `Verify:` | Test plan | Required. The old field is rejected. |
 | `Result:` | — | (Kaylo's own word) | Required |
 | Review comment (`R1`) | Finding | Review comment | Duplicate IDs are rejected. |
-| `blocking` / `non-blocking` | `blocker` / `optional` | Blocking / non-blocking; a nit is one kind of non-blocking comment | The old labels are rejected, and each comment needs the form `- R1: blocking — open` with the resolution `open`, `fixed`, or `accepted by user`. |
+| `blocking` / `non-blocking` | `blocker` / `optional` | Blocking / non-blocking; a nit is one kind of non-blocking comment | The old labels are rejected, and each comment needs the form `- R1: blocking — open` with the resolution `open`, `fixed`, or `accepted by user; decision: <citation>`. |
 
 ### PRD (product requirements document)
 
@@ -204,7 +204,7 @@ Structural checks:
 - `Blocked by:` is `None` or comma-separated, distinct IDs of earlier tasks in the same phase.
 - `Acceptance criteria:`, `Test plan:`, `Result:`, and `Blocked by:` each appear at most once per task. `## Review` and `## Completion` each appear at most once. Review comment IDs (`R1`) are unique.
 - The current phase plan has a `## Review` section (`None` is allowed before a review). A checked task with `Risk: high` needs a reviewer `dispatch` or `direct` record there whose `covers=` names the task or `phase`; a dispatch must be `completed`, by its own outcome or its latest `update`. Records are read with the dispatch report's parser, so quoted values count and malformed records do not. Prose alone, or a review covering other tasks, fails.
-- Review comments use `- R1: <blocking or non-blocking> — <resolution>`, where the resolution starts with `open`, `fixed`, or `accepted by user`. A label right after the ID without the colon, as in `- R1 (non-blocking, open):`, or a comment without one of those resolutions fails.
+- Review comments use `- R1: <blocking or non-blocking> — <resolution>`, where the resolution starts with `open`, `fixed`, or `accepted by user`; an acceptance continues `; decision: <the question asked and the user's answer, or where it is recorded>`. A label right after the ID without the colon, as in `- R1 (non-blocking, open):`, or a comment without one of those resolutions fails. An acceptance without a decision citation, or with a placeholder or punctuation-only citation, fails.
 - `{kaylo:v1 ...}` records in a task sit on its `Result:` line. `Acceptance criteria:` and `Test plan:` may mention record syntax; any other line in the task that contains `{kaylo:` fails, whatever its label.
 - Closure (`--closing`, or a checked current phase) requires every task checked, no `Status: Needs revision`, a record under `## Review` (`None` is allowed), and a substantive record under `## Completion`. A bare `Not complete` (case-insensitive, with an optional period or exclamation mark) is a placeholder; an open phase may retain it before closure.
 

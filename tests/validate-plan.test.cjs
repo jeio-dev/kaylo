@@ -189,18 +189,54 @@ test('Estimate values are instructions only', t => {
 
 test('blocking and non-blocking review comments pass', t => {
   const text = phase(task('T1', true)).replace('None; inspected greeting and command output.',
-    '- R1: blocking — fixed\n  - Recheck: node greet.cjs printed Hello\n- R2: non-blocking — accepted by user; optional follow-up\n- R7: non-blocking — Accepted by user\n- R3: non-blocking - fixed; the flag is optional now\n- R4: blocking—fixed; optional flag removed\n- R5: non-blocking–fixed; optional flag kept\n- R6: non-blocking – fixed; optional flag kept');
+    '- R1: blocking — fixed\n  - Recheck: node greet.cjs printed Hello\n- R2: non-blocking — accepted by user; decision: asked "Keep the optional flag?" on 2026-10-11; the user answered "Yes, keep it"\n- R7: non-blocking — Accepted by user ; Decision: recorded in PRD.md - Decisions — 2026-10-11\n- R8: non-blocking — accepted by user; decision: <https://github.com/o/r/issues/5#issuecomment-1>\n- R3: non-blocking - fixed; the flag is optional now\n- R4: blocking—fixed; optional flag removed\n- R5: non-blocking–fixed; optional flag kept\n- R6: non-blocking – fixed; optional flag kept');
   assert.deepEqual(validate(fixture(t, text).root, { closing: true }), []);
 });
 
 for (const [entry, expected] of [
   ['- R1: blocker — open', 'R1: label blocker is no longer supported; use blocking'],
   ['- R1: optional — open', 'R1: label optional is no longer supported; use non-blocking'],
-  ['- R1: Optional - accepted by user', 'R1: label optional is no longer supported; use non-blocking'],
+  ['- R1: Optional - accepted by user; decision: the user answered "accept" when asked about R1', 'R1: label optional is no longer supported; use non-blocking'],
   ['- R1: blocker / blocking — fixed', 'R1: label blocker is no longer supported; use blocking'],
 ]) test(`old review label is rejected: ${entry}`, t => {
   const text = phase(task('T1')).replace('None; inspected greeting and command output.', entry);
   assert.deepEqual(validate(fixture(t, text).root), [expected]);
+});
+
+const uncited = id => `${id}: "accepted by user" must cite the user's decision on this finding, as in "- ${id}: non-blocking — accepted by user; decision: <question asked and the user's answer, or where it is recorded>"; a route exception or waiver is not that decision, so otherwise keep it open`;
+
+test('an old label with an uncited acceptance reports both problems', t => {
+  const text = phase(task('T1')).replace('None; inspected greeting and command output.', '- R1: Optional - accepted by user');
+  assert.deepEqual(validate(fixture(t, text).root), ['R1: label optional is no longer supported; use non-blocking', uncited('R1')]);
+});
+
+for (const entry of [
+  '- R1: non-blocking — accepted by user',
+  '- R1: non-blocking — accepted by user; optional follow-up',
+  '- R1: blocking — Accepted by user',
+  '- R1: non-blocking — accepted by user (route exception)',
+  '- R1: non-blocking — accepted by user; decision:',
+  '- R1: non-blocking — accepted by user; decision: [question and answer]',
+  "- R1: non-blocking — accepted by user; decision: <question asked and the user's answer, or where it is recorded>",
+  '- R1: non-blocking — accepted by user; decision: TBD',
+  '- R1: non-blocking — accepted by user; decision: …',
+  '- R1: non-blocking — accepted by user; decision: ...',
+  '- R1: non-blocking - accepted by user; decision: - —',
+]) test(`acceptance without a cited decision is rejected: ${entry}`, t => {
+  const text = phase(task('T1')).replace('None; inspected greeting and command output.', entry);
+  assert.deepEqual(validate(fixture(t, text).root), [uncited('R1')]);
+});
+
+test('earlier phases keep uncited acceptances; only the Current plan is checked', t => {
+  const f = fixture(t);
+  const old = '.kaylo/phases/00-setup/00-PLAN.md';
+  fs.mkdirSync(path.dirname(path.join(f.root, old)), { recursive: true });
+  fs.writeFileSync(path.join(f.root, old), phase(task('T1', true)).replace('# 01 Greeting', '# 00 Setup')
+    .replace('None; inspected greeting and command output.', '- R1: non-blocking — accepted by user'));
+  fs.writeFileSync(f.index, fs.readFileSync(f.index, 'utf8').replace('- [ ] [01 Greeting]', `- [x] [00 Setup](${old}) — Set up\n- [ ] [01 Greeting]`));
+  assert.deepEqual(validate(f.root), []);
+  fs.writeFileSync(f.file, phase(task('T1')).replace('None; inspected greeting and command output.', '- R1: non-blocking — accepted by user'));
+  assert.deepEqual(validate(f.root), [uncited('R1')]);
 });
 
 for (const entry of [

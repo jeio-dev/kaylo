@@ -4,12 +4,32 @@
 
 ### Notable Changes
 
+- **tools**: The plan validator now requires an `accepted by user` review
+  resolution to cite your decision, as in
+  `- R1: non-blocking — accepted by user; decision: <the question asked and your answer, or where it is recorded>`.
+  A missing, placeholder, or punctuation-only citation fails. The record helper
+  therefore refuses any operation while the current phase has an uncited
+  acceptance, restores the file, and prints the accepted form. Only the plan
+  that `Current:` links is checked; earlier phases are not. To migrate, the
+  assistant asks you about each uncited acceptance in the current phase and
+  cites your answer, or sets the comment back to `open` if you don't confirm
+  it. A validator cannot prove you made the decision; it only makes a missing
+  one visible ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
+- **skills**: Build, review, and plan now say that agreeing to a review route
+  exception or waiver resolves no review finding. Only your explicit decision on
+  that finding allows `accepted by user`, and a reply that leaves the choice to
+  the assistant is not that decision. Instructions only; not yet trialed
+  ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
+- **docs**: `tests/GUARDRAIL-TRIALS.md` operator rules, for runs after
+  2026-10-11, approve a throwaway probe in the session's named scratch
+  directory and still deny every other write outside the project.
+
 - **tools**: Optional `scripts/plan-record.cjs` appends one task or reviewer record
   and checks off a task with its `accept` record. It reuses the record parser and
   structural validator, preserves earlier text, and restores caught validation
   failures. Anchored Markdown targeting prevents the #116 edit failure when the
-  helper is used ([#116](https://github.com/jeio-dev/kaylo/issues/116)). No record
-  grammar or validator rule changes; existing plans remain valid.
+  helper is used ([#116](https://github.com/jeio-dev/kaylo/issues/116)). The helper
+  itself changes no record grammar or validator rule.
 - **skills**: Build now presents high-risk completion as numbered steps: check,
   request review or ask the route in the same run, record, then check off through
   the helper. Review uses the helper for reviewer records; targeted manual edits
@@ -39,9 +59,8 @@
   question's own text, not only in one of its options, with an example
   sentence. `WORKERS.md`'s vendor choices say the same
   ([#115](https://github.com/jeio-dev/kaylo/issues/115)). These two entries
-  change instructions only; no model trial has run on them yet. The plan
-  validator and the dispatch report are unchanged, so existing plans validate
-  and report as before.
+  change instructions only and neither the plan validator nor the dispatch
+  report; no model trial has run on them yet.
 - **tools**: The dispatch report now lists records under `## Review` that fail
   to parse, and build records (`verify`, `repair`, `accept`, `reopen`, a builder
   `dispatch` or `direct`) placed there. Before, those were silently ignored.
@@ -95,10 +114,15 @@
   statement first written beside the review record comes too late. In the #83
   repeated set, five of six V1 and V1D runs reviewed first and named the tier
   only in the record.
-- **workers**: The builder brief says to write only inside the project,
-  temporary files included, and to return a missing dependency as a blocker
-  instead of placing stand-ins elsewhere. It also asks the builder to report
-  denied actions.
+- **workers**: The builder and reviewer briefs share one write-location rule.
+  Workers write only inside the project, except a throwaway probe or scratch
+  file, such as an edge-case script, in the scratch or temporary directory the
+  host's instructions name for the session. Modified copies of project files,
+  stand-ins for missing modules or dependencies, and changes to your other files
+  outside the project stay prohibited, and the builder returns a missing
+  dependency as a blocker. Both briefs ask workers to report denied actions.
+  Instructions only; no model trial has run on them yet
+  ([#83](https://github.com/jeio-dev/kaylo/issues/83)).
 - **docs**: The glossary's structural checks and the manual fallback in build,
   close, and plan now list the review comment form, the resolution, the
   `## Review` and high-risk review rules, and record placement. `WORKERS.md`

@@ -254,6 +254,17 @@ function validate(project, { closing = false } = {}) {
     }
     if (!/^[ \t]*(?:open|fixed|accepted by user)\b/i.test(rest.join('-'))) {
       fail(`${match[1]}: follow the label with " — " and a resolution (open, fixed, or accepted by user), as in "- ${match[1]}: blocking — open"`);
+      continue;
+    }
+    // An acceptance cites the user's decision. Read the original text after the first label
+    // dash, so a dash inside the citation is checked as written. This shows a citation is
+    // present; it cannot show the user decided. An autolink such as <https://...> is a citation.
+    const resolution = match[2].slice(label.length).replace(/^(?:\s-\s|[\u2013\u2014])/, '');
+    if (/^[ \t]*accepted by user\b/i.test(resolution)) {
+      const cited = resolution.match(/^[ \t]*accepted by user[ \t]*;[ \t]*decision:[ \t]*(.*?)[ \t]*$/i)?.[1];
+      if (!meaningful(cited) || (/^<[^]*>$/.test(cited) && !cited.includes('://')) || !/[\p{L}\p{N}]/u.test(cited)) {
+        fail(`${match[1]}: "accepted by user" must cite the user's decision on this finding, as in "- ${match[1]}: non-blocking — accepted by user; decision: <question asked and the user's answer, or where it is recorded>"; a route exception or waiver is not that decision, so otherwise keep it open`);
+      }
     }
   }
   if (closing || closed) {
