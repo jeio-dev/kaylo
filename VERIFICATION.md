@@ -1856,6 +1856,68 @@ manifest checks do not establish host loading or worker behavior. Deferred
 behavioral verification and release readiness remain separate from this
 finding recheck.
 
+## Git preferences, attributable commits, and phase pull requests (#85) — 2026-10-12
+
+Implementation on branch `issue-85-git-workflow` from `main` at `1363ee5`,
+following the revised #85 specification. Before starting, the maintainer chose
+to ship #85 with automatic commit, push, and pull request steps gated on #89:
+the Git keys are recorded and read, but this version never acts on them,
+because #89's candidate and outgoing-history scan contract does not exist yet.
+Explicitly requested Git actions follow the new rules. Deliverables, one
+commit each: the preferences reader, the commit message checker, the Git
+workflow reference with its consumers, the pull request and issue reference
+with the `Issue:` check, the phase size report, and the foundation area 7–8
+update. The builder brief changed, so `claude-agents/` was regenerated with
+`node scripts/sync-claude-agents.cjs`.
+
+Observed on Linux (WSL2) with Node 24.21.0 and Git 2.53.0:
+
+- `node scripts/validate-package.cjs` passed (five shared skills, matching
+  v0.11.0 versions and catalogs).
+- `node --test tests/*.test.cjs`: 337 tests, 337 pass, 0 skipped. New:
+  `tests/read-preferences.test.cjs` (14), `tests/check-commit-message.test.cjs`
+  (8), `tests/git-workflow.test.cjs` (6), `tests/diff-size.test.cjs` (6), and
+  two `Issue:` cases in `tests/validate-plan.test.cjs`. The package inventory
+  test packed the working tree with the new scripts and references, and
+  `validate-package.cjs --installed` matched the extracted tarball.
+- `claude plugin validate .claude-plugin/plugin.json --strict` and
+  `claude plugin validate .claude-plugin/marketplace.json --strict` passed on
+  Claude Code 2.1.296; `agy plugin validate .` passed on Antigravity CLI 1.3.1
+  (5 skills, 3 agents); `git diff main...HEAD --check` passed.
+- All 58 relative links in the 13 changed Markdown files resolve.
+
+What the fixtures establish: the preferences grammar (every documented value,
+CRLF, a tolerated byte-order mark, records only at column 0, inline comments
+and wrong case as unusable values, repeated keys unusable even when equal,
+unknown keys as notes that invalidate nothing, a missing or repeated `Format`
+making the file unusable), read failures for directories, dangling and
+escaping links, invalid encoding, oversized files and a FIFO without blocking,
+and diagnostics that never echo values. The checker covers the task, phase,
+review-fix, phase-record, release, and migration message cases, breaking
+notation, unlisted scopes, scopes without a list, required identities, and an
+unadopted or unusable policy. In disposable Git repositories with hooks
+disabled: `git add` of new task files followed by `git commit --only -- <task
+paths>` committed exactly an edit, a new file, a deletion, and a rename while
+the user's staged edit stayed staged, the unstaged edit and untracked file
+stayed untouched; a plain commit would have taken the staged file; an `--only`
+commit of a shared file took the user's edit, which is why overlap stops the
+step. The size report covers renames, lockfiles at any depth,
+`linguist-generated` files, binary files, untracked text and ignored files,
+the 400 and 600 boundaries, a project in a subdirectory, refused option-like
+revisions, and no repository changes. The validator accepts the documented
+`Issue:` forms and rejects malformed and repeated ones; the references'
+examples parse with the shipped parsers.
+
+Not run: any live model or worker session with the new instructions; real
+pushes, pull requests, provider CLIs, CI runs, merge-method or template
+discovery; issue filing; install or update trials in isolated host profiles;
+Codex, Gemini CLI, and OpenCode loading. Authorization, workspace
+preservation, publication, and issue-closure behavior is untested with a
+model. Automatic Git steps are not implemented and cannot be observed until
+#89's scan contract lands. Behavioral trials are deferred under the
+maintainer's 2026-10-11 timing decision; #85 stays open. No independent
+review of this implementation had run when this record was written.
+
 ## Public installation 0.11.0 — 2026-10-06
 
 PR #82 merged the release commits into `main` as `9a935bb`. The immutable
@@ -1894,3 +1956,87 @@ do not cover model behavior, hook delivery in a live session, worker starts,
 interactive host pickers, other operating systems, or newer host versions. No
 model requests were made. Trial scripts and logs are under the ignored
 `.local/trials/public-0.11.0/`.
+
+
+## PR #127 implementation review — 2026-10-12
+
+Direct review of `07a549c2e716f4d091f09dde250184a9d245a754` against base
+`1363ee52e8e492395bd35ba0e7e2eea32deaafe6` and the revised #85 specification.
+Published three inline findings:
+https://github.com/jeio-dev/kaylo/pull/127#pullrequestreview-5490262892
+
+Observed: `node scripts/validate-package.cjs` passed (v0.11.0, five shared
+skills, matching versions/catalogs); `node --test tests/*.test.cjs` passed
+337/337 with no skips; Claude Code 2.1.296 strict plugin and marketplace
+manifest validation passed; `agy plugin validate .` passed on Antigravity
+CLI 1.3.1; `git diff main...HEAD --check` passed. Disposable repository
+probes reproduced inherited unknown preference keys crashing the reader,
+generated-file exclusions changing for fixed base/head SHAs when local
+attributes change, and tab-containing paths being truncated and misclassified.
+The existing passing suite does not cover these failures. The published
+review and inline comments were read back to verify their target and content.
+
+No live model/worker, isolated installation, real project commit/push/PR
+lifecycle, provider CI, secret scanner, or issue-filing trial ran. Temporary
+Git commits establish local Git/parser behavior only; manifest validation
+establishes package discovery/structure, not instruction-following behavior.
+Automatic Git execution remains intentionally gated on #89. This review had
+no separate reviewer. No implementation was changed; only this evidence
+record was appended locally, without committing or pushing it.
+
+## PR #127 review fixes — 2026-10-12
+
+Addressed the three findings from the PR #127 implementation review above.
+
+- `scripts/read-preferences.cjs` checks recognized keys with `Object.hasOwn`
+  and keeps lines in Maps, so `constructor`, `toString`, `hasOwnProperty`,
+  `valueOf`, and `isPrototypeOf` are `PREFS_UNKNOWN` notes that leave other
+  preferences usable, instead of a crash. The commit message checker reading
+  such a file no longer crashes either.
+- `scripts/diff-size.cjs` reads `linguist-generated` rules with
+  `git check-attr --source=<head>` when a head is given, so a fixed base/head
+  comparison gives the same result after the working-tree attributes change or
+  another branch is checked out. Without a head it still uses working-tree
+  rules. `--source` needs Git 2.40 or later; older Git reports `SIZE_GIT`
+  rather than a result from the wrong rules.
+- `scripts/diff-size.cjs` splits each numstat record only at its first two
+  tabs, so paths containing tabs keep their full name and are classified as
+  lockfiles, generated, or binary files correctly.
+
+Observed on Linux (WSL2), Node 24.21.0, Git 2.53.0: three new tests (one in
+`tests/read-preferences.test.cjs`, two in `tests/diff-size.test.cjs`) fail
+against the reviewed scripts at `07a549c` and pass with the fix.
+`node --test tests/*.test.cjs` passed 340/340 with no skips. Package
+validation, `claude plugin validate --strict` for the plugin and marketplace
+(Claude Code 2.1.296), `agy plugin validate .` (Antigravity CLI 1.3.1), and
+`git diff --check` passed.
+
+Not run: Git older than 2.40; Windows; live model or worker sessions; real
+push, pull request, or CI behavior; isolated install trials. Automatic Git
+execution remains gated on #89, and behavioral trials remain deferred. The
+fixes have not been rechecked by a reviewer.
+
+
+## PR #127 focused review recheck — 2026-10-12
+
+Rechecked all three findings at `ee9ba26f4c0a7260f514c30f437403fdc15896bf`
+(implementation fix `bea6382`). All three are fixed; no new findings in the
+changed code. Posted the outcomes in the original threads and this review:
+https://github.com/jeio-dev/kaylo/pull/127#pullrequestreview-5490411251
+
+Observed on Linux/WSL2, Node 24.21.0, Git 2.53.0: the three regression
+fixtures fail against isolated copies of the reviewed scripts at `07a549c`
+and pass with the fixes. The full Node suite passed 340/340 with no skips.
+Package validation, strict Claude plugin and marketplace validation (2.1.296),
+`agy plugin validate .` (Antigravity CLI 1.3.1), and
+`git diff main...HEAD --check` passed. Published replies and review were read
+back and checked against the prepared payloads; `git diff --check` passed
+after this record was appended.
+
+This was a focused direct recheck, with no separate reviewer. Git older than
+2.40, Windows, isolated installation, live model/worker, and real project
+push/PR/CI behavior remain untested. Local fixtures and manifest validation
+establish parser/Git behavior and package structure, not model behavior.
+Automatic Git execution remains intentionally gated on #89. Prior evidence
+was preserved; only this recheck record was appended locally, without
+committing or pushing it.

@@ -178,7 +178,7 @@ function validate(project, { closing = false } = {}) {
     }
     tasks.push({ id: match[2], checked: match[1].toLowerCase() === 'x', title: match[3],
       acceptance: field('Acceptance criteria'), testPlan: field('Test plan'), result: field('Result'),
-      blockedBy: field('Blocked by'), risk: field('Risk') });
+      blockedBy: field('Blocked by'), risk: field('Risk'), issue: field('Issue') });
     i = end - 1;
   }
   if (!tasks.length) fail('Current phase has no recognizable task entries');
@@ -193,6 +193,11 @@ function validate(project, { closing = false } = {}) {
       } else for (const dep of deps) {
         if (!seen.has(dep)) fail(`${task.id}: Blocked by ${dep} must name an earlier task in this phase`);
       }
+    }
+    // Issue is optional; when present it names #N, owner/repo#N or an https:// link per entry.
+    if (task.issue !== undefined && !task.issue.split(/,[ \t]*/).every(ref =>
+      /^(?:[A-Za-z0-9_.-]+(?:\/[A-Za-z0-9_.-]+)+)?#[1-9]\d*$/.test(ref) || /^https:\/\/[^\s,]+$/.test(ref))) {
+      fail(`${task.id}: Issue must list #N, owner/repo#N, or https:// links, separated by commas`);
     }
     for (const [name, value] of [['title', task.title], ['Acceptance criteria', task.acceptance], ['Test plan', task.testPlan]]) {
       if (!meaningful(value)) fail(`${task.id}: task needs a substantive ${name} record`);

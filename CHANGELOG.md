@@ -4,6 +4,62 @@
 
 ### Notable Changes
 
+- **skills**: `.kaylo/preferences.md` accepts optional Git keys: `Git
+  autonomy` (`ask`, `commit`, `push`, `pr`), `Branch`, `Commit`, `Commit
+  style`, `Commit scopes`, and `Merge`. Plan raises them only when you want
+  Kaylo to commit, push, or open pull requests, records only your own
+  choices, and notes the decision under `## Agreement`. A copied example or a
+  worker's edit is not your decision, and no level covers merging, tagging,
+  force-pushing, default-branch pushes, issues, or labels. In this version
+  Kaylo records these keys but never commits, pushes, or opens a pull request
+  because of them: automatic steps need a secret scan of each commit and of
+  pushed history, which Kaylo does not include yet. Existing files and plans
+  need no change ([#85](https://github.com/jeio-dev/kaylo/issues/85)).
+- **skills**: When you ask Kaylo to commit, it follows the new
+  `skills/build/references/git.md`: it commits only the work's own changes
+  with `git commit --only -- <paths>`, leaves your staged, unstaged, and
+  untracked work as it was, stops when a file also holds your edits, honors
+  hooks, inspects every outgoing commit before a push, and records the
+  outcome and any retry step without counting a Git failure as a code
+  repair. It says that it ran no secret scan
+  ([#85](https://github.com/jeio-dev/kaylo/issues/85)).
+- **skills**: `skills/build/references/pull-requests.md` covers one pull
+  request per phase: finding an existing one before creating a draft,
+  explicit repository, base, and head, ready for review only after every task
+  is accepted and the full checks pass, back to draft when that stops being
+  true, CI reported for the pushed revision only, and a prepared body when no
+  provider is available. Repository templates come first; the fallback body
+  uses real commands and revisions and never writes `None` for missing risk
+  evidence. A `Release note:` line under `## Review` records the phase's
+  classification as provisional, reviewed, or pending. Issues are filed or
+  edited only on request, with existing labels only
+  ([#85](https://github.com/jeio-dev/kaylo/issues/85)).
+- **skills**: Tasks may carry `Issue: #12`, `owner/repo#12`, or an
+  `https://` link. `Closes` is used only when a pull request completes the
+  issue's agreed scope and targets the default branch; otherwise the link is
+  a reference. The plan validator now rejects a malformed or repeated
+  `Issue:` line in the current phase; plans without one are unaffected
+  ([#85](https://github.com/jeio-dev/kaylo/issues/85)).
+- **skills**: Plan notes a phase with more than five tasks or any L task, and
+  a phase implementation review reports the phase's size. Past about 400–600
+  counted lines, review recommends smaller future phases. Both are advisory
+  ([#85](https://github.com/jeio-dev/kaylo/issues/85)).
+- **tools**: `scripts/read-preferences.cjs` reads `.kaylo/preferences.md`
+  without changing it and reports `PREFS_*` diagnostics: a missing or
+  repeated `Format: 1` makes the file unusable, and a repeated key or
+  unsupported value, including an inline comment, makes only that key
+  unusable. `scripts/check-commit-message.cjs` checks one new message against
+  an adopted conventional policy, its scope list, and required task IDs.
+  `scripts/diff-size.cjs` counts added and deleted lines between two
+  revisions or against the working tree, listing lockfiles,
+  `linguist-generated` files, and binary files apart. Between two revisions
+  it reads the generated-file rules from the compared head, which needs Git
+  2.40 or later
+  ([#85](https://github.com/jeio-dev/kaylo/issues/85)).
+- **docs**: The #85 instructions have not been run with a model, and no
+  pull request, CI, or provider behavior was exercised. Their behavioral
+  trials are deferred with #84's. See `VERIFICATION.md`
+  ([#85](https://github.com/jeio-dev/kaylo/issues/85)).
 - **skills**: An optional `.kaylo/gates` file names a project's own
   full-check command and the directory to run it from, as three lines:
   `Format: 1`, `Directory:`, and `Full check:`. Task acceptance still runs the

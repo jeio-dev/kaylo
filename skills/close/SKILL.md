@@ -44,10 +44,11 @@ Help the user understand what is complete and how to use it. Work in the user's 
 - `Status: Current` means plan validity, not agreement, verification, or completion.
 - Older formats (listed under the structural plan check) are unsupported → `/kaylo:plan`. Report each with its replacement; do not convert them here.
 - Missing implementation review or recheck of a blocking comment → `/kaylo:review changes`; closure remains incomplete.
+- A `Release note:` line under `## Review` that is not `reviewed` is a pending classification: say so in the completion record and do not choose a class there. A phase pull request is not merged, and its branch is not deleted, as part of closing.
 - Open non-blocking review comments do not block closure. Record actual user decisions for accepted comments. Deferring an unmet requirement changes scope; it does not make the requirement pass.
 - Repairs or unresolved task verification → `/kaylo:build <task ID>`, naming the affected task (for example `/kaylo:build T1`) so automatic selection does not skip its recorded blocker. Close does not implement fixes.
 - After two unsuccessful repairs of the same unresolved failure, hand back the blocker and attempt history. A session, task ID, or worker change does not reset the limit. Another correction requires material new evidence, a changed blocking condition, or explicit user authorization, without a fresh two-attempt allowance.
-- Commit, push, deploy, post publicly, or tag a release only when already requested. If included in the agreed task, verify the action's actual outcome before claiming completion.
+- Commit, push, deploy, post publicly, or tag a release only when already requested. For a commit or push, follow [Git workflow](../build/references/git.md). If included in the agreed task, verify the action's actual outcome before claiming completion.
 
 ## Structural plan check
 

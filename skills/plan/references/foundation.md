@@ -33,12 +33,12 @@ Tools named below are examples, never requirements. Reuse what the project alrea
 | 4. Secret scanning | Any suitable scanning, such as gitleaks, provider scanning, or a pre-commit hook, where it runs, and its observed limits. |
 | 5. Static analysis | Analysis suited to the stack, such as Semgrep, a linter, or a type checker, and whether a check runs it. |
 | 6. Environment handling | Committed nonsecret catalogues or fake fixtures, ignore patterns for real secret files, and whether any real secret file is already tracked (see below). |
-| 7. Issue and PR templates | Repository or organization templates already in use. Kaylo ships none; assess what exists. |
-| 8. Commit-message checks | The project's agreed commit-message policy and scope list, if any, and whether a check enforces it. Do not invent a policy. |
+| 7. Issue and PR templates | Repository or organization templates already in use. Kaylo's fallback layouts in [pull requests](../../build/references/pull-requests.md) fill a gap only for text Kaylo prepares; adding templates to the repository is separate agreed work. |
+| 8. Commit-message checks | The project's agreed commit-message policy and scope list, if any, and whether a check enforces it, including whether it covers branch commits, squash titles, or both. Do not invent a policy; the conventional policy in [Git workflow](../../build/references/git.md#commit-messages) applies only when the user adopts it. |
 | 9. Test strategy and harness | Existing tests, how they are run, what they cover, and whether that fits the outcome. Do not add a framework, or a browser harness, for a small change, library, or docs project. |
 | 10. Secrets, startup, and environments | How the host and project limit secret access, whether startup validates required configuration where that applies, and which environments exist and how they differ. |
 
-Kaylo does not yet ship issue or PR layouts, commit-scope rules, decision records, or a test strategy. Areas 7–10 assess the project's own controls; draft any testing or environment decision under `## Design` and keep it there until the project has somewhere else it belongs.
+Kaylo does not yet ship decision records or a test strategy. Areas 7–10 assess the project's own controls; draft any testing or environment decision under `## Design` and keep it there until the project has somewhere else it belongs.
 
 ## Proposing work
 
