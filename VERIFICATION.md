@@ -4092,3 +4092,52 @@ structure and documentation consistency, not additional model behavior.
   `helper-history.md`, full native transcripts and final fixtures; exit/hash checks in
   `setup-checks/`. This record documents the stopped trial; no publication, issue closure
   or #84 work.
+
+## 2026-10-11 — #83 fixes after the stopped gate rerun: scratch-probe rule and cited acceptances
+
+Package checks for the two fixes planned in `.local/plans/issue-83-gate-fixes.md` (A and B). The plan was reviewed
+twice by a `kaylo:reviewer` subagent: round 1 found two blocking comments, and the round-2 recheck was ready. The
+operator was Claude Code with Claude Opus 5.5 (`claude-opus-5-5`). No model trial ran on these changes, and no model
+behavior was observed.
+
+- A, from H1-r2. The builder and reviewer briefs share one write-location rule, byte-identical in both briefs and both
+  generated adapters. Outside the project, a worker may write only a throwaway probe or scratch file in the scratch or
+  temporary directory the host's instructions name for the session. Modified copies of project files, stand-ins for
+  missing modules or dependencies, and changes to the user's other files stay prohibited. Before this, the reviewer
+  brief had no rule. The H1-r2 reviewer's host environment told it to use that scratchpad for temporary files.
+  - `WORKERS.md`, the build and review fallback worker instructions, and the `tests/GUARDRAIL-TRIALS.md` operator rules
+    (for runs after 2026-10-11) match the new rule.
+  - H1-r2 stays a gated Fail under the protocol it ran under.
+- B, from H2-r1. An `accepted by user` review resolution must now cite the decision:
+  `accepted by user; decision: <the question asked and the user's answer, or where it is recorded>`.
+  - The validator rejects a missing, placeholder (`[...]`, a `<...>` placeholder that is not an autolink, `TBD`,
+    and similar) or punctuation-only citation. It reads the text after the first label dash as written.
+  - `plan-record.cjs` has no new code path. Each operation validates the whole plan, so `review`, `append` and
+    `check-off` refuse, restore the file byte for byte, and print the accepted form while the current phase has an
+    uncited acceptance.
+  - Build, review, plan, the review delegation, `WORKERS.md`, `GLOSSARY.md` and the phase template now say a route
+    exception or waiver resolves no finding.
+  - Only the plan `Current:` links is checked, the same scope as #97. Earlier phases keep old forms, and the dispatch
+    report is unchanged.
+  - Limit: a validator cannot prove the user decided; it only requires an explicit citation. A manual Edit can still
+    write a false citation.
+- Checks, all passing:
+  - `node scripts/validate-package.cjs`;
+  - `node --test tests/*.test.cjs` 264/264, up from 250. New: 13 validator tests, among them a passing citation that
+    contains a hyphen and an em dash, rejection of uncited and placeholder citations, and earlier phases left
+    unchecked. One helper test covers refusal and byte restoration for all three operations, and success with a
+    citation.
+  - `node scripts/sync-claude-agents.cjs`, which is idempotent: a second run changes nothing;
+  - `claude plugin validate .claude-plugin/plugin.json --strict` and `… marketplace.json --strict` with Claude Code
+    2.1.296 and a scratch `CLAUDE_CONFIG_DIR`;
+  - `agy plugin validate .` with Antigravity CLI 1.3.1 and a scratch `HOME`;
+  - `git diff --check`.
+- Mutation checks, in a scratch copy, rerun after the review fix: disabling the rule, or dropping its letter/digit,
+  angle-placeholder, autolink-exemption or `meaningful()` parts, each makes the new tests fail (14, 3, 1, 1 and 2
+  failures).
+- Implementation review by a `kaylo:reviewer` subagent: ready, with three non-blocking comments, all fixed:
+  - a stale "existing plans validate as before" sentence in the #115 changelog entry;
+  - this record;
+  - an autolinked citation (`<https://…>`) is now accepted, with a test.
+- Not run: install or update checks, OpenCode, Gemini, and any model or worker session. The next declared trial on the
+  merge commit measures behavior. #113–#116 stay open.
