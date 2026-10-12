@@ -390,6 +390,23 @@ on Linux only; macOS and Windows (Git for Windows' `sh`) are untested.
 
 ## Workers and budgets
 
+The [testing contract](skills/plan/references/testing.md) reuses project runners
+and assesses only relevant layers. Criteria map to named checks and expected
+observations; regression/new-behavior proof records the intended failure then
+pass while preserving the working tree. Test maintenance needs rationale and
+retained coverage, and unavailable required evidence stays open. Native focus
+checks plus manual diff review establish only the controls actually exercised.
+Before high-risk implementation, a fresh test-only builder precedes the existing
+focused implementation review. With `Review vendor: different`, author and
+implementation vendors must differ, and a reviewer covering both may need a third
+vendor or explicit exception. Tier, freshness, billing and availability remain
+separate constraints. An available generic fresh worker or separate conversation
+can qualify without native registration; otherwise authoring needs a handoff,
+specific exception or pause. Implementation started before adoption keeps its
+prior evidence requirements without retrospective authoring or proof. These are
+instruction contracts; see [verification](VERIFICATION.md)
+for observed behavior and unrun [trials](tests/TESTING-TRIALS.md).
+
 Claude and Codex can guide a project. Seven guardrail and routing cases each passed three runs on Claude Code with Sonnet 5.5 and on Codex CLI with its default model. That result covers only those setups; see [verification](VERIFICATION.md). Antigravity can receive research work; Gemini CLI loads the same briefs, but no worker has been run there, and OpenCode with an available DeepSeek model can receive implementation work. Read [working with a worker](WORKERS.md) for a copyable handoff and model-selection guidance. When a plan expects workers for which Kaylo can choose a model at dispatch, plan asks once for a project preference and writes `Format: 1` and a `Worker models:` choice of Inherit, Quality, Balanced, or Budget to `.kaylo/preferences.md`. The user can edit that file later. A missing or unknown preference uses Inherit; build never asks for a preference. Gemini CLI and Antigravity use Inherit for their packaged workers, so plan does not ask for their model preference. When a requested tier is unavailable, dispatch waits for a user choice rather than silently using a weaker model.
 
 The same file accepts two optional keys, `Review vendor: different` and `Metered: allowed (<route>)`; see [review vendor and metered routes](WORKERS.md#review-vendor-and-metered-routes). A task marked `Risk: high` gets a focused review, requested in the same build run, after its checks pass and before it is checked off. When a check fails, the assistant diagnoses it first and recommends a stronger tier only when capability matters; a model change never adds repairs. Builds and reviews append compact `{kaylo:v1 ...}` records to the phase plan, through `scripts/plan-record.cjs` when Node is available, and `node /absolute/path/to/kaylo/scripts/dispatch-report.cjs /absolute/path/to/project` prints first-try pass rates from closed phases. The report is read-only and advisory. Earlier versions of these instructions ran in single-run and three-run trials on Claude Code with Sonnet 5.5; the current instructions and the record helper have not been run with a model. See [verification](VERIFICATION.md).
@@ -402,7 +419,7 @@ Delegated builds record the starting workspace state, confirm dependencies are p
 
 ## Package and scope
 
-- `skills/`: five command entrypoints with optional references: build and review delegation, build's Git workflow and pull request guidance, plan's project gates, foundation assessment, and project-decisions contract, and close's CI evidence, release metadata, and lazily loaded guided-release procedure.
+- `skills/`: five command entrypoints with references: build/review delegation and the high-risk test-author stage, build's Git workflow and pull request guidance, plan's project gates, foundation assessment, project-decisions and testing contracts, and close's CI evidence, release metadata, and lazily loaded guided-release procedure.
 - `agents/`: three shared worker briefs; `claude-agents/`: generated native Claude adapters with identical instruction bodies.
 - `templates/`: optional PRD, roadmap, and phase plan starting points, plus the ADR and decision-index templates close uses when promoting project decisions.
 - `.claude-plugin/`, `.codex-plugin/`, `plugin.json`, `.agents/plugins/`: native packaging for Claude, Codex, and Antigravity, and the released Codex catalog. OpenCode loads the shared skills directory directly.

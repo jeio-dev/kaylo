@@ -58,9 +58,9 @@ Run the exact `Full check:` text from `resolvedDirectory` with the host's normal
 ## When each check runs
 
 - **Plan review and diagnosis** may happen before the gate exists. Never require a gate that a task still has to create to pass before reviewing the plan that creates it.
-- **Task acceptance** runs the task's own scoped checks from its `Test plan:`, covering affected integration behavior. A scoped pass does not establish that the full check passes.
+- **Task acceptance** runs the task's own scoped checks from its `Test plan:`, covering affected integration behavior. Include applicable E2E when changed-flow acceptance or stricter repository policy requires it; runtime/flakiness does not automatically exclude required coverage. A scoped pass does not establish that the full check passes.
 - **High-risk task review** consumes those task checks; a passing gate is not review coverage.
-- **Before phase implementation review**, run the full check when `.kaylo/gates` is present. CI runs the same entry point where the project has CI.
+- **Before phase implementation review**, run the declared relevant full phase/project suite, including applicable E2E, under [testing evidence](testing.md), even without optional gates. Run the full check when `.kaylo/gates` is present. CI runs the same entry point where the project has CI.
 - **Close** uses full-check and CI evidence for the delivered revision; see close's CI evidence reference.
 - Stricter repository checks still apply. Proposed checks are labelled as still needing creation until the task that creates them is accepted, and that task's acceptance needs the new entry point to exist and pass.
 - Structural plan validation is separate and read-only. It does not run gates or establish evidence, and no gate may require a task check-off that itself needs the gate to pass.

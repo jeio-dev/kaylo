@@ -29,6 +29,18 @@ When resources are unavailable, apply the standalone fallback below.
 
 If the decision reference or required templates are unavailable: with `.kaylo/decisions/` absent and no promotion required, keep legacy behavior and read established project decisions under the ordinary agreement rules. With records present or promotion required, inspect decisions manually only from the complete canonical contract, taken from identified supplied content or an intact package, and record that source and the checks; existing ADRs, a phase plan, or structural plan validation do not establish it. Otherwise stop affected planning before agreement or readiness and record `Decision consistency: unreadable — <missing resource paths, affected scope, and resume action>` under `## Agreement` as an unresolved decision and in `## Next step`, or in the response when no phase plan exists. Resume with the full Kaylo package or the complete contents of `skills/plan/references/decisions.md`, `templates/DECISION.md`, and `templates/DECISION-INDEX.md`. Structural fallback never waives decision or product evidence. Never guess authority, overwrite user-owned files, install runtimes, or change host settings.
 
+## Testing strategy and evidence
+
+For current work, including direct/resumed entry, use the applicable settled
+strategy and task Test plan. Load relevant sections of [testing evidence](references/testing.md)
+when planning/revising strategy or resolving layer choice, failure proof,
+integrity, authoring or full-suite scope; reuse unchanged established decisions
+and evidence without rereading the whole contract for a clear local change.
+Required product evidence still governs acceptance. If the needed reference is
+unavailable, keep existing checks/agreement, disclose the affected scope and
+resume new requirements with the full package or complete identified contract;
+do not guess it, invent evidence or waive a required stage.
+
 ## Workflow
 
 1. Read project instructions, `PRD.md` if present, `ROADMAP.md`, and the current phase plan its `Current:` line links. Convert older formats first (see below). A concrete small-change request can stand in for a PRD. Ask for missing intent only when it changes the work.
@@ -115,7 +127,7 @@ Each task requires:
 - Starting points, required packages or tools, concrete steps, and an estimate reason when needed to execute without guessing. Clear local S tasks need no redundant explanation.
 - Existing failed-repair history, kept in the task's `Result:` line.
 - Optional `Issue:` naming the tracked issues the task works on, as `#12`, `owner/repo#40`, or an `https://` link, separated by commas; see [pull requests](../build/references/pull-requests.md#issue-links). Finishing the task does not by itself complete the issue.
-- Optional `Risk: high` with its reason, or `Risk: normal`. Classify by the behavior the task changes and its consequences: authentication or session enforcement, authorization, payment handling, upload trust boundaries, sensitive-data exposure, or other consequential security behavior. An incidental mention, a documentation change, or a cosmetic fix on a login page is not high risk by itself. Use the PRD's sensitivity notes when present. Build requires a focused review of a high-risk task before check-off. A missing `Risk:` keeps existing judgment about consequential review and does not mean low risk; older plans need no conversion.
+- Optional `Risk: high` with its reason, or `Risk: normal`. Classify by the behavior the task changes and its consequences: authentication or session enforcement, authorization, payment handling, upload trust boundaries, sensitive-data exposure, or other consequential security behavior. An incidental mention, a documentation change, or a cosmetic fix on a login page is not high risk by itself. Use the PRD's sensitivity notes when present. Build requires the [fresh test-only builder stage](../build/references/test-author.md) before high-risk implementation, subject to its pre-adoption rule, and a later focused implementation review before check-off. Plan its actual route, bounded ownership and inspected handoff; helper check-off does not establish authoring completion. A missing `Risk:` keeps existing judgment about consequential review and does not mean low risk; older plans need no conversion.
 
 Task and review comment IDs restart per phase (`T1`, `R1`). A bare ID means the current phase; `02-T3` or `02-R1` names a specific phase. Never renumber or reuse an ID within a phase. An inserted task takes the next free ID; list position sets order.
 
@@ -123,6 +135,9 @@ Estimate: **S** = clear local edit following an existing pattern; **M** = bounde
 
 ## Verification
 
+- Apply [testing defaults and mapping](references/testing.md#map-acceptance-to-observed-behavior) to each task's changed behavior. Record used/missing/not-applicable/unavailable layers, doubles and resources in Design; required gaps stay blockers with creation tasks or next actions. Settled consequential testing choices promote at close under area `testing`, never as a prerequisite for the same phase's tasks; required promotion precedes phase check-off.
+- For high-risk work, plan the [test-only builder stage](../build/references/test-author.md) before implementation, its allowed paths, harness/interface prerequisites, acceptance-derived negative cases and handoff. Establish intended implementation vendor(s) for different-vendor author routing; retain later focused implementation review. No new worker role, mandatory task field or event schema is needed.
+- Declare full-suite scope, exact existing command(s)/directories, layer coverage and manual observations in Design under [scoped/full checks and adoption](references/testing.md#scopedfull-checks-and-adoption). Legacy plans resolve their established repository suite in current evidence without migration or a new mandatory field.
 - In `Test plan:`, name only commands that exist; label proposed checks still needing creation.
 - Checks must establish acceptance, not repeat implementation. Use existing project checks; do not add a testing framework for a small change.
 - Include a user-facing check when automated tests do not establish the feature works.

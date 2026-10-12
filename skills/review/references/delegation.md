@@ -38,6 +38,7 @@ Supply:
 - Exact files or diff being reviewed, including untracked files in scope. For a plan check the target is the phase plan itself; say whether the phase is headed for a phase-wide build, where no one watches each task.
 - The build's recorded starting state when available, so the reviewer can distinguish assigned changes from pre-existing edits. If it is unavailable, disclose the attribution limit and still inspect relevant behavior.
 - Requirements and facts, without the author's defense of the approach.
+- Applicable [testing strategy and evidence](../../plan/references/testing.md), named criterion mapping, baseline/candidate and actual failure/pass observations, justified applicability exceptions, doubles/resources, test-integrity changes/rationale and quarantine follow-ups. For high-risk work include author/implementation artifacts and all covered builder identities, including the test author; different-vendor review compares against every covered builder. Phase review consumes the relevant full-suite evidence including applicable E2E; plan review may precede harness creation.
 - Applicable project decisions, resolved and supplied as described above.
 - For a phase review, earlier passing task reviews with their covered inputs, so the reviewer can reuse unchanged coverage and refresh what changed.
 

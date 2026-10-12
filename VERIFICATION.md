@@ -14,6 +14,15 @@ records from the first draft through 0.5.2 are in
 
 ## Current status — 0.11.0
 
+The #88 implementation adds the shared testing/evidence contract and bounded
+high-risk test-author stage to existing entry points and packets. The latest
+2026-10-12 second-review checks below pass package/manifest validation, **394**
+Node tests (one ineffective fixture removed), 73 final affected tests and
+staged/packed resource parity. Live #88 instruction-following, fresh
+author/implementation/reviewer and routing trials remain unrun; issue acceptance
+and release readiness are not established. The trial matrix is prepared in
+`tests/TESTING-TRIALS.md`. Existing released-host observations do not verify it.
+
 The #87 decision-record implementation adds a canonical optional ADR/index
 contract, manual consistency/promotion rules, and existing-entry-point/worker
 integration. The 2026-10-12 behavioral pass below has 55 manifest entries:
@@ -46,6 +55,172 @@ Code 2.1.289 with Sonnet 5.5 and on Codex CLI 0.160.1 with GPT-6.1-Sol. The
 Codex grades are operator-reported. The PR #79 review spot-checked their saved
 command records and secret-token classifications but did not audit every
 transcript.
+
+## PR #132 second-review corrections — 2026-10-12
+
+Started from clean `feat/88-testing-evidence` at
+`6b7b7900ab93df2d8eca51605fc038993bc240a1` following the user's second ten-finding
+review. Existing branch commit/push/PR authority applies. Direct instruction
+inspection/recheck again used the implementing assistant's context; no fresh
+reviewer or live behavior result is claimed.
+
+| Finding | Correction or retained design decision |
+| --- | --- |
+| 1 | Testing and plan distinguish phase tasks from closure: final ADRs are not task prerequisites; required promotion precedes phase check-off under decisions.md. |
+| 2 | Delegation and WORKERS link the canonical pre-implementation defect rule: corrective counts stay in Result prose before initial verify, never a premature repair event. |
+| 3 | Builder guardrail explicitly permits a guiding-assistant-supplied snapshot outside the original checkout when the packet assigns it as the project root with bounded paths/changes. No other outside copies, dependency stand-ins or original-checkout edits are authorized. WORKERS and testing use the same assigned-root boundary; reviewers gain no snapshot-edit exception. |
+| 4 | Review vendor preference definition and routing section explicitly include the high-risk test author, linking the detailed stage routing contract. |
+| 5 | Removed the detection-deliverable fixture: changing criterion text had no effect on either parser and proved no acceptance semantics. The original record now identifies only five meaningful new characterization cases; prior observed 395/74 totals remain historical run counts. No meaningful test coverage was removed to obtain green. |
+| 6 | Retained the current first-check metric: a later-discovered author defect can cause the implementing builder's verify=fail and a real repair. Prose identifies cause/author; rates are not fault or implementer-quality measures. A separately planned author detection task remains optional for pre-handoff verification and cannot guarantee absence of later defects. No report/schema change. |
+| 7 | Canonical suite declaration requires exact commands/directories/coverage/actions in new or revised Design. Legacy plans discover the established suite from repository/CI/runner/task sources and record current Review/Completion evidence without migration or a new field. Missing declaration alone is not a blocker; genuine required coverage gaps/acceptance ambiguity remain open. |
+| 8 | Explicit missing/unreadable test-author reference fallback: required dispatch/acceptance stays open with the path and resume action until full package/complete identified contract is supplied. No invented stage or waiver; pre-adoption work retains its prior requirements. |
+| 9 | Replaced WORKERS' repeated author-stage/routing summaries with canonical links and shortened consistent skill entry paragraphs. Role boundaries remain in briefs; detailed adoption/authoring/repair/suite rules live in their references. Package validation still checks reachability and copied entry consistency, not semantic equivalence of every summary. |
+| 10 | Entry points load relevant testing sections when resolving requirements, reusing unchanged settled strategy/evidence for clear local work instead of unconditionally rereading the full reference. Required evidence is unchanged. |
+
+The template's Risk sentence now names authoring/adoption and later focused
+implementation review; its guidance and changed host/snapshot paragraphs are
+wrapped without splitting record examples. The trial matrix adds defect
+attribution, new/legacy suite discovery and missing-authoring-resource cases.
+
+Observed checks in `/home/jeio/src/kaylo`: adapter generation and package
+validation passed; `node --test tests/*.test.cjs` exited 0 with **394 passed,
+zero failed/skipped**. After final instruction clarifications,
+`node --test tests/dispatch-report.test.cjs tests/validate-package.test.cjs tests/package-inventory.test.cjs`
+exited 0 with **73 passed, zero failed/skipped**. Claude Code 2.1.296 strict plugin
+and marketplace validation and Antigravity 1.3.1 validation passed (the latter
+skips commands/MCP/hooks). Local development staging and the installed-resource
+comparison passed with **43 matching resources**; packed inventory/parity is
+covered by the suite. `git diff --check` passed. No runtime-code, event grammar,
+version/catalog or hook change. Contributor guidance remains excluded.
+
+The changed instruction behavior and new trial variants remain **unrun with a
+model**. The preceding live author/routing, native installation/update/start,
+database/browser/E2E, interruption and CI-enforcement limits still apply. Static
+fixtures/resource parity do not establish prompt-loading choices, suite-scope
+judgment, failure attribution, snapshot boundary behavior or author independence.
+#88 behavioral acceptance remains pending.
+
+## PR #132 review corrections — 2026-10-12
+
+Started from clean `feat/88-testing-evidence` at
+`577d32f19a16306731f9c9225dc35c1ab2188e8c`,
+following the user's ten-finding review. Existing branch commit/push/PR authority
+continues to apply. Direct inspection/recheck used the implementing assistant's
+same context; no fresh reviewer or live instruction-following result is claimed.
+
+| Finding | Correction or retained design decision |
+| --- | --- |
+| 1 | Build's numbered high-risk procedure starts with the authoring/adoption check before implementation; plan's Risk guidance names both authoring and later review. The guiding assistant establishes authoring evidence; the helper does not validate it. |
+| 2 | Explicit adoption/resume contract: pre-adoption implementation keeps prior agreed evidence without retrospective authoring/proof or invented independence. Newly started work gets the stage; an already-required missing stage stays unresolved. Unknown timing requires a scope decision. Entry points, WORKERS, template, README and trial cases follow that boundary. |
+| 3 | Retained #88's different-vendor author rule and comparison against every covered builder in later review. Changelog now flags possible third-vendor/specific-exception consequences as compatibility changes, with the PR link. No vendor requirement is silently weakened. |
+| 4 | Retained the required fresh context for newly started high-risk work. Native registration is optional; an actually available qualifying generic worker or separate conversation can count. Without a qualifying route, the explicit handoff/exception/pause choice remains. Valid prior scoped authority is reused. |
+| 5 | Added the verified PR #132 link to the Unreleased entry. |
+| 6 | Builder description, tracing/edit/report steps and Return distinguish the test-only detection deliverable from implementation acceptance/initial verification. |
+| 7 | Resource-link mutation tests now import `testingConsumers` and `testAuthorConsumers`, as the decision test already does, rather than duplicating their lists. |
+| 8 | PR draft wording is a dated observation at the original implementation checkpoint, not a claim about its ongoing state. |
+| 9 | Reviewer and WORKERS distinguish ordinary runner outputs from authoring/editing test source, fixtures, helpers, snapshots or expectations. Scratch diagnostic probes retain their existing limits and cannot replace missing required test coverage. |
+| 10 | Removed the internal blank line from plan/close Verification bullets, leaving contiguous tight lists. |
+
+Checks from `/home/jeio/src/kaylo`: `node scripts/sync-claude-agents.cjs`
+regenerated the adapters; `node scripts/validate-package.cjs` passed;
+`node --test tests/*.test.cjs` exited 0 with **395 passed, zero failed/skipped**;
+both Claude Code 2.1.296 strict plugin/marketplace validators and Antigravity
+1.3.1 `agy plugin validate .` passed (Antigravity still skips commands/MCP/hooks).
+The full suite includes resource mutations, adapter/copied-entry consistency,
+packed inventory/parity, and unchanged dispatch/helper/legacy-plan behavior.
+Local development staging and `--installed development/package` comparison
+passed with **43 matching resources**; `git diff --check` passed. No runtime-code,
+event-schema, manifest/version/catalog or hook change is included in this correction.
+Contributor guidance remains ignored and excluded from staging/packing.
+
+The trial matrix adds pre-adoption/resume/unknown-timing cases and native-absence
+versus actually unavailable-route cases. These remain **unrun**, as do the
+previously recorded #88 live author/routing, native install/update/start,
+database/browser/E2E and CI-enforcement cases. Passing fixtures establish package
+and record compatibility, not adoption judgment, independence, routing reliability
+or reviewer behavior. This recheck establishes the cited instruction corrections
+by direct inspection only; #88 behavioral acceptance remains pending.
+
+## Issue #88 implementation — 2026-10-12
+
+Started from clean `main` at `e2aa520b84a0908d23e480e9998f8fe7ef6ec8c8`
+in `/home/jeio/src/kaylo`, on `feat/88-testing-evidence`. The user authorized
+implementation of the revised #88 specification, branch commit, push and PR.
+This contributor repository has no project PRD/ROADMAP/current phase; templates
+are not treated as an approved development plan. All changes are attributable
+to this implementation; local ignored contributor guidance remains untracked
+and outside staged/packed resources. No release/version/catalog/hook changes.
+
+`skills/plan/references/testing.md` is the canonical manual contract. It covers
+proportional layers, existing tools, criterion mapping, mock limits, meaningful
+failure proof with characterization exceptions, safe retrospective snapshots,
+existing record/repair semantics, integrity/maintenance/quarantine, isolated
+resources and scoped/full checks. `skills/build/references/test-author.md`
+defines fresh test-only builder ownership, packet/handoff and vendor/tier/context/
+billing limits, retaining later high-risk implementation review. Plan, build,
+both review targets, close, foundation/gates, worker/manual packets, WORKERS and
+the phase template consume these contracts. Shared briefs were edited in
+`agents/` and regenerated with `node scripts/sync-claude-agents.cjs`.
+
+Review was performed directly by the implementing assistant in the same context;
+no independent review or model trial is claimed. Inspected new and attributable
+tracked/untracked changes against the clean starting state. No tests/skips/suites
+were removed; runner/discovery configuration is unchanged. The only runtime-code
+change extends the existing package validator's bounded resource-link/copy checks.
+It checks no project test syntax, evidence truth, worker independence, strategy
+semantics or authorization. No universal test scanner or CI/hook enforcement is
+introduced. Pre-build test defects keep corrective history/counts in prose until
+resolved; the unchanged event grammar requires verify before structured repairs
+and reports initial implementation outcomes, not test-author quality.
+
+Observed checks (repository working directory unless stated otherwise):
+
+- `node scripts/validate-package.cjs`: passed, five skills, matching v0.11.0
+  manifests/catalogs, generated adapter parity and new resource consumers.
+- `node --test tests/*.test.cjs`: exit 0; **395 passed, 0 failed/skipped**.
+- After final instruction clarifications,
+  `node --test tests/dispatch-report.test.cjs tests/validate-package.test.cjs tests/package-inventory.test.cjs`:
+  exit 0; **74 passed, 0 failed/skipped**. This run included five meaningful new record/helper
+  characterization cases and three resource-link mutation groups, plus a sixth
+  detection-deliverable fixture removed after the second review: its changed
+  criterion text was not inspected by either parser and proved no acceptance
+  behavior. The historical total remains the actual observed run count. Characterization
+  correctly passed against existing behavior: failure proof is N/A, not missing.
+- New resource groups were observed failing before validator implementation:
+  `testing and test-author contracts are required even with all five skills present`,
+  `testing consumers resolve the canonical contract from their own directory`,
+  and `test-author consumers resolve the existing builder stage resource`.
+  A subsequent disposable snapshot `/tmp/kaylo-88-negative-v0sj4v1f` contained
+  candidate tracked and nonignored new files/contracts/tests, replacing only
+  `scripts/validate-package.cjs` with the starting revision's file. From that
+  snapshot, `node --test --test-name-pattern='testing and test-author|testing consumers|test-author consumers' tests/validate-package.test.cjs`
+  exited **1**, with each named test failing on `0 !== 1`: the old validator
+  accepted missing/broken resources instead of rejecting them. No setup/import
+  error caused red. The candidate's same named checks passed after implementation,
+  exit 0, and all their variants passed in the full/affected suites. Snapshot
+  removed afterward; the working tree/index were never reset/stashed/reverted.
+- Claude Code **2.1.296**: `claude plugin validate .claude-plugin/plugin.json --strict`
+  and `claude plugin validate .claude-plugin/marketplace.json --strict` passed.
+- Antigravity CLI **1.3.1**: `agy plugin validate .` passed, five skills/three
+  agents; that validator skipped commands/MCP/hooks. This is manifest discovery,
+  not worker/model startup or behavioral verification.
+- `node scripts/stage-development.cjs` and
+  `node scripts/validate-package.cjs --installed /home/jeio/src/kaylo/development/package`:
+  passed, **43 resources match**. Packed inventory tests also validate the
+  extracted package and parity, exclude contributor guidance, and retain legacy
+  helper behavior. This is local staging/extraction, not a native host install.
+- `git diff --check`: passed. Node **24.21.0**, Linux/WSL2. Final file inspection
+  preserved five skills/three shared briefs and existing relative layout.
+
+Not run: the bounded behavioral cases in `tests/TESTING-TRIALS.md`, fresh test
+author/implementation/reviewer contexts, actual vendor/tier/billing fallback
+routes, native host install/update/start trials, Gemini/OpenCode runtime trials,
+real database/browser/E2E checks, interruption against mutable test resources,
+actual required CI enforcement, external side effects or publication/release.
+These pending observations are required before claiming #88 acceptance; package
+and fixture passes cannot replace them. At the 2026-10-12 implementation checkpoint,
+PR #132 was opened as a draft relating to #88 without an issue-closing reference. No earlier host observation is reused as
+new feature evidence. Public installation/release checks await a release request.
 
 ## Issue #87 implementation — 2026-10-12
 

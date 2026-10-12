@@ -49,6 +49,80 @@ function fixture(t, phases) {
 }
 const byId = data => Object.fromEntries(data.tasks.map(t => [t.id, t]));
 
+// #88 adoption characterization: unchanged grammar/report/helper, two builder
+// purposes in prose. These checks correctly pass before instruction changes;
+// they establish record compatibility, not live author independence or truth.
+test('expected test-only red preserves first-try attribution to the implementation builder', t => {
+  const result = `${D('D1').replace('tier=Light', 'tier=Strong')} Test-only author: ` +
+    'C1/greeting, baseline fixture-v1, cwd ., node --test greeting.test.cjs; ' +
+    'expected Hello Ada, observed assertion Hello != Hello Ada, exit 1. ' +
+    `${D('D2').replace('vendor=anthropic', 'vendor=openai')} Implementation builder; ` +
+    '{kaylo:v1 verify by=D2 result=pass} C1/greeting passed on candidate fixture-v2, exit 0. {kaylo:v1 accept}';
+  const root = fixture(t, [{ id: '01', closed: true, text: plan(task('T1', result)) }]);
+  const file = path.join(root, '.kaylo/phases/01-greeting/01-PLAN.md');
+  const before = fs.readFileSync(file, 'utf8');
+  const data = report(root);
+  assert.equal(data.tasks[0].status, 'recorded');
+  assert.equal(data.tasks[0].success, true);
+  assert.deepEqual(data.tasks[0].group, { tier: 'Light', estimate: 'S', vendor: 'openai' });
+  assert.deepEqual(data.tasks[0].records.map(r => r.type), ['dispatch', 'dispatch', 'verify', 'accept']);
+  assert.deepEqual(validate(root, { closing: true }), []);
+  assert.equal(fs.readFileSync(file, 'utf8'), before);
+});
+
+test('baseline red cannot replace initial verify or invent a test-author role/event', t => {
+  const author = `${D('D1')} Test-only baseline C1 failed for intended assertion, exit 1.`;
+  const data = report(fixture(t, [{ id: '01', closed: true,
+    text: plan(task('T1', `${author} ${D('D2')} {kaylo:v1 accept}`)) }]));
+  assert.equal(data.tasks[0].status, 'missing');
+  assert.equal(data.tasks[0].reason, 'no initial verify record');
+  assert.deepEqual(data.groups, []);
+  assert.match(parseRecords(D('D1').replace('role=builder', 'role=test-author')).errors.join('; '), /invalid role=test-author/);
+  assert.match(parseRecords('{kaylo:v1 baseline by=D1 result=fail}').errors.join('; '), /unknown record type baseline/);
+});
+
+test('recording intentional red as verify then another initial verify remains malformed', t => {
+  const result = `${D('D1')} {kaylo:v1 verify by=D1 result=fail} ` +
+    `${D('D2')} {kaylo:v1 verify by=D2 result=pass} {kaylo:v1 accept}`;
+  const data = report(fixture(t, [{ id: '01', closed: true, text: plan(task('T1', result)) }]));
+  assert.equal(data.tasks[0].status, 'malformed');
+  assert.match(data.tasks[0].reason, /more than one verify record/);
+  assert.deepEqual(data.groups, []);
+});
+
+test('implementation defects retain repair accounting after expected test-only red', t => {
+  const result = `${D('D1')} Baseline C1/greeting failed as intended, fixture-v1, exit 1. ` +
+    `${D('D2')} {kaylo:v1 verify by=D2 result=fail} Candidate C1 failed: implementation defect. ` +
+    '{kaylo:v1 repair by=D2 failure=F1 n=1 result=fail} Same failure still observed. ' +
+    `${D('D3', ' resumes=D2')} {kaylo:v1 repair by=D3 failure=F1 n=2 result=pass} {kaylo:v1 accept}`;
+  const root = fixture(t, [{ id: '01', closed: true, text: plan(task('T1', result)) }]);
+  const data = report(root);
+  assert.equal(data.tasks[0].status, 'recorded');
+  assert.equal(data.tasks[0].success, false);
+  assert.deepEqual(data.tasks[0].records.filter(r => r.type === 'repair').map(r => r.n), ['1', '2']);
+  assert.equal(data.tasks[0].records.filter(r => r.type === 'verify').length, 1);
+});
+
+test('both builder stages and later review keep distinct IDs and original evidence through check-off', t => {
+  const { applyOperation } = require('../scripts/plan-record.cjs');
+  const result = 'Baseline: clean fixture-v1; C1/check expected missing behavior and observed the named assertion, exit 1. ' +
+    `${D('D1')} Test-only stage complete. ${D('D2').replace('vendor=anthropic', 'vendor=openai')} ` +
+    'Implementation stage complete. {kaylo:v1 verify by=D2 result=pass} C1/check passes on fixture-v2, exit 0.';
+  const root = fixture(t, [{ id: '01', closed: false,
+    text: plan(task('T1', result, { checked: false, extra: '  - Risk: high — fixture boundary change\n' }),
+      'Retained required review; fixture only. {kaylo:v1 dispatch id=D3 role=reviewer tier=Strong ' +
+      'vendor=google outcome=completed covers=T1}') }]);
+  const file = path.join(root, '.kaylo/phases/01-greeting/01-PLAN.md');
+  applyOperation(root, 'check-off', 'T1');
+  const after = fs.readFileSync(file, 'utf8');
+  assert(after.includes(result), 'baseline and both dispatches must remain unchanged');
+  assert(after.includes('vendor=google outcome=completed covers=T1}'));
+  assert.match(after, /- \[x\] T1:/);
+  fs.writeFileSync(path.join(root, 'ROADMAP.md'), fs.readFileSync(path.join(root, 'ROADMAP.md'), 'utf8').replace('- [ ]', '- [x]'));
+  assert.equal(report(root).tasks[0].success, true);
+  assert.deepEqual(validate(root, { closing: true }), []);
+});
+
 // Regression fixtures for the PR #91 review findings; they must keep passing unchanged.
 test('a returned dispatch appends observed identity without rewriting its initial record', t => {
   const initial = '{kaylo:v1 dispatch id=D1 role=builder tier=Light vendor=unknown model=unknown outcome=pending}';
