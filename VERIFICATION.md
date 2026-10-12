@@ -4141,3 +4141,43 @@ behavior was observed.
   - an autolinked citation (`<https://…>`) is now accepted, with a test.
 - Not run: install or update checks, OpenCode, Gemini, and any model or worker session. The next declared trial on the
   merge commit measures behavior. #113–#116 stay open.
+
+## 2026-10-11 — #83 acceptance gate trial 2 stopped at the fix C preflight
+
+- Protocol: `.local/plans/issue-83-gate-trial-2.md` and its prompt. On 2026-10-11 the maintainer waived only the
+  2026-10-15 date gate ("Waive date, keep rest"), recorded in `.local/plans/issue-83-gate-trial-2-date-waiver-2026-10-11.md`.
+  The weekly ≤ 40% / session ≤ 30% start condition and every other rule stood.
+- Candidate `36d42e8c7d85ff9297ca5f1684fe58790c35cc73` (PR #121 merge). Subject: Claude Code 2.1.294 / Sonnet 5.5,
+  pinned SHA-256 `27122ca7…f262`. Operator: Claude Code, Claude Opus 5.5 (`claude-opus-5-5`), no subagents.
+- Passed before any Claude start:
+  - branch `main`;
+  - guard `--ref HEAD` and `--ref 36d42e8`;
+  - the 50 protected #107–#112 lines unstaged and matching the stash;
+  - token-file metadata only;
+  - pinned binary hash;
+  - trial harness hashes 35/35, plus the guard and manifest hashes.
+- **Stopped at the first Claude start with the setup token (the fix C zero-turn check):** `FIXC-FAIL: plan-label
+  bang-failure meter-unreadable credits-not-off assistant-turns conversation-request`. A harness fault; no guiding
+  request was sent, and 0 of 40 slots were used.
+  - With `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1`, every `!` command failed: "Sandbox is required but failed to
+    initialize: Sandbox dependencies not available: socat not installed." `socat` is absent on the host, so every
+    subject Bash command would have failed too.
+  - Claude Code passed each failure to the model. The dry start therefore made 5 conversation requests
+    (`repl_main_thread`), plus 4 `prompt_suggestion` and 1 `quota_check`. The model only explained the error and ran
+    no tool. These were D1 dry-start requests, not case requests.
+  - Under the setup token, the header reads `Sonnet 5.5 · Claude API` with no subscription plan label. The debug log
+    shows `[Bootstrap] Skipped: 403 for OAuth token without profile scope`, and `/status` showed no meters or credits
+    line. This is open risk N9 happening. The billing route of the dry requests is not established.
+- Not run: the live preflight (package validator, Node suite, native manifests, synthetic, prose and token tests,
+  snapshot probe, dry starts), the start measurement, the NOTES freeze, and all 40 slots. As declared, the
+  credentials bind was not restored and the scrub was not dropped.
+- Exit:
+  - token scan of the whole trial directory: absent;
+  - hard link removed; no `k83t-` sessions;
+  - 11 earlier sets (35,061 entries) and the gate rerun (5,260 entries) unchanged;
+  - host hashes only: `settings.json` unchanged; `.claude.json` changed since the rerun's exit, cause not
+    established;
+  - trial directory marked read only.
+- No model behavior was observed. **#83 behavior is not accepted under the gate**, and #113–#116 stay open. Next, the
+  maintainer decides how fix C gets a working subprocess sandbox (install `socat` on the host, or drop the scrub) and
+  a usage-meter source. A new declared trial follows.
