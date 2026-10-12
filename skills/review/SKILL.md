@@ -33,17 +33,15 @@ If the decision reference or required templates are unavailable: with `.kaylo/de
 
 ## Testing strategy and evidence
 
-For current work, including direct/resumed entry, read [testing strategy and acceptance
-evidence](../plan/references/testing.md) and the applicable project/phase decisions. Reuse
-existing checks and a proportional strategy in Design/Agreement. Map every
-criterion to a named check, directory, exact existing command/manual action and
-expected observation; inspect actual coverage, mock limits and required failure
-proof. Keep unavailable required evidence open, preserve workspace/history, and
-use native focus checks plus bounded test-diff review without claiming enforcement
-from structural validation. Absent optional records need no migration/backfill.
-If the reference is unavailable, keep existing checks and agreement, disclose
-that limit and resume new strategy/authoring work with the full package or its
-complete contract; do not guess it or waive required product evidence.
+For current work, including direct/resumed entry, use the applicable settled
+strategy and task Test plan. Load relevant sections of [testing evidence](../plan/references/testing.md)
+when planning/revising strategy or resolving layer choice, failure proof,
+integrity, authoring or full-suite scope; reuse unchanged established decisions
+and evidence without rereading the whole contract for a clear local change.
+Required product evidence still governs acceptance. If the needed reference is
+unavailable, keep existing checks/agreement, disclose the affected scope and
+resume new requirements with the full package or complete identified contract;
+do not guess it, invent evidence or waive a required stage.
 
 ## Workflow
 
@@ -57,7 +55,7 @@ complete contract; do not guess it or waive required product evidence.
 - **Plan:** coverage of the requested outcome, reuse of existing capabilities, executable tasks with clear boundaries, `Blocked by` lines naming real prerequisites listed above in the same phase, observable acceptance criteria, and test plans that are meaningful and feasible. Identify decisions a small-model builder would otherwise guess; a missing consequential decision is blocking and keeps the plan from being ready. A passing structural plan check is not a plan review. A plan that creates a project gate can be reviewed before the gate exists.
 - **Changes:** actual implementation and relevant callers, acceptance criteria, correctness, regressions, and applicable security, accessibility, and data handling. Check that the user can reach the intended behavior; passing tests alone do not establish this. When the project has `.kaylo/gates`, a phase implementation review needs a full-check result for the reviewed changes under [project gates](../plan/references/gates.md); run it when feasible or report it missing. A scoped task pass is not that result, and a passing gate is not review coverage.
 - **Testing evidence:** for a plan, assess proportional layers, feasible many-to-many criterion mapping, harness prerequisites, risk-derived cases and test-author ownership/routing. For changes, inspect actual named-case coverage, user-facing observations, relevant baseline failure causes/subsequent passes or justified characterization exceptions, doubles and resource limits. Check initial verify attribution and repair/history preservation; expected red alone accepts no implementation. Perform the bounded test-integrity diff checklist, including maintenance, skips, quarantine, helpers and discovery/configuration against the identified task/phase baseline with relevant staged/unstaged/untracked content. Disclose unknown syntax/baselines and coverage loss. Green unrelated checks or missing commands are not acceptance.
-- **Full evidence:** before phase implementation review, require the declared relevant full suite including applicable E2E even without optional gates; record required failed/unavailable checks as open. Plan review may precede harness creation. Reuse passing evidence only while its actual inputs remain unchanged.
+- **Full evidence:** apply [suite declaration and legacy discovery](../plan/references/testing.md#scopedfull-checks-and-adoption) before phase implementation review, including applicable E2E even without gates; a missing legacy declaration alone is not a blocker. Plan review can precede harness creation. Required failed/unavailable evidence stays open.
 - **Phase size:** for a phase implementation review, run `node "<kaylo-root>/scripts/diff-size.cjs" "<project-root>" <base> [<head>]` (resolve the script relative to this skill directory, `../../scripts/diff-size.cjs`), with the phase's starting commit as base and its head, or no head for the working tree. Report the base and head, counted added and deleted lines, and the lockfiles, generated, and binary files it lists apart; those files can still need review. Its band is advisory: past about 400–600 counted lines, recommend smaller future phases. Size never fails acceptance, reopens work, or adds reviewers. Exit 1 or 2 means no report; say so, or count with `git diff --numstat` and name what you excluded.
 - **High-risk tasks:** for a task marked `Risk: high`, check changed trust boundaries, authorization, invalid input, sensitive-data exposure, and relevant abuse cases, and record each one's result or why it does not apply. This focused review does not replace a security audit. A phase review reuses a passing high-risk task review only when the relevant implementation, criteria, and verification inputs are unchanged, refreshes affected coverage when they changed, and still checks integration and the phase outcome.
 - Identify duplicated capability, unnecessary dependencies, and speculative abstractions. Fewer lines alone do not justify changing readable, correct code.

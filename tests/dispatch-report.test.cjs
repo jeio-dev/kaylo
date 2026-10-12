@@ -103,15 +103,6 @@ test('implementation defects retain repair accounting after expected test-only r
   assert.equal(data.tasks[0].records.filter(r => r.type === 'verify').length, 1);
 });
 
-test('separate detection deliverable can pass its initial verify despite expected test-process red', t => {
-  const result = `${D('D1')} {kaylo:v1 verify by=D1 result=pass} ` +
-    'Acceptance is detection: named C1 assertion failed for expected missing greeting, exit 1. {kaylo:v1 accept}';
-  const root = fixture(t, [{ id: '01', closed: true, text: plan(task('T1', result)
-    .replace('Acceptance criteria: Output Hello', 'Acceptance criteria: Detect the missing greeting via the named C1 assertion')) }]);
-  assert.equal(report(root).tasks[0].success, true);
-  assert.deepEqual(validate(root, { closing: true }), []);
-});
-
 test('both builder stages and later review keep distinct IDs and original evidence through check-off', t => {
   const { applyOperation } = require('../scripts/plan-record.cjs');
   const result = 'Baseline: clean fixture-v1; C1/check expected missing behavior and observed the named assertion, exit 1. ' +

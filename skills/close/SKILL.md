@@ -31,17 +31,15 @@ If the decision reference or required templates are unavailable: with `.kaylo/de
 
 ## Testing strategy and evidence
 
-For current work, including direct/resumed entry, read [testing strategy and acceptance
-evidence](../plan/references/testing.md) and the applicable project/phase decisions. Reuse
-existing checks and a proportional strategy in Design/Agreement. Map every
-criterion to a named check, directory, exact existing command/manual action and
-expected observation; inspect actual coverage, mock limits and required failure
-proof. Keep unavailable required evidence open, preserve workspace/history, and
-use native focus checks plus bounded test-diff review without claiming enforcement
-from structural validation. Absent optional records need no migration/backfill.
-If the reference is unavailable, keep existing checks and agreement, disclose
-that limit and resume new strategy/authoring work with the full package or its
-complete contract; do not guess it or waive required product evidence.
+For current work, including direct/resumed entry, use the applicable settled
+strategy and task Test plan. Load relevant sections of [testing evidence](../plan/references/testing.md)
+when planning/revising strategy or resolving layer choice, failure proof,
+integrity, authoring or full-suite scope; reuse unchanged established decisions
+and evidence without rereading the whole contract for a clear local change.
+Required product evidence still governs acceptance. If the needed reference is
+unavailable, keep existing checks/agreement, disclose the affected scope and
+resume new requirements with the full package or complete identified contract;
+do not guess it, invent evidence or waive a required stage.
 
 ## Workflow
 
@@ -56,7 +54,7 @@ complete contract; do not guess it or waive required product evidence.
 ## Verification
 
 - Inspect the testing contract's criterion mapping and actual behavior evidence, including required failure proof, relevant negative cases, user-facing observations, integrity review and safe-resource limits. For high-risk work retain established test-author artifacts/routing and later implementation review. Expected red is not implementation acceptance; quarantined required coverage stays open without replacement evidence or explicit scope revision.
-- Require the declared relevant full phase/project suite, including applicable E2E, even without optional gates. Preserve original evidence/repair attribution; refresh affected checks after changes. Promote only consequential final testing decisions under area `testing` via the existing decision lifecycle and source mappings; no final ADR is required before the phase's own work.
+- Apply [full-suite scope and legacy discovery](../plan/references/testing.md#scopedfull-checks-and-adoption), including applicable E2E even without gates; missing legacy declaration alone does not block closure. Preserve verification/repair history and refresh affected evidence. Promote consequential final testing decisions under the project-decisions lifecycle before phase check-off; final ADRs are not prerequisites for the phase's tasks.
 - Reuse passing results only when history establishes unchanged relevant inputs: implementation, dependencies, configuration, runtime, data, and criteria.
 - Run missing, stale, or required final checks. If inputs are uncertain, rerun an affected check when feasible. If unchanged inputs cannot be established and the check cannot run, uncheck each affected task, leave the phase open, and record the verification limit and next action in each affected task's `Result`, preserving earlier evidence as superseded history within that `Result:` line; add no separate task fields for it. Stating a limit never permits closure, including during manual structural inspection.
 - Confirm evidence covers combined behavior across connected tasks, not only each task in isolation. Run a focused integration check when that coverage is missing.

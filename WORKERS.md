@@ -30,7 +30,13 @@ Review vendor: different
 Metered: allowed (openrouter)
 ```
 
-- `Review vendor:` accepts `same` or `different`. Missing or `same` keeps existing review routing, including a fresh reviewer when available and disclosed direct review when needed; `same` sets no cross-vendor requirement and does not enforce the same vendor. Treat an unknown value as missing and say so; it never authorizes another paid route. `different` follows [review vendor](#review-vendor-and-metered-routes) below.
+- `Review vendor:` accepts `same` or `different`. Missing or `same` keeps existing
+  review routing, including a fresh reviewer when available and disclosed direct review
+  when needed; `same` sets no cross-vendor requirement and does not enforce the same
+  vendor. Treat an unknown value as missing and say so; it never authorizes another paid
+  route. `different` applies to both later reviewers and the high-risk test author,
+  under [review vendor](#review-vendor-and-metered-routes) below; author-stage freshness
+  remains required with either value.
 - `Metered: allowed (<route>)` authorizes the one named metered route or account, as described below. A missing key or any other value authorizes none.
 
 For Quality, Balanced, or Budget on a host that can select a worker model, use this table as a recommendation. A direct review by the guiding assistant uses the reviewer rows too: state the tier and the guiding model, and review directly only when that model is identified as meeting it. Inherit skips the table and keeps the host's normal worker model choice. Light, Medium, and Strong are relative capability tiers, not model names or promises of availability. The planner row is guidance for a future user choice, not permission to change the invoking session's model.
@@ -110,47 +116,52 @@ If a model cannot complete the task, diagnose the failure before changing the mo
 
 Use a per-worker model control only when Kaylo can apply it to the worker being dispatched and the user's preference authorizes it. Claude Code documents per-worker selection; `/model` changes the guiding session instead. Codex documents per-worker selection but Kaylo does not register native Codex workers. OpenCode documents per-worker selection but Kaylo ships no OpenCode agents. Kaylo's Gemini CLI and Antigravity worker definitions remain at Inherit: their documented definition-level model controls do not provide this package a per-dispatch preference without adding briefs. These are documented capabilities, not observed routing behavior. Passing a brief does not change model settings, and a subscription name does not establish worker availability or identity. If selection is unavailable, follow the tier fallback rule above; with Inherit, work directly when capable or provide a packet for a manual handoff.
 
-Claude Code's researcher adapter allows reading, searching, and web lookup. Its reviewer adapter allows reading, searching, web lookup, and `Bash` for focused checks; it excludes direct edit, write, notebook edit, subagent, and MCP tools. The same reviewer adapter serves plan checks and implementation reviews. The builder adapter is deliberately unrestricted because its job is to edit. These are documented adapter lists; reviewer behavior with the list, including background subagents, has not been run with a model. `Bash` can write files, so the plan check's instruction that the reviewer edits nothing still governs shell writes. On other hosts workers have whatever tools the host provides and rely on their briefs. Brief instructions constrain a worker's actions, but are not a security boundary; the host's permissions still apply. A focused reviewer check may create ordinary runner output such as logs, coverage reports or screenshots from existing checks. That output permission does not authorize authoring or editing test source, fixtures, helpers, snapshots or expectations. A throwaway diagnostic probe follows the scratch limits below and is not a deliverable test or a replacement for missing required test coverage. Outside the project, the builder and reviewer briefs allow only a throwaway probe or scratch file in the scratch or temporary directory the host's instructions name for the session; modified copies of project files, stand-ins for missing modules or dependencies, and changes to the user's other files stay prohibited there too. No account limits, model prices, or automatic cross-vendor routing are assumed.
+Claude Code's researcher adapter allows reading, searching, and web lookup. Its reviewer
+adapter allows reading, searching, web lookup, and `Bash` for focused checks; it
+excludes direct edit, write, notebook edit, subagent, and MCP tools. The same reviewer
+adapter serves plan checks and implementation reviews. The builder adapter is
+deliberately unrestricted because its job is to edit. These are documented adapter
+lists; reviewer behavior with the list, including background subagents, has not been run
+with a model. `Bash` can write files, so the plan check's instruction that the reviewer
+edits nothing still governs shell writes. On other hosts workers have whatever tools the
+host provides and rely on their briefs. Brief instructions constrain a worker's actions,
+but are not a security boundary; the host's permissions still apply. A focused reviewer
+check may create ordinary runner output such as logs, coverage reports or screenshots
+from existing checks. That output permission does not authorize authoring or editing
+test source, fixtures, helpers, snapshots or expectations. A throwaway diagnostic probe
+follows the scratch limits below and is not a deliverable test or a replacement for
+missing required test coverage. Outside the project, the builder and reviewer briefs
+allow only a throwaway probe or scratch file in the scratch or temporary directory the
+host's instructions name for the session; the builder may work inside a
+guiding-assistant-supplied snapshot explicitly assigned as its project root, but may not
+create further modified copies or dependency stand-ins outside that root; changes to the
+user's other files stay prohibited. The reviewer has no snapshot-edit exception. No
+account limits, model prices, or automatic cross-vendor routing are assumed.
 
 ## High-risk test authors and evidence
 
-Use [testing strategy and evidence](skills/plan/references/testing.md) in direct,
-resumed and delegated work. Supply applicable strategy/decisions, criterion-to-
-named-check mapping with expected observations, mock/resource limits, failure
-proof and integrity baseline in the actual worker packet/workspace. Unavailable
-required evidence stays open; worker reports are observations, not acceptance.
+Supply applicable [testing strategy/evidence](skills/plan/references/testing.md)
+and [test-author stage](skills/build/references/test-author.md) content in the
+actual packet/workspace. These references govern authoring/adoption, ownership,
+handoff, unavailable routes and evidence; they add no role or event schema.
+Keep later focused implementation review. Native registration is optional, not
+proof of a qualifying fresh context.
 
-Before high-risk implementation use a fresh test-only invocation of **builder**
-under [test-author delegation](skills/build/references/test-author.md). Its packet
-bounds tests/fixtures/agreed support paths and supplies acceptance-derived
-negative cases, harness/interfaces and prior history without implementation-author
-advocacy. No fourth role or read-only-reviewer authoring is added. Inspect its
-actual changes and intended failures/applicability exception before handing the
-same artifacts and prerequisites to the implementation builder. Serialize shared
-test/resource writes. Follow the stage's adoption rule: implementation already started before adoption keeps its prior evidence requirements and gets no retrospective authoring stage; an already-required missing stage is not waived. Retain later focused high-risk review and phase integration.
-
-`Review vendor: different` extends to the author: establish a known vendor
-different from every intended implementation builder before dispatch, and
-reassess mixed/changed builders. Missing/`same` has no different-vendor requirement;
-fresh context remains required. Unknown preferences retain the disclosed default.
-Select the author's builder estimate/preference tier with consequential raises,
-not the reviewer's tier row. Establish capability, context, identity and billing
-separately. Unknown/unavailable constraints require the user's qualifying route,
-pending manual handoff, specific exception or pause; direct work is never labelled
-independent. A vendor waiver waives no tier, freshness, later review or acceptance.
-Later different-vendor review covers every builder including the test author, so
-two-vendor author/implementation work may require a third vendor or explicit
-exception. No account/global setup or unauthorized paid fallback is implied.
-
-Expected baseline red is labelled prose/artifact evidence outside record grammar,
-not the initial implementation verify, repair or escalation. Actual test defects
-retain corrective accounting. Use distinct phase-unique `role=builder` dispatch
-IDs for author and implementation; tie the one initial implementation `verify`
-to the implementing builder. Preserve history on resume. A separate test-author
-task can accept expected process failure only when detection is explicitly its
-deliverable; the default bounded stage never independently checks off implementation.
+Follow [existing records and repairs](skills/plan/references/testing.md#existing-records-and-repairs):
+pre-implementation test defects/corrective counts go in Result prose, never a
+repair before initial verify. Actual dispatches retain phase-unique builder IDs
+and the initial implementation verify belongs to its implementer. Expected red,
+worker completion and a pending handoff are not implementation acceptance.
 
 ## Review vendor and metered routes
+
+For a high-risk test author, `Review vendor: different` requires a known model
+vendor different from every intended implementation builder vendor; follow
+[test-author routing](skills/build/references/test-author.md#establish-the-route-before-dispatch)
+for actual/mixed/changed vendors and unavailable-route choices. Later review
+compares against all covered builders, including the test author, so a third
+vendor or specific exception may be needed. A vendor waiver for one stage
+covers only that stage's vendor constraint.
 
 The guiding assistant chooses each review route and sends the reviewer brief, requirements, scoped diff and baseline, and evidence. The reviewer does not dispatch another reviewer or install or connect services.
 
@@ -205,4 +216,4 @@ Each record is `{kaylo:v1 <type> key=value ...}`. A value has no spaces, quotes,
 - Result: Baseline: main at 1a2b3c4, clean. {kaylo:v1 dispatch id=D1 role=builder tier=Light setting=haiku host=claude-code route=claude-subscription vendor=anthropic model=unknown billing=subscription outcome=completed} {kaylo:v1 verify by=D1 result=fail} npm test failed: 2 of 14 tests, exit 1. {kaylo:v1 repair by=D1 failure=F1 n=1 result=pass} npm test passed, exit 0. {kaylo:v1 accept}
 ```
 
-`node "<kaylo-root>/scripts/dispatch-report.cjs" "<project-root>"` reads these records from closed phases and prints first-try pass rates. It is read-only, separate from the structural plan check, and never changes preferences or the tier table. A first-try pass needs a `verify` with `result=pass`, an `accept`, and no `repair` or `reopen`; a task missing its builder record, `verify`, or `accept` is counted as missing, never as a pass. Rates are grouped by the requested tier of the builder dispatch that `verify` names (`direct` for direct work), the task's estimate, and that builder's observed vendor, including one appended later in an `update`; `unknown` and `n/a` updates preserve earlier known identity values. The report includes counts of missing, malformed, and unknown entries. A `verify` or `repair` naming a dispatch still `pending`, an `accept` while a builder dispatch is still `pending`, or an `accept` before the initial `verify` marks the task malformed. Records under `## Review` that fail to parse, or that belong in a task `Result:`, are listed separately and do not change the rates. Review `update` records naming a task dispatch belong in that task's `Result:`; those naming no parsed dispatch in the phase are also reported. A task with records on any other line of the task, other than mentions in `Acceptance criteria:` or `Test plan:`, is malformed, since the report reads only the `Result:` line. Updates naming a Review dispatch stay there. Closed phases leave out blocked or abandoned work. A rate below about 60% is advisory: it may justify the user choosing another preference, not an automatic change, and small samples cannot show that one vendor or model is better.
+`node "<kaylo-root>/scripts/dispatch-report.cjs" "<project-root>"` reads these records from closed phases and prints first-try pass rates. It is read-only, separate from the structural plan check, and never changes preferences or the tier table. A first-try pass needs a `verify` with `result=pass`, an `accept`, and no `repair` or `reopen`; a task missing its builder record, `verify`, or `accept` is counted as missing, never as a pass. Failure-attribution limits, including test-author defects, follow [existing records and repairs](skills/plan/references/testing.md#existing-records-and-repairs); the metric is not a fault or implementer-quality measure. Rates are grouped by the requested tier of the builder dispatch that `verify` names (`direct` for direct work), the task's estimate, and that builder's observed vendor, including one appended later in an `update`; `unknown` and `n/a` updates preserve earlier known identity values. The report includes counts of missing, malformed, and unknown entries. A `verify` or `repair` naming a dispatch still `pending`, an `accept` while a builder dispatch is still `pending`, or an `accept` before the initial `verify` marks the task malformed. Records under `## Review` that fail to parse, or that belong in a task `Result:`, are listed separately and do not change the rates. Review `update` records naming a task dispatch belong in that task's `Result:`; those naming no parsed dispatch in the phase are also reported. A task with records on any other line of the task, other than mentions in `Acceptance criteria:` or `Test plan:`, is malformed, since the report reads only the `Result:` line. Updates naming a Review dispatch stay there. Closed phases leave out blocked or abandoned work. A rate below about 60% is advisory: it may justify the user choosing another preference, not an automatic change, and small samples cannot show that one vendor or model is better.

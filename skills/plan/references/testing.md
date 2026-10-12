@@ -30,7 +30,8 @@ remains a blocker; removing/deferring it requires an explicit scope decision.
 Reuse [project decisions](decisions.md): settled phase-local decisions govern
 current work before close promotes consequential final choices under area
 `testing`, with source-to-ADR mappings. Final ADRs are never prerequisites for
-the same phase's tasks or closure. Ordinary reversible runner choices may stay
+the same phase's tasks. Close follows the project-decisions contract's required
+promotion before phase check-off. Ordinary reversible runner choices may stay
 concise labelled local defaults. Consequential tooling, services, cost, behavior
 and acceptance choices follow existing user agreement rules. Strategy approval
 does not authorize external actions. Supply the relevant decisions in actual
@@ -95,9 +96,10 @@ relevant implementation, or an agreed controlled negative case. An old commit
 alone may omit uncommitted prerequisites. Record included/excluded changes and
 snapshot identity. Never reset, stash, clean or revert the user's working tree
 to manufacture red. Preserve staged, unstaged and untracked content and worker
-ownership. Worker briefs prohibit modified project copies outside the project:
-the guiding assistant prepares snapshots in an authorized location and assigns
-that workspace explicitly; workers do not evade their write limits. Code
+ownership. The guiding assistant prepares the snapshot in an authorized location
+and identifies it as the builder's assigned project root in the packet, with
+allowed paths and bounded changes. The builder's snapshot exception permits
+work inside that assigned root, not creation of other copies or edits outside it. Code
 reversal does not reverse database state; isolate resources separately below.
 
 ## Existing records and repairs
@@ -118,6 +120,16 @@ history is not a report of test-author quality. If authoring needs its own
 structured verification/repair sequence, plan the explicit detection-deliverable
 task below rather than silently changing event semantics.
 
+If a test-author defect first becomes visible at the initial implementation check,
+record the actual `verify=fail` against the implementing builder and the subsequent
+correction as a repair under the existing grammar. Identify the defective test,
+author, observed cause, governing criterion and correction in prose/diff; never
+call it intentional red or rewrite the verify to improve a rate. The report counts
+first implementation-check outcomes, not fault or implementer quality, so it can
+include test-author mistakes. This conservative cost is retained in this version.
+A separately planned detection task can give authoring its own pre-handoff
+verification/repairs when useful; it does not guarantee no later-discovered defects.
+
 Record actual test-only and implementation dispatches with distinct phase-unique
 IDs and `role=builder`, describing purpose/coverage in prose. Keep initial
 verification attribution and first-try statistics intact. Reviewer records stay
@@ -133,6 +145,18 @@ corrective failures still use normal repairs. The default is a bounded pre-build
 stage within the implementation task, never its independent check-off. Use
 [test-author delegation](../../build/references/test-author.md) for high-risk
 work before implementation; keep the later focused high-risk review.
+
+## Authoring resource fallback
+
+If required high-risk authoring needs `skills/build/references/test-author.md`
+and that resource is missing or unreadable, stop before author dispatch or task
+acceptance; record the missing path, affected task/stage and a concrete resume
+action in existing Result/Next step prose. Resume with the full package or the
+complete identified contents of that reference available in the actual workspace/
+packet. Do not invent the stage, treat a pending packet as completion or convert
+missing guidance into an independence waiver. A supplied complete contract may
+be used manually with its source and limits recorded. Pre-adoption work retains
+its prior requirements; missing guidance alone does not impose a new stage.
 
 ## Test integrity and maintenance
 
@@ -202,6 +226,23 @@ Respect existing safe-file exceptions; records contain locations and fake values
 
 ## Scoped/full checks and adoption
 
+When planning or revising verification, declare the relevant full suite under
+existing `## Design`: exact existing command(s), directories, covered layers and
+manual observations, including applicable E2E, or proposed checks with creation
+prerequisites. Reuse an adopted `.kaylo/gates` entry point and its actual coverage
+when present; no new mandatory field or gate is required. The full suite can be
+several existing commands/actions rather than a new wrapper.
+
+For legacy plans without that declaration, inspect established repository
+instructions, CI, runner/package configuration and task Test plans to identify
+the existing relevant suite. Record the concrete commands, sources and coverage
+in current Review/Completion evidence, without migrating plans, inventing extra
+layers or requiring new tests merely for adoption. Applicable existing task checks
+may together constitute that suite when they establish the phase outcome; scoped
+results alone do not prove broader coverage. A missing declaration is not itself
+a blocker. A genuinely missing required check or materially ambiguous acceptance
+still needs the ordinary blocker/scope decision; do not guess away coverage.
+
 Task checks cover changed behavior and integration. E2E need not run every task
 but is required when it supplies necessary changed-flow evidence or stricter
 repository policy demands it. Before phase implementation review run the declared
@@ -225,6 +266,7 @@ stage applies to newly started high-risk work, as defined in
 A missing stage already required before interruption stays unresolved. Record
 actual adoption timing/coverage without claiming retrospective independence.
 Diagnose relevant present-but-broken resources. If this reference is unavailable,
-preserve existing checks and agreement; disclose unavailable testing guidance and resume with the full package
-or its complete contract before adopting new strategy/authoring requirements.
+preserve existing checks and agreement; disclose unavailable testing guidance and
+resume with the full package or its complete contract before adopting new
+strategy/authoring requirements.
 Never guess the missing contract or claim enforcement/acceptance from structure.

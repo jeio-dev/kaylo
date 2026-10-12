@@ -15,9 +15,10 @@ records from the first draft through 0.5.2 are in
 ## Current status — 0.11.0
 
 The #88 implementation adds the shared testing/evidence contract and bounded
-high-risk test-author stage to existing entry points and packets. The 2026-10-12
-checks below pass package/manifest validation, 395 Node tests, final affected
-tests and staged/packed resource parity. Live #88 instruction-following, fresh
+high-risk test-author stage to existing entry points and packets. The latest
+2026-10-12 second-review checks below pass package/manifest validation, **394**
+Node tests (one ineffective fixture removed), 73 final affected tests and
+staged/packed resource parity. Live #88 instruction-following, fresh
 author/implementation/reviewer and routing trials remain unrun; issue acceptance
 and release readiness are not established. The trial matrix is prepared in
 `tests/TESTING-TRIALS.md`. Existing released-host observations do not verify it.
@@ -54,6 +55,50 @@ Code 2.1.289 with Sonnet 5.5 and on Codex CLI 0.160.1 with GPT-6.1-Sol. The
 Codex grades are operator-reported. The PR #79 review spot-checked their saved
 command records and secret-token classifications but did not audit every
 transcript.
+
+## PR #132 second-review corrections — 2026-10-12
+
+Started from clean `feat/88-testing-evidence` at
+`6b7b7900ab93df2d8eca51605fc038993bc240a1` following the user's second ten-finding
+review. Existing branch commit/push/PR authority applies. Direct instruction
+inspection/recheck again used the implementing assistant's context; no fresh
+reviewer or live behavior result is claimed.
+
+| Finding | Correction or retained design decision |
+| --- | --- |
+| 1 | Testing and plan distinguish phase tasks from closure: final ADRs are not task prerequisites; required promotion precedes phase check-off under decisions.md. |
+| 2 | Delegation and WORKERS link the canonical pre-implementation defect rule: corrective counts stay in Result prose before initial verify, never a premature repair event. |
+| 3 | Builder guardrail explicitly permits a guiding-assistant-supplied snapshot outside the original checkout when the packet assigns it as the project root with bounded paths/changes. No other outside copies, dependency stand-ins or original-checkout edits are authorized. WORKERS and testing use the same assigned-root boundary; reviewers gain no snapshot-edit exception. |
+| 4 | Review vendor preference definition and routing section explicitly include the high-risk test author, linking the detailed stage routing contract. |
+| 5 | Removed the detection-deliverable fixture: changing criterion text had no effect on either parser and proved no acceptance semantics. The original record now identifies only five meaningful new characterization cases; prior observed 395/74 totals remain historical run counts. No meaningful test coverage was removed to obtain green. |
+| 6 | Retained the current first-check metric: a later-discovered author defect can cause the implementing builder's verify=fail and a real repair. Prose identifies cause/author; rates are not fault or implementer-quality measures. A separately planned author detection task remains optional for pre-handoff verification and cannot guarantee absence of later defects. No report/schema change. |
+| 7 | Canonical suite declaration requires exact commands/directories/coverage/actions in new or revised Design. Legacy plans discover the established suite from repository/CI/runner/task sources and record current Review/Completion evidence without migration or a new field. Missing declaration alone is not a blocker; genuine required coverage gaps/acceptance ambiguity remain open. |
+| 8 | Explicit missing/unreadable test-author reference fallback: required dispatch/acceptance stays open with the path and resume action until full package/complete identified contract is supplied. No invented stage or waiver; pre-adoption work retains its prior requirements. |
+| 9 | Replaced WORKERS' repeated author-stage/routing summaries with canonical links and shortened consistent skill entry paragraphs. Role boundaries remain in briefs; detailed adoption/authoring/repair/suite rules live in their references. Package validation still checks reachability and copied entry consistency, not semantic equivalence of every summary. |
+| 10 | Entry points load relevant testing sections when resolving requirements, reusing unchanged settled strategy/evidence for clear local work instead of unconditionally rereading the full reference. Required evidence is unchanged. |
+
+The template's Risk sentence now names authoring/adoption and later focused
+implementation review; its guidance and changed host/snapshot paragraphs are
+wrapped without splitting record examples. The trial matrix adds defect
+attribution, new/legacy suite discovery and missing-authoring-resource cases.
+
+Observed checks in `/home/jeio/src/kaylo`: adapter generation and package
+validation passed; `node --test tests/*.test.cjs` exited 0 with **394 passed,
+zero failed/skipped**. After final instruction clarifications,
+`node --test tests/dispatch-report.test.cjs tests/validate-package.test.cjs tests/package-inventory.test.cjs`
+exited 0 with **73 passed, zero failed/skipped**. Claude Code 2.1.296 strict plugin
+and marketplace validation and Antigravity 1.3.1 validation passed (the latter
+skips commands/MCP/hooks). Local development staging and the installed-resource
+comparison passed with **43 matching resources**; packed inventory/parity is
+covered by the suite. `git diff --check` passed. No runtime-code, event grammar,
+version/catalog or hook change. Contributor guidance remains excluded.
+
+The changed instruction behavior and new trial variants remain **unrun with a
+model**. The preceding live author/routing, native installation/update/start,
+database/browser/E2E, interruption and CI-enforcement limits still apply. Static
+fixtures/resource parity do not establish prompt-loading choices, suite-scope
+judgment, failure attribution, snapshot boundary behavior or author independence.
+#88 behavioral acceptance remains pending.
 
 ## PR #132 review corrections — 2026-10-12
 
@@ -135,9 +180,11 @@ Observed checks (repository working directory unless stated otherwise):
 - `node --test tests/*.test.cjs`: exit 0; **395 passed, 0 failed/skipped**.
 - After final instruction clarifications,
   `node --test tests/dispatch-report.test.cjs tests/validate-package.test.cjs tests/package-inventory.test.cjs`:
-  exit 0; **74 passed, 0 failed/skipped**. This includes six new record/helper
-  characterization cases, two-stage check-off, six event-type/role/history
-  distinctions and three new resource-link mutation groups. Characterization
+  exit 0; **74 passed, 0 failed/skipped**. This run included five meaningful new record/helper
+  characterization cases and three resource-link mutation groups, plus a sixth
+  detection-deliverable fixture removed after the second review: its changed
+  criterion text was not inspected by either parser and proved no acceptance
+  behavior. The historical total remains the actual observed run count. Characterization
   correctly passed against existing behavior: failure proof is N/A, not missing.
 - New resource groups were observed failing before validator implementation:
   `testing and test-author contracts are required even with all five skills present`,

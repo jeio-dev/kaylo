@@ -17,7 +17,11 @@
   handoff, explicit exception or pause; direct work cannot claim independence.
   Existing scoped route/exception authority is reused. Implementation started
   before adoption keeps prior evidence requirements without retrospective
-  authoring/proof. No new role, framework, scanner, hook enforcement or plan
+  authoring/proof. New plans declare full-suite commands and coverage in Design;
+  legacy plans resolve established repository checks without migration. Entry
+  points load relevant testing sections when needed and reuse settled decisions.
+  Required testing ADR promotion precedes phase check-off. No new role,
+  framework, scanner, hook enforcement or plan
   migration is added. Live instruction-following trials remain pending
   ([#88](https://github.com/jeio-dev/kaylo/issues/88),
   [#132](https://github.com/jeio-dev/kaylo/pull/132)).

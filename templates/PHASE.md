@@ -23,7 +23,10 @@ phase changes govern current work; promotion happens at close.]
 unit, component, integration and E2E layers as used with evidence, missing,
 not applicable with reason, or unavailable with next action. Record existing
 commands/directories, mock limits, applicable smoke flows and isolated resources.
-No framework/database/browser is required merely by this template. Consequential
+Declare the relevant full suite here with exact existing commands/directories,
+covered layers and applicable manual observations; reference adopted gates when
+present, and label proposed checks needing creation. No new mandatory field,
+gate, framework/database/browser is required merely by this template. Consequential
 choices follow Design/Agreement and promote under area testing at close.]
 
 ## Agreement
@@ -39,7 +42,27 @@ choices follow Design/Agreement and promote under area testing at close.]
   - Test plan: [Map each criterion to named check(s), working directory, exact existing command or manual action and expected observation; label checks still needing creation and relevant deviations from testing defaults]
   - Result: Not started
 
-[`Blocked by` lists tasks above this one in this phase whose output it needs to implement or verify, or None; every task needs it. It sets order, not concurrency. For tasks that need them, add starting points, required packages or tools, concrete steps, and an estimate reason. Add `Issue: #12` (or `owner/repo#12`, or an `https://` link) when the task works on a tracked issue. Add `Risk: high` with its reason when the task changes consequential security behavior; build then requires a focused review before check-off. Use M or L for more complex work. IDs restart per phase. Before the first edit, replace a bare `Not started` placeholder with `In progress`; otherwise put `In progress` at the start of the existing `Result` and keep all earlier records in that line. Replace the leading unfinished state with actual evidence at check-off while retaining the starting workspace record, recorded check failures, superseded evidence, and failed-repair history within the same `Result:` line. Keep named regression/new-behavior baseline failures and subsequent passes, or justified characterization exceptions, as labelled prose/artifact links in the same Result; expected red is not initial implementation verify or a repair. Newly started high-risk tasks use a fresh test-only builder stage before implementation with bounded paths and inspected handoff, then later focused review. Implementation started before adoption keeps prior evidence requirements without retrospective authoring/proof; already-required missing stages stay unresolved. Append dispatch records such as `{kaylo:v1 verify by=direct result=pass}` there as described in Kaylo's `WORKERS.md`. A blocked result includes the failure and next action.]
+[`Blocked by` lists tasks above this one in this phase whose output it needs to
+implement or verify, or None; every task needs it. It sets order, not concurrency. For
+tasks that need them, add starting points, required packages or tools, concrete steps,
+and an estimate reason. Add `Issue: #12` (or `owner/repo#12`, or an `https://` link)
+when the task works on a tracked issue. Add `Risk: high` with its reason when the task
+changes consequential security behavior; build applies authoring/adoption first and
+requires the later focused implementation review before check-off. Use M or L for more
+complex work. IDs restart per phase. Before the first edit, replace a bare `Not started`
+placeholder with `In progress`; otherwise put `In progress` at the start of the existing
+`Result` and keep all earlier records in that line. Replace the leading unfinished state
+with actual evidence at check-off while retaining the starting workspace record,
+recorded check failures, superseded evidence, and failed-repair history within the same
+`Result:` line. Keep named regression/new-behavior baseline failures and subsequent
+passes, or justified characterization exceptions, as labelled prose/artifact links in
+the same Result; expected red is not initial implementation verify or a repair. Newly
+started high-risk tasks use a fresh test-only builder stage before implementation with
+bounded paths and inspected handoff, then later focused review. Implementation started
+before adoption keeps prior evidence requirements without retrospective authoring/proof;
+already-required missing stages stay unresolved. Append dispatch records such as
+`{kaylo:v1 verify by=direct result=pass}` there as described in Kaylo's `WORKERS.md`. A
+blocked result includes the failure and next action.]
 
 ## Review
 
