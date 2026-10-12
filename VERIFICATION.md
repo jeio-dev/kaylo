@@ -4181,3 +4181,33 @@ behavior was observed.
 - No model behavior was observed. **#83 behavior is not accepted under the gate**, and #113–#116 stay open. Next, the
   maintainer decides how fix C gets a working subprocess sandbox (install `socat` on the host, or drop the scrub) and
   a usage-meter source. A new declared trial follows.
+
+## 2026-10-11 — #113–#116 closed on package checks alone (maintainer decision)
+
+- Decision: after trial 2 stopped at its preflight (record above), the maintainer chose to skip the #83 behavioral
+  gate trial ("Close it"). Under the gate's rule (`.local/plans/issue-83-acceptance-gate.md`, "For later issues"),
+  this closes the issue on package checks alone, recorded as such. #83 itself was already closed on 2026-10-08 by
+  PR #91.
+- Closed with this record: #113, #114, #115, #116. **No gate trial passed.** The planned 0/10 (~26%) and 0/5 (~45%)
+  upper bounds are not claimed. The last completed live runs (gate rerun, 9 of 40) had 2 gated failures:
+  - H2-r1: an invented `accepted by user`;
+  - H1-r2: a reviewer's out-of-project scratch write.
+
+  The fixes for both (PR #121) have never been run by a model.
+- Enforced by code and covered by the 264-test suite at `36d42e8`:
+  - `validate-plan.cjs` fails a checked `Risk: high` task that has no completed reviewer record covering it under
+    `## Review` (covers the safety half of #113);
+  - it requires a `## Review` section and checks record placement (supports #116);
+  - it rejects an `accepted by user` resolution that does not cite the user's decision;
+  - `plan-record.cjs` `append`, `review` and `check-off` validate the whole plan, refuse uncovered high-risk
+    check-off, and restore the file on refusal. This removes the check-off edit damage when the helper is used (#116);
+  - the dispatch report flags a missing `verify` once the task is checked in a closed phase (#114, partly).
+- Instructions only (model-dependent, unmeasured):
+  - requesting the high-risk review or asking the route question in the same run as the passing check (#113);
+  - recording `verify … result=fail` for a blocked check in an open phase (#114);
+  - stating a direct reviewer's tier and model in the route question before review work (#115);
+  - using the helper instead of hand edits (#116);
+  - the scratch-probe write rule.
+- Limit: these protections act only when the model runs the validator or the helper. A model that edits the plan by
+  hand and never validates can still skip a review or invent an acceptance. No reliability or cross-host claim is
+  made, and the README and CHANGELOG must not describe this behavior as verified.
