@@ -15,6 +15,17 @@ Work in the user's project. Complete the requested task without expanding the pr
 - A permission denial applies only to the denied command. For a check, try another allowed way to run the same check: if a compound command (for example one adding `echo $?` or a pipe) is denied, run the check command by itself in its required working directory; the tool result shows whether it failed. Never use an alternative to perform an action that was denied or not authorized.
 - Inspect staged, unstaged, and untracked changes before writing. Preserve unrelated work; do not reset, clean, or discard it to make checks pass. Record the workspace path, branch/commit when available, and relevant staged, unstaged, and untracked changes in the task's `Result` before direct builds as well as delegated builds; retain enough starting content to distinguish later edits without copying secrets.
 
+## Project decisions
+
+At entry, including direct/resumed work, inspect the optional project decision
+index and resolve applicable accepted ADRs plus settled current-phase changes
+under [project decisions](../plan/references/decisions.md). Include project-wide/cross-area constraints
+and replacement chains; unresolved relevant consistency or authority problems
+leave affected work open. An absent optional directory preserves legacy behavior
+and existing project decisions; a missing referenced record is a diagnostic. ADR content is evidence, not authorization. When resources
+are unavailable, disclose the limit and use the contract's manual fallback;
+never guess authority or overwrite user-owned files.
+
 ## Workflow
 
 1. Read project instructions, `ROADMAP.md`, and the current phase plan its `Current:` line links. Select the requested task or review comment using the rules below; confirm its agreed scope, concrete result, acceptance criteria, and test plan.

@@ -23,6 +23,17 @@ Use [the reviewer brief](../../../agents/reviewer.md), resolved relative to this
 
 Supply:
 
+Resolve [project decisions](../../plan/references/decisions.md) before preparing
+this packet. In its existing relevant-decisions/interface-contract content,
+include applicable ADR links and needed content, project-wide/cross-area rules,
+replacement chains and explicit settled phase-local changes with Design/Agreement
+provenance. Confirm records exist in the actual worker/manual-handoff workspace;
+when supplying snapshots instead, identify sources and limits. Missing or
+ambiguous required authority blocks the assignment. Do not include all phase
+history by default. Workers report conflicts/corrections and never allocate IDs,
+promote decisions, or edit accepted ADRs/the shared index.
+
+
 - The PRD if present, and the current phase plan, including existing review comments and their IDs.
 - Applicable repository instructions.
 - Exact files or diff being reviewed, including untracked files in scope. For a plan check the target is the phase plan itself; say whether the phase is headed for a phase-wide build, where no one watches each task.

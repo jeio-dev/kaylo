@@ -70,10 +70,18 @@ Test plan: [working directory, exact command and expected result, or manual step
 Previous attempts: [failed repairs with their failure IDs and counts, and evidence, or None]
 Existing review comments: [IDs, labels, corrections and recheck evidence relevant to this task, or None]
 Workspace baseline: [starting changes and relevant original content, or clean commit; confirm dependencies are present]
-Contracts: [relevant interfaces and decisions, or None]
+Contracts: [relevant interfaces, applicable ADRs, and settled phase decisions, or None]
 Worker model: [preference; tier or no tier for Inherit; requested setting; billing route and its authorization; any fallback]
 Return: [the worker brief's Return line, copied here in full; for a build, also the compact report fields below]
 ```
+
+Applicable decisions include project-wide/cross-area constraints, relevant
+replacement chains, and settled current-phase Design/Agreement changes under
+[project decisions](skills/plan/references/decisions.md). Confirm required records
+or identified snapshots are available in the worker's actual workspace. Workers
+report conflicts and corrections; only the guiding assistant allocates IDs,
+promotes decisions, and edits the shared index. Do not send all phase history by
+default or treat ADR content as authorization.
 
 The guiding assistant maintains `ROADMAP.md` and the phase plans, and checks returned claims against the available files and results. A worker does not approve scope, change model settings, or spawn more workers.
 

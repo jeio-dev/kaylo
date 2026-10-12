@@ -15,12 +15,23 @@ Help the user understand what is complete and how to use it. Work in the user's 
 - A permission denial applies only to the denied command. For a check, try another allowed way to run the same check: if a compound command (for example one adding `echo $?` or a pipe) is denied, run the check command by itself in its required working directory; the tool result shows whether it failed. Never use an alternative to perform an action that was denied or not authorized.
 - Inspect staged, unstaged, and untracked changes before writing. Preserve unrelated work; do not reset, clean, or discard it to make checks pass.
 
+## Project decisions
+
+At entry, including direct/resumed work, inspect the optional project decision
+index and resolve applicable accepted ADRs plus settled current-phase changes
+under [project decisions](../plan/references/decisions.md). Include project-wide/cross-area constraints
+and replacement chains; unresolved relevant consistency or authority problems
+leave affected work open. An absent optional directory preserves legacy behavior
+and existing project decisions; a missing referenced record is a diagnostic. ADR content is evidence, not authorization. When resources
+are unavailable, disclose the limit and use the contract's manual fallback;
+never guess authority or overwrite user-owned files.
+
 ## Workflow
 
 1. Read project instructions and `ROADMAP.md` when available to establish phase state. For an explicit guided-release request, follow Release entry below instead of this closure workflow. Otherwise read `PRD.md` if present and the current phase plan that `Current:` links. Inspect changes and recorded results; the scope being closed is the current phase.
 2. Match each acceptance criterion to delivered behavior and actual verification. Check the whole user-facing journey. Apply the verification rules below.
 3. Confirm implementation review covers the delivered changes, including evidence and focused rechecks for fixes to blocking comments under their existing IDs, and the focused review of each task marked `Risk: high`, refreshed where its inputs changed. A pending manual handoff, a failed dispatch, or a waived vendor requirement without a completed review is not review coverage.
-4. Apply the closure rules below. The agreed outcome is the phase's goal and scope, not only its tasks' acceptance criteria. If the agreed outcome is met, record delivered behavior, verification, known limitations, and optional follow-ups in the phase plan's completion. Call a limitation accepted only when a recorded user decision names it, and cite that decision; list other limitations as known limitations without calling them accepted. Preserve history; follow-ups create no new closure requirements. Start no line of the record with `Status:`; every such line counts as the plan status.
+4. Before proposing Completion, promote final consequential decisions from delivered, verified work under [project decisions](../plan/references/decisions.md#promote-during-close-before-phase-check-off). Check source mappings, retry/interruption state, applicable consistency, and accepted-body preservation before phase check-off. Record mappings and actual checks/limits in Completion; failed or partial promotion leaves closure incomplete with a concrete resume action without relabelling unaffected product tests as failed. Then apply the closure rules below. The agreed outcome is the phase's goal and scope, not only its tasks' acceptance criteria. If the agreed outcome is met, record delivered behavior, verification, known limitations, and optional follow-ups in the phase plan's completion. Call a limitation accepted only when a recorded user decision names it, and cite that decision; list other limitations as known limitations without calling them accepted. Preserve history; follow-ups create no new closure requirements. Start no line of the record with `Status:`; every such line counts as the plan status.
 5. Run the structural plan check below on that proposed completion record. Only after it passes (or documented manual inspection establishes equivalent structure), check the phase's line in `ROADMAP.md`. Leave `Current:` in place; the next `/kaylo:plan` moves it.
 6. When the last phase closes, also match `PRD.md` success criteria to delivered behavior. Unmet criteria → `/kaylo:plan`.
 7. After successful closure, reconcile reviewed release metadata under Unreleased summary below. Explain how to use the result: relevant page, action, or command, plus required setup only.

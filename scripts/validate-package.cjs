@@ -139,6 +139,32 @@ try {
     const target = path.join(root, resource);
     assert(fs.existsSync(target) && fs.statSync(target).isFile(), `Required release resource is missing: ${resource}`);
   }
+  // Optional project records still need their canonical contract and templates
+  // in every shipped package. This checks resources, never project ADR semantics.
+  const decisionResources = ['skills/plan/references/decisions.md',
+    'templates/DECISION.md', 'templates/DECISION-INDEX.md'];
+  for (const resource of decisionResources) {
+    const target = path.join(root, resource);
+    assert(fs.existsSync(target) && fs.statSync(target).isFile(),
+      `Required decision resource is missing: ${resource}`);
+  }
+  const decisionConsumers = ['skills/plan/SKILL.md', 'skills/build/SKILL.md',
+    'skills/review/SKILL.md', 'skills/close/SKILL.md',
+    'skills/build/references/delegation.md', 'skills/review/references/delegation.md',
+    'skills/plan/references/foundation.md', 'WORKERS.md'];
+  for (const consumer of decisionConsumers) {
+    const body = fs.readFileSync(path.join(root, consumer), 'utf8');
+    const links = [...body.matchAll(/\]\(([^)]+)\)/g)].map(match => match[1].split('#')[0]);
+    assert(links.some(link => path.resolve(root, path.dirname(consumer), link) ===
+      path.join(root, decisionResources[0])),
+    `Missing canonical decision reference: ${consumer}`);
+  }
+  const contract = fs.readFileSync(path.join(root, decisionResources[0]), 'utf8');
+  for (const template of decisionResources.slice(1)) {
+    const links = [...contract.matchAll(/\]\(([^)]+)\)/g)].map(match => match[1].split('#')[0]);
+    assert(links.some(link => path.resolve(root, path.dirname(decisionResources[0]), link) ===
+      path.join(root, template)), `Missing decision template reference: ${template}`);
+  }
   // Each SKILL.md must work when pasted alone, so these blocks are copied
   // rather than shared. Copies must stay byte-identical; a listed variant is a
   // deliberate difference: omitted, extended (the shared copy plus more), or

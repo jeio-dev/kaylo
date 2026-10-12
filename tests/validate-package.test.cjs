@@ -329,3 +329,44 @@ test('guided-release resources are required and retain relative layout in instal
   assert.doesNotMatch(missing.stderr, /ENOENT/);
   assert.match(check(repo, ['--installed', dir]).stderr, /release\.md/);
 });
+
+// These mutation fixtures establish resource reachability only, not model behavior.
+test('decision contract and templates are required even when all skill entrypoints exist', t => {
+  const dir = fixture(t);
+  for (const resource of ['skills/plan/references/decisions.md',
+    'templates/DECISION.md', 'templates/DECISION-INDEX.md']) {
+    const target = path.join(dir, resource);
+    const original = fs.readFileSync(target);
+    fs.unlinkSync(target);
+    const result = check(dir);
+    assert.equal(result.status, 1);
+    assert(result.stderr.includes(`Required decision resource is missing: ${resource}`));
+    fs.writeFileSync(target, original);
+  }
+});
+test('every decision consumer must resolve the canonical contract from its own directory', t => {
+  const dir = fixture(t);
+  for (const consumer of ['skills/plan/SKILL.md', 'skills/build/SKILL.md',
+    'skills/review/SKILL.md', 'skills/close/SKILL.md',
+    'skills/build/references/delegation.md', 'skills/review/references/delegation.md',
+    'skills/plan/references/foundation.md', 'WORKERS.md']) {
+    const target = path.join(dir, consumer);
+    const original = fs.readFileSync(target, 'utf8');
+    fs.writeFileSync(target, original.replaceAll('decisions.md', 'missing-decisions.md'));
+    const result = check(dir);
+    assert.equal(result.status, 1);
+    assert(result.stderr.includes(`Missing canonical decision reference: ${consumer}`));
+    fs.writeFileSync(target, original);
+  }
+});
+test('decision template links cannot drift while files remain packaged', t => {
+  const dir = fixture(t);
+  const target = path.join(dir, 'skills/plan/references/decisions.md');
+  const original = fs.readFileSync(target, 'utf8');
+  for (const template of ['DECISION.md', 'DECISION-INDEX.md']) {
+    fs.writeFileSync(target, original.replaceAll(`templates/${template}`, `missing/${template}`));
+    const result = check(dir);
+    assert.equal(result.status, 1);
+    assert(result.stderr.includes(`Missing decision template reference: templates/${template}`));
+  }
+});

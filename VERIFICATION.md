@@ -14,6 +14,12 @@ records from the first draft through 0.5.2 are in
 
 ## Current status — 0.11.0
 
+The #87 decision-record implementation adds a canonical optional ADR/index
+contract, manual consistency/promotion rules, and existing-entry-point/worker
+integration. Resource and native manifest checks are recorded below; its bounded
+live behavioral trials remain pending. Project ADR checks are instructional,
+not part of the structural plan/package validators.
+
 The #86 guided-release implementation adds local metadata/reconciliation and
 manual preparation guidance. Its parsing/Git/package checks are recorded below;
 live host/model behavior remains deferred with the #84–#90 series. The released
@@ -37,6 +43,76 @@ Code 2.1.289 with Sonnet 5.5 and on Codex CLI 0.160.1 with GPT-6.1-Sol. The
 Codex grades are operator-reported. The PR #79 review spot-checked their saved
 command records and secret-token classifications but did not audit every
 transcript.
+
+## Issue #87 implementation — 2026-10-12
+
+Started from clean `main` at `0c815d85d9e1d203002bb3e0b88ca29372de3912`
+in `/home/jeio/src/kaylo`, on `feat/87-project-decisions`. No project PRD,
+ROADMAP or current phase plan exists in this contributor repository; implementation
+is scoped to the approved revised issue and the user's subsequent implementation,
+issue-update, branch commit and PR request. Contributor guidance stays local and
+ignored. No version/catalog/tag or session-start hook changes are included.
+
+The canonical contract is `skills/plan/references/decisions.md`; literal templates
+are `templates/DECISION.md` and `templates/DECISION-INDEX.md`. This first version
+uses the permitted bounded manual consistency checklist, not an ADR parser or
+writer. It integrates plan, direct/resumed build, both review targets, close,
+worker/manual packets, and foundation phase-local references. Close records
+source mappings and checks retry/interruption state before phase check-off.
+Shared brief changes originate in `agents/` and the Claude adapters were
+regenerated with `node scripts/sync-claude-agents.cjs`.
+
+Observed on Node 24.21.0:
+
+- `node scripts/validate-package.cjs` passed: five skills, unchanged consistent
+  v0.11.0 manifests/catalogs, generated adapter parity and canonical decision
+  resource/link reachability.
+- `node --test tests/validate-package.test.cjs` passed: 25 tests, including
+  mutation fixtures for missing ADR contract/templates and broken relative
+  consumer/template links. These check shipped resources, not model behavior.
+- `node --test tests/*.test.cjs` passed: 378 tests, zero failures/skips. Includes
+  legacy plan compatibility, isolated package exports/npm inventory and
+  OpenCode copy/install fixtures; no ADR parser or promotion helper is claimed.
+- Claude Code 2.1.296: both `claude plugin validate
+  .claude-plugin/plugin.json --strict` and `claude plugin validate
+  .claude-plugin/marketplace.json --strict` passed.
+- Antigravity CLI 1.3.1: `agy plugin validate .` passed, reporting five skills
+  and three agents. It skipped commands, MCP servers and hooks as not found;
+  this does not establish runtime hook or worker behavior.
+- `node scripts/stage-development.cjs` and `node
+  scripts/validate-package.cjs --installed development/package` passed: all
+  41 shared resources match at their relative paths. The generated development
+  copy excludes contributor guidance and changes no host profile/settings.
+- After final reference/workflow wording and this evidence record, reran
+  `node --test tests/validate-package.test.cjs tests/package-inventory.test.cjs`:
+  28 tests passed, zero failures/skips. Refreshed the staged package and repeated
+  installed resource comparison: all 41 resources match. This final check covers
+  the packaged bytes; the earlier full-suite result is reused for unchanged
+  implementation/test inputs outside those resource/document edits.
+- `git diff --check` passed.
+
+Direct inspection of the diff against #87's revised scope checked entry-point
+coverage, worker shared-state prohibitions, whole-record scope retention,
+separate acceptance/verification, close ordering, source-match retry handling,
+legacy absence versus corrupt records, and missing-baseline diagnostics. This
+is author inspection without a fresh independent reviewer. The operational
+convention choices (resource paths, numeric IDs, labelled record paragraphs,
+index columns and diagnostic kinds) implement the approved contract; they add
+no migration marker or new command/role. Full #88/#89 testing/environment
+strategy implementation is still owned by those issues; #87 supplies their
+phase-local and promotion mapping lifecycle.
+
+`tests/DECISION-TRIALS.md` specifies bounded live cases and grading checkpoints
+for authority, relevance/cross-area delivery, supersession, collisions,
+interrupted/repeated close, reopening, immutability, and host/resource limits.
+Those trials have **not run**. No new live model/worker execution, native-host
+install/update/discovery, controlled ADR-promotion behavioral fixture, public
+installation, migration, deployment, paid operation or release trial was run.
+Gemini CLI is unavailable on PATH; available Claude/Codex/Antigravity/OpenCode
+executables do not establish feature behavior. No trusted project ADR historical
+baseline was inspected, so historical immutability is not established. Markdown
+instructions and package parity are not enforcement or behavioral acceptance;
+issue acceptance boxes remain open and the PR is a draft pending review/trials.
 
 ## Issue #87 specification review — 2026-10-07
 

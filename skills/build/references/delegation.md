@@ -22,6 +22,17 @@ Read this only when using a worker or preparing a manual handoff.
 
 ## Prepare the handoff
 
+Resolve [project decisions](../../plan/references/decisions.md) before preparing
+this packet. In its existing relevant-decisions/interface-contract content,
+include applicable ADR links and needed content, project-wide/cross-area rules,
+replacement chains and explicit settled phase-local changes with Design/Agreement
+provenance. Confirm records exist in the actual worker/manual-handoff workspace;
+when supplying snapshots instead, identify sources and limits. Missing or
+ambiguous required authority blocks the assignment. Do not include all phase
+history by default. Workers report conflicts/corrections and never allocate IDs,
+promote decisions, or edit accepted ADRs/the shared index.
+
+
 Use [the builder brief](../../../agents/builder.md), resolved relative to this reference file, not the user's project. Observed registration: Claude Code lists Kaylo's native brief as `kaylo:builder`, Antigravity lists it as `builder`, and Gemini CLI's agent loader returns it as `builder`. Check that a bare name resolves to Kaylo's brief before using it, as described in [WORKERS.md](../../../WORKERS.md). For a manual handoff, read and paste the brief's body. If the necessary brief is missing, ask for its location or content; do not invent it.
 
 Supply:
