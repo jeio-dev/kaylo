@@ -182,6 +182,22 @@ for (const [old, replacement] of [['Complexity', 'Estimate'], ['Depends on', 'Bl
   });
 }
 
+test('an optional Issue field accepts same-repository, qualified and https references', t => {
+  for (const issue of ['#12', 'acme/api#40', 'group/sub/repo#3', '#12, acme/api#40,https://tracker.example/browse/PROJ-7']) {
+    const f = fixture(t, phase(task('T1').replace('  - Result:', `  - Issue: ${issue}\n  - Result:`)));
+    assert.deepEqual(validate(f.root), [], issue);
+  }
+});
+
+test('a malformed or duplicated Issue field is rejected; plans without one stay valid', t => {
+  for (const issue of ['12', '#0', 'see #12', '#12 and #13', 'acme#4', 'http://tracker.example/4', '#12,', 'None', '']) {
+    const f = fixture(t, phase(task('T1').replace('  - Result:', `  - Issue: ${issue}\n  - Result:`)));
+    assert.deepEqual(validate(f.root), ['T1: Issue must list #N, owner/repo#N, or https:// links, separated by commas'], issue);
+  }
+  const twice = fixture(t, phase(task('T1').replace('  - Result:', '  - Issue: #1\n  - Issue: #2\n  - Result:')));
+  assert.deepEqual(validate(twice.root), ['T1: duplicate Issue field']);
+});
+
 test('Estimate values are instructions only', t => {
   const f = fixture(t, phase(task('T1').replace('Estimate: S', 'Estimate: XXL') + task('T2').replace(/  - Estimate:.*\n/, '')));
   assert.deepEqual(validate(f.root), []);

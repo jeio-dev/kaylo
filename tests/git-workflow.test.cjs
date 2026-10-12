@@ -97,3 +97,23 @@ test('the reference documents every preference diagnostic, its example parses, a
   const documented = reference.match(/`type` is one of ([^.]*)\./)[1].match(/`([a-z]+)`/g).map(value => value.slice(1, -1));
   assert.deepEqual(documented, types);
 });
+
+test('the pull request reference keeps its fallback layout, Issue example and release note form usable', t => {
+  const pulls = fs.readFileSync(path.resolve(__dirname, '../skills/build/references/pull-requests.md'), 'utf8');
+  const layout = pulls.match(/```markdown\n([\s\S]*?)```/)[1];
+  assert.deepEqual(layout.match(/^## .*/gm), ['## Summary', '## Phase', '## Changes', '## Verification', '## Risk', '## Release note']);
+  assert.match(layout, /\]\(\.kaylo\/phases\/03-login\/03-PLAN\.md\)/, 'links the ROADMAP-style phase plan path');
+  const note = /^Release note: (?:feature|fix|breaking|internal) \((?:provisional|reviewed|pending)\) — \S/m;
+  assert.match(pulls, note);
+  assert.match(layout.split('## Release note\n')[1], /^(?:feature|fix|breaking|internal) \(provisional\) — \S/);
+  const issue = pulls.match(/```text\n( {2}- Issue: .*)\n```/)[1];
+  const { validate } = require('../scripts/validate-plan.cjs');
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'kaylo-issue-doc-'));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const plan = '.kaylo/phases/01-a/01-PLAN.md';
+  fs.mkdirSync(path.join(root, path.dirname(plan)), { recursive: true });
+  fs.writeFileSync(path.join(root, 'ROADMAP.md'), `Current: [01 A](${plan})\n\n- [ ] [01 A](${plan}) — A\n`);
+  fs.writeFileSync(path.join(root, plan), '# 01 A\nStatus: Current\n\n## Tasks\n- [ ] T1: Do A\n  - Blocked by: None\n' +
+    `  - Acceptance criteria: A works\n  - Test plan: run a\n${issue}\n  - Result: Not started\n\n## Review\nNone.\n`);
+  assert.deepEqual(validate(root), []);
+});

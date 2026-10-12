@@ -49,6 +49,7 @@ Read `ROADMAP.md` and follow its `Current:` link to the current phase plan; revi
 - Recheck a fix under its existing ID, recording evidence and outcome. Focus on the comment and affected behavior; widen review only for new evidence. Fixes to blocking comments require this recheck before closure.
 - The guiding assistant records resolutions after inspecting artifacts and evidence. Delegated reviewers return reports without editing shared plan state.
 - Keep unresolved comments visible. Non-blocking comments alone do not reopen completed tasks or block closure.
+- When the phase has a `Release note:` or `Pull request:` line under `## Review`, read [pull requests](../build/references/pull-requests.md). A phase implementation review confirms the release classification as `reviewed`, corrects it, or leaves it `pending` with the disagreement. When a blocking finding reopens work on a pull request marked ready, return it to draft only within existing authority; otherwise record that pending step.
 - Reopen affected work only when a blocking comment shows acceptance is unmet or relevant changes make required evidence insufficient, appending a `reopen` record to each unchecked task's `Result:` when the phase uses dispatch records.
 - A material scope mismatch requires `Status: Needs revision: <reason>` in the current phase plan and a return to plan. An ordinary implementation defect does not. Plan restores `Status: Current` after revision; status does not imply agreement or completion.
 
