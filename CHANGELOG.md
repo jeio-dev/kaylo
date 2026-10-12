@@ -10,7 +10,8 @@
   before phase check-off. Accepted bodies remain snapshots while whole-record
   successors update the index. Existing projects require no migration/backfill.
   Consistency checks are manual and do not claim technical write protection
-  ([#87](https://github.com/jeio-dev/kaylo/issues/87)).
+  ([#87](https://github.com/jeio-dev/kaylo/issues/87),
+  [#129](https://github.com/jeio-dev/kaylo/pull/129)).
 
 - **skills**: Close aggregates reviewed phase contributions into unreleased notes
   and gives an advisory release/wait verdict. Request `/kaylo:close release`,

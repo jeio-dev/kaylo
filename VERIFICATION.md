@@ -114,6 +114,18 @@ baseline was inspected, so historical immutability is not established. Markdown
 instructions and package parity are not enforcement or behavioral acceptance;
 issue acceptance boxes remain open and the PR is a draft pending review/trials.
 
+Git outcomes: committed implementation as
+`26d4e81eac7da5e90c319c7cfa074e16e74cf4e9`, pushed the attributable branch to
+`https://github.com/jeio-dev/kaylo.git`, and opened
+[draft PR #129](https://github.com/jeio-dev/kaylo/pull/129) against verified
+`main`. GitHub reported the PR open/draft with the expected head revision and
+no reported status checks; that is not a CI pass. Issue comments recorded start
+and progress, and its status now links the implementation/evidence without
+checking acceptance boxes. The user explicitly requested these Git/issue actions;
+Kaylo supplied no built-in secret scan and repository hooks were not bypassed.
+Later additions here and in CHANGELOG only link/report these outcomes; they do
+not change the implementation or tested shared resources.
+
 ## Issue #87 specification review — 2026-10-07
 
 Direct review of the ADR proposal against local `7e5b4bd` on
