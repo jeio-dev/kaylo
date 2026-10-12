@@ -1956,3 +1956,62 @@ do not cover model behavior, hook delivery in a live session, worker starts,
 interactive host pickers, other operating systems, or newer host versions. No
 model requests were made. Trial scripts and logs are under the ignored
 `.local/trials/public-0.11.0/`.
+
+
+## PR #127 implementation review — 2026-10-12
+
+Direct review of `07a549c2e716f4d091f09dde250184a9d245a754` against base
+`1363ee52e8e492395bd35ba0e7e2eea32deaafe6` and the revised #85 specification.
+Published three inline findings:
+https://github.com/jeio-dev/kaylo/pull/127#pullrequestreview-5490262892
+
+Observed: `node scripts/validate-package.cjs` passed (v0.11.0, five shared
+skills, matching versions/catalogs); `node --test tests/*.test.cjs` passed
+337/337 with no skips; Claude Code 2.1.296 strict plugin and marketplace
+manifest validation passed; `agy plugin validate .` passed on Antigravity
+CLI 1.3.1; `git diff main...HEAD --check` passed. Disposable repository
+probes reproduced inherited unknown preference keys crashing the reader,
+generated-file exclusions changing for fixed base/head SHAs when local
+attributes change, and tab-containing paths being truncated and misclassified.
+The existing passing suite does not cover these failures. The published
+review and inline comments were read back to verify their target and content.
+
+No live model/worker, isolated installation, real project commit/push/PR
+lifecycle, provider CI, secret scanner, or issue-filing trial ran. Temporary
+Git commits establish local Git/parser behavior only; manifest validation
+establishes package discovery/structure, not instruction-following behavior.
+Automatic Git execution remains intentionally gated on #89. This review had
+no separate reviewer. No implementation was changed; only this evidence
+record was appended locally, without committing or pushing it.
+
+## PR #127 review fixes — 2026-10-12
+
+Addressed the three findings from the PR #127 implementation review above.
+
+- `scripts/read-preferences.cjs` checks recognized keys with `Object.hasOwn`
+  and keeps lines in Maps, so `constructor`, `toString`, `hasOwnProperty`,
+  `valueOf`, and `isPrototypeOf` are `PREFS_UNKNOWN` notes that leave other
+  preferences usable, instead of a crash. The commit message checker reading
+  such a file no longer crashes either.
+- `scripts/diff-size.cjs` reads `linguist-generated` rules with
+  `git check-attr --source=<head>` when a head is given, so a fixed base/head
+  comparison gives the same result after the working-tree attributes change or
+  another branch is checked out. Without a head it still uses working-tree
+  rules. `--source` needs Git 2.40 or later; older Git reports `SIZE_GIT`
+  rather than a result from the wrong rules.
+- `scripts/diff-size.cjs` splits each numstat record only at its first two
+  tabs, so paths containing tabs keep their full name and are classified as
+  lockfiles, generated, or binary files correctly.
+
+Observed on Linux (WSL2), Node 24.21.0, Git 2.53.0: three new tests (one in
+`tests/read-preferences.test.cjs`, two in `tests/diff-size.test.cjs`) fail
+against the reviewed scripts at `07a549c` and pass with the fix.
+`node --test tests/*.test.cjs` passed 340/340 with no skips. Package
+validation, `claude plugin validate --strict` for the plugin and marketplace
+(Claude Code 2.1.296), `agy plugin validate .` (Antigravity CLI 1.3.1), and
+`git diff --check` passed.
+
+Not run: Git older than 2.40; Windows; live model or worker sessions; real
+push, pull request, or CI behavior; isolated install trials. Automatic Git
+execution remains gated on #89, and behavioral trials remain deferred. The
+fixes have not been rechecked by a reviewer.

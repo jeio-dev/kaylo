@@ -52,7 +52,9 @@
   an adopted conventional policy, its scope list, and required task IDs.
   `scripts/diff-size.cjs` counts added and deleted lines between two
   revisions or against the working tree, listing lockfiles,
-  `linguist-generated` files, and binary files apart
+  `linguist-generated` files, and binary files apart. Between two revisions
+  it reads the generated-file rules from the compared head, which needs Git
+  2.40 or later
   ([#85](https://github.com/jeio-dev/kaylo/issues/85)).
 - **docs**: The #85 instructions have not been run with a model, and no
   pull request, CI, or provider behavior was exercised. Their behavioral
