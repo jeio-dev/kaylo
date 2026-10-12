@@ -10,7 +10,7 @@ Status: Current
 
 ## Design
 
-[The simplest sufficient approach, what existing capability it reuses, and why it meets the criteria.]
+[The simplest sufficient approach, what existing capability it reuses, and why it meets the criteria. When relevant, the foundation assessment and draft testing or environment decisions.]
 
 ## Agreement
 
