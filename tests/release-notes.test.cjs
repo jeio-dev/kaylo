@@ -6,7 +6,8 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { propose, reviewNote, kayloVersion } = require('../scripts/release-notes.cjs');
+const { propose, reviewNote, kayloVersion, main } = require('../scripts/release-notes.cjs');
+const { validate } = require('../scripts/validate-plan.cjs');
 const helper = path.resolve(__dirname, '../scripts/release-notes.cjs');
 
 function fixture(t, eol = '\n') {
@@ -15,6 +16,7 @@ function fixture(t, eol = '\n') {
   const write = (file, value) => fs.writeFileSync(path.join(root, file), value.replaceAll('\r\n', '\n').replaceAll('\n', eol));
   write('ROADMAP.md', 'Current: [01 Export](phase.md)\n- [x] [01 Export](phase.md) — Export\n- [ ] 02 Future — Later\n');
   write('phase.md', '# 01 Export\nStatus: Current\n## Tasks\n- [x] T1: Export\n  - Blocked by: None\n' +
+    '  - Acceptance criteria: Prints the requested export.\n  - Test plan: node export.cjs\n' +
     '  - Result: Scoped check passed.\n## Review\nReview completed; highest impact feature, also fixes invalid exports.\n' +
     'Release note: feature (reviewed) — Users can export; invalid exports show an error.\n' +
     'Release contribution: v0.11.0 / initial\n## Completion\nDelivered and verified.\n');
@@ -60,16 +62,19 @@ for (const [name, edit] of [
     'Release note: fix (reviewed) — Competing classification.\n## Completion'))],
   ['wrong boundary', f => { f.selection.boundary = 'v0.10.0'; }]
 ]) {
-  test(`${name} remains pending and removes matching unreleased eligibility without changing source closure`, t => {
+  test(`${name} remains pending without changing source closure`, t => {
     const f = fixture(t);
-    f.write('CHANGELOG.md', f.run().notes);
+    const original = f.run().notes;
+    f.write('CHANGELOG.md', original);
     edit(f);
     const roadmap = f.read('ROADMAP.md');
     const result = f.run();
     assert.equal(result.state, 'pending');
     assert.equal(result.counts.feature, 0);
     assert.equal(result.diagnostics[0].code, 'RELEASE_PENDING');
-    assert.doesNotMatch(result.notes, /<!-- kaylo-release:/);
+    if (['missing legacy metadata', 'duplicate metadata', 'wrong boundary'].includes(name)) {
+      assert.equal(result.notes, original);
+    } else assert.doesNotMatch(result.notes, /<!-- kaylo-release:/);
     assert.equal(f.read('ROADMAP.md'), roadmap);
   });
 }
@@ -238,7 +243,8 @@ test('CLI distinguishes proposals, pending classification, schema/read failures 
   result = run(f.root, selectionFile);
   assert.match(result.stderr, /RELEASE_SCHEMA/);
   fs.writeFileSync(selectionFile, '{not json');
-  assert.match(run(f.root, selectionFile).stderr, /RELEASE_READ/);
+  assert.match(run(f.root, selectionFile).stderr, /RELEASE_SCHEMA: Selection is not valid JSON/);
+  assert.match(run(f.root, path.join(f.root, 'missing.json')).stderr, /RELEASE_READ/);
 });
 
 test('Kaylo version matrix uses highest impact and resets without imposing a consumer policy', () => {
@@ -281,4 +287,98 @@ test('a FIFO selection is refused promptly without a blocking read', t => {
   const result = spawnSync(process.execPath, [helper, f.root, fifo], { encoding: 'utf8', timeout: 2000 });
   assert.equal(result.status, 1);
   assert.match(result.stderr, /RELEASE_READ/);
+});
+
+test('a provisional later delta retains the earlier unreleased contribution', t => {
+  const f = fixture(t);
+  const original = f.run().notes;
+  f.write('CHANGELOG.md', original);
+  f.write('phase.md', f.read('phase.md').replace('(reviewed)', '(provisional)').replace('/ initial', '/ repair-1'));
+  const result = f.run();
+  assert.equal(result.state, 'pending');
+  assert.equal(result.notes, original);
+  assert.equal(result.counts.feature, 0);
+});
+
+test('unselected ./ links do not block proposals and selected ./ links normalize like the plan validator', t => {
+  const f = fixture(t);
+  f.write('other.md', f.read('phase.md').replace('01 Export', '02 Future'));
+  f.write('ROADMAP.md', f.read('ROADMAP.md').replace('- [ ] 02 Future — Later', '- [ ] [02 Future](./other.md) — Later'));
+  assert.deepEqual(validate(f.root), []);
+  assert.equal(f.run().state, 'complete');
+  f.write('ROADMAP.md', f.read('ROADMAP.md').replaceAll('(phase.md)', '(./phase.md)'));
+  assert.equal(f.run().state, 'complete');
+  f.selection.phases[0].plan = './phase.md';
+  assert.deepEqual(validate(f.root), []);
+  assert.equal(f.run().state, 'complete');
+  f.write('ROADMAP.md', f.read('ROADMAP.md').replace('(./other.md)', '(https://tracker.example/future)'));
+  assert.equal(f.run().state, 'complete');
+  assert.equal(f.run().entries[0].plan, 'phase.md');
+});
+
+test('area metadata formats the bullet independently of its release classification', t => {
+  const f = fixture(t);
+  f.write('phase.md', f.read('phase.md').replace('## Completion', 'Release area: skills\n## Completion'));
+  const result = f.run();
+  assert.match(result.notes, /- \*\*skills\*\*:/);
+  assert.equal(result.counts.feature, 1);
+  f.write('CHANGELOG.md', result.notes);
+  assert.equal(f.run().notes, result.notes);
+});
+
+test('curated published area labels stay immutable without a permanent pending diagnostic', t => {
+  const f = fixture(t);
+  const published = f.run().notes.replace('- **feature**:', '- **skills**:')
+    .replace('## [Unreleased]', '## 2026-10-12, Version 0.12.0')
+    .replace('# Changes\n', '# Changes\n\n## [Unreleased]\n\n### Notable Changes\n');
+  f.write('CHANGELOG.md', published);
+  const result = f.run();
+  assert.equal(result.state, 'complete');
+  assert.equal(result.notes, published);
+  assert.deepEqual(result.alreadyPublished, [{ phase: '01', delta: 'initial' }]);
+});
+
+for (const eol of ['\n', '\r\n']) {
+  test(`reopen/close cycles preserve exact separators (${JSON.stringify(eol)})`, t => {
+    const f = fixture(t, eol);
+    const baseline = f.read('CHANGELOG.md');
+    const closed = f.run().notes;
+    for (let i = 0; i < 3; i++) {
+      f.write('CHANGELOG.md', closed);
+      f.write('ROADMAP.md', f.read('ROADMAP.md').replace('[x]', '[ ]'));
+      const reopened = f.run().notes;
+      assert.equal(reopened, baseline);
+      f.write('CHANGELOG.md', reopened);
+      f.write('ROADMAP.md', f.read('ROADMAP.md').replace('[ ] [01', '[x] [01'));
+      assert.equal(f.run().notes, closed);
+    }
+  });
+}
+
+test('Pull request records preserve URLs with zero, one or several spaces after the colon', () => {
+  for (const spacing of ['', ' ', '   ', '\t']) {
+    const note = reviewNote('## Review\nRelease note: fix (reviewed) — Fixed.\n' +
+      'Release contribution: first / initial\nPull request:' + spacing + 'https://tracker.example/pull/1\n');
+    assert.equal(note.pr, 'https://tracker.example/pull/1');
+  }
+});
+
+test('unexpected helper errors escape the CLI handler instead of becoming read failures', t => {
+  const f = fixture(t);
+  const selected = path.join(f.root, 'selection.json');
+  fs.writeFileSync(selected, JSON.stringify(f.selection));
+  t.mock.method(fs, 'realpathSync', () => { throw new TypeError('Unexpected fixture bug'); });
+  assert.throws(() => main([f.root, selected]), /Unexpected fixture bug/);
+});
+
+test('area metadata remains optional and rejects malformed or repeated labels as pending', t => {
+  const f = fixture(t);
+  assert.equal(f.run().state, 'complete');
+  for (const record of ['Release area: Skills', 'Release area: skills\nRelease area: tools']) {
+    f.write('phase.md', '## Review\nRelease note: feature (reviewed) — Export.\n' +
+      'Release contribution: v0.11.0 / initial\n' + record + '\n');
+    const result = f.run();
+    assert.equal(result.state, 'pending');
+    assert.equal(result.counts.feature, 0);
+  }
 });

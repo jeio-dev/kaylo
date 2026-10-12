@@ -4,7 +4,7 @@
 // Optional read-only proposal helper. No writes, Git, network, or evidence verdicts.
 const fs = require('node:fs');
 const path = require('node:path');
-const { visibleMarkdown } = require('./validate-plan.cjs');
+const { visibleMarkdown, linkTarget, phaseEntry } = require('./validate-plan.cjs');
 const token = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
 const classes = ['breaking', 'feature', 'fix', 'internal'];
 function refuse(code, message) { throw Object.assign(new Error(message), { code }); }
@@ -19,11 +19,22 @@ function identifier(value, label) {
 }
 function relative(value) {
   if (typeof value !== 'string' || !value || /[\r\n\0?#\\]/.test(value) ||
-      /^[a-z][a-z\d+.-]*:/i.test(value) || path.isAbsolute(value) ||
-      value.split('/').some(part => part === '..' || part === '.' || !part)) {
-    refuse('RELEASE_PATH', 'Expected a project-relative file path without traversal');
+      /^[a-z][a-z\d+.-]*:/i.test(value) || path.isAbsolute(value)) {
+    refuse('RELEASE_PATH', 'Expected a project-relative file path');
   }
-  return value;
+  const normalized = path.normalize(value);
+  if (normalized === '.' || normalized === '..' || normalized.startsWith('..' + path.sep)) {
+    refuse('RELEASE_PATH', 'File path leaves the project or names its root');
+  }
+  return normalized;
+}
+function releaseFailure(error) { return typeof error?.code === 'string' && error.code.startsWith('RELEASE_'); }
+function readFailure(error, message) {
+  if (releaseFailure(error)) throw error;
+  if (error.code === 'ERR_ENCODING_INVALID_ENCODED_DATA' || /^E[A-Z]+$/.test(error.code || '')) {
+    refuse('RELEASE_READ', message);
+  }
+  throw error;
 }
 function readRegular(name, expected) {
   let fd;
@@ -34,10 +45,11 @@ function readRegular(name, expected) {
     if (expected && (stat.dev !== expected.dev || stat.ino !== expected.ino)) refuse('RELEASE_READ', 'File changed while reading');
     const bytes = fs.readFileSync(fd);
     return { stat, text: new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes) };
-  } finally { if (fd !== undefined) fs.closeSync(fd); }
+  } catch (error) { readFailure(error, 'Cannot read a regular UTF-8 file'); }
+  finally { if (fd !== undefined) fs.closeSync(fd); }
 }
 function readInside(root, name) {
-  relative(name);
+  name = relative(name);
   try {
     const target = fs.realpathSync(path.join(root, name));
     const inside = path.relative(root, target);
@@ -49,8 +61,7 @@ function readInside(root, name) {
     const file = readRegular(target, stat);
     return { text: file.text, target, identity: stat.ino ? `${stat.dev}:${stat.ino}` : target };
   } catch (error) {
-    if (error.code?.startsWith('RELEASE_')) throw error;
-    refuse('RELEASE_READ', `Cannot read ${name} as a project UTF-8 file`);
+    readFailure(error, `Cannot read ${name} as a project UTF-8 file`);
   }
 }
 function reviewNote(text) {
@@ -64,31 +75,36 @@ function reviewNote(text) {
   if (notes.length !== 1 || contributions.length !== 1) return { reason: 'missing or repeated release metadata' };
   const note = notes[0].match(/^Release note: (breaking|feature|fix|internal) \((provisional|reviewed|pending)\) — (\S.*)$/);
   const contribution = contributions[0].match(/^Release contribution: ([A-Za-z0-9][A-Za-z0-9._-]{0,127}) \/ ([A-Za-z0-9][A-Za-z0-9._-]{0,127})$/);
-  if (!note || !contribution) return { reason: 'invalid release metadata grammar' };
-  if (note[2] !== 'reviewed') return { reason: `${note[2]} classification` };
+  const identity = contribution ? { boundary: contribution[1], delta: contribution[2] } : {};
+  if (!note || !contribution) return { ...identity, reason: 'invalid release metadata grammar' };
+  const areas = section.filter(line => /^Release area:/.test(line));
+  const area = areas[0]?.match(/^Release area: ([a-z][a-z0-9-]{0,63})$/)?.[1];
+  if (areas.length > 1 || (areas.length && !area)) return { ...identity, reason: 'invalid or repeated release area' };
   const prs = section.filter(line => /^Pull request:/.test(line));
-  if (prs.length > 1) return { reason: 'repeated Pull request record' };
+  if (prs.length > 1) return { ...identity, reason: 'repeated Pull request record' };
   // Preserve provider-neutral association as data; never execute retrieved text.
-  return { class: note[1], description: note[3], boundary: contribution[1], delta: contribution[2], pr: prs[0]?.slice(14).trim() || null };
+  return { class: note[1], description: note[3], ...identity,
+    ...(area ? { area } : {}), pr: prs[0]?.replace(/^Pull request:/, '').trim() || null,
+    ...(note[2] !== 'reviewed' ? { reason: `${note[2]} classification` } : {}) };
 }
-function roadmap(text) {
+function roadmap(text, selected) {
   const result = new Map();
   for (const line of visibleMarkdown(text).split('\n')) {
-    const entry = line.match(/^[ \t]*[-*][ \t]+\[([ xX])\][ \t]+\[?(\d{2})\b/);
-    if (!entry) continue;
-    if (result.has(entry[2])) refuse('RELEASE_IDENTITY', 'Duplicate roadmap phase ID');
-    const link = line.match(/\[[^\]]+\]\(([^)]+)\)/);
-    let plan = null;
-    if (link) {
-      try { plan = relative(decodeURIComponent(link[1].replace(/^<|>$/g, ''))); }
-      catch { refuse('RELEASE_PATH', 'Invalid roadmap plan link'); }
-    }
-    result.set(entry[2], { closed: entry[1].toLowerCase() === 'x', plan });
+    const entry = line.match(phaseEntry);
+    if (!entry || !selected.has(entry[2])) continue;
+    if (result.has(entry[2])) refuse('RELEASE_IDENTITY', 'Duplicate selected roadmap phase ID');
+    const plan = linkTarget(line, () => refuse('RELEASE_PATH', 'Invalid selected roadmap plan link'));
+    result.set(entry[2], { closed: entry[1].toLowerCase() === 'x', plan: relative(plan) });
   }
   return result;
 }
 function entryShape(entry) {
-  shape(entry, ['project', 'phase', 'plan', 'boundary', 'delta', 'class', 'description', 'pr'], 'release entry');
+  const keys = ['project', 'phase', 'plan', 'boundary', 'delta', 'class', 'description', 'pr'];
+  if (entry && Object.hasOwn(entry, 'area')) keys.push('area');
+  shape(entry, keys, 'release entry');
+  if (Object.hasOwn(entry, 'area') && (typeof entry.area !== 'string' || !/^[a-z][a-z0-9-]{0,63}$/.test(entry.area))) {
+    refuse('RELEASE_SCHEMA', 'Invalid release area');
+  }
   for (const key of ['project', 'boundary', 'delta']) identifier(entry[key], key);
   if (typeof entry.phase !== 'string' || !/^\d{2}$/.test(entry.phase)) refuse('RELEASE_SCHEMA', 'Invalid phase ID');
   relative(entry.plan);
@@ -104,7 +120,7 @@ function block(entry, eol) {
   // Description stays in JSON as well; bullet text is data, never release authority.
   const description = entry.description.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
   const link = encodeURI(entry.plan).replaceAll('(', '%28').replaceAll(')', '%29');
-  return `<!-- kaylo-release:${json} -->${eol}- **${entry.class}**: ${description} ([${entry.phase}](${link}))${eol}<!-- /kaylo-release -->`;
+  return `<!-- kaylo-release:${json} -->${eol}- **${entry.area || entry.class}**: ${description} ([${entry.phase}](${link}))${eol}<!-- /kaylo-release -->`;
 }
 function noteLayout(text) {
   const raw = text.split(/\r?\n/);
@@ -146,7 +162,9 @@ function noteLayout(text) {
       try { entry = JSON.parse(match[1]); } catch { refuse('RELEASE_MARKER', 'Invalid release marker JSON'); }
       entryShape(entry);
       const finish = lines[i + 2].start + lines[i + 2].raw.length;
-      entries.push({ entry, start: lines[i].start, end: finish, pending: lines[i].start > start && finish <= end,
+      const eol = text.slice(finish, finish + 2) === '\r\n' ? '\r\n' : '\n';
+      const removalEnd = text.slice(finish, finish + 2 * eol.length) === eol + eol ? finish + 2 * eol.length : finish;
+      entries.push({ entry, start: lines[i].start, end: finish, removalEnd, pending: lines[i].start > start && finish <= end,
         edited: lines[i + 1].raw !== block(entry, '\n').split('\n')[1] });
       i += 2;
       continue;
@@ -171,25 +189,29 @@ function propose(project, selection) {
   identifier(selection.project, 'project identity');
   identifier(selection.boundary, 'release boundary');
   if (!Array.isArray(selection.phases)) refuse('RELEASE_SCHEMA', 'phases must be an array');
-  const root = fs.realpathSync(project);
-  const notesFile = readInside(root, selection.notes);
-  const notes = notesFile.text;
-  const layout = noteLayout(notes);
-  const index = roadmap(readInside(root, 'ROADMAP.md').text);
-  const diagnostics = [];
   const selected = new Set();
-  const targets = new Set();
-  const eligible = [];
-  const alreadyPublished = [];
-  const replacements = [];
-  const additions = [];
-  for (const phase of selection.phases) {
+  const phases = selection.phases.map(phase => {
     shape(phase, ['id', 'plan'], 'selected phase');
     if (typeof phase.id !== 'string' || !/^\d{2}$/.test(phase.id) || selected.has(phase.id)) {
       refuse('RELEASE_IDENTITY', 'Invalid or duplicate selected phase ID');
     }
     selected.add(phase.id);
-    relative(phase.plan);
+    return { id: phase.id, plan: relative(phase.plan) };
+  });
+  let root;
+  try { root = fs.realpathSync(project); }
+  catch (error) { readFailure(error, 'Project directory is unavailable'); }
+  const notesFile = readInside(root, selection.notes);
+  const notes = notesFile.text;
+  const layout = noteLayout(notes);
+  const index = roadmap(readInside(root, 'ROADMAP.md').text, selected);
+  const diagnostics = [];
+  const targets = new Set();
+  const eligible = [];
+  const alreadyPublished = [];
+  const replacements = [];
+  const additions = [];
+  for (const phase of phases) {
     const indexed = index.get(phase.id);
     if (!indexed || indexed.plan !== phase.plan) refuse('RELEASE_IDENTITY', 'Selection must use the authoritative roadmap ID and plan link');
     const file = readInside(root, phase.plan);
@@ -209,7 +231,7 @@ function propose(project, selection) {
         continue;
       }
       alreadyPublished.push({ phase: phase.id, delta: metadata.delta });
-      if (published.edited) diagnostics.push({ code: 'RELEASE_EDITED', phase: phase.id, reason: 'published bullet differs from metadata; inspect history without rewriting it' });
+      // Published presentation may be curated; preserve it without rewriting or blocking future batches.
       if (['boundary', 'class', 'description'].some(field => published.entry[field] !== metadata[field])) {
         diagnostics.push({ code: 'RELEASE_PUBLISHED', phase: phase.id, reason: 'published contribution changed; review a new unreleased delta' });
       }
@@ -219,13 +241,18 @@ function propose(project, selection) {
       (metadata.boundary !== selection.boundary ? 'release boundary mismatch' : null);
     if (reason) {
       diagnostics.push({ code: 'RELEASE_PENDING', phase: phase.id, reason });
-      // Reopening, disputed or missing metadata removes eligibility, retaining review history in the plan.
-      for (const item of pending) replacements.push({ ...item, text: '' });
+      // Invalidate only the identified contribution. Unknown/later metadata must not erase earlier work.
+      for (const item of pending) {
+        if ((!indexed.closed || metadata.reason) &&
+            item.entry.delta === metadata.delta && item.entry.boundary === metadata.boundary) {
+          replacements.push({ ...item, end: item.removalEnd, text: '' });
+        }
+      }
       continue;
     }
     const entry = { project: selection.project, phase: phase.id, plan: phase.plan,
       boundary: metadata.boundary, delta: metadata.delta, class: metadata.class,
-      description: metadata.description, pr: metadata.pr };
+      description: metadata.description, pr: metadata.pr, ...(metadata.area ? { area: metadata.area } : {}) };
     entryShape(entry);
     const old = matching.find(item => keyOf(item.entry) === keyOf(entry));
     if (pending.some(item => keyOf(item.entry) !== keyOf(entry)) || (old && old.entry.boundary !== entry.boundary)) {
@@ -273,12 +300,19 @@ function kayloVersion(version, impacts) {
 function main(args) {
   if (args.length !== 2) { console.error('RELEASE_USAGE: node scripts/release-notes.cjs <project-root> <selection.json>'); return 2; }
   try {
-    const selection = JSON.parse(readRegular(args[1]).text);
+    const source = readRegular(args[1]).text;
+    let selection;
+    try { selection = JSON.parse(source); }
+    catch (error) {
+      if (!(error instanceof SyntaxError)) throw error;
+      refuse('RELEASE_SCHEMA', 'Selection is not valid JSON');
+    }
     const result = propose(args[0], selection);
     console.log(JSON.stringify(result, null, 2));
     return result.state === 'complete' ? 0 : 1;
   } catch (error) {
-    console.error(`${error.code?.startsWith('RELEASE_') ? error.code : 'RELEASE_READ'}: ${error.code?.startsWith('RELEASE_') ? error.message : 'Cannot read project or selection JSON'}`);
+    if (!releaseFailure(error)) throw error;
+    console.error(`${error.code}: ${error.message}`);
     return 1;
   }
 }

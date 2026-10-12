@@ -323,6 +323,9 @@ test('guided-release resources are required and retain relative layout in instal
   const dir = fixture(t);
   const resource = 'skills/close/references/release.md';
   fs.unlinkSync(path.join(dir, resource));
-  assert.equal(check(dir).status, 1);
+  const missing = check(dir);
+  assert.equal(missing.status, 1);
+  assert.match(missing.stderr, /Required release resource is missing: skills\/close\/references\/release\.md/);
+  assert.doesNotMatch(missing.stderr, /ENOENT/);
   assert.match(check(repo, ['--installed', dir]).stderr, /release\.md/);
 });

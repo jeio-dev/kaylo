@@ -2134,3 +2134,54 @@ explicit-preparation, missing-mechanics/evidence, existing/missing/changed
 scope, timing, resume, notes/history, and hotfix cases. No unobserved host/model
 behavior is claimed; #86 remains open for that verification. Versions/catalogs
 remain 0.11.0; no release/tag/package publication is part of this PR.
+
+## PR #128 review corrections — 2026-10-12
+
+Addressed the nine inline comments on `67d25ec940b1d09b2d93f9370b3c11b09ff781a1`
+in the existing `issue-86-guided-releases` branch. Starting index/worktree was
+clean; local ignored contributor guidance was preserved. Existing user authority
+covers corrective commits and pushing this PR branch, not a Kaylo release.
+The comments were read from GitHub; their IDs are recorded below for recheck.
+
+| Finding / inline comment ID | Correction and evidence |
+| --- | --- |
+| 1 / 4248206939 | A provisional note retains its parsed boundary/delta. Invalidation removes only that identified pending contribution, preserving an earlier delta, unknown identity, or a mismatched selection boundary. The regression compares the entire earlier notes string, not only a count. |
+| 2 / 4248207143 | Export/reuse the validator's phase-entry regex and link parser. Normalize selection links and parse only selected roadmap links. A fixture passes structural plan validation with `./` links and produces complete proposals with canonical or `./` selection paths; an unselected external link does not abort aggregation. |
+| 3 / 4248207337 | Optional reviewed `Release area: skills` metadata renders a concrete area label independently of `feature` classification. Markers without area remain compatible. Curated published presentation is retained byte-for-byte and no longer causes permanent RELEASE_EDITED diagnostics; changed published impact/description still blocks. Tests cover area generation, repeat proposals, curated published labels, and malformed/repeated area metadata. |
+| 4 / 4248207562 | Removal consumes a managed block's trailing blank-line separator. Three reopen/close cycles in both LF and CRLF compare exact reopened baseline and closed bytes; human/history text remains intact. |
+| 5 / 4248207764 | Strip the literal Pull request prefix then trim, preserving the entire URL with zero, one, several spaces, or a tab after the colon. |
+| 6 / 4248207972 | Malformed selection JSON reports RELEASE_SCHEMA. Expected filesystem/UTF-8 failures retain RELEASE_READ, while unexpected helper errors propagate for diagnosis. CLI tests distinguish malformed JSON and missing files; an injected TypeError is rethrown. |
+| 7 / 4248208255 | Check resource existence before stat. A missing release reference produces the custom required-resource diagnostic, with no raw ENOENT, asserted by the package test. |
+| 8 / 4248208452 | Both new Notable Changes entries link the verified PR #128; the issue link is retained. Inspected the two rendered Markdown source entries. |
+| 9 / 4248208680 | Removed the three automated stock-Git probes and their bare-remote setup. Their observed tag/archive/ancestry facts remain in the original implementation record above. The remaining Git fixture calls Kaylo's propose helper and asserts unchanged index, dirty artifact, refs and human files. |
+
+Before correction, the new regression cases produced seven failures covering
+findings 1–5 (two separate cases for area presentation and LF/CRLF spacing).
+The supplied review had reproduced 1, 2, 4 and 5; it described the other five
+as code inspection. Tests that previously expected wholesale invalidation or
+RELEASE_READ for malformed JSON were corrected to the reviewed contract;
+missing/ambiguous identities retain their earlier notes with pending evidence.
+
+Observed after correction on Node 24.21.0:
+
+- `node --test tests/release-notes.test.cjs tests/release-workflow.test.cjs`:
+  33 passed. The broader focused validator/package set also passed before
+  the final additional area/normalization cases.
+- `node --test tests/*.test.cjs`: 374 passed, 0 failed, 0 skipped. Nine new
+  release-helper tests were added; three Git-only tests were removed. Existing
+  plan-validator tests passed after sharing its parser, and npm inventory
+  checks include the modified scripts, references and template.
+- `node scripts/validate-package.cjs` and staged-package validation passed,
+  with 38 shared resources matching and local contributor guidance excluded.
+- Both strict Claude plugin/marketplace manifest validations passed on
+  Claude Code 2.1.296; `agy plugin validate .` passed on Antigravity CLI 1.3.1.
+- `git diff --check` passed. No worker brief changed or generated adapter
+  required regeneration. Package versions/catalogs remain unchanged.
+
+This was a direct corrective recheck in the implementing context, not an
+independent approval or resolution of the remote review threads. Live
+model/worker and five-host native install/update trials remain deferred under
+the recorded series timing decision. Real release/registry publication,
+CI/protection/scan enforcement, deployment and hotfix reintegration were not
+run. These limitations and #89's automatic-Git scan gate remain unchanged;
+#86 stays open for the deferred behavioral verification.

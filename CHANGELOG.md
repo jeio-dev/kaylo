@@ -11,11 +11,13 @@
   and existing scoped authorization. Repeated preparation preserves published
   history; legacy metadata, unavailable tools, and partial publication retain
   explicit pending actions. No sixth skill or automatic publication is added
-  ([#86](https://github.com/jeio-dev/kaylo/issues/86)).
+  ([#86](https://github.com/jeio-dev/kaylo/issues/86),
+  [#128](https://github.com/jeio-dev/kaylo/pull/128)).
 - **tools**: An optional read-only release-notes helper proposes reconciliation
   from authoritative local reviewed records, reports exact phase-entry counts
   and pending classification, and preserves human notes and released entries.
-  It makes no writes, Git/network calls, or readiness/authorization decisions.
+  It makes no writes, Git/network calls, or readiness/authorization decisions
+  ([#128](https://github.com/jeio-dev/kaylo/pull/128)).
 
 - **skills**: `.kaylo/preferences.md` accepts optional Git keys: `Git
   autonomy` (`ask`, `commit`, `push`, `pr`), `Branch`, `Commit`, `Commit

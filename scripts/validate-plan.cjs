@@ -55,6 +55,19 @@ function meaningful(value) {
     !/^(?:not started|in progress|none|pending|todo|tbd|n\/a)[.!]?$/i.test(value.trim()));
 }
 
+function linkTarget(line, fail = () => {}) {
+  const match = line.match(/\[[^\]]+\]\(([^)]+)\)/);
+  if (!match) { fail('Expected a Markdown phase link: ' + line.trim()); return null; }
+  let target;
+  try { target = decodeURIComponent(match[1].replace(/^<|>$/g, '')); }
+  catch { fail('Invalid encoded phase link'); return null; }
+  if (/^[a-z][a-z\d+.-]*:/i.test(target) || path.isAbsolute(target) || /[?#\\]/.test(target)) {
+    fail(`Expected a relative project file link: ${target}`);
+    return null;
+  }
+  return path.normalize(target);
+}
+
 function validate(project, { closing = false } = {}) {
   const errors = [];
   const fail = message => errors.push(message);
@@ -76,19 +89,6 @@ function validate(project, { closing = false } = {}) {
     } catch { fail(`Cannot read plan: ${relative}`); return null; }
   }
 
-  function linkTarget(line) {
-    const match = line.match(/\[[^\]]+\]\(([^)]+)\)/);
-    if (!match) { fail('Expected a Markdown phase link: ' + line.trim()); return null; }
-    let target;
-    try { target = decodeURIComponent(match[1].replace(/^<|>$/g, '')); }
-    catch { fail('Invalid encoded phase link'); return null; }
-    if (/^[a-z][a-z\d+.-]*:/i.test(target) || path.isAbsolute(target) || /[?#\\]/.test(target)) {
-      fail(`Expected a relative project file link: ${target}`);
-      return null;
-    }
-    return path.normalize(target);
-  }
-
   const present = name => { try { fs.lstatSync(path.join(root, name)); return true; } catch { return false; } };
   if (present('OBJECTIVE.md')) fail('OBJECTIVE.md is no longer supported; rename it to PRD.md');
   if (!present('ROADMAP.md')) {
@@ -106,7 +106,7 @@ function validate(project, { closing = false } = {}) {
   if (currentLines.length) {
     if (currentLines.length !== 1) fail('Expected exactly one Current link');
     if (!/^[ \t]*Current:[ \t]*\[/.test(currentLines[0])) fail('Unsupported Current record; expected Current: [label](relative-file)');
-    const current = linkTarget(currentLines[0]);
+    const current = linkTarget(currentLines[0], fail);
     const phases = index.split('\n').filter(line => phaseLike.test(line));
     const ids = new Set();
     const targets = new Set();
@@ -123,7 +123,7 @@ function validate(project, { closing = false } = {}) {
         if (checked) fail(`Closed phase ${id} has no plan link`);
         continue;
       }
-      const target = linkTarget(line);
+      const target = linkTarget(line, fail);
       if (target === null) continue;
       const content = read(target);
       if (content !== null) {
@@ -285,7 +285,7 @@ function validate(project, { closing = false } = {}) {
 }
 
 // Export before the CLI runs: validate() loads dispatch-report.cjs, which requires this file back.
-module.exports = { validate, visibleMarkdown };
+module.exports = { validate, visibleMarkdown, linkTarget, phaseEntry };
 
 if (require.main === module) {
   const args = process.argv.slice(2);
