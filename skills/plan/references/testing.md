@@ -218,8 +218,13 @@ Manual structure checks and limitations cannot substitute for product verificati
 
 Absence of optional strategy, gates, ADR or Risk records preserves existing
 checks/plans. No migration, new marker, Risk backfill, retrospective proof or
-closed-history rewrite is required for adoption. Diagnose relevant present-but-
-broken resources. If this reference is unavailable, preserve existing checks and
-agreement; disclose unavailable testing guidance and resume with the full package
+closed-history rewrite is required for adoption. Implementation already started
+before adoption keeps its prior agreed evidence requirements; the new test-author
+stage applies to newly started high-risk work, as defined in
+[test-author adoption](../../build/references/test-author.md#adoption-and-resume).
+A missing stage already required before interruption stays unresolved. Record
+actual adoption timing/coverage without claiming retrospective independence.
+Diagnose relevant present-but-broken resources. If this reference is unavailable,
+preserve existing checks and agreement; disclose unavailable testing guidance and resume with the full package
 or its complete contract before adopting new strategy/authoring requirements.
 Never guess the missing contract or claim enforcement/acceptance from structure.

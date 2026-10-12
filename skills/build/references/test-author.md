@@ -1,11 +1,28 @@
 # High-risk test-author stage
 
-Read before implementing high-risk work, including resumed tasks whose required
-authoring stage is not established. This is a bounded pre-build stage using a
-fresh invocation of the existing **builder**, constrained to tests, fixtures and
-explicitly agreed test-support paths. It adds no registered role and never uses
-the read-only reviewer to write tests. Legacy adoption requires no retrospective
-stage for completed work; an interrupted task retains actually completed stages.
+Read before starting high-risk implementation or resuming work to which this
+stage already applied. This is a bounded pre-build stage using a fresh invocation
+of the existing **builder**, constrained to tests, fixtures and explicitly agreed
+test-support paths. It adds no registered role and never uses the read-only
+reviewer to write tests.
+
+## Adoption and resume
+
+Establish when the task's implementation started and when these requirements
+became applicable from the recorded baseline, plan/agreement and available
+history; no new adoption marker is required. Tasks whose implementation already
+started before adoption keep their existing agreed evidence requirements and
+later focused high-risk review. Do not impose a retrospective test-author stage
+or new failure proof solely for the upgrade, reopen completed work, or claim an
+independent pre-build stage occurred. Record the adoption boundary and actual
+coverage/limits in existing Result prose. A newly started task or separately
+agreed new scope follows the new stage before its implementation.
+
+For work to which authoring was already required, resume retains actually
+completed stages, pending handoffs, scoped exceptions and corrective history;
+missing completion remains unresolved rather than being waived as adoption.
+If the timing cannot be established, disclose that uncertainty and obtain the
+user's scope decision instead of guessing an exemption or inventing a stage.
 
 Apply [testing evidence](../../plan/references/testing.md) and
 [build delegation](delegation.md). Independence means fresh context and
@@ -43,6 +60,16 @@ all exceptions in prose. A pause records no dispatch. Prepared packets do not
 complete a stage. Reuse prior scoped authority; never connect accounts, change
 global settings or silently choose paid routes. Unknown billing is not presumed
 subscription-covered; metered routes need actual route/account authorization.
+
+Native worker registration is not required: an actually available generic fresh
+worker or a separate fresh conversation consuming the builder brief/packet may
+qualify. A prepared manual packet remains pending until its evidence returns.
+If no qualifying independent context/route is available, the new high-risk stage
+intentionally requires a qualifying handoff, a specific user-authorized exception,
+or pause; ordinary direct builds still use their existing path. Reuse an already
+recorded route/exception within its actual task/phase/constraint scope when its
+inputs remain valid, rather than asking again. Native registration absence alone
+is not proof that all qualifying routes are unavailable.
 
 ## Packet, ownership and handoff
 

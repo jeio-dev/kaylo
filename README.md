@@ -400,7 +400,11 @@ Before high-risk implementation, a fresh test-only builder precedes the existing
 focused implementation review. With `Review vendor: different`, author and
 implementation vendors must differ, and a reviewer covering both may need a third
 vendor or explicit exception. Tier, freshness, billing and availability remain
-separate constraints. These are instruction contracts; see [verification](VERIFICATION.md)
+separate constraints. An available generic fresh worker or separate conversation
+can qualify without native registration; otherwise authoring needs a handoff,
+specific exception or pause. Implementation started before adoption keeps its
+prior evidence requirements without retrospective authoring or proof. These are
+instruction contracts; see [verification](VERIFICATION.md)
 for observed behavior and unrun [trials](tests/TESTING-TRIALS.md).
 
 Claude and Codex can guide a project. Seven guardrail and routing cases each passed three runs on Claude Code with Sonnet 5.5 and on Codex CLI with its default model. That result covers only those setups; see [verification](VERIFICATION.md). Antigravity can receive research work; Gemini CLI loads the same briefs, but no worker has been run there, and OpenCode with an available DeepSeek model can receive implementation work. Read [working with a worker](WORKERS.md) for a copyable handoff and model-selection guidance. When a plan expects workers for which Kaylo can choose a model at dispatch, plan asks once for a project preference and writes `Format: 1` and a `Worker models:` choice of Inherit, Quality, Balanced, or Budget to `.kaylo/preferences.md`. The user can edit that file later. A missing or unknown preference uses Inherit; build never asks for a preference. Gemini CLI and Antigravity use Inherit for their packaged workers, so plan does not ask for their model preference. When a requested tier is unavailable, dispatch waits for a user choice rather than silently using a weaker model.

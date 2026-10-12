@@ -55,6 +55,47 @@ Codex grades are operator-reported. The PR #79 review spot-checked their saved
 command records and secret-token classifications but did not audit every
 transcript.
 
+## PR #132 review corrections — 2026-10-12
+
+Started from clean `feat/88-testing-evidence` at
+`577d32f19a16306731f9c9225dc35c1ab2188e8c`,
+following the user's ten-finding review. Existing branch commit/push/PR authority
+continues to apply. Direct inspection/recheck used the implementing assistant's
+same context; no fresh reviewer or live instruction-following result is claimed.
+
+| Finding | Correction or retained design decision |
+| --- | --- |
+| 1 | Build's numbered high-risk procedure starts with the authoring/adoption check before implementation; plan's Risk guidance names both authoring and later review. The guiding assistant establishes authoring evidence; the helper does not validate it. |
+| 2 | Explicit adoption/resume contract: pre-adoption implementation keeps prior agreed evidence without retrospective authoring/proof or invented independence. Newly started work gets the stage; an already-required missing stage stays unresolved. Unknown timing requires a scope decision. Entry points, WORKERS, template, README and trial cases follow that boundary. |
+| 3 | Retained #88's different-vendor author rule and comparison against every covered builder in later review. Changelog now flags possible third-vendor/specific-exception consequences as compatibility changes, with the PR link. No vendor requirement is silently weakened. |
+| 4 | Retained the required fresh context for newly started high-risk work. Native registration is optional; an actually available qualifying generic worker or separate conversation can count. Without a qualifying route, the explicit handoff/exception/pause choice remains. Valid prior scoped authority is reused. |
+| 5 | Added the verified PR #132 link to the Unreleased entry. |
+| 6 | Builder description, tracing/edit/report steps and Return distinguish the test-only detection deliverable from implementation acceptance/initial verification. |
+| 7 | Resource-link mutation tests now import `testingConsumers` and `testAuthorConsumers`, as the decision test already does, rather than duplicating their lists. |
+| 8 | PR draft wording is a dated observation at the original implementation checkpoint, not a claim about its ongoing state. |
+| 9 | Reviewer and WORKERS distinguish ordinary runner outputs from authoring/editing test source, fixtures, helpers, snapshots or expectations. Scratch diagnostic probes retain their existing limits and cannot replace missing required test coverage. |
+| 10 | Removed the internal blank line from plan/close Verification bullets, leaving contiguous tight lists. |
+
+Checks from `/home/jeio/src/kaylo`: `node scripts/sync-claude-agents.cjs`
+regenerated the adapters; `node scripts/validate-package.cjs` passed;
+`node --test tests/*.test.cjs` exited 0 with **395 passed, zero failed/skipped**;
+both Claude Code 2.1.296 strict plugin/marketplace validators and Antigravity
+1.3.1 `agy plugin validate .` passed (Antigravity still skips commands/MCP/hooks).
+The full suite includes resource mutations, adapter/copied-entry consistency,
+packed inventory/parity, and unchanged dispatch/helper/legacy-plan behavior.
+Local development staging and `--installed development/package` comparison
+passed with **43 matching resources**; `git diff --check` passed. No runtime-code,
+event-schema, manifest/version/catalog or hook change is included in this correction.
+Contributor guidance remains ignored and excluded from staging/packing.
+
+The trial matrix adds pre-adoption/resume/unknown-timing cases and native-absence
+versus actually unavailable-route cases. These remain **unrun**, as do the
+previously recorded #88 live author/routing, native install/update/start,
+database/browser/E2E and CI-enforcement cases. Passing fixtures establish package
+and record compatibility, not adoption judgment, independence, routing reliability
+or reviewer behavior. This recheck establishes the cited instruction corrections
+by direct inspection only; #88 behavioral acceptance remains pending.
+
 ## Issue #88 implementation — 2026-10-12
 
 Started from clean `main` at `e2aa520b84a0908d23e480e9998f8fe7ef6ec8c8`
@@ -130,8 +171,8 @@ routes, native host install/update/start trials, Gemini/OpenCode runtime trials,
 real database/browser/E2E checks, interruption against mutable test resources,
 actual required CI enforcement, external side effects or publication/release.
 These pending observations are required before claiming #88 acceptance; package
-and fixture passes cannot replace them. The PR remains a draft and relates to
-#88 without an issue-closing reference. No earlier host observation is reused as
+and fixture passes cannot replace them. At the 2026-10-12 implementation checkpoint,
+PR #132 was opened as a draft relating to #88 without an issue-closing reference. No earlier host observation is reused as
 new feature evidence. Public installation/release checks await a release request.
 
 ## Issue #87 implementation — 2026-10-12

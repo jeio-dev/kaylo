@@ -49,7 +49,11 @@ configured checks; comments/literals/fixtures are not automatically executable
 focus. Disclose unknown syntax/base or unavailable checks. Required quarantined
 coverage stays missing without replacement evidence or explicit scope revision.
 Phase review needs relevant full-suite evidence including applicable E2E; plan
-review may precede harness creation. Do not author tests or change expectations.
+review may precede harness creation. Do not author or edit deliverable test source,
+fixtures, helpers, snapshots or expectations. Running existing checks may create
+ordinary runner output such as logs, coverage reports or screenshots; this does
+not permit changing the tests they run. Throwaway diagnostic probes follow the
+scratch limits below and supply no replacement for missing required test coverage.
 
 ## Guardrails
 

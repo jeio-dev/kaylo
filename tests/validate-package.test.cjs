@@ -295,12 +295,9 @@ test('testing and test-author contracts are required even with all five skills p
 
 test('testing consumers resolve the canonical contract from their own directory', t => {
   const dir = fixture(t);
-  const consumers = ['skills/plan/SKILL.md', 'skills/build/SKILL.md',
-    'skills/review/SKILL.md', 'skills/close/SKILL.md',
-    'skills/build/references/delegation.md', 'skills/review/references/delegation.md',
-    'skills/plan/references/foundation.md', 'skills/plan/references/gates.md',
-    'skills/build/references/test-author.md', 'agents/builder.md', 'agents/reviewer.md', 'WORKERS.md'];
-  for (const consumer of consumers) {
+  const { testingConsumers } = require(path.join(repo, 'scripts/validate-package.cjs'));
+  assert(testingConsumers.length > 0);
+  for (const consumer of testingConsumers) {
     const target = path.join(dir, consumer);
     const original = fs.readFileSync(target, 'utf8');
     assert(original.includes('testing.md'), consumer);
@@ -320,8 +317,9 @@ test('testing consumers resolve the canonical contract from their own directory'
 
 test('test-author consumers resolve the existing builder stage resource', t => {
   const dir = fixture(t);
-  for (const consumer of ['skills/plan/SKILL.md', 'skills/build/SKILL.md',
-    'skills/build/references/delegation.md', 'skills/plan/references/testing.md', 'WORKERS.md']) {
+  const { testAuthorConsumers } = require(path.join(repo, 'scripts/validate-package.cjs'));
+  assert(testAuthorConsumers.length > 0);
+  for (const consumer of testAuthorConsumers) {
     const target = path.join(dir, consumer);
     const original = fs.readFileSync(target, 'utf8');
     fs.writeFileSync(target, original.replaceAll('test-author.md', 'missing-test-author.md'));
