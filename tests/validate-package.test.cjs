@@ -346,10 +346,9 @@ test('decision contract and templates are required even when all skill entrypoin
 });
 test('every decision consumer must resolve the canonical contract from its own directory', t => {
   const dir = fixture(t);
-  for (const consumer of ['skills/plan/SKILL.md', 'skills/build/SKILL.md',
-    'skills/review/SKILL.md', 'skills/close/SKILL.md',
-    'skills/build/references/delegation.md', 'skills/review/references/delegation.md',
-    'skills/plan/references/foundation.md', 'WORKERS.md']) {
+  const { decisionConsumers } = require(path.join(repo, 'scripts/validate-package.cjs'));
+  assert(decisionConsumers.length > 0);
+  for (const consumer of decisionConsumers) {
     const target = path.join(dir, consumer);
     const original = fs.readFileSync(target, 'utf8');
     fs.writeFileSync(target, original.replaceAll('decisions.md', 'missing-decisions.md'));
@@ -428,7 +427,7 @@ test('worker briefs keep one Project decisions section', t => {
   }
   const result = check(dir);
   assert.equal(result.status, 1);
-  assert.match(result.stderr, /Project decisions section in agents\/reviewer\.md/);
+  assert.match(result.stderr, /worker-brief project decisions differs between agents\/builder\.md, agents\/reviewer\.md/);
 });
 test('build and review delegation keep one project-decisions packet rule', t => {
   const dir = fixture(t);
@@ -439,5 +438,34 @@ test('build and review delegation keep one project-decisions packet rule', t => 
   fs.writeFileSync(target, original.replace(rule, ''));
   const result = check(dir);
   assert.equal(result.status, 1);
-  assert.match(result.stderr, /project-decisions packet paragraph differs between build and review/);
+  assert.match(result.stderr,
+    /project-decisions packet rule in skills\/review\/references\/delegation\.md differs from the shared copy with its listed rewordings/);
+});
+test('a stale packet-rule rewording is named rather than reported as drift', t => {
+  const dir = fixture(t);
+  const target = path.join(dir, 'skills/build/references/delegation.md');
+  const original = fs.readFileSync(target, 'utf8');
+  const phrase = 'In its existing relevant-decisions/interface-contract content,';
+  assert(original.includes(phrase));
+  fs.writeFileSync(target, original.replace(phrase, 'In its relevant-decisions content,'));
+  const result = check(dir);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr,
+    /listed rewording of the project-decisions packet rule for skills\/review\/references\/delegation\.md no longer matches/);
+});
+test('decision links in indented or tilde fences and comments do not count; reference links do', t => {
+  const dir = fixture(t);
+  const target = path.join(dir, 'skills/plan/references/foundation.md');
+  const original = fs.readFileSync(target, 'utf8');
+  const link = '[project decisions](decisions.md)';
+  const unlinked = original.replace(link, 'project decisions');
+  fs.writeFileSync(target, original.replace(link, '[project decisions][dec]') + '\n[dec]: decisions.md\n');
+  assert.equal(check(dir).status, 0);
+  for (const hidden of ['- Example:\n\n  ```text\n  [x](decisions.md)\n  ```\n',
+    '~~~text\n[x](decisions.md)\n~~~\n', '<!-- [x](decisions.md) -->\n']) {
+    fs.writeFileSync(target, `${unlinked}\n${hidden}`);
+    const result = check(dir);
+    assert.equal(result.status, 1, hidden);
+    assert(result.stderr.includes('Missing canonical decision reference: skills/plan/references/foundation.md'), hidden);
+  }
 });

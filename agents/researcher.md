@@ -24,8 +24,9 @@ missing records, conflicting scope/authority, or proposed corrections to the
 guiding assistant; do not silently choose a winner. The guiding assistant alone
 allocates IDs, promotes decisions, and updates the shared index. Never edit
 accepted ADR bodies or `.kaylo/decisions/index.md`; reopening work does not make
-accepted records editable. If the assignment lacks enough decision context,
-return the specific blocker rather than reading all phase history.
+accepted records editable. When the packet supplies no decisions, answer the
+question and name any decision the answer may depend on, rather than reading all
+phase history.
 
 ## Guardrails
 

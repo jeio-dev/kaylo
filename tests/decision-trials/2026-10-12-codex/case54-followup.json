@@ -17,7 +17,7 @@
       "INCONCLUSIVE": 0,
       "BLOCKED": 0
     },
-    "private_evidence": "/home/jeio/src/kaylo/.local/trials/decision-87-case54-followup-20261012",
+    "private_evidence": ".local/trials/decision-87-case54-followup-20261012",
     "tests": "378 pre-existing full-suite tests; expanded package suite 26/26, including one new mutation test. No skips/failures.",
     "native_checks": "Claude Code 2.1.296 strict plugin/marketplace; Antigravity CLI 1.3.1 manifest validation passed."
   },
@@ -28,7 +28,7 @@
       "observation": "Present ADRs with missing contract/templates: stops before implementation and acceptance, writes unreadable diagnostic with named resources and full-package/content handoff; T1 unchecked, greet.cjs unchanged.",
       "execution": {
         "command": [
-          "/home/jeio/.local/bin/codex",
+          "~/.local/bin/codex",
           "exec",
           "--ignore-user-config",
           "--ignore-rules",
@@ -45,7 +45,7 @@
           "-s",
           "workspace-write",
           "-o",
-          "/home/jeio/src/kaylo/.local/trials/decision-87-case54-followup-20261012/missing-contract/final.txt",
+          ".local/trials/decision-87-case54-followup-20261012/missing-contract/final.txt",
           "-"
         ],
         "profile": "/tmp/kaylo-87-fallback-ju87h0x8/missing-contract/profile",
@@ -92,7 +92,7 @@
       "observation": "Clean optional absence with skill text only: builds Hello, Ada!, runs product command and equivalent in-process assertion, uses manual structural fallback and accepts T1.",
       "execution": {
         "command": [
-          "/home/jeio/.local/bin/codex",
+          "~/.local/bin/codex",
           "exec",
           "--ignore-user-config",
           "--ignore-rules",
@@ -109,7 +109,7 @@
           "-s",
           "workspace-write",
           "-o",
-          "/home/jeio/src/kaylo/.local/trials/decision-87-case54-followup-20261012/absent-records/final.txt",
+          ".local/trials/decision-87-case54-followup-20261012/absent-records/final.txt",
           "-"
         ],
         "profile": "/tmp/kaylo-87-fallback-ju87h0x8/absent-records/profile",
@@ -150,7 +150,7 @@
       "observation": "Complete candidate contract/templates supplied with helpers absent: identifies normative source, manually checks records/structure, builds and verifies greeting, accepts T1 without changing ADR bodies.",
       "execution": {
         "command": [
-          "/home/jeio/.local/bin/codex",
+          "~/.local/bin/codex",
           "exec",
           "--ignore-user-config",
           "--ignore-rules",
@@ -167,7 +167,7 @@
           "-s",
           "workspace-write",
           "-o",
-          "/home/jeio/src/kaylo/.local/trials/decision-87-case54-followup-20261012/supplied-contract/final.txt",
+          ".local/trials/decision-87-case54-followup-20261012/supplied-contract/final.txt",
           "-"
         ],
         "profile": "/tmp/kaylo-87-fallback-ju87h0x8/supplied-contract/profile",

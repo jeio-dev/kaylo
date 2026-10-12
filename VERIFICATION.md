@@ -50,7 +50,7 @@ transcript.
 ## Issue #87 implementation — 2026-10-12
 
 Started from clean `main` at `0c815d85d9e1d203002bb3e0b88ca29372de3912`
-in `/home/jeio/src/kaylo`, on `feat/87-project-decisions`. No project PRD,
+in the maintainer's checkout, on `feat/87-project-decisions`. No project PRD,
 ROADMAP or current phase plan exists in this contributor repository; implementation
 is scoped to the approved revised issue and the user's subsequent implementation,
 issue-update, branch commit and PR request. Contributor guidance stays local and
@@ -132,7 +132,7 @@ not change the implementation or tested shared resources.
 ## Issue #87 behavioral-trial pass — 2026-10-12
 
 Candidate `94324a2326ad567002d76387e93e6ce685b88fd3`, clean
-`feat/87-project-decisions` in `/home/jeio/src/kaylo`. Read contributor guidance,
+`feat/87-project-decisions` in the maintainer's checkout. Read contributor guidance,
 `tests/DECISION-TRIALS.md`, the canonical decision contract and the implementation
 record above. No project PRD, ROADMAP or linked current phase plan exists here.
 No implementation was changed; unrelated work and local ignored guidance were
@@ -225,6 +225,42 @@ as current behavioral evidence. `git diff --check` passed for these records.
 Issue acceptance stays open and PR #129 stays draft. Next: address missing-resource
 fallback failure 54 separately, then run a focused recheck with corrected
 inconclusive fixtures.
+
+## PR #129 third review fixes — 2026-10-12
+
+Uncommitted follow-up on `feat/87-project-decisions` from clean `fa5775f`,
+addressing all ten comments of a third model code review of PR #129 at the
+user's request. Close runs the structural plan check before promotion, so a
+structural failure promotes nothing; the post-Completion recheck corrects only
+that record. The contract gives one recorded renumbering for IDs accepted on
+two merged branches: the first accepted keeps its ID, the other moves above the
+largest with only its heading changed. Plan's copy of the resource fallback
+records the stop under Agreement and Next step instead of task fields. The
+researcher brief answers without decisions when none are supplied. The copied
+fallback is shorter but keeps every stopping rule from the case 54 fix; the
+contract's own copy matches. The validator's copied-block check now also covers
+the worker briefs and the build/review packet paragraph, replacing the separate
+helpers; a stale rewording fails by name. The decision-consumer list is shared
+with its test. The link scan ignores indented and tilde fences and HTML comments
+and reads reference definitions.
+
+`case54-followup.json` and two entries above no longer carry the maintainer's
+home-directory paths; trial `/tmp` directory names remain. The trial JSON still
+ships: excluding it from npm alone broke the npm/Git-export parity test, and
+Git-based installers copy tracked files regardless, so the `files` change was
+reverted.
+
+Observed: package validation passed. Node 24.21.0: full suite 386/386 passed,
+including new tests for stale rewordings, hidden and reference-style links, and
+the updated brief/packet drift messages; zero skips/failures. Claude Code
+2.1.296 strict plugin/marketplace validators and Antigravity CLI 1.3.1 native
+manifest validator passed. `git diff --check` passed. The researcher brief
+changed; Claude adapters were regenerated and parity passed.
+
+Limits: the shortened fallback and plan rewording were not re-run against the
+case 54 trial; its pass covers the earlier, longer wording. No model has run on
+any wording revised in the three review rounds. The link scan is bounded, not a
+Markdown parser. Windows remains unchecked.
 
 ## PR #129 second review fixes — 2026-10-12
 

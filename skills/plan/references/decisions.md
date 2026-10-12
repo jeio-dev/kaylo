@@ -101,7 +101,14 @@ add chmod rules, hooks, host permissions, or session-start project reads.
 Independent branches can allocate the same next ID. Inspect files/user edits
 before allocation; never overwrite a collision or silently renumber an accepted
 record. Report both identities and reconcile the conflict explicitly before
-acceptance. Unsupported existing syntax is not permission to rewrite it.
+acceptance. When both records were already accepted, for example after merging
+branches that each promoted, keep the record accepted first in merged history
+(ask the user when that is unclear) at its ID. Move the other to the next ID
+above the largest, at a new path, changing only its heading ID; update its index
+row and record `Decision consistency: identity-collision — <old ID/path> -> <new
+ID/path>` with a new `Decision promotion:` mapping in its phase's Completion.
+This explicit, recorded move is the only permitted renumbering; earlier mappings
+stay as history. Unsupported existing syntax is not permission to rewrite it.
 
 ## Resolve the applicable set at every entry point
 
@@ -180,29 +187,27 @@ observed conflict, affected scope, and resume action>`. Kinds are `unreadable`,
 in existing blocker/review fields and leave affected work open. Resolve
 consequential ambiguity through planning/agreement, never a guessed winner.
 
-When the reference/templates are unavailable, retain optional-absence behavior
-when `.kaylo/decisions/` is absent and no promotion is required; read established
-project decisions under ordinary agreement rules. For present records there or
-required promotion, use equivalent manual decision inspection only when the
-complete canonical contract is available from identified supplied content or
-an intact package; record that source and the checks. Existing ADRs, a phase
-plan, and structural validation do not establish the contract. Otherwise stop
-affected implementation, review readiness, task acceptance, or closure and
-leave its checkbox open. Record `Decision consistency: unreadable` with missing
-resource paths, affected scope, and a resume action in Result/Review/Completion.
-The handoff is the full package's selected skill and
-`skills/plan/references/decisions.md`, plus required `templates/DECISION.md` and
-`templates/DECISION-INDEX.md`, or their complete supplied contents. Manual
-structural fallback does not waive decision or product evidence. Do not install
-runtimes or change host settings.
+When the reference/templates are unavailable, each skill carries the stopping
+rule itself: with `.kaylo/decisions/` absent and no promotion required, keep
+legacy behavior and read established project decisions under ordinary agreement
+rules. With records present or promotion required, inspect decisions manually
+only from this complete contract, taken from identified supplied content or an
+intact package, and record that source and the checks; existing ADRs, a phase
+plan, or structural validation do not establish it. Otherwise stop affected
+work, leave it open, and record `Decision consistency: unreadable` with missing
+resource paths, affected scope, and a resume action: the full package, or the
+complete contents of `skills/plan/references/decisions.md`,
+`templates/DECISION.md`, and `templates/DECISION-INDEX.md`. Structural fallback
+never waives decision or product evidence. Do not install runtimes or change
+host settings.
 
 ## Promote during close, before phase check-off
 
 First preserve ordinary close's implementation review, task/product evidence,
 structural check, Completion and ROADMAP requirements. Resolve applicable
 records at entry. Promote only after delivered work, required
-review/verification, and the phase's agreed goal are established and no closure
-rule routes elsewhere; a close that routes to plan, build, or review promotes
+review/verification, and the phase's agreed goal are established, the plan
+passes ordinary close's structural check, and no closure rule routes elsewhere; a close that routes to plan, build, or review promotes
 nothing. Then the guiding assistant promotes only final consequential decisions
 applicable to that delivered work. Do not promote unresolved drafts, abandoned
 choices, or convert defaults to user approval. Promotion records settled
@@ -243,7 +248,8 @@ acceptance; it does not make the choice retrospectively.
    separate promotion mechanism. External issue/ADR prerequisites belong in
    constraints/starting points, never task `Blocked by:` (same-phase tasks only).
 5. Only after promotion/consistency pass, write the proposed Completion and run
-   ordinary close's structural check before checking ROADMAP. Missing/partial
+   ordinary close's structural check again before checking ROADMAP; correct a
+   failure in the Completion record without changing promoted decisions. Missing/partial
    promotion leaves closure incomplete; record the precise resume action in
    Completion/Next step. Preserve unaffected passing product-test evidence; do
    not relabel it failed because recording failed. Promotion is required
