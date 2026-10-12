@@ -2015,3 +2015,28 @@ Not run: Git older than 2.40; Windows; live model or worker sessions; real
 push, pull request, or CI behavior; isolated install trials. Automatic Git
 execution remains gated on #89, and behavioral trials remain deferred. The
 fixes have not been rechecked by a reviewer.
+
+
+## PR #127 focused review recheck — 2026-10-12
+
+Rechecked all three findings at `ee9ba26f4c0a7260f514c30f437403fdc15896bf`
+(implementation fix `bea6382`). All three are fixed; no new findings in the
+changed code. Posted the outcomes in the original threads and this review:
+https://github.com/jeio-dev/kaylo/pull/127#pullrequestreview-5490411251
+
+Observed on Linux/WSL2, Node 24.21.0, Git 2.53.0: the three regression
+fixtures fail against isolated copies of the reviewed scripts at `07a549c`
+and pass with the fixes. The full Node suite passed 340/340 with no skips.
+Package validation, strict Claude plugin and marketplace validation (2.1.296),
+`agy plugin validate .` (Antigravity CLI 1.3.1), and
+`git diff main...HEAD --check` passed. Published replies and review were read
+back and checked against the prepared payloads; `git diff --check` passed
+after this record was appended.
+
+This was a focused direct recheck, with no separate reviewer. Git older than
+2.40, Windows, isolated installation, live model/worker, and real project
+push/PR/CI behavior remain untested. Local fixtures and manifest validation
+establish parser/Git behavior and package structure, not model behavior.
+Automatic Git execution remains intentionally gated on #89. Prior evidence
+was preserved; only this recheck record was appended locally, without
+committing or pushing it.
