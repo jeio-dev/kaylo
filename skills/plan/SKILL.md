@@ -98,6 +98,7 @@ Estimate: **S** = clear local edit following an existing pattern; **M** = bounde
 - In `Test plan:`, name only commands that exist; label proposed checks still needing creation.
 - Checks must establish acceptance, not repeat implementation. Use existing project checks; do not add a testing framework for a small change.
 - Include a user-facing check when automated tests do not establish the feature works.
+- When the project has `.kaylo/gates`, or a task would create one, read [project gates](references/gates.md). Task test plans name scoped checks for the task's behavior and affected integration; the full check runs before phase implementation review. Label a gate a task still has to create as proposed; the plan that creates it can be reviewed before it exists.
 
 ## Status and revision
 
