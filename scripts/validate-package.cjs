@@ -15,9 +15,16 @@ const decisionConsumers = ['skills/plan/SKILL.md', 'skills/build/SKILL.md',
   'skills/review/SKILL.md', 'skills/close/SKILL.md',
   'skills/build/references/delegation.md', 'skills/review/references/delegation.md',
   'skills/plan/references/foundation.md', 'WORKERS.md'];
+const testingConsumers = ['skills/plan/SKILL.md', 'skills/build/SKILL.md',
+  'skills/review/SKILL.md', 'skills/close/SKILL.md',
+  'skills/build/references/delegation.md', 'skills/review/references/delegation.md',
+  'skills/plan/references/foundation.md', 'skills/plan/references/gates.md',
+  'skills/build/references/test-author.md', 'agents/builder.md', 'agents/reviewer.md', 'WORKERS.md'];
+const testAuthorConsumers = ['skills/plan/SKILL.md', 'skills/build/SKILL.md',
+  'skills/build/references/delegation.md', 'skills/plan/references/testing.md', 'WORKERS.md'];
 // Tests read the list without running the checks.
 if (require.main !== module) {
-  module.exports = { decisionConsumers };
+  module.exports = { decisionConsumers, testingConsumers, testAuthorConsumers };
   return;
 }
 const args = process.argv.slice(2);
@@ -149,7 +156,9 @@ try {
   const requiredResources = [
     ...['skills/close/references/release.md', 'skills/close/references/release-notes.md',
       'scripts/release-notes.cjs'].map(resource => ['release', resource]),
-    ...[decisionContract, ...decisionTemplates].map(resource => ['decision', resource])
+    ...[decisionContract, ...decisionTemplates].map(resource => ['decision', resource]),
+    ...['skills/plan/references/testing.md', 'skills/build/references/test-author.md']
+      .map(resource => ['testing', resource])
   ];
   for (const [kind, resource] of requiredResources) {
     const target = path.join(root, resource);
@@ -172,6 +181,17 @@ try {
     assert(fs.existsSync(path.join(root, consumer)), `Decision consumer is missing: ${consumer}`);
     assert(linkTargets(consumer).has(path.join(root, decisionContract)),
       `Missing canonical decision reference: ${consumer}`);
+  }
+  // Resource reachability only; this validates no project strategy, test syntax,
+  // acceptance evidence, worker independence or authorization.
+  for (const [consumers, contract, label] of [
+    [testingConsumers, 'skills/plan/references/testing.md', 'canonical testing'],
+    [testAuthorConsumers, 'skills/build/references/test-author.md', 'test-author']
+  ]) {
+    for (const consumer of consumers) {
+      assert(fs.existsSync(path.join(root, consumer)), `Testing consumer is missing: ${consumer}`);
+      assert(linkTargets(consumer).has(path.join(root, contract)), `Missing ${label} reference: ${consumer}`);
+    }
   }
   const contractLinks = linkTargets(decisionContract);
   for (const template of decisionTemplates) {
@@ -199,6 +219,9 @@ try {
       omitted: { define: 'define does not consume ADR records' },
       // Plan links its own references directory.
       reworded: { plan: [['../plan/references/decisions.md', 'references/decisions.md']] } },
+    { block: 'testing-evidence entry', start: 'For current work, including direct/resumed entry', in: ['build', 'review', 'close'],
+      omitted: { define: 'define does not choose a testing strategy' },
+      reworded: { plan: [['../plan/references/testing.md', 'references/testing.md']] } },
     { block: 'decision-resource fallback', start: 'If the decision reference', in: ['build', 'review', 'close'],
       omitted: { define: 'define does not consume ADR records' },
       // Plan has no checkbox or Result/Review/Completion field of its own.

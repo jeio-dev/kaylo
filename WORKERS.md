@@ -112,6 +112,44 @@ Use a per-worker model control only when Kaylo can apply it to the worker being 
 
 Claude Code's researcher adapter allows reading, searching, and web lookup. Its reviewer adapter allows reading, searching, web lookup, and `Bash` for focused checks; it excludes direct edit, write, notebook edit, subagent, and MCP tools. The same reviewer adapter serves plan checks and implementation reviews. The builder adapter is deliberately unrestricted because its job is to edit. These are documented adapter lists; reviewer behavior with the list, including background subagents, has not been run with a model. `Bash` can write files, so the plan check's instruction that the reviewer edits nothing still governs shell writes. On other hosts workers have whatever tools the host provides and rely on their briefs. Brief instructions constrain a worker's actions, but are not a security boundary; the host's permissions still apply. A focused reviewer check may create ordinary test artifacts. Outside the project, the builder and reviewer briefs allow only a throwaway probe or scratch file in the scratch or temporary directory the host's instructions name for the session; modified copies of project files, stand-ins for missing modules or dependencies, and changes to the user's other files stay prohibited there too. No account limits, model prices, or automatic cross-vendor routing are assumed.
 
+## High-risk test authors and evidence
+
+Use [testing strategy and evidence](skills/plan/references/testing.md) in direct,
+resumed and delegated work. Supply applicable strategy/decisions, criterion-to-
+named-check mapping with expected observations, mock/resource limits, failure
+proof and integrity baseline in the actual worker packet/workspace. Unavailable
+required evidence stays open; worker reports are observations, not acceptance.
+
+Before high-risk implementation use a fresh test-only invocation of **builder**
+under [test-author delegation](skills/build/references/test-author.md). Its packet
+bounds tests/fixtures/agreed support paths and supplies acceptance-derived
+negative cases, harness/interfaces and prior history without implementation-author
+advocacy. No fourth role or read-only-reviewer authoring is added. Inspect its
+actual changes and intended failures/applicability exception before handing the
+same artifacts and prerequisites to the implementation builder. Serialize shared
+test/resource writes. Retain later focused high-risk review and phase integration.
+
+`Review vendor: different` extends to the author: establish a known vendor
+different from every intended implementation builder before dispatch, and
+reassess mixed/changed builders. Missing/`same` has no different-vendor requirement;
+fresh context remains required. Unknown preferences retain the disclosed default.
+Select the author's builder estimate/preference tier with consequential raises,
+not the reviewer's tier row. Establish capability, context, identity and billing
+separately. Unknown/unavailable constraints require the user's qualifying route,
+pending manual handoff, specific exception or pause; direct work is never labelled
+independent. A vendor waiver waives no tier, freshness, later review or acceptance.
+Later different-vendor review covers every builder including the test author, so
+two-vendor author/implementation work may require a third vendor or explicit
+exception. No account/global setup or unauthorized paid fallback is implied.
+
+Expected baseline red is labelled prose/artifact evidence outside record grammar,
+not the initial implementation verify, repair or escalation. Actual test defects
+retain corrective accounting. Use distinct phase-unique `role=builder` dispatch
+IDs for author and implementation; tie the one initial implementation `verify`
+to the implementing builder. Preserve history on resume. A separate test-author
+task can accept expected process failure only when detection is explicitly its
+deliverable; the default bounded stage never independently checks off implementation.
+
 ## Review vendor and metered routes
 
 The guiding assistant chooses each review route and sends the reviewer brief, requirements, scoped diff and baseline, and evidence. The reviewer does not dispatch another reviewer or install or connect services.

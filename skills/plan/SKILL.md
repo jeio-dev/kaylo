@@ -29,6 +29,20 @@ When resources are unavailable, apply the standalone fallback below.
 
 If the decision reference or required templates are unavailable: with `.kaylo/decisions/` absent and no promotion required, keep legacy behavior and read established project decisions under the ordinary agreement rules. With records present or promotion required, inspect decisions manually only from the complete canonical contract, taken from identified supplied content or an intact package, and record that source and the checks; existing ADRs, a phase plan, or structural plan validation do not establish it. Otherwise stop affected planning before agreement or readiness and record `Decision consistency: unreadable — <missing resource paths, affected scope, and resume action>` under `## Agreement` as an unresolved decision and in `## Next step`, or in the response when no phase plan exists. Resume with the full Kaylo package or the complete contents of `skills/plan/references/decisions.md`, `templates/DECISION.md`, and `templates/DECISION-INDEX.md`. Structural fallback never waives decision or product evidence. Never guess authority, overwrite user-owned files, install runtimes, or change host settings.
 
+## Testing strategy and evidence
+
+For current work, including direct/resumed entry, read [testing strategy and acceptance
+evidence](references/testing.md) and the applicable project/phase decisions. Reuse
+existing checks and a proportional strategy in Design/Agreement. Map every
+criterion to a named check, directory, exact existing command/manual action and
+expected observation; inspect actual coverage, mock limits and required failure
+proof. Keep unavailable required evidence open, preserve workspace/history, and
+use native focus checks plus bounded test-diff review without claiming enforcement
+from structural validation. Absent optional records need no migration/backfill.
+If the reference is unavailable, keep existing checks and agreement, disclose
+that limit and resume new strategy/authoring work with the full package or its
+complete contract; do not guess it or waive required product evidence.
+
 ## Workflow
 
 1. Read project instructions, `PRD.md` if present, `ROADMAP.md`, and the current phase plan its `Current:` line links. Convert older formats first (see below). A concrete small-change request can stand in for a PRD. Ask for missing intent only when it changes the work.
@@ -122,6 +136,9 @@ Task and review comment IDs restart per phase (`T1`, `R1`). A bare ID means the 
 Estimate: **S** = clear local edit following an existing pattern; **M** = bounded feature or bug fix requiring reasoning; **L** = uncertain or cross-cutting work. Account for consequence: a short sensitive change may need a stronger model. Research tasks deliver answers with sources, not code.
 
 ## Verification
+
+- Apply [testing defaults and mapping](references/testing.md#map-acceptance-to-observed-behavior) to each task's changed behavior. Record used/missing/not-applicable/unavailable layers, doubles and resources in Design; required gaps stay blockers with creation tasks or next actions. Settled consequential testing choices promote at close under area `testing`, never as a prerequisite for the same phase.
+- For high-risk work, plan the [test-only builder stage](../build/references/test-author.md) before implementation, its allowed paths, harness/interface prerequisites, acceptance-derived negative cases and handoff. Establish intended implementation vendor(s) for different-vendor author routing; retain later focused implementation review. No new worker role, mandatory task field or event schema is needed.
 
 - In `Test plan:`, name only commands that exist; label proposed checks still needing creation.
 - Checks must establish acceptance, not repeat implementation. Use existing project checks; do not add a testing framework for a small change.

@@ -14,6 +14,14 @@ records from the first draft through 0.5.2 are in
 
 ## Current status — 0.11.0
 
+The #88 implementation adds the shared testing/evidence contract and bounded
+high-risk test-author stage to existing entry points and packets. The 2026-10-12
+checks below pass package/manifest validation, 395 Node tests, final affected
+tests and staged/packed resource parity. Live #88 instruction-following, fresh
+author/implementation/reviewer and routing trials remain unrun; issue acceptance
+and release readiness are not established. The trial matrix is prepared in
+`tests/TESTING-TRIALS.md`. Existing released-host observations do not verify it.
+
 The #87 decision-record implementation adds a canonical optional ADR/index
 contract, manual consistency/promotion rules, and existing-entry-point/worker
 integration. The 2026-10-12 behavioral pass below has 55 manifest entries:
@@ -46,6 +54,85 @@ Code 2.1.289 with Sonnet 5.5 and on Codex CLI 0.160.1 with GPT-6.1-Sol. The
 Codex grades are operator-reported. The PR #79 review spot-checked their saved
 command records and secret-token classifications but did not audit every
 transcript.
+
+## Issue #88 implementation — 2026-10-12
+
+Started from clean `main` at `e2aa520b84a0908d23e480e9998f8fe7ef6ec8c8`
+in `/home/jeio/src/kaylo`, on `feat/88-testing-evidence`. The user authorized
+implementation of the revised #88 specification, branch commit, push and PR.
+This contributor repository has no project PRD/ROADMAP/current phase; templates
+are not treated as an approved development plan. All changes are attributable
+to this implementation; local ignored contributor guidance remains untracked
+and outside staged/packed resources. No release/version/catalog/hook changes.
+
+`skills/plan/references/testing.md` is the canonical manual contract. It covers
+proportional layers, existing tools, criterion mapping, mock limits, meaningful
+failure proof with characterization exceptions, safe retrospective snapshots,
+existing record/repair semantics, integrity/maintenance/quarantine, isolated
+resources and scoped/full checks. `skills/build/references/test-author.md`
+defines fresh test-only builder ownership, packet/handoff and vendor/tier/context/
+billing limits, retaining later high-risk implementation review. Plan, build,
+both review targets, close, foundation/gates, worker/manual packets, WORKERS and
+the phase template consume these contracts. Shared briefs were edited in
+`agents/` and regenerated with `node scripts/sync-claude-agents.cjs`.
+
+Review was performed directly by the implementing assistant in the same context;
+no independent review or model trial is claimed. Inspected new and attributable
+tracked/untracked changes against the clean starting state. No tests/skips/suites
+were removed; runner/discovery configuration is unchanged. The only runtime-code
+change extends the existing package validator's bounded resource-link/copy checks.
+It checks no project test syntax, evidence truth, worker independence, strategy
+semantics or authorization. No universal test scanner or CI/hook enforcement is
+introduced. Pre-build test defects keep corrective history/counts in prose until
+resolved; the unchanged event grammar requires verify before structured repairs
+and reports initial implementation outcomes, not test-author quality.
+
+Observed checks (repository working directory unless stated otherwise):
+
+- `node scripts/validate-package.cjs`: passed, five skills, matching v0.11.0
+  manifests/catalogs, generated adapter parity and new resource consumers.
+- `node --test tests/*.test.cjs`: exit 0; **395 passed, 0 failed/skipped**.
+- After final instruction clarifications,
+  `node --test tests/dispatch-report.test.cjs tests/validate-package.test.cjs tests/package-inventory.test.cjs`:
+  exit 0; **74 passed, 0 failed/skipped**. This includes six new record/helper
+  characterization cases, two-stage check-off, six event-type/role/history
+  distinctions and three new resource-link mutation groups. Characterization
+  correctly passed against existing behavior: failure proof is N/A, not missing.
+- New resource groups were observed failing before validator implementation:
+  `testing and test-author contracts are required even with all five skills present`,
+  `testing consumers resolve the canonical contract from their own directory`,
+  and `test-author consumers resolve the existing builder stage resource`.
+  A subsequent disposable snapshot `/tmp/kaylo-88-negative-v0sj4v1f` contained
+  candidate tracked and nonignored new files/contracts/tests, replacing only
+  `scripts/validate-package.cjs` with the starting revision's file. From that
+  snapshot, `node --test --test-name-pattern='testing and test-author|testing consumers|test-author consumers' tests/validate-package.test.cjs`
+  exited **1**, with each named test failing on `0 !== 1`: the old validator
+  accepted missing/broken resources instead of rejecting them. No setup/import
+  error caused red. The candidate's same named checks passed after implementation,
+  exit 0, and all their variants passed in the full/affected suites. Snapshot
+  removed afterward; the working tree/index were never reset/stashed/reverted.
+- Claude Code **2.1.296**: `claude plugin validate .claude-plugin/plugin.json --strict`
+  and `claude plugin validate .claude-plugin/marketplace.json --strict` passed.
+- Antigravity CLI **1.3.1**: `agy plugin validate .` passed, five skills/three
+  agents; that validator skipped commands/MCP/hooks. This is manifest discovery,
+  not worker/model startup or behavioral verification.
+- `node scripts/stage-development.cjs` and
+  `node scripts/validate-package.cjs --installed /home/jeio/src/kaylo/development/package`:
+  passed, **43 resources match**. Packed inventory tests also validate the
+  extracted package and parity, exclude contributor guidance, and retain legacy
+  helper behavior. This is local staging/extraction, not a native host install.
+- `git diff --check`: passed. Node **24.21.0**, Linux/WSL2. Final file inspection
+  preserved five skills/three shared briefs and existing relative layout.
+
+Not run: the bounded behavioral cases in `tests/TESTING-TRIALS.md`, fresh test
+author/implementation/reviewer contexts, actual vendor/tier/billing fallback
+routes, native host install/update/start trials, Gemini/OpenCode runtime trials,
+real database/browser/E2E checks, interruption against mutable test resources,
+actual required CI enforcement, external side effects or publication/release.
+These pending observations are required before claiming #88 acceptance; package
+and fixture passes cannot replace them. The PR remains a draft and relates to
+#88 without an issue-closing reference. No earlier host observation is reused as
+new feature evidence. Public installation/release checks await a release request.
 
 ## Issue #87 implementation — 2026-10-12
 

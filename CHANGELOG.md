@@ -4,6 +4,16 @@
 
 ### Notable Changes
 
+- **skills**: Testing strategy reuses relevant project layers and maps criteria
+  to named behavior checks. Regression/new-behavior failure proof preserves the
+  workspace and existing verification/repair records; native focus controls and
+  bounded diff review allow justified maintenance without weakening acceptance.
+  High-risk work uses a fresh test-only builder before implementation, with
+  explicit vendor/tier/resource limits and the later focused review retained.
+  No new role, framework, scanner, hook enforcement or legacy-plan migration is
+  added. Live instruction-following trials remain pending
+  ([#88](https://github.com/jeio-dev/kaylo/issues/88)).
+
 - **skills**: Optional indexed ADRs preserve consequential project decisions.
   Plan, build, both review targets, and worker packets consume applicable records
   and settled phase changes; once a phase's goal is met, close promotes final

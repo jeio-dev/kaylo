@@ -38,7 +38,7 @@ Tools named below are examples, never requirements. Reuse what the project alrea
 | 9. Test strategy and harness | Existing tests, how they are run, what they cover, and whether that fits the outcome. Do not add a framework, or a browser harness, for a small change, library, or docs project. |
 | 10. Secrets, startup, and environments | How the host and project limit secret access, whether startup validates required configuration where that applies, and which environments exist and how they differ. |
 
-Areas 7–10 assess the project's own controls; a packaged test strategy remains pending. Draft testing/environment decisions under `## Design` with phase-local identity under [project decisions](decisions.md). They govern settled current work before promotion. Close promotes them and records their final ADR mappings before phase check-off; final ADRs are never a prerequisite for the same phase's tasks.
+Areas 7–10 assess the project's own controls. Use [testing strategy and acceptance evidence](testing.md) for area 9's proportional layers, harness reuse, mock limits, resources and criterion mapping. Environment/secret integrations use actual project contracts rather than assumed undelivered features. Draft testing/environment decisions under `## Design` with phase-local identity under [project decisions](decisions.md). They govern settled current work before promotion. Close promotes them and records their final ADR mappings before phase check-off; final ADRs are never a prerequisite for the same phase's tasks.
 
 ## Proposing work
 

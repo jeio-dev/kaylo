@@ -29,6 +29,20 @@ When resources are unavailable, apply the standalone fallback below.
 
 If the decision reference or required templates are unavailable: with `.kaylo/decisions/` absent and no promotion required, keep legacy behavior and read established project decisions under the ordinary agreement rules. With records present or promotion required, inspect decisions manually only from the complete canonical contract, taken from identified supplied content or an intact package, and record that source and the checks; existing ADRs, a phase plan, or structural plan validation do not establish it. Otherwise stop affected work before implementation, review readiness, task acceptance, or closure; leave its checkbox open and record `Decision consistency: unreadable — <missing resource paths, affected scope, and resume action>` in the existing Result/Review/Completion field. Resume with the full Kaylo package or the complete contents of `skills/plan/references/decisions.md`, `templates/DECISION.md`, and `templates/DECISION-INDEX.md`. Structural fallback never waives decision or product evidence. Never guess authority, overwrite user-owned files, install runtimes, or change host settings.
 
+## Testing strategy and evidence
+
+For current work, including direct/resumed entry, read [testing strategy and acceptance
+evidence](../plan/references/testing.md) and the applicable project/phase decisions. Reuse
+existing checks and a proportional strategy in Design/Agreement. Map every
+criterion to a named check, directory, exact existing command/manual action and
+expected observation; inspect actual coverage, mock limits and required failure
+proof. Keep unavailable required evidence open, preserve workspace/history, and
+use native focus checks plus bounded test-diff review without claiming enforcement
+from structural validation. Absent optional records need no migration/backfill.
+If the reference is unavailable, keep existing checks and agreement, disclose
+that limit and resume new strategy/authoring work with the full package or its
+complete contract; do not guess it or waive required product evidence.
+
 ## Workflow
 
 1. Read project instructions and `ROADMAP.md` when available to establish phase state. For an explicit guided-release request, follow Release entry below instead of this closure workflow. Otherwise read `PRD.md` if present and the current phase plan that `Current:` links. Inspect changes and recorded results; the scope being closed is the current phase.
@@ -40,6 +54,9 @@ If the decision reference or required templates are unavailable: with `.kaylo/de
 7. After successful closure, reconcile reviewed release metadata under Unreleased summary below. Explain how to use the result: relevant page, action, or command, plus required setup only.
 
 ## Verification
+
+- Inspect the testing contract's criterion mapping and actual behavior evidence, including required failure proof, relevant negative cases, user-facing observations, integrity review and safe-resource limits. For high-risk work retain established test-author artifacts/routing and later implementation review. Expected red is not implementation acceptance; quarantined required coverage stays open without replacement evidence or explicit scope revision.
+- Require the declared relevant full phase/project suite, including applicable E2E, even without optional gates. Preserve original evidence/repair attribution; refresh affected checks after changes. Promote only consequential final testing decisions under area `testing` via the existing decision lifecycle and source mappings; no final ADR is required before the phase's own work.
 
 - Reuse passing results only when history establishes unchanged relevant inputs: implementation, dependencies, configuration, runtime, data, and criteria.
 - Run missing, stale, or required final checks. If inputs are uncertain, rerun an affected check when feasible. If unchanged inputs cannot be established and the check cannot run, uncheck each affected task, leave the phase open, and record the verification limit and next action in each affected task's `Result`, preserving earlier evidence as superseded history within that `Result:` line; add no separate task fields for it. Stating a limit never permits closure, including during manual structural inspection.

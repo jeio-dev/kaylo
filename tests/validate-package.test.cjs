@@ -279,6 +279,59 @@ test('invalid CLI usage returns 2', () => {
   assert.equal(check(repo, ['--installed']).status, 2);
 });
 
+// Resource reachability is a package guarantee, not observed model behavior.
+test('testing and test-author contracts are required even with all five skills present', t => {
+  const dir = fixture(t);
+  for (const resource of ['skills/plan/references/testing.md', 'skills/build/references/test-author.md']) {
+    const target = path.join(dir, resource);
+    const original = fs.readFileSync(target);
+    fs.unlinkSync(target);
+    const result = check(dir);
+    assert.equal(result.status, 1, resource);
+    assert(result.stderr.includes(`Required testing resource is missing: ${resource}`), result.stderr);
+    fs.writeFileSync(target, original);
+  }
+});
+
+test('testing consumers resolve the canonical contract from their own directory', t => {
+  const dir = fixture(t);
+  const consumers = ['skills/plan/SKILL.md', 'skills/build/SKILL.md',
+    'skills/review/SKILL.md', 'skills/close/SKILL.md',
+    'skills/build/references/delegation.md', 'skills/review/references/delegation.md',
+    'skills/plan/references/foundation.md', 'skills/plan/references/gates.md',
+    'skills/build/references/test-author.md', 'agents/builder.md', 'agents/reviewer.md', 'WORKERS.md'];
+  for (const consumer of consumers) {
+    const target = path.join(dir, consumer);
+    const original = fs.readFileSync(target, 'utf8');
+    assert(original.includes('testing.md'), consumer);
+    fs.writeFileSync(target, original.replaceAll('testing.md', 'missing-testing.md'));
+    if (consumer.startsWith('agents/')) {
+      assert.equal(spawnSync(process.execPath, [path.join(dir, 'scripts/sync-claude-agents.cjs')]).status, 0);
+    }
+    const result = check(dir);
+    assert.equal(result.status, 1, consumer);
+    assert(result.stderr.includes(`Missing canonical testing reference: ${consumer}`), result.stderr);
+    fs.writeFileSync(target, original);
+    if (consumer.startsWith('agents/')) {
+      assert.equal(spawnSync(process.execPath, [path.join(dir, 'scripts/sync-claude-agents.cjs')]).status, 0);
+    }
+  }
+});
+
+test('test-author consumers resolve the existing builder stage resource', t => {
+  const dir = fixture(t);
+  for (const consumer of ['skills/plan/SKILL.md', 'skills/build/SKILL.md',
+    'skills/build/references/delegation.md', 'skills/plan/references/testing.md', 'WORKERS.md']) {
+    const target = path.join(dir, consumer);
+    const original = fs.readFileSync(target, 'utf8');
+    fs.writeFileSync(target, original.replaceAll('test-author.md', 'missing-test-author.md'));
+    const result = check(dir);
+    assert.equal(result.status, 1, consumer);
+    assert(result.stderr.includes(`Missing test-author reference: ${consumer}`), result.stderr);
+    fs.writeFileSync(target, original);
+  }
+});
+
 test('the shared hook loader resolves Claude, Codex, and Gemini package paths', () => {
   const hooks = JSON.parse(fs.readFileSync(path.join(repo, 'hooks/hooks.json')));
   const command = hooks.hooks.SessionStart[0].hooks[0].command;
