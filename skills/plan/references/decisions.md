@@ -10,7 +10,10 @@ an assignment. No command, worker role, provider, runtime, or hook is added.
 Inspect existing project decision documents and user edits first. A missing
 `.kaylo/decisions/` preserves existing behavior, including no-PRD small changes;
 read applicable established decisions where they exist. Close creates the
-directory and index from the templates at the first required promotion. Do not backfill history,
+directory and index from the templates at the first required promotion. A phase
+planned before this contract, whose Design has no `DEC` identities, promotes
+nothing at close; its choices stay in its plan. Do not relabel a legacy plan to
+create promotions; a later phase can record such a choice with `DEC` identity. Do not backfill history,
 rewrite closed phases, or create a competing authority. Before introducing
 Kaylo records into an existing decision location, reconcile ownership and
 competing authorities under the existing planning/agreement rules. Never
@@ -213,14 +216,20 @@ acceptance; it does not make the choice retrospectively.
    `source-conflict`; stop and reconcile without editing accepted bytes. For a
    subsequent substantive change in reopened work, give the new phase-local
    decision a fresh DEC ID and explicitly supersede the previous ADR.
-2. If new, choose an unused ID after inspecting both files and index. Prepare
-   the complete snapshot and intended index changes before writing. When
+2. If new, allocate the next ID above the largest found in both files and
+   index, never a gap. Prepare the complete snapshot and intended index changes
+   before writing. The snapshot restates the settled Design decision and its
+   reviewed Agreement provenance and adds no new rule; if it would need content
+   the reviewed plan lacks, such as a fuller retained rule for a replacement,
+   route to `/kaylo:plan` instead of accepting unreviewed text. When
    `.kaylo/decisions/` is absent, this first promotion creates it with an index
-   from the template; reconcile any competing decision location first. Create the
-   new file only at an absent path using exclusive creation where available;
-   never overwrite an existing or concurrently created file. If no safe creation
-   facility is available, stop with a concrete recording handoff. No generic
-   write service or runtime installation is required.
+   from the template; reconcile any competing decision location first. Create
+   the new file only at an absent path: use a create-only write where the host
+   offers one; otherwise confirm the path is absent immediately before writing
+   and re-read it afterward to confirm it holds exactly the prepared snapshot.
+   A file that appeared or differs is a `source-conflict`, never something to
+   overwrite. If neither is possible, stop with a concrete recording handoff.
+   No generic write service or runtime installation is required.
 3. Reconcile the index only after complete files exist, retaining unrelated rows
    and user edits. Add each new row and update replaced records' current status
    and successor links without touching their bodies. Inspect current index

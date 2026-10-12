@@ -10,7 +10,7 @@
   decisions with retry recovery before phase check-off, creating
   `.kaylo/decisions/` at the first promotion. Accepted bodies remain snapshots
   while whole-record successors update the index. Existing projects require no
-  migration/backfill. When pasted without the decisions contract, skills stop
+  migration/backfill; a phase planned before this release promotes nothing. When pasted without the decisions contract, skills stop
   affected work on present records rather than guess the contract. Consistency
   checks are manual and do not claim technical write protection
   ([#87](https://github.com/jeio-dev/kaylo/issues/87),

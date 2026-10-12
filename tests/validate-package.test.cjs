@@ -402,3 +402,42 @@ test('pasted decision consumers keep an aligned project-decisions entry paragrap
   assert.equal(result.status, 1);
   assert.match(result.stderr, /project-decisions entry in skills\/build\/SKILL\.md/);
 });
+test('decision links count only outside code and may carry a title', t => {
+  const dir = fixture(t);
+  const target = path.join(dir, 'skills/plan/references/foundation.md');
+  const original = fs.readFileSync(target, 'utf8');
+  const link = '[project decisions](decisions.md)';
+  assert(original.includes(link));
+  fs.writeFileSync(target, original.replace(link, '[project decisions](decisions.md "Contract")'));
+  assert.equal(check(dir).status, 0);
+  fs.writeFileSync(target, original.replace(link, 'project decisions') +
+    '\n```text\n[project decisions](decisions.md)\n```\n');
+  const result = check(dir);
+  assert.equal(result.status, 1);
+  assert(result.stderr.includes('Missing canonical decision reference: skills/plan/references/foundation.md'));
+});
+test('worker briefs keep one Project decisions section', t => {
+  const dir = fixture(t);
+  // Edit the generated adapter too, so only the cross-brief check can fail.
+  const rule = 'Never edit\naccepted ADR bodies or `.kaylo/decisions/index.md`;';
+  for (const file of ['agents/reviewer.md', 'claude-agents/reviewer.md']) {
+    const target = path.join(dir, file);
+    const original = fs.readFileSync(target, 'utf8');
+    assert(original.includes(rule));
+    fs.writeFileSync(target, original.replace(rule, 'Never edit\naccepted ADR bodies;'));
+  }
+  const result = check(dir);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Project decisions section in agents\/reviewer\.md/);
+});
+test('build and review delegation keep one project-decisions packet rule', t => {
+  const dir = fixture(t);
+  const target = path.join(dir, 'skills/review/references/delegation.md');
+  const original = fs.readFileSync(target, 'utf8');
+  const rule = 'Do not include all phase\nhistory by default. ';
+  assert(original.includes(rule));
+  fs.writeFileSync(target, original.replace(rule, ''));
+  const result = check(dir);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /project-decisions packet paragraph differs between build and review/);
+});

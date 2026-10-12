@@ -226,6 +226,33 @@ Issue acceptance stays open and PR #129 stays draft. Next: address missing-resou
 fallback failure 54 separately, then run a focused recheck with corrected
 inconclusive fixtures.
 
+## PR #129 second review fixes — 2026-10-12
+
+Uncommitted follow-up on `feat/87-project-decisions` from clean `6e59391`,
+addressing all nine comments of a second model code review of PR #129 at the
+user's request. A phase planned without `DEC` identities promotes nothing and
+is not relabelled. Promotion allocates above the largest ID, never a gap. The
+ADR snapshot restates the reviewed Design/Agreement and routes to plan instead
+of adding unreviewed text. File creation uses a create-only write where offered,
+otherwise an immediate absence check plus a read-back, with any appearance or
+difference a `source-conflict`. The index template drops its placeholder
+comment, whose rules the contract already states. Review's no-reference
+fallback now hands reviewers the applicable decisions. The validator compares
+absolute link targets (as before #129's first fix round), ignores links inside
+code, accepts link titles, and checks the briefs' Project decisions sections
+and the build/review packet paragraph for drift.
+
+Observed: package validation passed. Node 24.21.0: full suite 384/384 passed,
+including three new tests for code-only/titled links, brief drift and packet
+drift; zero skips/failures. Claude Code 2.1.296 strict plugin/marketplace
+validators and Antigravity CLI 1.3.1 native manifest validator passed.
+`git diff --check` passed. No worker brief changed.
+
+Limits: the Windows path fix was not run on Windows; it restores the
+absolute-path comparison the original check used. All earlier limits stand: no
+model has run on the revised promotion, legacy-phase, ID-allocation, creation or
+review-fallback wording.
+
 ## PR #129 review fixes — 2026-10-12
 
 Uncommitted follow-up on `feat/87-project-decisions` from clean

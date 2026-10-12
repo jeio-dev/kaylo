@@ -147,21 +147,47 @@ try {
     const target = path.join(root, resource);
     assert(fs.existsSync(target) && fs.statSync(target).isFile(), `Required ${kind} resource is missing: ${resource}`);
   }
-  // Resolved link targets of a Markdown file, relative to the package root.
+  // Absolute targets of a Markdown file's real links, ignoring code examples;
+  // a link may carry a quoted title. Absolute paths compare on every OS.
   const linkTargets = file => new Set([...fs.readFileSync(path.join(root, file), 'utf8')
-    .matchAll(/\]\(([^)]+)\)/g)].map(match => path.relative(root,
-    path.resolve(root, path.dirname(file), match[1].split('#')[0]))));
+    .replace(/^```[\s\S]*?^```/gm, '').replace(/`[^`\n]*`/g, '')
+    .matchAll(/\]\(<?([^)\s>]+)>?(?:\s+"[^"]*")?\)/g)]
+    .map(match => path.resolve(root, path.dirname(file), match[1].split('#')[0])));
   for (const consumer of ['skills/plan/SKILL.md', 'skills/build/SKILL.md',
     'skills/review/SKILL.md', 'skills/close/SKILL.md',
     'skills/build/references/delegation.md', 'skills/review/references/delegation.md',
     'skills/plan/references/foundation.md', 'WORKERS.md']) {
     assert(fs.existsSync(path.join(root, consumer)), `Decision consumer is missing: ${consumer}`);
-    assert(linkTargets(consumer).has(decisionContract), `Missing canonical decision reference: ${consumer}`);
+    assert(linkTargets(consumer).has(path.join(root, decisionContract)),
+      `Missing canonical decision reference: ${consumer}`);
   }
   const contractLinks = linkTargets(decisionContract);
   for (const template of decisionTemplates) {
-    assert(contractLinks.has(template), `Missing decision template reference: ${template}`);
+    assert(contractLinks.has(path.join(root, template)), `Missing decision template reference: ${template}`);
   }
+  // Worker briefs and delegation packets repeat the decision rules; keep the
+  // copies aligned, comparing wrapped prose by words.
+  const words = text => text.replace(/\s+/g, ' ').trim();
+  const section = (file, heading) => {
+    const body = fs.readFileSync(path.join(root, file), 'utf8');
+    const match = body.match(new RegExp(`^## ${heading}\\r?\\n([\\s\\S]*?)(?=^## |(?![\\s\\S]))`, 'm'));
+    assert(match, `${file} is missing its ${heading} section`);
+    return words(match[1]);
+  };
+  const briefs = ['builder', 'researcher', 'reviewer'].map(name => `agents/${name}.md`);
+  for (const brief of briefs.slice(1)) {
+    assert(section(brief, 'Project decisions') === section(briefs[0], 'Project decisions'),
+      `Copied brief text drifted: the Project decisions section in ${brief} differs from ${briefs[0]}`);
+  }
+  const packetRule = file => {
+    const match = fs.readFileSync(path.join(root, file), 'utf8').match(/^Resolve \[project decisions\][\s\S]*?(?=\r?\n\r?\n)/m);
+    assert(match, `${file} is missing its project-decisions packet paragraph`);
+    return words(match[0]);
+  };
+  // Review names its own Supply item where build uses its existing packet content.
+  assert(packetRule('skills/review/references/delegation.md') === packetRule('skills/build/references/delegation.md')
+    .replace('In its existing relevant-decisions/interface-contract content,', "In the packet's applicable-decisions item below,"),
+  'Copied delegation text drifted: the project-decisions packet paragraph differs between build and review');
   // Each SKILL.md must work when pasted alone, so these blocks are copied
   // rather than shared. Copies must stay byte-identical; a listed variant is a
   // deliberate difference: omitted, extended (the shared copy plus more), or
