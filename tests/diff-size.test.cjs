@@ -115,3 +115,36 @@ test('the report changes nothing in the repository', t => {
   assert.equal(JSON.parse(result.stdout).counted.lines, 2);
   assert.equal(git(root, 'status', '--porcelain=v1'), before);
 });
+
+test('generated-file rules come from the compared head, not the current checkout', t => {
+  const { root, base } = repo(t);
+  write(root, 'dist/out.js', lines(700));
+  git(root, 'add', '-A');
+  git(root, 'commit', '-q', '-m', 'bundle');
+  const head = git(root, 'rev-parse', 'HEAD');
+  const committed = diffSize(root, base, head);
+  assert.deepEqual(committed.generated, [{ path: 'dist/out.js', added: 700, deleted: 0 }]);
+  assert.equal(committed.band, 'under-400');
+  write(root, '.gitattributes', '');
+  assert.deepEqual(diffSize(root, base, head), committed, 'a working-tree attribute change does not alter a fixed comparison');
+  assert.equal(diffSize(root, base).band, 'over-600', 'the working-tree comparison uses working-tree rules');
+  git(root, 'checkout', '-q', '-b', 'other', base);
+  assert.deepEqual(diffSize(root, base, head), committed, 'another checkout does not alter it either');
+});
+
+test('paths containing tabs keep their full name for lockfile, generated and binary classification', t => {
+  const { root, base } = repo(t);
+  write(root, 'dir\tname/package-lock.json', lines(700));
+  write(root, 'binary\tasset.bin', Buffer.from([1, 0, 2]));
+  write(root, 'dist/tab\tout.js', lines(50));
+  write(root, 'src/tab\tfile.js', lines(3));
+  const untracked = diffSize(root, base);
+  git(root, 'add', '-A');
+  git(root, 'commit', '-q', '-m', 'tabs');
+  for (const result of [untracked, diffSize(root, base, 'HEAD')]) {
+    assert.deepEqual(result.lockfiles, [{ path: 'dir\tname/package-lock.json', added: 700, deleted: 0 }]);
+    assert.deepEqual(result.generated, [{ path: 'dist/tab\tout.js', added: 50, deleted: 0 }]);
+    assert.deepEqual(result.binary, ['binary\tasset.bin']);
+    assert.deepEqual(result.counted, { files: 1, added: 3, deleted: 0, lines: 3 });
+  }
+});

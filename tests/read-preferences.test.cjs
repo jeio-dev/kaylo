@@ -110,6 +110,23 @@ test('unknown keys are notes that grant nothing and keep exit 0', t => {
   assert.match(run.stderr, /^PREFS_UNKNOWN: \.kaylo\/preferences\.md:2: /);
 });
 
+test('keys named like inherited object properties are unknown notes, not crashes', t => {
+  const names = ['constructor', 'toString', 'hasOwnProperty', 'valueOf', 'isPrototypeOf'];
+  const root = project(t, 'Format: 1\nWorker models: Balanced\n' + names.map(name => `${name}: harmless\n`).join(''));
+  const result = readPreferences(root);
+  assert.equal(result.state, 'present');
+  assert.deepEqual(result.values, { 'Worker models': 'Balanced' });
+  assert.deepEqual(result.diagnostics, []);
+  assert.deepEqual(result.notes.map(note => note.key), names);
+  const run = cli(root);
+  assert.equal(run.status, 0, run.stderr);
+  assert.deepEqual(JSON.parse(run.stdout).values, { 'Worker models': 'Balanced' });
+  const checker = path.resolve(__dirname, '../scripts/check-commit-message.cjs');
+  fs.appendFileSync(path.join(root, '.kaylo/preferences.md'), 'Commit style: conventional\n');
+  const message = spawnSync(process.execPath, [checker, root, '-'], { encoding: 'utf8', input: 'feat: add login (03-T1)' });
+  assert.equal(message.status, 0, message.stderr);
+});
+
 test('a missing, duplicated or unsupported Format makes the whole file unusable', t => {
   const cases = [['Git autonomy: pr\n', 'PREFS_FORMAT@.kaylo/preferences.md'],
     ['Format: 2\nGit autonomy: pr\n', 'PREFS_FORMAT@.kaylo/preferences.md:1'],

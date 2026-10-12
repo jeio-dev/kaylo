@@ -48,8 +48,9 @@ const inside = (root, target) => {
 
 function parse(text) {
   const lines = text.split('\n');
-  const seen = {};
-  const raw = {};
+  // Maps, so a key such as constructor or toString cannot reach an inherited property.
+  const seen = new Map();
+  const raw = new Map();
   const diagnostics = [];
   const notes = [];
   lines.forEach((line, index) => {
@@ -59,22 +60,22 @@ function parse(text) {
     if (!record) return;
     const [, key, value] = record;
     const number = index + 1;
-    if (!(key in keys)) return notes.push(diagnostic('PREFS_UNKNOWN', number, key));
-    (seen[key] = seen[key] || []).push(number);
-    raw[key] = value.trim();
+    if (!Object.hasOwn(keys, key)) return notes.push(diagnostic('PREFS_UNKNOWN', number, key));
+    seen.set(key, [...(seen.get(key) || []), number]);
+    raw.set(key, value.trim());
   });
-  const formatLines = seen.Format || [];
-  if (formatLines.length !== 1 || keys.Format(raw.Format) === undefined) {
+  const formatLines = seen.get('Format') || [];
+  if (formatLines.length !== 1 || keys.Format(raw.get('Format')) === undefined) {
     return { state: 'invalid', diagnostics: [diagnostic('PREFS_FORMAT', formatLines[0] || 0)], notes };
   }
   const values = {};
-  for (const [key, numbers] of Object.entries(seen)) {
+  for (const [key, numbers] of seen) {
     if (key === 'Format') continue;
     if (numbers.length > 1) {
       diagnostics.push(diagnostic('PREFS_DUPLICATE', numbers[1], key));
       continue;
     }
-    const usable = control.test(raw[key]) ? undefined : keys[key](raw[key]);
+    const usable = control.test(raw.get(key)) ? undefined : keys[key](raw.get(key));
     if (usable === undefined) diagnostics.push(diagnostic('PREFS_VALUE', numbers[0], key));
     else values[key] = usable;
   }

@@ -26,11 +26,14 @@ function git(root, args, input) {
 const fail = (code, detail = '') => ({ error: { code, message: bodies[code] + detail } });
 
 // numstat -z: "added\tdeleted\tpath\0", or "added\tdeleted\t\0old\0new\0" for a rename.
+// Paths are unquoted and may hold tabs, so split only at the first two tabs.
 function numstat(buffer) {
   const parts = buffer.toString('utf8').split('\0');
   const rows = [];
   for (let i = 0; i < parts.length - 1; i++) {
-    const [added, deleted, name] = parts[i].split('\t');
+    const first = parts[i].indexOf('\t');
+    const second = parts[i].indexOf('\t', first + 1);
+    const [added, deleted, name] = [parts[i].slice(0, first), parts[i].slice(first + 1, second), parts[i].slice(second + 1)];
     const file = name === '' ? parts[(i += 2)] : name;
     rows.push(added === '-' ? { path: file, binary: true } : { path: file, added: Number(added), deleted: Number(deleted) });
   }
@@ -82,7 +85,10 @@ function diffSize(projectRoot, base, head) {
     if (extra === null) return fail('SIZE_GIT');
     rows = rows.concat(extra);
   }
-  const attrs = rows.length ? git(root, ['check-attr', '-z', '--stdin', 'linguist-generated'],
+  // Generated-file rules come from the compared head tree, or the working tree without a head.
+  // Reading a tree's attributes needs Git 2.40 or later; older Git reports SIZE_GIT.
+  const source = head === undefined ? [] : [`--source=${head}`];
+  const attrs = rows.length ? git(root, ['check-attr', '-z', ...source, '--stdin', 'linguist-generated'],
     rows.map(row => row.path).join('\0') + '\0') : { status: 0, stdout: Buffer.alloc(0) };
   if (attrs.status !== 0) return fail('SIZE_GIT');
   const generated = new Set();
