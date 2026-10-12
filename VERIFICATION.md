@@ -16,9 +16,10 @@ records from the first draft through 0.5.2 are in
 
 The #87 decision-record implementation adds a canonical optional ADR/index
 contract, manual consistency/promotion rules, and existing-entry-point/worker
-integration. Resource and native manifest checks are recorded below; its bounded
-live behavioral trials remain pending. Project ADR checks are instructional,
-not part of the structural plan/package validators.
+integration. The 2026-10-12 behavioral pass below has 55 manifest entries:
+49 executed once (42 PASS, 2 FAIL, 5 INCONCLUSIVE) and 6 dependent cases BLOCKED.
+Issue acceptance remains open and PR #129 remains draft. Project ADR checks are
+instructional, not part of the structural plan/package validators.
 
 The #86 guided-release implementation adds local metadata/reconciliation and
 manual preparation guidance. Its parsing/Git/package checks are recorded below;
@@ -125,6 +126,103 @@ checking acceptance boxes. The user explicitly requested these Git/issue actions
 Kaylo supplied no built-in secret scan and repository hooks were not bypassed.
 Later additions here and in CHANGELOG only link/report these outcomes; they do
 not change the implementation or tested shared resources.
+
+## Issue #87 behavioral-trial pass — 2026-10-12
+
+Candidate `94324a2326ad567002d76387e93e6ce685b88fd3`, clean
+`feat/87-project-decisions` in `/home/jeio/src/kaylo`. Read contributor guidance,
+`tests/DECISION-TRIALS.md`, the canonical decision contract and the implementation
+record above. No project PRD, ROADMAP or linked current phase plan exists here.
+No implementation was changed; unrelated work and local ignored guidance were
+preserved. The user authorized this verification pass, issue/PR updates, and
+attributable verification commit/push on this branch, not release publication.
+
+Expanded all 22 documented groups into **55 explicit entries** and announced
+that count before starting. **49 fresh model executions ran once; 42 PASS,
+2 FAIL, 5 INCONCLUSIVE; 6 dependent entries BLOCKED and not started.** No blanket
+repetition or replacement run occurred. Peak concurrent subjects: two. The
+complete [manifest](tests/decision-trials/2026-10-12-codex/manifest.json),
+[graded observations and limits](tests/decision-trials/2026-10-12-codex/RESULTS.md),
+and [receipts/byte comparisons](tests/decision-trials/2026-10-12-codex/results.json)
+are attributable verification records, not new implementation tests or helpers.
+
+Observed host: Codex CLI 0.162.1, CLI-selected `gpt-6.1-sol`, low reasoning,
+through the existing ChatGPT login/subscription. Backend returned model/snapshot
+identity was not exposed and is recorded unknown. Node 24.21.0, Git 2.53.0,
+Linux/WSL2. Each execution used a fresh ephemeral native model context and its
+own temporary profile, with separate mutable fixtures. Existing login credentials
+were copied privately into those profiles, API-key environment routes removed,
+and credential copies deleted after completion. No normal account/settings
+changes or alternative paid/unknown-billing route was used. Host built-in skills
+and account-synchronized catalogs were automatically present; observed Kaylo
+reads used candidate files, not the installed v0.11.0 Kaylo skill cache.
+
+The **full npm candidate package** was extracted at
+`/tmp/kaylo-87-subjects-lxv5_os4/package`. Before models ran, package validation
+passed and all **41 shared resources matched**; contributor guidance was absent.
+The focused package/resource suite passed **28/28**, zero skips/failures. These
+are package checks, separate from the real model executions. Greeting/session
+seeds used actual local commands and an explicitly disclosed operator direct
+implementation review; it was not an independent model review. Expected grading
+material remained outside subject workspaces/prompts. All 49 host processes
+exited 0; host completion does not imply behavioral PASS.
+
+Failures remain visible:
+
+- **25:** named the indexed missing ADR and kept T1 open, but emitted
+  `workspace-missing`/`historical-change` rather than the documented
+  unreadable/broken-link diagnostic. This is a narrow diagnostic failure;
+  it did not accept affected work or overwrite history.
+- **54:** accepted T1 with present ADRs and missing canonical resources, using
+  structural manual fallback without establishing the complete ADR manual
+  contract or providing the required specific full-package/reference handoff.
+  The product command passed; decision-resource coverage was incomplete.
+
+Inconclusive: **01/02** exposed operator-seeded Git-visible ADR deletions instead
+of clean optional absence; **26** inferred deletion without inspecting an actual
+unreadable directory at the ADR path; **39** rejected the operator's testing
+fixture consequentiality because it reused irrelevant browser/session/service
+objective boilerplate; **47** stopped on phase scope/threshold ambiguity before
+supersession. These are not reported as successful checkpoint coverage or
+implementation promotion defects. **40–45** stopped because 39 produced no
+qualifying promotion artifact; interrupted/repeated/reopened closure remains
+untested. No completed case was fixed or rerun. Only unstarted fixtures were
+corrected; attempted late corrections stopped before altering running fixtures.
+
+The actual build/review/manual packets from **15/17/19** were delivered unchanged
+to fresh shared-brief workers **16/18/20** in their actual separate directories.
+All three inspected missing/conflicting authority and changed no files. The
+first two delivery fixtures also changed an accepted body, so their observed
+coverage combines historical-change and workspace-delivery faults; the manual
+fixture used a new uncommitted record. These were generic fresh CLI contexts,
+not registered native Kaylo workers. Every initial readable ADR remained
+byte-identical after its subject. That establishes controlled-run preservation,
+not past immutability without trusted history; no-baseline subjects disclosed
+that limit. Supersession/factual correction created successors and changed index
+status without changing accepted bodies in qualifying runs.
+
+Recording-limit subjects retained product passes and precise resume actions,
+but relied on supplied restrictions backed by read-only temporary paths; no
+recording write, actual OS denial, simultaneous writer or crash was exercised.
+Node absence in **55** was actual: `login=false` preserved a PATH without Node,
+and product/validator commands exited 127; T1 reopened and closure remained
+open. Authorization stubs in **52/53** never ran. Review subjects repeatedly
+observed size-helper stalls and used Git-count fallbacks; events retain the
+stalls/interruption/timeouts. These limitations were not repaired during the pass.
+
+Private prompts, events/transcripts, actual command outcomes, before/after
+fixtures, Git state/diffs, ADR hashes and packets are retained under ignored
+`.local/trials/decision-87-20261012/`; temporary projects/profiles are under
+`/tmp/kaylo-87-subjects-lxv5_os4/`. Published receipts hash private evidence rather
+than releasing transcripts. Run interval: 2026-10-12 16:52:10–17:35:53 UTC.
+One run establishes observations, not reliability. Native candidate install,
+discovery/update, public installation, other hosts/models, actual interruption
+recovery or real external-action lifecycles remain untested. Full Node/native
+manifest suites were not rerun here; earlier dated results are not relabelled
+as current behavioral evidence. `git diff --check` passed for these records.
+Issue acceptance stays open and PR #129 stays draft. Next: address missing-resource
+fallback failure 54 separately, then run a focused recheck with corrected
+inconclusive fixtures.
 
 ## Issue #87 specification review — 2026-10-07
 

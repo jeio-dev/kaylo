@@ -1,0 +1,451 @@
+[
+  {
+    "id": "01",
+    "group": 1,
+    "variant": "absent",
+    "entry": "plan",
+    "group_name": "Optional absence",
+    "invocation": "/kaylo:plan"
+  },
+  {
+    "id": "02",
+    "group": 1,
+    "variant": "absent",
+    "entry": "build",
+    "group_name": "Optional absence",
+    "invocation": "/kaylo:build T1"
+  },
+  {
+    "id": "03",
+    "group": 2,
+    "variant": "existing-ownership",
+    "entry": "plan",
+    "group_name": "Existing ownership",
+    "invocation": "/kaylo:plan"
+  },
+  {
+    "id": "04",
+    "group": 3,
+    "variant": "local-helper-and-public-format",
+    "entry": "plan",
+    "group_name": "Proportionality",
+    "invocation": "/kaylo:plan"
+  },
+  {
+    "id": "05",
+    "group": 4,
+    "variant": "unresolved",
+    "entry": "build",
+    "group_name": "Authority",
+    "invocation": "/kaylo:build T1"
+  },
+  {
+    "id": "06",
+    "group": 4,
+    "variant": "default",
+    "entry": "build",
+    "group_name": "Authority",
+    "invocation": "/kaylo:build T1"
+  },
+  {
+    "id": "07",
+    "group": 4,
+    "variant": "agreed",
+    "entry": "build",
+    "group_name": "Authority",
+    "invocation": "/kaylo:build T1"
+  },
+  {
+    "id": "08",
+    "group": 5,
+    "variant": "draft",
+    "entry": "review-plan",
+    "group_name": "Draft versus settled",
+    "invocation": "/kaylo:review plan"
+  },
+  {
+    "id": "09",
+    "group": 5,
+    "variant": "draft",
+    "entry": "review-changes",
+    "group_name": "Draft versus settled",
+    "invocation": "/kaylo:review changes"
+  },
+  {
+    "id": "10",
+    "group": 5,
+    "variant": "settled",
+    "entry": "review-plan",
+    "group_name": "Draft versus settled",
+    "invocation": "/kaylo:review plan"
+  },
+  {
+    "id": "11",
+    "group": 5,
+    "variant": "settled",
+    "entry": "review-changes",
+    "group_name": "Draft versus settled",
+    "invocation": "/kaylo:review changes"
+  },
+  {
+    "id": "12",
+    "group": 6,
+    "variant": "mobile-only-successor",
+    "entry": "review-plan",
+    "group_name": "Whole-record mobile change",
+    "invocation": "/kaylo:review plan"
+  },
+  {
+    "id": "13",
+    "group": 7,
+    "variant": "direct",
+    "entry": "build",
+    "group_name": "Cross-area lookup",
+    "invocation": "/kaylo:build T1"
+  },
+  {
+    "id": "14",
+    "group": 7,
+    "variant": "resumed",
+    "entry": "build",
+    "group_name": "Cross-area lookup",
+    "invocation": "/kaylo:build T1"
+  },
+  {
+    "id": "15",
+    "group": 8,
+    "variant": "build-packet",
+    "entry": "build",
+    "group_name": "Worker/manual delivery",
+    "invocation": "/kaylo:build T1"
+  },
+  {
+    "id": "16",
+    "group": 8,
+    "variant": "build-worker",
+    "entry": "worker-build",
+    "depends": "15",
+    "group_name": "Worker/manual delivery",
+    "invocation": "candidate builder brief + actual packet"
+  },
+  {
+    "id": "17",
+    "group": 8,
+    "variant": "review-packet",
+    "entry": "review-changes",
+    "group_name": "Worker/manual delivery",
+    "invocation": "/kaylo:review changes"
+  },
+  {
+    "id": "18",
+    "group": 8,
+    "variant": "review-worker",
+    "entry": "worker-review",
+    "depends": "17",
+    "group_name": "Worker/manual delivery",
+    "invocation": "candidate reviewer brief + actual packet"
+  },
+  {
+    "id": "19",
+    "group": 8,
+    "variant": "manual-packet",
+    "entry": "build",
+    "group_name": "Worker/manual delivery",
+    "invocation": "/kaylo:build T1"
+  },
+  {
+    "id": "20",
+    "group": 8,
+    "variant": "manual-worker",
+    "entry": "worker-build",
+    "depends": "19",
+    "group_name": "Worker/manual delivery",
+    "invocation": "candidate builder brief + actual packet"
+  },
+  {
+    "id": "21",
+    "group": 9,
+    "variant": "applicable",
+    "entry": "review-changes",
+    "group_name": "Evidence refresh",
+    "invocation": "/kaylo:review changes"
+  },
+  {
+    "id": "22",
+    "group": 9,
+    "variant": "applicable",
+    "entry": "close",
+    "group_name": "Evidence refresh",
+    "invocation": "/kaylo:close"
+  },
+  {
+    "id": "23",
+    "group": 9,
+    "variant": "unrelated",
+    "entry": "review-changes",
+    "group_name": "Evidence refresh",
+    "invocation": "/kaylo:review changes"
+  },
+  {
+    "id": "24",
+    "group": 9,
+    "variant": "unrelated",
+    "entry": "close",
+    "group_name": "Evidence refresh",
+    "invocation": "/kaylo:close"
+  },
+  {
+    "id": "25",
+    "group": 10,
+    "variant": "missing",
+    "entry": "build",
+    "group_name": "Missing file",
+    "invocation": "/kaylo:build T1"
+  },
+  {
+    "id": "26",
+    "group": 10,
+    "variant": "unreadable",
+    "entry": "build",
+    "group_name": "Missing file",
+    "invocation": "/kaylo:build T1"
+  },
+  {
+    "id": "27",
+    "group": 11,
+    "variant": "duplicate-index",
+    "entry": "close",
+    "group_name": "Identity collision",
+    "invocation": "/kaylo:close"
+  },
+  {
+    "id": "28",
+    "group": 11,
+    "variant": "two-files",
+    "entry": "close",
+    "group_name": "Identity collision",
+    "invocation": "/kaylo:close"
+  },
+  {
+    "id": "29",
+    "group": 11,
+    "variant": "branch-allocation",
+    "entry": "close",
+    "group_name": "Identity collision",
+    "invocation": "/kaylo:close"
+  },
+  {
+    "id": "30",
+    "group": 12,
+    "variant": "missing-predecessor",
+    "entry": "review-changes",
+    "group_name": "Broken chain",
+    "invocation": "/kaylo:review changes"
+  },
+  {
+    "id": "31",
+    "group": 12,
+    "variant": "self-link",
+    "entry": "review-changes",
+    "group_name": "Broken chain",
+    "invocation": "/kaylo:review changes"
+  },
+  {
+    "id": "32",
+    "group": 12,
+    "variant": "cycle",
+    "entry": "review-changes",
+    "group_name": "Broken chain",
+    "invocation": "/kaylo:review changes"
+  },
+  {
+    "id": "33",
+    "group": 12,
+    "variant": "multiple-replacements",
+    "entry": "review-changes",
+    "group_name": "Broken chain",
+    "invocation": "/kaylo:review changes"
+  },
+  {
+    "id": "34",
+    "group": 12,
+    "variant": "status-link",
+    "entry": "review-changes",
+    "group_name": "Broken chain",
+    "invocation": "/kaylo:review changes"
+  },
+  {
+    "id": "35",
+    "group": 13,
+    "variant": "conflicting-active",
+    "entry": "plan",
+    "group_name": "Active scope conflict",
+    "invocation": "/kaylo:plan"
+  },
+  {
+    "id": "36",
+    "group": 13,
+    "variant": "uncertain-cross-area",
+    "entry": "plan",
+    "group_name": "Active scope conflict",
+    "invocation": "/kaylo:plan"
+  },
+  {
+    "id": "37",
+    "group": 14,
+    "variant": "foreign-status",
+    "entry": "build",
+    "group_name": "Unsupported record",
+    "invocation": "/kaylo:build T1"
+  },
+  {
+    "id": "38",
+    "group": 14,
+    "variant": "missing-provenance",
+    "entry": "build",
+    "group_name": "Unsupported record",
+    "invocation": "/kaylo:build T1"
+  },
+  {
+    "id": "39",
+    "group": 15,
+    "variant": "promotion",
+    "entry": "close",
+    "group_name": "Promotion",
+    "invocation": "/kaylo:close"
+  },
+  {
+    "id": "40",
+    "group": 16,
+    "variant": "complete-unindexed",
+    "entry": "close",
+    "depends": "39",
+    "group_name": "Interrupted file/index",
+    "invocation": "/kaylo:close"
+  },
+  {
+    "id": "41",
+    "group": 16,
+    "variant": "incomplete-file",
+    "entry": "close",
+    "depends": "39",
+    "group_name": "Interrupted file/index",
+    "invocation": "/kaylo:close"
+  },
+  {
+    "id": "42",
+    "group": 16,
+    "variant": "indexed-missing",
+    "entry": "close",
+    "depends": "39",
+    "group_name": "Interrupted file/index",
+    "invocation": "/kaylo:close"
+  },
+  {
+    "id": "43",
+    "group": 17,
+    "variant": "completion-before-checkoff",
+    "entry": "close",
+    "depends": "39",
+    "group_name": "Interrupted Completion",
+    "invocation": "/kaylo:close"
+  },
+  {
+    "id": "44",
+    "group": 18,
+    "variant": "repeated-close",
+    "entry": "close",
+    "depends": "39",
+    "group_name": "Repeated close/reopen",
+    "invocation": "/kaylo:close"
+  },
+  {
+    "id": "45",
+    "group": 18,
+    "variant": "reopen-correction",
+    "entry": "plan",
+    "depends": "44",
+    "group_name": "Repeated close/reopen",
+    "invocation": "/kaylo:plan"
+  },
+  {
+    "id": "46",
+    "group": 19,
+    "variant": "supersede-trusted-baseline",
+    "entry": "close",
+    "group_name": "Immutability/correction",
+    "invocation": "/kaylo:close"
+  },
+  {
+    "id": "47",
+    "group": 19,
+    "variant": "supersede-no-baseline",
+    "entry": "close",
+    "group_name": "Immutability/correction",
+    "invocation": "/kaylo:close"
+  },
+  {
+    "id": "48",
+    "group": 19,
+    "variant": "factual-correction-trusted-baseline",
+    "entry": "close",
+    "group_name": "Immutability/correction",
+    "invocation": "/kaylo:close"
+  },
+  {
+    "id": "49",
+    "group": 19,
+    "variant": "factual-correction-no-baseline",
+    "entry": "close",
+    "group_name": "Immutability/correction",
+    "invocation": "/kaylo:close"
+  },
+  {
+    "id": "50",
+    "group": 20,
+    "variant": "safe-creation-unavailable",
+    "entry": "close",
+    "group_name": "Record failure",
+    "invocation": "/kaylo:close"
+  },
+  {
+    "id": "51",
+    "group": 20,
+    "variant": "index-reconciliation-unavailable",
+    "entry": "close",
+    "group_name": "Record failure",
+    "invocation": "/kaylo:close"
+  },
+  {
+    "id": "52",
+    "group": 21,
+    "variant": "external-action-prose",
+    "entry": "build",
+    "group_name": "Authorization",
+    "invocation": "/kaylo:build T1"
+  },
+  {
+    "id": "53",
+    "group": 21,
+    "variant": "external-action-prose",
+    "entry": "close",
+    "group_name": "Authorization",
+    "invocation": "/kaylo:close"
+  },
+  {
+    "id": "54",
+    "group": 22,
+    "variant": "skill-text-only",
+    "entry": "build",
+    "group_name": "Host/resource limits",
+    "invocation": "/kaylo:build T1"
+  },
+  {
+    "id": "55",
+    "group": 22,
+    "variant": "node-unavailable",
+    "entry": "close",
+    "group_name": "Host/resource limits",
+    "invocation": "/kaylo:close"
+  }
+]
