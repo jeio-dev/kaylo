@@ -1856,6 +1856,68 @@ manifest checks do not establish host loading or worker behavior. Deferred
 behavioral verification and release readiness remain separate from this
 finding recheck.
 
+## Git preferences, attributable commits, and phase pull requests (#85) — 2026-10-12
+
+Implementation on branch `issue-85-git-workflow` from `main` at `1363ee5`,
+following the revised #85 specification. Before starting, the maintainer chose
+to ship #85 with automatic commit, push, and pull request steps gated on #89:
+the Git keys are recorded and read, but this version never acts on them,
+because #89's candidate and outgoing-history scan contract does not exist yet.
+Explicitly requested Git actions follow the new rules. Deliverables, one
+commit each: the preferences reader, the commit message checker, the Git
+workflow reference with its consumers, the pull request and issue reference
+with the `Issue:` check, the phase size report, and the foundation area 7–8
+update. The builder brief changed, so `claude-agents/` was regenerated with
+`node scripts/sync-claude-agents.cjs`.
+
+Observed on Linux (WSL2) with Node 24.21.0 and Git 2.53.0:
+
+- `node scripts/validate-package.cjs` passed (five shared skills, matching
+  v0.11.0 versions and catalogs).
+- `node --test tests/*.test.cjs`: 337 tests, 337 pass, 0 skipped. New:
+  `tests/read-preferences.test.cjs` (14), `tests/check-commit-message.test.cjs`
+  (8), `tests/git-workflow.test.cjs` (6), `tests/diff-size.test.cjs` (6), and
+  two `Issue:` cases in `tests/validate-plan.test.cjs`. The package inventory
+  test packed the working tree with the new scripts and references, and
+  `validate-package.cjs --installed` matched the extracted tarball.
+- `claude plugin validate .claude-plugin/plugin.json --strict` and
+  `claude plugin validate .claude-plugin/marketplace.json --strict` passed on
+  Claude Code 2.1.296; `agy plugin validate .` passed on Antigravity CLI 1.3.1
+  (5 skills, 3 agents); `git diff main...HEAD --check` passed.
+- All 58 relative links in the 13 changed Markdown files resolve.
+
+What the fixtures establish: the preferences grammar (every documented value,
+CRLF, a tolerated byte-order mark, records only at column 0, inline comments
+and wrong case as unusable values, repeated keys unusable even when equal,
+unknown keys as notes that invalidate nothing, a missing or repeated `Format`
+making the file unusable), read failures for directories, dangling and
+escaping links, invalid encoding, oversized files and a FIFO without blocking,
+and diagnostics that never echo values. The checker covers the task, phase,
+review-fix, phase-record, release, and migration message cases, breaking
+notation, unlisted scopes, scopes without a list, required identities, and an
+unadopted or unusable policy. In disposable Git repositories with hooks
+disabled: `git add` of new task files followed by `git commit --only -- <task
+paths>` committed exactly an edit, a new file, a deletion, and a rename while
+the user's staged edit stayed staged, the unstaged edit and untracked file
+stayed untouched; a plain commit would have taken the staged file; an `--only`
+commit of a shared file took the user's edit, which is why overlap stops the
+step. The size report covers renames, lockfiles at any depth,
+`linguist-generated` files, binary files, untracked text and ignored files,
+the 400 and 600 boundaries, a project in a subdirectory, refused option-like
+revisions, and no repository changes. The validator accepts the documented
+`Issue:` forms and rejects malformed and repeated ones; the references'
+examples parse with the shipped parsers.
+
+Not run: any live model or worker session with the new instructions; real
+pushes, pull requests, provider CLIs, CI runs, merge-method or template
+discovery; issue filing; install or update trials in isolated host profiles;
+Codex, Gemini CLI, and OpenCode loading. Authorization, workspace
+preservation, publication, and issue-closure behavior is untested with a
+model. Automatic Git steps are not implemented and cannot be observed until
+#89's scan contract lands. Behavioral trials are deferred under the
+maintainer's 2026-10-11 timing decision; #85 stays open. No independent
+review of this implementation had run when this record was written.
+
 ## Public installation 0.11.0 — 2026-10-06
 
 PR #82 merged the release commits into `main` as `9a935bb`. The immutable

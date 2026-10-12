@@ -383,20 +383,22 @@ Claude and Codex can guide a project. Seven guardrail and routing cases each pas
 
 The same file accepts two optional keys, `Review vendor: different` and `Metered: allowed (<route>)`; see [review vendor and metered routes](WORKERS.md#review-vendor-and-metered-routes). A task marked `Risk: high` gets a focused review, requested in the same build run, after its checks pass and before it is checked off. When a check fails, the assistant diagnoses it first and recommends a stronger tier only when capability matters; a model change never adds repairs. Builds and reviews append compact `{kaylo:v1 ...}` records to the phase plan, through `scripts/plan-record.cjs` when Node is available, and `node /absolute/path/to/kaylo/scripts/dispatch-report.cjs /absolute/path/to/project` prints first-try pass rates from closed phases. The report is read-only and advisory. Earlier versions of these instructions ran in single-run and three-run trials on Claude Code with Sonnet 5.5; the current instructions and the record helper have not been run with a model. See [verification](VERIFICATION.md).
 
+The file can also record Git preferences: `Git autonomy` (`ask`, `commit`, `push`, or `pr`), `Branch`, `Commit`, `Commit style`, `Commit scopes`, and `Merge`. Plan raises them only when you want Kaylo to commit, push, or open pull requests, and records only your choices. In this version Kaylo does not act on them by itself, because automatic commits need a secret scan it does not include yet; it commits, pushes, or opens a pull request only when you ask. When it does, it commits only the work's own changes, leaves your staged, unstaged, and untracked work alone, and uses one pull request per phase. See [Git workflow](skills/build/references/git.md) and [pull requests and issues](skills/build/references/pull-requests.md).
+
 Work directly when that is sufficient; use one worker at a time when helpful. Plain `/kaylo:build phase` stays sequential. On Claude Code, an explicit request to build the phase in parallel may run up to two ready tasks together when their files and mutable check resources are disjoint; uncertain or overlapping work stays sequential. Other hosts keep the sequential loop. The guiding assistant maintains `ROADMAP.md` and the phase plans, inspects each worker's actual changes, and runs shared checks after a parallel wave. Native delegation is optional and never implies cross-vendor subscription access. Narrow uncertain work before giving it to a smaller model; no prompt guarantees every model can complete every task.
 
 Delegated builds record the starting workspace state, confirm dependencies are present, and keep one owner for assigned implementation files. Workers return compact acceptance and verification evidence, embedded instructions not followed, and resume details when needed. The guiding assistant records those details in the existing phase plan and checks combined behavior when tasks connect.
 
 ## Package and scope
 
-- `skills/`: five command entrypoints with optional references: build and review delegation, plan's project gates and foundation assessment, and close's CI evidence.
+- `skills/`: five command entrypoints with optional references: build and review delegation, build's Git workflow and pull request guidance, plan's project gates and foundation assessment, and close's CI evidence.
 - `agents/`: three shared worker briefs; `claude-agents/`: generated native Claude adapters with identical instruction bodies.
 - `templates/`: optional PRD, roadmap, and phase plan starting points.
 - `.claude-plugin/`, `.codex-plugin/`, `plugin.json`, `.agents/plugins/`: native packaging for Claude, Codex, and Antigravity, and the released Codex catalog. OpenCode loads the shared skills directory directly.
 - `gemini-extension.json`: native Gemini packaging of the shared skills.
 - `development/`: the separate local Codex catalog and ignored generated package.
 - `hooks/`: the optional reminder; no workflow runtime or persistent state.
-- `scripts/`: plan/package validators, the plan record helper, the read-only dispatch report, the read-only `.kaylo/gates` reader and CI evidence checker, the Claude agent adapter generator, and local development staging; `tests/`: validator fixtures and behavioral trial prompts.
+- `scripts/`: plan/package validators, the plan record helper, the read-only dispatch report, the read-only `.kaylo/gates` and `.kaylo/preferences.md` readers, the CI evidence and commit message checkers, the phase size report, the Claude agent adapter generator, and local development staging; `tests/`: validator fixtures and behavioral trial prompts.
 
 The installer runs native host commands, with one verified package copy and one
 global config entry for OpenCode. It adds no model router or terminal
