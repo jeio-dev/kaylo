@@ -4020,6 +4020,56 @@ No model call, new sandbox probe, full transcript audit, native manifest
 validation, or installation check was run. These checks establish package
 structure and documentation consistency, not additional model behavior.
 
+## Issues #107–#112 specification review — 2026-10-10
+
+Reviewed the six existing-project adoption proposals and their delivery order
+against #106, #90, #98–#103, and repository HEAD
+`5db91f74c46cf2bfedc45c840b6da803907ac638`. No blocking specification finding
+was identified. Posted findings on each issue:
+[#107](https://github.com/jeio-dev/kaylo/issues/107#issuecomment-6105919215),
+[#108](https://github.com/jeio-dev/kaylo/issues/108#issuecomment-6105919428),
+[#109](https://github.com/jeio-dev/kaylo/issues/109#issuecomment-6105919647),
+[#110](https://github.com/jeio-dev/kaylo/issues/110#issuecomment-6105919884),
+[#111](https://github.com/jeio-dev/kaylo/issues/111#issuecomment-6105920161), and
+[#112](https://github.com/jeio-dev/kaylo/issues/112#issuecomment-6105920371).
+
+Two non-blocking recommendations remain for implementation/verification:
+#109 should explicitly fixture a disposable baseline containing relevant
+staged, unstaged, and untracked working inputs rather than a clean HEAD;
+#111/#112 should explicitly carry forward #90's minimum-compatible-reader
+and participating-session/update boundary. Current skills and plan/report
+scripts still assume root `ROADMAP.md`; new record/location support cannot
+retroactively protect older readers.
+
+With Node v24.21.0, `node scripts/validate-package.cjs` and
+`node --test tests/*.test.cjs` passed (233 passed, none failed or skipped).
+`git diff --check` passed on the reviewed clean checkout and after this
+record was added. These checks establish current package/test health, not
+implementation or acceptance of the proposed adoption features. No adoption
+fixture or live model/worker trial, native manifest validation, or isolated
+installation/update check ran. Only this local verification record changed;
+no implementation, commit, push, tag, or release was performed.
+
+### Specification follow-up recheck — 2026-10-10
+
+Re-read the updated #109, #111, #112, and tracker #106 at unchanged HEAD
+`5db91f74c46cf2bfedc45c840b6da803907ac638`. R1 is resolved at the specification
+level: #109 requires verified working-input fidelity, refusal on failed or
+stale capture, and explicit uncommitted/untracked outcome fixtures. R2 is
+resolved at the specification level: #111 specifies minimum-reader identity,
+participating-resource compatibility, writer blockers, session refresh, and
+older-reader limits. #112 includes both in its final matrix/guidance, and
+#106 preserves the distinction between specification alignment and actual
+implementation. The three original review comments are marked resolved.
+No new specification finding was identified.
+Posted the [recheck on #112](https://github.com/jeio-dev/kaylo/issues/112#issuecomment-6105953933).
+
+No package/Node tests were rerun; no new fixture, model/worker, native
+manifest, or installation/update trial ran. The earlier 233-test result
+remains evidence of the previously checked repository. `git diff --check`
+passed after this record update. Implementation and behavioral verification
+of these requirements remain pending.
+
 
 ## 2026-10-11 — #83 corrected-harness acceptance gate stopped on native access
 
