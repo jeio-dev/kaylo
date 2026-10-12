@@ -1723,6 +1723,59 @@ of earlier #83 instructions, and the archived record locations.
 passed 264 of 264, and `git diff --check` passed. Native manifest validators
 were not run because no manifest changed. No model behavior was checked.
 
+## Project gates, foundation assessment, sensitivity, and CI evidence (#84) — 2026-10-11
+
+Implementation on branch `issue-84-gates-foundation` from `main` at `173a2b4`,
+following the local five-deliverable plan for the revised #84 specification:
+the `.kaylo/gates` parser and shared gates reference, scoped versus full check
+lifecycle in plan, build, review, close and build delegation, the foundation
+assessment reference, PRD data sensitivity and phase threat notes, and the CI
+evidence checker with its close reference. All five deliverables went into
+one branch and PR at the maintainer's request, one commit per deliverable. No
+worker brief changed, so `claude-agents/` was not regenerated.
+
+Observed on Linux (WSL2) with Node 24.21.0:
+
+- `node scripts/validate-package.cjs` passed (five shared skills, matching
+  v0.11.0 versions and catalogs).
+- `node --test tests/*.test.cjs`: 297 tests, 297 pass, 0 skipped. New:
+  `tests/read-gates.test.cjs` (16), `tests/check-ci-evidence.test.cjs` (13),
+  `tests/foundation.test.cjs` (4). The package inventory test packed the
+  working tree, including the new scripts and references, and
+  `validate-package.cjs --installed` matched the extracted tarball byte for byte.
+- `claude plugin validate .claude-plugin/plugin.json --strict` and
+  `claude plugin validate .claude-plugin/marketplace.json --strict` passed on
+  Claude Code 2.1.296; `agy plugin validate .` passed on Antigravity CLI 1.3.1
+  (5 skills, 3 agents); `git diff --check` passed.
+- All 35 relative links in the changed Markdown files resolve.
+
+What the fixtures establish: the gates grammar, diagnostics, absence versus
+present-but-broken references (dangling links, directories, unreadable,
+non-UTF-8 and oversized files, a `.kaylo` that is not a directory), project
+containment through symlinks, changed-reference detection through `--expect`,
+and that a canary command is neither executed nor echoed in diagnostics. For
+CI snapshots: exact repository and revision matching (a shortened or merge-test
+revision is not the head), every non-pass state, missing and duplicate names,
+advisory and mismatched observations, the empty required set with and without
+a reason, schema refusals that do not echo values, and that the checker
+imports no process or network module. For the foundation reference's
+`.gitignore` example, in disposable Git repositories with fake values:
+`.env.example`, a fake-only `.env.test`, and a nested example stay addable,
+secret-named files are ignored at any depth, and an already committed `.env`
+stays tracked and unchanged.
+
+Not run: any live model or worker session with the new instructions; install
+or update trials in isolated host profiles (resource parity is covered only by
+the packed-tarball comparison above); Codex, Gemini CLI, and OpenCode loading;
+real CI providers, branch-protection APIs, or `gh` output for a real commit.
+Plan, review, close, and foundation-assessment behavior, including
+authorization, secret-exposure, and closure-on-inadequate-evidence safety
+cases, is untested. Under the maintainer's 2026-10-11 timing decision, those
+behavioral trials are deferred until the #84–#90 series is built and known
+findings are resolved. #84 stays open until then, unless the maintainer
+records a package-only closure. No independent review of this implementation
+had run when this record was written.
+
 ## Public installation 0.11.0 — 2026-10-06
 
 PR #82 merged the release commits into `main` as `9a935bb`. The immutable
