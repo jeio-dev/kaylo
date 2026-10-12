@@ -4,6 +4,18 @@
 
 ### Notable Changes
 
+- **skills**: Optional indexed ADRs preserve consequential project decisions.
+  Plan, build, both review targets, and worker packets consume applicable records
+  and settled phase changes; once a phase's goal is met, close promotes final
+  decisions with retry recovery before phase check-off, creating
+  `.kaylo/decisions/` at the first promotion. Accepted bodies remain snapshots
+  while whole-record successors update the index. Existing projects require no
+  migration/backfill; a phase planned before this release promotes nothing. When pasted without the decisions contract, skills stop
+  affected work on present records rather than guess the contract. Consistency
+  checks are manual and do not claim technical write protection
+  ([#87](https://github.com/jeio-dev/kaylo/issues/87),
+  [#129](https://github.com/jeio-dev/kaylo/pull/129)).
+
 - **skills**: Close aggregates reviewed phase contributions into unreleased notes
   and gives an advisory release/wait verdict. Request `/kaylo:close release`,
   or select close and ask for guided release, to load manual preparation that

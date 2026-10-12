@@ -14,6 +14,15 @@ records from the first draft through 0.5.2 are in
 
 ## Current status — 0.11.0
 
+The #87 decision-record implementation adds a canonical optional ADR/index
+contract, manual consistency/promotion rules, and existing-entry-point/worker
+integration. The 2026-10-12 behavioral pass below has 55 manifest entries:
+49 executed once (42 PASS, 2 FAIL, 5 INCONCLUSIVE) and 6 dependent cases BLOCKED.
+Issue acceptance remains open and PR #129 remains draft. Case 54 has the separate
+correction and three passing focused observations recorded below; original trial
+grades remain historical. Project ADR checks are instructional, not part of the
+structural plan/package validators.
+
 The #86 guided-release implementation adds local metadata/reconciliation and
 manual preparation guidance. Its parsing/Git/package checks are recorded below;
 live host/model behavior remains deferred with the #84–#90 series. The released
@@ -37,6 +46,336 @@ Code 2.1.289 with Sonnet 5.5 and on Codex CLI 0.160.1 with GPT-6.1-Sol. The
 Codex grades are operator-reported. The PR #79 review spot-checked their saved
 command records and secret-token classifications but did not audit every
 transcript.
+
+## Issue #87 implementation — 2026-10-12
+
+Started from clean `main` at `0c815d85d9e1d203002bb3e0b88ca29372de3912`
+in the maintainer's checkout, on `feat/87-project-decisions`. No project PRD,
+ROADMAP or current phase plan exists in this contributor repository; implementation
+is scoped to the approved revised issue and the user's subsequent implementation,
+issue-update, branch commit and PR request. Contributor guidance stays local and
+ignored. No version/catalog/tag or session-start hook changes are included.
+
+The canonical contract is `skills/plan/references/decisions.md`; literal templates
+are `templates/DECISION.md` and `templates/DECISION-INDEX.md`. This first version
+uses the permitted bounded manual consistency checklist, not an ADR parser or
+writer. It integrates plan, direct/resumed build, both review targets, close,
+worker/manual packets, and foundation phase-local references. Close records
+source mappings and checks retry/interruption state before phase check-off.
+Shared brief changes originate in `agents/` and the Claude adapters were
+regenerated with `node scripts/sync-claude-agents.cjs`.
+
+Observed on Node 24.21.0:
+
+- `node scripts/validate-package.cjs` passed: five skills, unchanged consistent
+  v0.11.0 manifests/catalogs, generated adapter parity and canonical decision
+  resource/link reachability.
+- `node --test tests/validate-package.test.cjs` passed: 25 tests, including
+  mutation fixtures for missing ADR contract/templates and broken relative
+  consumer/template links. These check shipped resources, not model behavior.
+- `node --test tests/*.test.cjs` passed: 378 tests, zero failures/skips. Includes
+  legacy plan compatibility, isolated package exports/npm inventory and
+  OpenCode copy/install fixtures; no ADR parser or promotion helper is claimed.
+- Claude Code 2.1.296: both `claude plugin validate
+  .claude-plugin/plugin.json --strict` and `claude plugin validate
+  .claude-plugin/marketplace.json --strict` passed.
+- Antigravity CLI 1.3.1: `agy plugin validate .` passed, reporting five skills
+  and three agents. It skipped commands, MCP servers and hooks as not found;
+  this does not establish runtime hook or worker behavior.
+- `node scripts/stage-development.cjs` and `node
+  scripts/validate-package.cjs --installed development/package` passed: all
+  41 shared resources match at their relative paths. The generated development
+  copy excludes contributor guidance and changes no host profile/settings.
+- After final reference/workflow wording and this evidence record, reran
+  `node --test tests/validate-package.test.cjs tests/package-inventory.test.cjs`:
+  28 tests passed, zero failures/skips. Refreshed the staged package and repeated
+  installed resource comparison: all 41 resources match. This final check covers
+  the packaged bytes; the earlier full-suite result is reused for unchanged
+  implementation/test inputs outside those resource/document edits.
+- `git diff --check` passed.
+
+Direct inspection of the diff against #87's revised scope checked entry-point
+coverage, worker shared-state prohibitions, whole-record scope retention,
+separate acceptance/verification, close ordering, source-match retry handling,
+legacy absence versus corrupt records, and missing-baseline diagnostics. This
+is author inspection without a fresh independent reviewer. The operational
+convention choices (resource paths, numeric IDs, labelled record paragraphs,
+index columns and diagnostic kinds) implement the approved contract; they add
+no migration marker or new command/role. Full #88/#89 testing/environment
+strategy implementation is still owned by those issues; #87 supplies their
+phase-local and promotion mapping lifecycle.
+
+`tests/DECISION-TRIALS.md` specifies bounded live cases and grading checkpoints
+for authority, relevance/cross-area delivery, supersession, collisions,
+interrupted/repeated close, reopening, immutability, and host/resource limits.
+Those trials have **not run**. No new live model/worker execution, native-host
+install/update/discovery, controlled ADR-promotion behavioral fixture, public
+installation, migration, deployment, paid operation or release trial was run.
+Gemini CLI is unavailable on PATH; available Claude/Codex/Antigravity/OpenCode
+executables do not establish feature behavior. No trusted project ADR historical
+baseline was inspected, so historical immutability is not established. Markdown
+instructions and package parity are not enforcement or behavioral acceptance;
+issue acceptance boxes remain open and the PR is a draft pending review/trials.
+
+Git outcomes: committed implementation as
+`26d4e81eac7da5e90c319c7cfa074e16e74cf4e9`, pushed the attributable branch to
+`https://github.com/jeio-dev/kaylo.git`, and opened
+[draft PR #129](https://github.com/jeio-dev/kaylo/pull/129) against verified
+`main`. GitHub reported the PR open/draft with the expected head revision and
+no reported status checks; that is not a CI pass. Issue comments recorded start
+and progress, and its status now links the implementation/evidence without
+checking acceptance boxes. The user explicitly requested these Git/issue actions;
+Kaylo supplied no built-in secret scan and repository hooks were not bypassed.
+Later additions here and in CHANGELOG only link/report these outcomes; they do
+not change the implementation or tested shared resources.
+
+## Issue #87 behavioral-trial pass — 2026-10-12
+
+Candidate `94324a2326ad567002d76387e93e6ce685b88fd3`, clean
+`feat/87-project-decisions` in the maintainer's checkout. Read contributor guidance,
+`tests/DECISION-TRIALS.md`, the canonical decision contract and the implementation
+record above. No project PRD, ROADMAP or linked current phase plan exists here.
+No implementation was changed; unrelated work and local ignored guidance were
+preserved. The user authorized this verification pass, issue/PR updates, and
+attributable verification commit/push on this branch, not release publication.
+
+Expanded all 22 documented groups into **55 explicit entries** and announced
+that count before starting. **49 fresh model executions ran once; 42 PASS,
+2 FAIL, 5 INCONCLUSIVE; 6 dependent entries BLOCKED and not started.** No blanket
+repetition or replacement run occurred. Peak concurrent subjects: two. The
+complete [manifest](tests/decision-trials/2026-10-12-codex/manifest.json),
+[graded observations and limits](tests/decision-trials/2026-10-12-codex/RESULTS.md),
+and [receipts/byte comparisons](tests/decision-trials/2026-10-12-codex/results.json)
+are attributable verification records, not new implementation tests or helpers.
+
+Observed host: Codex CLI 0.162.1, CLI-selected `gpt-6.1-sol`, low reasoning,
+through the existing ChatGPT login/subscription. Backend returned model/snapshot
+identity was not exposed and is recorded unknown. Node 24.21.0, Git 2.53.0,
+Linux/WSL2. Each execution used a fresh ephemeral native model context and its
+own temporary profile, with separate mutable fixtures. Existing login credentials
+were copied privately into those profiles, API-key environment routes removed,
+and credential copies deleted after completion. No normal account/settings
+changes or alternative paid/unknown-billing route was used. Host built-in skills
+and account-synchronized catalogs were automatically present; observed Kaylo
+reads used candidate files, not the installed v0.11.0 Kaylo skill cache.
+
+The **full npm candidate package** was extracted at
+`/tmp/kaylo-87-subjects-lxv5_os4/package`. Before models ran, package validation
+passed and all **41 shared resources matched**; contributor guidance was absent.
+The focused package/resource suite passed **28/28**, zero skips/failures. These
+are package checks, separate from the real model executions. Greeting/session
+seeds used actual local commands and an explicitly disclosed operator direct
+implementation review; it was not an independent model review. Expected grading
+material remained outside subject workspaces/prompts. All 49 host processes
+exited 0; host completion does not imply behavioral PASS.
+
+Failures remain visible:
+
+- **25:** named the indexed missing ADR and kept T1 open, but emitted
+  `workspace-missing`/`historical-change` rather than the documented
+  unreadable/broken-link diagnostic. This is a narrow diagnostic failure;
+  it did not accept affected work or overwrite history.
+- **54:** accepted T1 with present ADRs and missing canonical resources, using
+  structural manual fallback without establishing the complete ADR manual
+  contract or providing the required specific full-package/reference handoff.
+  The product command passed; decision-resource coverage was incomplete.
+
+Inconclusive: **01/02** exposed operator-seeded Git-visible ADR deletions instead
+of clean optional absence; **26** inferred deletion without inspecting an actual
+unreadable directory at the ADR path; **39** rejected the operator's testing
+fixture consequentiality because it reused irrelevant browser/session/service
+objective boilerplate; **47** stopped on phase scope/threshold ambiguity before
+supersession. These are not reported as successful checkpoint coverage or
+implementation promotion defects. **40–45** stopped because 39 produced no
+qualifying promotion artifact; interrupted/repeated/reopened closure remains
+untested. No completed case was fixed or rerun. Only unstarted fixtures were
+corrected; attempted late corrections stopped before altering running fixtures.
+
+The actual build/review/manual packets from **15/17/19** were delivered unchanged
+to fresh shared-brief workers **16/18/20** in their actual separate directories.
+All three inspected missing/conflicting authority and changed no files. The
+first two delivery fixtures also changed an accepted body, so their observed
+coverage combines historical-change and workspace-delivery faults; the manual
+fixture used a new uncommitted record. These were generic fresh CLI contexts,
+not registered native Kaylo workers. Every initial readable ADR remained
+byte-identical after its subject. That establishes controlled-run preservation,
+not past immutability without trusted history; no-baseline subjects disclosed
+that limit. Supersession/factual correction created successors and changed index
+status without changing accepted bodies in qualifying runs.
+
+Recording-limit subjects retained product passes and precise resume actions,
+but relied on supplied restrictions backed by read-only temporary paths; no
+recording write, actual OS denial, simultaneous writer or crash was exercised.
+Node absence in **55** was actual: `login=false` preserved a PATH without Node,
+and product/validator commands exited 127; T1 reopened and closure remained
+open. Authorization stubs in **52/53** never ran. Review subjects repeatedly
+observed size-helper stalls and used Git-count fallbacks; events retain the
+stalls/interruption/timeouts. These limitations were not repaired during the pass.
+
+Private prompts, events/transcripts, actual command outcomes, before/after
+fixtures, Git state/diffs, ADR hashes and packets are retained under ignored
+`.local/trials/decision-87-20261012/`; temporary projects/profiles are under
+`/tmp/kaylo-87-subjects-lxv5_os4/`. Published receipts hash private evidence rather
+than releasing transcripts. Run interval: 2026-10-12 16:52:10–17:35:53 UTC.
+One run establishes observations, not reliability. Native candidate install,
+discovery/update, public installation, other hosts/models, actual interruption
+recovery or real external-action lifecycles remain untested. Full Node/native
+manifest suites were not rerun here; earlier dated results are not relabelled
+as current behavioral evidence. `git diff --check` passed for these records.
+Issue acceptance stays open and PR #129 stays draft. Next: address missing-resource
+fallback failure 54 separately, then run a focused recheck with corrected
+inconclusive fixtures.
+
+## PR #129 third review fixes — 2026-10-12
+
+Uncommitted follow-up on `feat/87-project-decisions` from clean `fa5775f`,
+addressing all ten comments of a third model code review of PR #129 at the
+user's request. Close runs the structural plan check before promotion, so a
+structural failure promotes nothing; the post-Completion recheck corrects only
+that record. The contract gives one recorded renumbering for IDs accepted on
+two merged branches: the first accepted keeps its ID, the other moves above the
+largest with only its heading changed. Plan's copy of the resource fallback
+records the stop under Agreement and Next step instead of task fields. The
+researcher brief answers without decisions when none are supplied. The copied
+fallback is shorter but keeps every stopping rule from the case 54 fix; the
+contract's own copy matches. The validator's copied-block check now also covers
+the worker briefs and the build/review packet paragraph, replacing the separate
+helpers; a stale rewording fails by name. The decision-consumer list is shared
+with its test. The link scan ignores indented and tilde fences and HTML comments
+and reads reference definitions.
+
+`case54-followup.json` and two entries above no longer carry the maintainer's
+home-directory paths; trial `/tmp` directory names remain. The trial JSON still
+ships: excluding it from npm alone broke the npm/Git-export parity test, and
+Git-based installers copy tracked files regardless, so the `files` change was
+reverted.
+
+Observed: package validation passed. Node 24.21.0: full suite 386/386 passed,
+including new tests for stale rewordings, hidden and reference-style links, and
+the updated brief/packet drift messages; zero skips/failures. Claude Code
+2.1.296 strict plugin/marketplace validators and Antigravity CLI 1.3.1 native
+manifest validator passed. `git diff --check` passed. The researcher brief
+changed; Claude adapters were regenerated and parity passed.
+
+Limits: the shortened fallback and plan rewording were not re-run against the
+case 54 trial; its pass covers the earlier, longer wording. No model has run on
+any wording revised in the three review rounds. The link scan is bounded, not a
+Markdown parser. Windows remains unchecked.
+
+## PR #129 second review fixes — 2026-10-12
+
+Uncommitted follow-up on `feat/87-project-decisions` from clean `6e59391`,
+addressing all nine comments of a second model code review of PR #129 at the
+user's request. A phase planned without `DEC` identities promotes nothing and
+is not relabelled. Promotion allocates above the largest ID, never a gap. The
+ADR snapshot restates the reviewed Design/Agreement and routes to plan instead
+of adding unreviewed text. File creation uses a create-only write where offered,
+otherwise an immediate absence check plus a read-back, with any appearance or
+difference a `source-conflict`. The index template drops its placeholder
+comment, whose rules the contract already states. Review's no-reference
+fallback now hands reviewers the applicable decisions. The validator compares
+absolute link targets (as before #129's first fix round), ignores links inside
+code, accepts link titles, and checks the briefs' Project decisions sections
+and the build/review packet paragraph for drift.
+
+Observed: package validation passed. Node 24.21.0: full suite 384/384 passed,
+including three new tests for code-only/titled links, brief drift and packet
+drift; zero skips/failures. Claude Code 2.1.296 strict plugin/marketplace
+validators and Antigravity CLI 1.3.1 native manifest validator passed.
+`git diff --check` passed. No worker brief changed.
+
+Limits: the Windows path fix was not run on Windows; it restores the
+absolute-path comparison the original check used. All earlier limits stand: no
+model has run on the revised promotion, legacy-phase, ID-allocation, creation or
+review-fallback wording.
+
+## PR #129 review fixes — 2026-10-12
+
+Uncommitted follow-up on `feat/87-project-decisions` from clean
+`432747e`, addressing all ten comments of a model code review of PR #129 at
+the user's request. Close now applies its closure rules first and promotes
+decisions only once the phase goal is met; a close that routes elsewhere
+promotes nothing. The entry paragraph and contract say close creates
+`.kaylo/decisions/` at the first required promotion. Foundation guidance no
+longer says closure is independent of ADRs. The reviewer handoff gains an
+applicable-decisions Supply item, with its paragraph moved above the list.
+Phase-local decisions use `DEC1`, `DEC2`, … to stay distinct from dispatch
+IDs, including in the PHASE/DECISION templates and the trial protocol. README
+names the decision templates; the changelog folds the fallback fix into the
+#87 entry. The validator merges its required-resource loops, names a missing
+decision consumer instead of raising ENOENT, parses contract links once, and
+registers the copied entry paragraph (plan reworded for its own link path).
+
+Observed: package validation passed. Node 24.21.0: full suite 381/381 passed,
+including two new tests for the named missing-consumer error and entry-paragraph
+drift; zero skips/failures. Claude Code 2.1.296 strict plugin/marketplace
+validators and Antigravity CLI 1.3.1 native manifest validator passed.
+`git diff --check` passed. No worker brief changed, so adapters needed no
+regeneration. These checks cover package resources and copy alignment only.
+
+Limits: the 2026-10-12 behavioral trials and case 54 follow-up ran on earlier
+wording with `D1`-style decision IDs and promotion before the goal check; no
+model was re-run on this wording. Promotion ordering, first-promotion creation
+and the reviewer packet item are instruction changes without behavioral
+evidence. No installed-package parity, public installation or other host was
+checked.
+
+## Issue #87 case 54 resource-fallback correction — 2026-10-12
+
+Separate follow-up on `feat/87-project-decisions` from clean
+`b7e485c02af36a21bd397cf1c11041d8dc7206b2`, authorized by the user's request to
+address case 54. The pasted skill previously referred to a missing contract's
+fallback, so a model accepted work using structural inspection alone. The four
+decision-consuming skills now include the stopping rule directly: present records
+or required promotion need an identified complete canonical contract; otherwise
+leave affected work open before implementation/readiness/acceptance/closure,
+record missing resources, and name the full package/reference/template-content
+handoff. Existing ADRs or structural validation cannot establish that contract.
+Optional absence keeps the legacy path. The canonical reference matches it.
+
+Package validation now enforces presence/alignment of these copied paragraphs;
+a new mutation test rejects missing and drifted fallback copies. That checks
+package instructions, not model behavior. No worker brief changed; generated
+adapter parity passed without regeneration. No versions/catalogs/hooks changed.
+Only attributable implementation, tests, changelog and verification records were
+edited; no unrelated work was present or discarded.
+
+Observed: package validation and extracted full-package parity passed with
+41 matching shared resources. Node 24.21.0: all 378 pre-existing full-suite tests
+passed, then the expanded package suite passed 26/26 including the new mutation
+test; zero skips/failures. Claude Code 2.1.296 strict plugin/marketplace validators
+and Antigravity CLI 1.3.1 native manifest validator passed. `git diff --check`
+passed. Package/manifest checks do not establish instruction following.
+
+**Three focused fresh model executions, one each: 3 PASS, no failures/limits
+preventing the checkpoints.** Present ADRs plus missing contract kept T1 open
+with a concrete unreadable diagnostic and full-package/content handoff; no product
+edit or acceptance occurred. Clean absent records retained the legacy build;
+complete supplied contract/templates allowed manual decision/structure inspection
+when helpers were unavailable. Product commands passed for both positive cases,
+and all existing ADR/index bytes stayed unchanged. An optional nested spawnSync
+probe in the absence case failed EPERM; the direct command and equivalent
+in-process assertion passed. No nested-process support is claimed.
+
+Codex CLI 0.162.1, CLI-selected gpt-6.1-sol (low), existing ChatGPT login;
+backend resolved model/snapshot unknown because not exposed. At most two subjects
+concurrently, fresh ephemeral contexts and isolated temporary profiles with
+separate mutable fixtures; normal settings and account routes unchanged. Credential
+copies deleted afterward. Full candidate package:
+`/tmp/kaylo-87-fallback-ju87h0x8/package`, base b7e485c plus the private recorded
+candidate patch/inventory. Raw prompts/events/outcomes, fixture snapshots and
+candidate evidence are private in
+`.local/trials/decision-87-case54-followup-20261012/`. The
+[focused report](tests/decision-trials/2026-10-12-codex/CASE54-FOLLOWUP.md) and
+[receipts](tests/decision-trials/2026-10-12-codex/case54-followup.json) record exact
+scope, hashes, outputs and limits without publishing transcripts.
+
+This follow-up is separate from the completed pass; its original grades are
+preserved. Live observations cover build, while other entry points have instruction
+parity only. No independent code review, native candidate install/update/discovery,
+other model/host, public installation or interrupted/reopened closure was tested.
+One observation is not reliability. Failure 25 and other original coverage gaps
+remain open; issue #87 remains open and PR #129 draft.
 
 ## Issue #87 specification review — 2026-10-07
 
@@ -2225,3 +2564,93 @@ five-host native install/update, real publication/CI/scan/deployment and hotfix
 reintegration trials remain unrun/deferred as previously recorded. No worker
 brief or release version/catalog changed; local contributor guidance remains
 ignored and excluded from staging/distribution.
+
+## PR #129 review against issue #87 — 2026-10-12
+
+Reviewed draft PR #129 at `6f8736c61ece5bc8570a46b96f5e500b9b60d9c0`
+against base `0c815d85d9e1d203002bb3e0b88ca29372de3912` and issue #87's
+approved revised specification. GitHub metadata and the local HEAD matched;
+the initial index/worktree was clean. Read the canonical decision contract,
+templates, skill entry points, worker briefs and delegation, package validator
+and mutation tests, public behavioral receipts and stated limits. This was a
+direct review in a new invoking conversation, without a delegated reviewer or
+fresh worker/model behavioral trial. No implementation corrections or GitHub
+review/comment publication were performed.
+
+Two blocking findings remain on the reviewed head:
+
+- Close workflow step 4 runs its `--closing` structural check before writing
+  Completion. A disposable otherwise-valid phase with a checked task and Review
+  passed ordinary validation but exited 1 under `--closing` with either empty
+  Completion or `Not complete.`: `Phase closure needs a substantive Completion
+  record`. The identical fixture with substantive Completion passed both modes.
+  This reproduces the prerequisite cycle in the written workflow, including
+  legacy phases with no ADR promotion. The pre-promotion check must not require
+  the Completion that subsequent steps create; retain full closing validation
+  after that record is written.
+- The accepted-branch ID-collision recovery moves an already accepted file and
+  changes its heading ID, contrary to permanent IDs/paths and immutable bodies.
+  A disposable link probe applied the specified move from `0003-beta.md` to
+  `0005-beta.md` while preserving an accepted `0004` successor: the original
+  accepted path disappeared, the moved body differed, and the successor's
+  predecessor link no longer resolved. Index/Completion-only updates cannot
+  repair that immutable incoming link. Keep the conflict open for an explicitly
+  agreed reconciliation policy rather than prescribe mutation of accepted
+  history. The probe checks the documented filesystem/link consequences, not
+  model instruction following or a complete ADR parser.
+
+Observed with Node 24.21.0 on Linux:
+
+- `node scripts/validate-package.cjs`: passed.
+- `node --test tests/*.test.cjs`: 386 passed, 0 failed, 0 skipped.
+- Claude Code 2.1.296: both strict plugin/marketplace manifest validators passed.
+- Antigravity CLI 1.3.1: `agy plugin validate .` passed (5 skills, 3 agents;
+  commands, mcpServers and hooks reported skipped).
+- `git diff --check` and `git diff origin/main...HEAD --check`: passed before
+  this evidence-only edit; whitespace rechecked afterward.
+
+Disposable probes were removed. These checks establish structural/resource and
+specific workflow/link facts, not live adherence or overall acceptance of #87.
+No native candidate install/update/discovery, public installation, live model
+or worker trial, race/crash, interrupted/reopened closure, or historical
+immutability audit ran. Gemini CLI was unavailable on PATH. Existing behavioral
+grades and coverage gaps remain historical; the PR still needs changes.
+
+## PR #129 fourth review fixes — 2026-10-12
+
+Applied both blocking findings from the review above on top of `6f8736c`:
+
+- Close now runs a pre-promotion structural check in ordinary mode (without
+  `--closing`) before promotion, because Completion is not written yet; the
+  closure rules separately establish finished tasks, no `Status: Needs
+  revision`, and a Review record. After writing Completion, close runs the full
+  `--closing` check before checking `ROADMAP.md`. `skills/close/SKILL.md` steps
+  4–5, its structural-check section, and the decisions contract's promotion
+  prerequisites and step 5 now name the two modes. The shared Node-unavailable
+  fallback paragraph is unchanged (the package validator requires it to match
+  build); close's own paragraph says a manual pre-promotion inspection omits only
+  the Completion requirement.
+- The accepted-branch ID-collision recovery no longer moves, renumbers, or edits
+  either accepted record or its incoming links. With no reconciliation policy in
+  this version, close records `Decision consistency: identity-collision` and
+  keeps work that needs either record, or trustworthy selection, open until
+  the user agrees a policy that preserves accepted bodies, paths, and links.
+
+Observed with Node 24.21.0 on Linux:
+
+- Disposable P1 probe (one checked task, Review record, unchecked phase): with
+  empty or `Not complete.` Completion, ordinary mode exited 0 and `--closing`
+  exited 1 with `Phase closure needs a substantive Completion record`; with a
+  substantive Completion both modes exited 0. The probe was removed.
+- `node scripts/validate-package.cjs`: passed (after keeping the shared
+  fallback paragraph identical to build's; the first run failed on that drift).
+- `node --test tests/*.test.cjs`: 386 passed, 0 failed, 0 skipped.
+- Claude Code 2.1.296: plugin and marketplace manifest validators passed.
+- Antigravity CLI 1.3.1: `agy plugin validate .` passed (5 skills, 3 agents;
+  commands, mcpServers and hooks reported skipped).
+- `git diff --check`: passed.
+
+These checks establish the written workflow order and validator modes, not
+model instruction following. No live model or worker trial, collision
+reconciliation trial, native install/update, or public installation ran. The
+fixes were pushed in `0dfee51` and are not yet re-reviewed.

@@ -21,6 +21,16 @@ A pause records no dispatch, because no reviewer ran; record the pause, the miss
 
 Use [the reviewer brief](../../../agents/reviewer.md), resolved relative to this reference file, not the user's project. Observed registration: Claude Code lists Kaylo's native brief as `kaylo:reviewer`, Antigravity lists it as `reviewer`, and Gemini CLI's agent loader returns it as `reviewer`. Check that a bare name resolves to Kaylo's brief before using it, as described in [WORKERS.md](../../../WORKERS.md). For a manual handoff, read and paste the brief's body. If the necessary brief is missing, ask for its location or content; do not invent it.
 
+Resolve [project decisions](../../plan/references/decisions.md) before preparing
+this packet. In the packet's applicable-decisions item below, include
+applicable ADR links and needed content, project-wide/cross-area rules,
+replacement chains and explicit settled phase-local changes with Design/Agreement
+provenance. Confirm records exist in the actual worker/manual-handoff workspace;
+when supplying snapshots instead, identify sources and limits. Missing or
+ambiguous required authority blocks the assignment. Do not include all phase
+history by default. Workers report conflicts/corrections and never allocate IDs,
+promote decisions, or edit accepted ADRs/the shared index.
+
 Supply:
 
 - The PRD if present, and the current phase plan, including existing review comments and their IDs.
@@ -28,6 +38,7 @@ Supply:
 - Exact files or diff being reviewed, including untracked files in scope. For a plan check the target is the phase plan itself; say whether the phase is headed for a phase-wide build, where no one watches each task.
 - The build's recorded starting state when available, so the reviewer can distinguish assigned changes from pre-existing edits. If it is unavailable, disclose the attribution limit and still inspect relevant behavior.
 - Requirements and facts, without the author's defense of the approach.
+- Applicable project decisions, resolved and supplied as described above.
 - For a phase review, earlier passing task reviews with their covered inputs, so the reviewer can reuse unchanged coverage and refresh what changed.
 
 The reviewer returns review comments, readiness, coverage, limitations, and embedded instructions not followed without editing shared plan state. The guiding assistant inspects the artifacts and evidence and records the results in the current phase plan.

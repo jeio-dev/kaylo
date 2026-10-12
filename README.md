@@ -18,6 +18,15 @@ Start with define, then plan. A concrete small change can start with plan. Subst
 
 After closure, close reconciles reviewed phase release notes and recommends releasing or waiting. Request `/kaylo:close release`, where supported, or select Kaylo close and ask for guided release. It works with a closed current phase and future planned phases; an open current phase must close first. The procedure loads only on request and follows your project's version policy and release mechanics. Confirming a version or entering preparation does not authorize tags, pushes, publication, or deployment. Legacy plans stay valid without release metadata; incomplete classification remains pending. See [release guidance](skills/close/references/release.md) and [metadata/reconciliation](skills/close/references/release-notes.md).
 
+Consequential project choices can be preserved in optional `.kaylo/decisions/`
+records: one immutable acceptance snapshot per decision and an index holding
+current status. Settled phase decisions govern work before close promotes them;
+changes explicitly replace whole records while retaining still-applicable rules.
+Plan, build, review, and close load relevant records and cross-area constraints.
+Existing projects need no backfill or migration. Consistency checks are manual;
+writable Markdown is not technical write protection. See the
+[project-decisions contract](skills/plan/references/decisions.md).
+
 The assistant investigates repository facts, recommends an approach, and asks a short numbered round only for consequential decisions. Tasks include acceptance criteria and a test plan with meaningful checks. After two unsuccessful repairs of the same failure, the assistant preserves the work and recommends a different next action. Unverified work stays open, and a known limitation is accepted only with your recorded decision.
 
 Kaylo uses common software-team names for its files and fields: a PRD, a roadmap, acceptance criteria, and blocking or non-blocking review comments. The [glossary](GLOSSARY.md) explains each term, Kaylo's own words such as `Status:`, the plan check, and phase build readiness, where Kaylo differs from common practice, and which team practices Kaylo does not cover yet.
@@ -393,9 +402,9 @@ Delegated builds record the starting workspace state, confirm dependencies are p
 
 ## Package and scope
 
-- `skills/`: five command entrypoints with optional references: build and review delegation, build's Git workflow and pull request guidance, plan's project gates and foundation assessment, and close's CI evidence, release metadata, and lazily loaded guided-release procedure.
+- `skills/`: five command entrypoints with optional references: build and review delegation, build's Git workflow and pull request guidance, plan's project gates, foundation assessment, and project-decisions contract, and close's CI evidence, release metadata, and lazily loaded guided-release procedure.
 - `agents/`: three shared worker briefs; `claude-agents/`: generated native Claude adapters with identical instruction bodies.
-- `templates/`: optional PRD, roadmap, and phase plan starting points.
+- `templates/`: optional PRD, roadmap, and phase plan starting points, plus the ADR and decision-index templates close uses when promoting project decisions.
 - `.claude-plugin/`, `.codex-plugin/`, `plugin.json`, `.agents/plugins/`: native packaging for Claude, Codex, and Antigravity, and the released Codex catalog. OpenCode loads the shared skills directory directly.
 - `gemini-extension.json`: native Gemini packaging of the shared skills.
 - `development/`: the separate local Codex catalog and ignored generated package.

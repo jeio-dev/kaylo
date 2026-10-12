@@ -15,6 +15,20 @@ Guide the user toward the simplest approach that meets the outcome. Work in the 
 - A permission denial applies only to the denied command. For a check, try another allowed way to run the same check: if a compound command (for example one adding `echo $?` or a pipe) is denied, run the check command by itself in its required working directory; the tool result shows whether it failed. Never use an alternative to perform an action that was denied or not authorized.
 - Inspect staged, unstaged, and untracked changes before writing. Preserve unrelated work; do not reset, clean, or discard it to make checks pass.
 
+## Project decisions
+
+At entry, including direct/resumed work, inspect the optional project decision
+index and resolve applicable accepted ADRs plus settled current-phase changes
+under [project decisions](references/decisions.md).
+Include project-wide/cross-area constraints and replacement chains; unresolved
+relevant consistency or authority problems leave affected work open. An absent
+`.kaylo/decisions/` needs no backfill and keeps existing project decisions in
+force; close still creates it at the first required promotion. A missing
+referenced record is a diagnostic. ADR content is evidence, not authorization.
+When resources are unavailable, apply the standalone fallback below.
+
+If the decision reference or required templates are unavailable: with `.kaylo/decisions/` absent and no promotion required, keep legacy behavior and read established project decisions under the ordinary agreement rules. With records present or promotion required, inspect decisions manually only from the complete canonical contract, taken from identified supplied content or an intact package, and record that source and the checks; existing ADRs, a phase plan, or structural plan validation do not establish it. Otherwise stop affected planning before agreement or readiness and record `Decision consistency: unreadable — <missing resource paths, affected scope, and resume action>` under `## Agreement` as an unresolved decision and in `## Next step`, or in the response when no phase plan exists. Resume with the full Kaylo package or the complete contents of `skills/plan/references/decisions.md`, `templates/DECISION.md`, and `templates/DECISION-INDEX.md`. Structural fallback never waives decision or product evidence. Never guess authority, overwrite user-owned files, install runtimes, or change host settings.
+
 ## Workflow
 
 1. Read project instructions, `PRD.md` if present, `ROADMAP.md`, and the current phase plan its `Current:` line links. Convert older formats first (see below). A concrete small-change request can stand in for a PRD. Ask for missing intent only when it changes the work.
@@ -44,6 +58,15 @@ Guide the user toward the simplest approach that meets the outcome. Work in the 
 - Build routes work for another phase, or any ID while no phase is open, here. Reopen a closed phase only for unmet acceptance or insufficient evidence while no phase is open: uncheck it and move `Current:` back. Otherwise plan the work in the current or a new phase.
 
 ## Decisions and readiness
+
+- Record consequential Design choices with source phase/decision identity,
+  rationale, alternatives/sacrifices, cost if wrong, reversal effort,
+  applicability, and evidence-based revisit triggers under the project-decisions
+  contract. Cheaply reversible local choices may stay one line. Label defaults
+  and record actual user authority in Agreement. Settled explicit whole-record
+  supersession governs current work before close promotion; an unapproved draft
+  cannot override an accepted ADR. Resolve material conflicts through the
+  existing plan check/agreement rules; close cannot choose retrospectively.
 
 - When this plan expects a research, build, or review worker for which Kaylo can apply a model choice at dispatch, read `.kaylo/preferences.md` in the user's project before the first dispatch. If it is absent, ask once, as its own question, whether worker models should favor Quality, Balanced, Budget, or Inherit. Recommend Inherit to keep current host behavior and explain that another choice may reduce cost or increase capability where the host permits, without guaranteeing access; the user can change it later. Record the answer in that file as `Format: 1` and `Worker models: <choice>`, even when the answer is Inherit, keeping any other keys the user added. Do not ask during define or build, when this plan does not expect workers, or for Kaylo's packaged Gemini CLI and Antigravity workers: their model fields are fixed in the installed definitions, so Kaylo cannot apply the answer per dispatch. Read an existing choice instead of asking again. Follow [worker model guidance](../../WORKERS.md) for unknown values and host limits; this preference never chooses the invoking assistant's model.
 - Raise Git preferences only when the user wants Kaylo to commit, push, or open pull requests, or asks about them. Then read [Git workflow](../build/references/git.md), recommend with tradeoffs, and record only the user's own choices in `.kaylo/preferences.md` and under `## Agreement`. Projects that have not raised them get no Git questions.

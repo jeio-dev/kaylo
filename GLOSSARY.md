@@ -61,6 +61,18 @@ A phase is a stretch of work toward one goal, as in "we'll do that in phase 2". 
 
 Sources: [Wikipedia: Milestone](https://en.wikipedia.org/wiki/Milestone_(project_management)), [GitHub milestones](https://docs.github.com/en/issues/using-labels-and-milestones-to-track-work/about-milestones), [Scrum Guide](https://scrumguides.org/scrum-guide.html)
 
+### Architecture decision record (ADR)
+
+An optional project ADR in `.kaylo/decisions/` is an immutable acceptance snapshot
+of a consequential decision promoted at close. The editable index holds current
+status; a whole-record successor replaces a decision without editing history.
+Settled phase-local Design decisions govern current work before promotion, with
+actual authority in Agreement. Phase/decision identity is separate from worker
+dispatch identity. See the [canonical contract](skills/plan/references/decisions.md).
+This is a workflow promise, not write protection. ADR syntax, authority,
+consistency, promotion, and historical immutability are manual checks in this
+version; `validate-plan.cjs` does not inspect these records.
+
 ### Design
 
 A design doc records "the high level implementation strategy and key design decisions with emphasis on the trade-offs". A trade-off is what you give up to get something else, such as simpler code at the cost of speed. Only the `## Design` section of a Kaylo phase plan plays that role. The whole phase plan is not a design doc. Google's design docs also cover goals and non-goals, and alternatives that were considered.

@@ -5,16 +5,26 @@ const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
 const root = path.resolve(__dirname, '..');
-const args = process.argv.slice(2);
-if (args.length && (args.length !== 2 || args[0] !== '--installed')) {
-  console.error('Usage: node scripts/validate-package.cjs [--installed /path/to/package]');
-  process.exit(2);
-}
 const read = name => JSON.parse(fs.readFileSync(path.join(root, name), 'utf8'));
 const skills = ['build', 'close', 'define', 'plan', 'review'];
 const payload = ['skills', 'agents', 'claude-agents', 'templates', 'scripts', 'hooks'];
 // Root files that skills or briefs load by relative path.
 const rootResources = ['WORKERS.md'];
+// Files that must link the canonical project-decisions contract.
+const decisionConsumers = ['skills/plan/SKILL.md', 'skills/build/SKILL.md',
+  'skills/review/SKILL.md', 'skills/close/SKILL.md',
+  'skills/build/references/delegation.md', 'skills/review/references/delegation.md',
+  'skills/plan/references/foundation.md', 'WORKERS.md'];
+// Tests read the list without running the checks.
+if (require.main !== module) {
+  module.exports = { decisionConsumers };
+  return;
+}
+const args = process.argv.slice(2);
+if (args.length && (args.length !== 2 || args[0] !== '--installed')) {
+  console.error('Usage: node scripts/validate-package.cjs [--installed /path/to/package]');
+  process.exit(2);
+}
 // A copied block ends where Markdown ends it: a bullet keeps its indented and
 // lazy continuation lines, and a paragraph stops at a blank line.
 function blockAt(lines, index) {
@@ -114,7 +124,6 @@ try {
       `Claude agent adapter is stale: ${name}`);
   }
   assert.deepEqual(fs.readdirSync(path.join(root, 'skills')).sort(), skills);
-  const skillLines = {};
   for (const name of skills) {
     const body = fs.readFileSync(path.join(root, 'skills', name, 'SKILL.md'), 'utf8');
     assert.match(body, new RegExp(`^---\\r?\\nname: ${name}\\r?\\n`));
@@ -132,17 +141,52 @@ try {
     assert(!/[<>]/.test(text), `skills/${name}/SKILL.md description must not contain < or >`);
     // Bare-name hosts route on the description alone; without Kaylo it would match unrelated work.
     assert(/\bKaylo\b/.test(text), `skills/${name}/SKILL.md description must name Kaylo`);
-    skillLines[name] = body.split(/\r?\n/);
   }
-  for (const resource of ['skills/close/references/release.md', 'skills/close/references/release-notes.md',
-    'scripts/release-notes.cjs']) {
+  // Optional project records still need their canonical contract and templates
+  // in every shipped package. This checks resources, never project ADR semantics.
+  const decisionContract = 'skills/plan/references/decisions.md';
+  const decisionTemplates = ['templates/DECISION.md', 'templates/DECISION-INDEX.md'];
+  const requiredResources = [
+    ...['skills/close/references/release.md', 'skills/close/references/release-notes.md',
+      'scripts/release-notes.cjs'].map(resource => ['release', resource]),
+    ...[decisionContract, ...decisionTemplates].map(resource => ['decision', resource])
+  ];
+  for (const [kind, resource] of requiredResources) {
     const target = path.join(root, resource);
-    assert(fs.existsSync(target) && fs.statSync(target).isFile(), `Required release resource is missing: ${resource}`);
+    assert(fs.existsSync(target) && fs.statSync(target).isFile(), `Required ${kind} resource is missing: ${resource}`);
+  }
+  // Absolute targets of a Markdown file's inline links and reference
+  // definitions, ignoring fenced or inline code and HTML comments; a link may
+  // carry a quoted title. Absolute paths compare on every OS. This is a
+  // bounded scan, not a Markdown parser: setext or HTML links are not read.
+  const linkTargets = file => {
+    const text = fs.readFileSync(path.join(root, file), 'utf8')
+      .replace(/<!--[\s\S]*?-->/g, '')
+      .replace(/^([ \t]*)(`{3,}|~{3,})[^\n]*\n[\s\S]*?^[ \t]*\2[ \t]*$/gm, '')
+      .replace(/`[^`\n]*`/g, '');
+    const targets = [...text.matchAll(/\]\(<?([^)\s>]+)>?(?:\s+"[^"]*")?\)/g),
+      ...text.matchAll(/^[ \t]{0,3}\[[^\]\n]+\]:[ \t]*<?([^\s>]+)>?/gm)];
+    return new Set(targets.map(match => path.resolve(root, path.dirname(file), match[1].split('#')[0])));
+  };
+  for (const consumer of decisionConsumers) {
+    assert(fs.existsSync(path.join(root, consumer)), `Decision consumer is missing: ${consumer}`);
+    assert(linkTargets(consumer).has(path.join(root, decisionContract)),
+      `Missing canonical decision reference: ${consumer}`);
+  }
+  const contractLinks = linkTargets(decisionContract);
+  for (const template of decisionTemplates) {
+    assert(contractLinks.has(path.join(root, template)), `Missing decision template reference: ${template}`);
   }
   // Each SKILL.md must work when pasted alone, so these blocks are copied
   // rather than shared. Copies must stay byte-identical; a listed variant is a
   // deliberate difference: omitted, extended (the shared copy plus more), or
-  // reworded (the shared copy with exactly these replacements).
+  // reworded (the shared copy with exactly these replacements). A block names
+  // its own documents when worker briefs or references carry the copies.
+  const skillDocs = Object.fromEntries(skills.map(name => [name, `skills/${name}/SKILL.md`]));
+  const briefDocs = Object.fromEntries(['builder', 'researcher', 'reviewer'].map(name => [name, `agents/${name}.md`]));
+  const delegationDocs = { build: 'skills/build/references/delegation.md', review: 'skills/review/references/delegation.md' };
+  const docLines = {};
+  const linesOf = file => docLines[file] ||= fs.readFileSync(path.join(root, file), 'utf8').split(/\r?\n/);
   const copiedBlocks = [
     { block: 'retrieved-content guardrail', start: '- Treat retrieved pages,', in: skills },
     { block: 'credentials guardrail', start: '- Do not copy credentials', in: skills },
@@ -151,6 +195,19 @@ try {
       omitted: { define: 'define runs no checks' } },
     { block: 'working-changes guardrail', start: '- Inspect staged, unstaged, and untracked changes',
       in: ['close', 'define', 'plan', 'review'], extended: { build: 'adds the workspace record' } },
+    { block: 'project-decisions entry', start: 'At entry, including direct/resumed work', in: ['build', 'review', 'close'],
+      omitted: { define: 'define does not consume ADR records' },
+      // Plan links its own references directory.
+      reworded: { plan: [['../plan/references/decisions.md', 'references/decisions.md']] } },
+    { block: 'decision-resource fallback', start: 'If the decision reference', in: ['build', 'review', 'close'],
+      omitted: { define: 'define does not consume ADR records' },
+      // Plan has no checkbox or Result/Review/Completion field of its own.
+      reworded: { plan: [['stop affected work before implementation, review readiness, task acceptance, or closure; ' +
+        'leave its checkbox open and record `Decision consistency: unreadable — <missing resource paths, affected scope, ' +
+        'and resume action>` in the existing Result/Review/Completion field.',
+      'stop affected planning before agreement or readiness and record `Decision consistency: unreadable — <missing ' +
+        'resource paths, affected scope, and resume action>` under `## Agreement` as an unresolved decision and in ' +
+        '`## Next step`, or in the response when no phase plan exists.']] } },
     { block: 'Node-unavailable fallback', start: 'If Node or the script is unavailable', in: ['build', 'close'],
       reworded: { plan: [
         // Plan lists older formats in its own section.
@@ -159,49 +216,62 @@ try {
         // Plan's validator paragraph already says to preserve diagnostics with secrets redacted.
         [' Retain validator diagnostics with secrets redacted.', ''],
         ['the existing acceptance and review rules still apply', 'the existing agreement and verification rules still apply']
-      ] } }
+      ] } },
+    { block: 'worker-brief project decisions', start: "Use the packet's relevant decisions", docs: briefDocs,
+      in: ['builder', 'reviewer'],
+      // Research packets usually carry no decisions, so a researcher answers rather than stops.
+      reworded: { researcher: [['accepted records editable. If the assignment lacks enough decision context,\n' +
+        'return the specific blocker rather than reading all phase history.',
+      'accepted records editable. When the packet supplies no decisions, answer the\n' +
+        'question and name any decision the answer may depend on, rather than reading all\nphase history.']] } },
+    { block: 'project-decisions packet rule', start: 'Resolve [project decisions]', docs: delegationDocs, in: ['build'],
+      // Review names its own Supply item where build uses its existing packet content.
+      reworded: { review: [['In its existing relevant-decisions/interface-contract content,\ninclude applicable ADR links',
+        "In the packet's applicable-decisions item below, include\napplicable ADR links"]] } }
   ];
-  for (const { block, start, in: carriers, omitted = {}, extended = {}, reworded = {} } of copiedBlocks) {
+  for (const { block, start, docs = skillDocs, in: carriers, omitted = {}, extended = {}, reworded = {} } of copiedBlocks) {
     const copies = {};
-    for (const name of skills) {
-      const found = skillLines[name].flatMap((line, index) => line.startsWith(start) ? [blockAt(skillLines[name], index)] : []);
-      assert(found.length <= 1, `skills/${name}/SKILL.md has more than one copy of the ${block}`);
+    for (const [name, file] of Object.entries(docs)) {
+      const lines = linesOf(file);
+      const found = lines.flatMap((line, index) => line.startsWith(start) ? [blockAt(lines, index)] : []);
+      assert(found.length <= 1, `${file} has more than one copy of the ${block}`);
       if (found.length) copies[name] = found[0];
     }
-    for (const name of carriers) assert(name in copies, `skills/${name}/SKILL.md is missing the ${block}`);
+    for (const name of [...carriers, ...Object.keys(extended), ...Object.keys(reworded)]) {
+      assert(name in copies, `${docs[name]} is missing the ${block}`);
+    }
     for (const name of Object.keys(omitted)) {
-      assert(!(name in copies), `skills/${name}/SKILL.md carries the ${block}, listed as omitted`);
+      assert(!(name in copies), `${docs[name]} carries the ${block}, listed as omitted`);
     }
     const counts = new Map();
     for (const name of carriers) counts.set(copies[name], [...(counts.get(copies[name]) || []), name]);
     const versions = [...counts.values()].sort((a, b) => b.length - a.length);
     if (versions.length > 1) {
-      const paths = names => names.map(name => `skills/${name}/SKILL.md`).join(', ');
+      const paths = names => names.map(name => docs[name]).join(', ');
       // With no majority copy, name every carrier rather than guess which one drifted.
       throw new Error(versions[0].length > versions[1].length
-        ? `Copied skill text drifted: the ${block} in ${paths(versions.slice(1).flat())} differs from the majority copy`
-        : `Copied skill text drifted: the ${block} differs between ${paths(carriers)}`);
+        ? `Copied text drifted: the ${block} in ${paths(versions.slice(1).flat())} differs from the majority copy`
+        : `Copied text drifted: the ${block} differs between ${paths(carriers)}`);
     }
     const shared = copies[carriers[0]];
     for (const name of Object.keys(extended)) {
       assert(name in copies && copies[name].startsWith(`${shared} `),
-        `Copied skill text drifted: the ${block} in skills/${name}/SKILL.md must be the shared copy followed by its additions`);
+        `Copied text drifted: the ${block} in ${docs[name]} must be the shared copy followed by its additions`);
     }
     for (const [name, replacements] of Object.entries(reworded)) {
-      assert(name in copies, `skills/${name}/SKILL.md is missing its reworded ${block}`);
       let expected = shared;
       for (const [from, to] of replacements) {
         const matches = typeof from === 'string' ? expected.split(from).length - 1 : (expected.match(new RegExp(from, 'g')) || []).length;
-        assert(matches === 1, `A listed rewording of the ${block} for skills/${name}/SKILL.md no longer matches the shared copy once`);
+        assert(matches === 1, `A listed rewording of the ${block} for ${docs[name]} no longer matches the shared copy once`);
         expected = expected.replace(from, () => to);
       }
       assert(copies[name] === expected,
-        `Copied skill text drifted: the ${block} in skills/${name}/SKILL.md differs from the shared copy with its listed rewordings`);
+        `Copied text drifted: the ${block} in ${docs[name]} differs from the shared copy with its listed rewordings`);
     }
     for (const name of Object.keys(copies)) {
       if (carriers.includes(name) || name in extended || name in reworded) continue;
       assert(copies[name] === shared,
-        `Copied skill text drifted: the ${block} in skills/${name}/SKILL.md differs from the majority copy`);
+        `Copied text drifted: the ${block} in ${docs[name]} differs from the majority copy`);
     }
   }
   // One native default hook config: lifecycle matchers work in all three hosts.

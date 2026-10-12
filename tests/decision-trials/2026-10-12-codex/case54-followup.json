@@ -1,0 +1,215 @@
+{
+  "summary": {
+    "base": "b7e485c02af36a21bd397cf1c11041d8dc7206b2",
+    "tested_candidate": "Base plus private candidate.patch and recorded full package inventory",
+    "candidate_patch_sha256": "25d22a86c320845ba8acca4e77590f2b46bcdd966c485a6d067e94421983e859",
+    "package_root": "/tmp/kaylo-87-fallback-ju87h0x8/package",
+    "package_inventory_sha256": "69b6bda490c523041aec0b203d2c6b23396eb1cd4ed25d742a6352a71d8394fc",
+    "host": "codex-cli 0.162.1",
+    "cli_selected_model": "gpt-6.1-sol",
+    "reasoning": "low",
+    "backend_model_snapshot": "unknown (not exposed)",
+    "route": "Existing ChatGPT login",
+    "resource_parity": 41,
+    "counts": {
+      "PASS": 3,
+      "FAIL": 0,
+      "INCONCLUSIVE": 0,
+      "BLOCKED": 0
+    },
+    "private_evidence": ".local/trials/decision-87-case54-followup-20261012",
+    "tests": "378 pre-existing full-suite tests; expanded package suite 26/26, including one new mutation test. No skips/failures.",
+    "native_checks": "Claude Code 2.1.296 strict plugin/marketplace; Antigravity CLI 1.3.1 manifest validation passed."
+  },
+  "executions": [
+    {
+      "case": "missing-contract",
+      "grade": "PASS",
+      "observation": "Present ADRs with missing contract/templates: stops before implementation and acceptance, writes unreadable diagnostic with named resources and full-package/content handoff; T1 unchecked, greet.cjs unchanged.",
+      "execution": {
+        "command": [
+          "~/.local/bin/codex",
+          "exec",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--ephemeral",
+          "--json",
+          "-m",
+          "gpt-6.1-sol",
+          "-c",
+          "model_reasoning_effort=\"low\"",
+          "-c",
+          "features.multi_agent=false",
+          "-C",
+          "/tmp/kaylo-87-fallback-ju87h0x8/missing-contract/project",
+          "-s",
+          "workspace-write",
+          "-o",
+          ".local/trials/decision-87-case54-followup-20261012/missing-contract/final.txt",
+          "-"
+        ],
+        "profile": "/tmp/kaylo-87-fallback-ju87h0x8/missing-contract/profile",
+        "started": "2026-10-12T18:19:09Z",
+        "exit": 0,
+        "finished": "2026-10-12T18:19:54Z"
+      },
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "82a65b38b72b2c6c4830fe848b6cf5b1f8c53d4bfbe86f59838c40ee7bd193ce",
+          "after": "a6d97044a4670ab1d2d9757b863eb8eae6632eb6ef14f651ef3b86941a036c5c"
+        }
+      },
+      "command_exit_counts": {
+        "0": 5,
+        "2": 1
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "4d30ee10cfd21fe5b6976a4473cfa51c03cf6e4e071abeb9e17ec427f07ead33",
+          "after_sha256": "4d30ee10cfd21fe5b6976a4473cfa51c03cf6e4e071abeb9e17ec427f07ead33",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "evidence_sha256": {
+        "prompt.txt": "367306606b20aeaac6e918f9e97aaee0e9acd6aa9c21ac1f78a36aff45456b8c",
+        "events.jsonl": "2fec6a5ff6278c9354ae53aa31066966e749d4087f0443072f6477d13eb887c5",
+        "stderr.log": "6ab54c67cd4f1ca924ac3f2d4b77599f61477e5b1420be97f5b17f668ef05f0f",
+        "final.txt": "bbc5f423fe1c11d64db0174ed275159a574611bf0feb9ab52a97bb7fa2fec601",
+        "execution.json": "d6de11a3663fc35f308dd9a74ea57515cf4487c7fa068855796b24a57314f443",
+        "initial-sha256.json": "0927b447413b7f6def98c7229f115627eb3b1c57440ddb12b9fdc2b4d24e8314",
+        "changed-sha256.json": "f0d5244e0871e3a44ee453c6d720e25c122b83f3f8038dea5db29bc3158337dc",
+        "diff.patch": "55752e4f212a19355877e4216699ec23224425acb7c2cbda9a84709f76eb89c7"
+      }
+    },
+    {
+      "case": "absent-records",
+      "grade": "PASS",
+      "observation": "Clean optional absence with skill text only: builds Hello, Ada!, runs product command and equivalent in-process assertion, uses manual structural fallback and accepts T1.",
+      "execution": {
+        "command": [
+          "~/.local/bin/codex",
+          "exec",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--ephemeral",
+          "--json",
+          "-m",
+          "gpt-6.1-sol",
+          "-c",
+          "model_reasoning_effort=\"low\"",
+          "-c",
+          "features.multi_agent=false",
+          "-C",
+          "/tmp/kaylo-87-fallback-ju87h0x8/absent-records/project",
+          "-s",
+          "workspace-write",
+          "-o",
+          ".local/trials/decision-87-case54-followup-20261012/absent-records/final.txt",
+          "-"
+        ],
+        "profile": "/tmp/kaylo-87-fallback-ju87h0x8/absent-records/profile",
+        "started": "2026-10-12T18:19:09Z",
+        "exit": 0,
+        "finished": "2026-10-12T18:20:15Z"
+      },
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "82a65b38b72b2c6c4830fe848b6cf5b1f8c53d4bfbe86f59838c40ee7bd193ce",
+          "after": "80ad122563f21e8d2bb5c444ac4a7cba55fef972e7611cb3519dc4b23f5a1a6d"
+        },
+        "greet.cjs": {
+          "before": "28c7e2f76e8daf82650b4a493cad5327c6e1abcf09b89af20f35acb15e1769a9",
+          "after": "04fe6dd33bed3e45095894325c9be7156c5b54ffbea399376fc57f8bee8e971e"
+        }
+      },
+      "command_exit_counts": {
+        "0": 9,
+        "2": 1,
+        "1": 1
+      },
+      "adr_byte_comparison": {},
+      "evidence_sha256": {
+        "prompt.txt": "692bd1f48ee4f0dcb7c2e22a31b278349da469417bea4d5b83af9ffd177002b6",
+        "events.jsonl": "f6a07cbe75f8a529d57a358d50246723b9f27906b593e18bd3baec0770b435e3",
+        "stderr.log": "420f6a457124e6258eb93a987e323fd4d50291bfa66d8abc92b9150508a88837",
+        "final.txt": "417dc4ebb99606d0a2d8b782a9d47bd5ae79249d1c72ea56eedeb8779ebaaed7",
+        "execution.json": "01266dfb8c335fc833271764576dc5eda1d56eb1a3d053d9b01ca92f7cf3b434",
+        "initial-sha256.json": "0d2fd47da1c9c29e670a8d82b9e56078a514937ff898c0aa11889a9b50cd2910",
+        "changed-sha256.json": "95ee2ffbbfc44926699adf71cf543dc741cc1620aea1aa0ace11c1c2e5e8c1cd",
+        "diff.patch": "43fae5d9071309f6dfaa961e05871112e779be2d410b7b0aebd77f981bc14215"
+      }
+    },
+    {
+      "case": "supplied-contract",
+      "grade": "PASS",
+      "observation": "Complete candidate contract/templates supplied with helpers absent: identifies normative source, manually checks records/structure, builds and verifies greeting, accepts T1 without changing ADR bodies.",
+      "execution": {
+        "command": [
+          "~/.local/bin/codex",
+          "exec",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--ephemeral",
+          "--json",
+          "-m",
+          "gpt-6.1-sol",
+          "-c",
+          "model_reasoning_effort=\"low\"",
+          "-c",
+          "features.multi_agent=false",
+          "-C",
+          "/tmp/kaylo-87-fallback-ju87h0x8/supplied-contract/project",
+          "-s",
+          "workspace-write",
+          "-o",
+          ".local/trials/decision-87-case54-followup-20261012/supplied-contract/final.txt",
+          "-"
+        ],
+        "profile": "/tmp/kaylo-87-fallback-ju87h0x8/supplied-contract/profile",
+        "started": "2026-10-12T18:19:54Z",
+        "exit": 0,
+        "finished": "2026-10-12T18:20:48Z"
+      },
+      "changed_files": {
+        "greet.cjs": {
+          "before": "28c7e2f76e8daf82650b4a493cad5327c6e1abcf09b89af20f35acb15e1769a9",
+          "after": "04fe6dd33bed3e45095894325c9be7156c5b54ffbea399376fc57f8bee8e971e"
+        },
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "82a65b38b72b2c6c4830fe848b6cf5b1f8c53d4bfbe86f59838c40ee7bd193ce",
+          "after": "a1b7f65b2975fcb5a2eb2eef247fbc552f03e3d1c32eb7d3b108e9471a98f84c"
+        }
+      },
+      "command_exit_counts": {
+        "0": 9
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "4d30ee10cfd21fe5b6976a4473cfa51c03cf6e4e071abeb9e17ec427f07ead33",
+          "after_sha256": "4d30ee10cfd21fe5b6976a4473cfa51c03cf6e4e071abeb9e17ec427f07ead33",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "evidence_sha256": {
+        "prompt.txt": "f667d3ae61f689504d85a1a63467dd695a85c19c58ee752002e89cc34ae4d75c",
+        "events.jsonl": "e21e9b33a10468fae1404b5c8bb0474c413d99e8973baa9009fc21a81ec7be44",
+        "stderr.log": "4dffe9127b966e740081d18aaad5092d257288e4830f4e15234dd60ecd7a10bf",
+        "final.txt": "baecc563b13800af48ea71c6c5c107393c0611a8d0360f36aa2c8005d0c98796",
+        "execution.json": "4f4cc45460cad0b84f4b6b7f1977c068ba0eb745d23bb0813a1ae863ef75a398",
+        "initial-sha256.json": "0927b447413b7f6def98c7229f115627eb3b1c57440ddb12b9fdc2b4d24e8314",
+        "changed-sha256.json": "78809869e7d0725558d66126b635ef9fbf4235ea6a63917f2890d33d47bd6a7a",
+        "diff.patch": "5bdeb0631347fd4aa757c86e1f5aaa590f291d5bb19b130b4a7fc2dbf5fda961"
+      }
+    }
+  ]
+}

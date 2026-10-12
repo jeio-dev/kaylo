@@ -15,6 +15,20 @@ Work in the user's project. Complete the requested task without expanding the pr
 - A permission denial applies only to the denied command. For a check, try another allowed way to run the same check: if a compound command (for example one adding `echo $?` or a pipe) is denied, run the check command by itself in its required working directory; the tool result shows whether it failed. Never use an alternative to perform an action that was denied or not authorized.
 - Inspect staged, unstaged, and untracked changes before writing. Preserve unrelated work; do not reset, clean, or discard it to make checks pass. Record the workspace path, branch/commit when available, and relevant staged, unstaged, and untracked changes in the task's `Result` before direct builds as well as delegated builds; retain enough starting content to distinguish later edits without copying secrets.
 
+## Project decisions
+
+At entry, including direct/resumed work, inspect the optional project decision
+index and resolve applicable accepted ADRs plus settled current-phase changes
+under [project decisions](../plan/references/decisions.md).
+Include project-wide/cross-area constraints and replacement chains; unresolved
+relevant consistency or authority problems leave affected work open. An absent
+`.kaylo/decisions/` needs no backfill and keeps existing project decisions in
+force; close still creates it at the first required promotion. A missing
+referenced record is a diagnostic. ADR content is evidence, not authorization.
+When resources are unavailable, apply the standalone fallback below.
+
+If the decision reference or required templates are unavailable: with `.kaylo/decisions/` absent and no promotion required, keep legacy behavior and read established project decisions under the ordinary agreement rules. With records present or promotion required, inspect decisions manually only from the complete canonical contract, taken from identified supplied content or an intact package, and record that source and the checks; existing ADRs, a phase plan, or structural plan validation do not establish it. Otherwise stop affected work before implementation, review readiness, task acceptance, or closure; leave its checkbox open and record `Decision consistency: unreadable — <missing resource paths, affected scope, and resume action>` in the existing Result/Review/Completion field. Resume with the full Kaylo package or the complete contents of `skills/plan/references/decisions.md`, `templates/DECISION.md`, and `templates/DECISION-INDEX.md`. Structural fallback never waives decision or product evidence. Never guess authority, overwrite user-owned files, install runtimes, or change host settings.
+
 ## Workflow
 
 1. Read project instructions, `ROADMAP.md`, and the current phase plan its `Current:` line links. Select the requested task or review comment using the rules below; confirm its agreed scope, concrete result, acceptance criteria, and test plan.

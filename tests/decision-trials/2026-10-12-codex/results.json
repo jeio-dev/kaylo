@@ -1,0 +1,3246 @@
+{
+  "summary": {
+    "candidate_revision": "94324a2326ad567002d76387e93e6ce685b88fd3",
+    "package_root": "/tmp/kaylo-87-subjects-lxv5_os4/package",
+    "package_version": "0.11.0",
+    "host": "Codex CLI",
+    "host_version": "0.162.1",
+    "cli_selected_model": "gpt-6.1-sol",
+    "reasoning": "low",
+    "backend_resolved_model_snapshot": "unknown (not exposed)",
+    "route": "Existing ChatGPT login; no API-key route",
+    "planned": 55,
+    "executed": 49,
+    "not_started": 6,
+    "counts": {
+      "INCONCLUSIVE": 5,
+      "PASS": 42,
+      "FAIL": 2,
+      "BLOCKED": 6
+    },
+    "peak_subjects": 2,
+    "resource_parity": 41,
+    "focused_package_tests": {
+      "passed": 28,
+      "failed": 0
+    },
+    "started": "2026-10-12T16:52:10Z",
+    "finished": "2026-10-12T17:35:53Z"
+  },
+  "executions": [
+    {
+      "id": "01",
+      "group": 1,
+      "variant": "absent",
+      "entry": "plan",
+      "group_name": "Optional absence",
+      "invocation": "/kaylo:plan",
+      "grade": "INCONCLUSIVE",
+      "checkpoint": "History reconciliation",
+      "reason": "Fixture exposed accepted ADR deletions instead of clean optional absence; the model correctly stopped for reconciliation. Clean absence checkpoint not reached.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/01",
+      "execution_exit": 0,
+      "started": "2026-10-12T16:52:10Z",
+      "finished": "2026-10-12T16:53:22Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/01/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/01/profile",
+      "completed_commands": 9,
+      "command_exit_counts": {
+        "0": 9
+      },
+      "usage": {
+        "input_tokens": 200009,
+        "cached_input_tokens": 164992,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1811,
+        "reasoning_output_tokens": 69
+      },
+      "thread_id": "01a13107-6599-73f0-b225-14bb7ef2fe49",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "82a65b38b72b2c6c4830fe848b6cf5b1f8c53d4bfbe86f59838c40ee7bd193ce",
+          "after": "9568cb886c1c8399d6fdce2ac59c6f75aa67be6c08fec14db848ddbde5a77839"
+        }
+      },
+      "adr_byte_comparison": {},
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "1542be04e45fea46a308b6f248a2d7fb3a2d0a84855113838d2a6d2223f0d9c7",
+        "diff.patch": "be9d9a80ec1d4004ea4f3d8c297654751c9a0cf5d461309d92f0ec8396c21126",
+        "changed-sha256.json": "83502380d9c79406898901f34061201aba98e6fc70442b127294f3f53671de25",
+        "stderr.log": "41ef8b399fdfeba05f5012ec72a57f5221480d97d9b78c424b848f6aa88639ed",
+        "events.jsonl": "b44f967aa95092f69e5678e2c1e75e1f4d2ea060bff09b4561857985802e672a",
+        "prompt.txt": "58a8e2cd14092292d4e0ba4c8748ed8a79b6956602fdf9309c0ea32c061a3180",
+        "initial-sha256.json": "32aadb998b699b676178587e50427552d3f837c5345f425376d07d0d6c9e2747",
+        "after-git.txt": "382e5dcc7352784b6d6765b1aefe2f59f48711761bf92190bd4f3ddb0f8368aa",
+        "initial-git.txt": "75bea4fd731b1b4056cfa90d2353469d7e3b424e2ca321bd02550f6a365ceaa4",
+        "execution.json": "a1cc7f5970238aa62883fc9325f3689d051970871712efbf20e4cb1cbbb51d87"
+      }
+    },
+    {
+      "id": "02",
+      "group": 1,
+      "variant": "absent",
+      "entry": "build",
+      "group_name": "Optional absence",
+      "invocation": "/kaylo:build T1",
+      "grade": "INCONCLUSIVE",
+      "checkpoint": "History reconciliation",
+      "reason": "Same absence-fixture confound; no build acceptance checkpoint. No rerun.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/02",
+      "execution_exit": 0,
+      "started": "2026-10-12T16:52:10Z",
+      "finished": "2026-10-12T16:54:33Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/02/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/02/profile",
+      "completed_commands": 8,
+      "command_exit_counts": {
+        "0": 8
+      },
+      "usage": {
+        "input_tokens": 165777,
+        "cached_input_tokens": 143616,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1278,
+        "reasoning_output_tokens": 54
+      },
+      "thread_id": "01a13107-6599-7783-be5d-136365b88ffd",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "82a65b38b72b2c6c4830fe848b6cf5b1f8c53d4bfbe86f59838c40ee7bd193ce",
+          "after": "b09117a76d899e912302d07fd54a6c4a852f7d2176cb56f8ac92f6a324148f61"
+        }
+      },
+      "adr_byte_comparison": {},
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "79acbb6216fb038c40f27774d3b13c084033f1dad4f332e7a4cb570fcab5970f",
+        "diff.patch": "4862d5b38324b0f979de09b014212504c57dea124daf0eae140f5041587e4a81",
+        "changed-sha256.json": "ee7db86f1e9776e05f025d668bc030e49812de9550699e4ac136760dde18fd0c",
+        "stderr.log": "ad7d764f8fe08fe266ad85beb62d218fd27c729a8da68fe7e30be0d583d87683",
+        "events.jsonl": "ae67ad88d7eff2dbcfabc30467a21b714e5eff9fdca6d73393a29bfbdea677b4",
+        "prompt.txt": "afba1e2bc0e39789466448e445dff63163ee7176d7f2a945dd8d8b87e68202fa",
+        "initial-sha256.json": "32aadb998b699b676178587e50427552d3f837c5345f425376d07d0d6c9e2747",
+        "after-git.txt": "382e5dcc7352784b6d6765b1aefe2f59f48711761bf92190bd4f3ddb0f8368aa",
+        "initial-git.txt": "75bea4fd731b1b4056cfa90d2353469d7e3b424e2ca321bd02550f6a365ceaa4",
+        "execution.json": "84dcb5813c45bbe252a0e0ea66900dda4e0dfc14e31bceae48ea05ad83efb862"
+      }
+    },
+    {
+      "id": "03",
+      "group": 2,
+      "variant": "existing-ownership",
+      "entry": "plan",
+      "group_name": "Existing ownership",
+      "invocation": "/kaylo:plan",
+      "grade": "PASS",
+      "checkpoint": "Ownership reconciliation",
+      "reason": "Reads and preserves user index and established docs; asks reconciliation before replacement; no competing authority created.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/03",
+      "execution_exit": 0,
+      "started": "2026-10-12T16:58:27Z",
+      "finished": "2026-10-12T16:59:42Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/03/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/03/profile",
+      "completed_commands": 8,
+      "command_exit_counts": {
+        "0": 8
+      },
+      "usage": {
+        "input_tokens": 141712,
+        "cached_input_tokens": 113280,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1824,
+        "reasoning_output_tokens": 51
+      },
+      "thread_id": "01a1310d-2765-7630-be45-9975b02ca208",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "82a65b38b72b2c6c4830fe848b6cf5b1f8c53d4bfbe86f59838c40ee7bd193ce",
+          "after": "f32642a87001c9b46c5d4c26797fdaae198dd770394caa6a3afd23d4d95bba51"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "4d30ee10cfd21fe5b6976a4473cfa51c03cf6e4e071abeb9e17ec427f07ead33",
+          "after_sha256": "4d30ee10cfd21fe5b6976a4473cfa51c03cf6e4e071abeb9e17ec427f07ead33",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "5f380c3ca99820080697d0905dc529bd1f106f78756ae385b9441285a85ac22b",
+        "diff.patch": "aa06cd82f4d1fff6ffc74c45e5082873ead71134403e1908023e44289abd2706",
+        "changed-sha256.json": "8d3a1313ee476d7eef9931f7b7286b1f08e5c6652f00b318d21406464c07b9db",
+        "stderr.log": "c475473b2e2e117458570fbf74b8dc549c8b39f37541f612b6f08d39d934d57f",
+        "events.jsonl": "f01655d4d24b8391e6021f564192cf32e09babd08e9a0d8604035249b9de8013",
+        "prompt.txt": "6b7fbc3335bf0589409c6e10de416407977a0945b57ed4f3570f36a1be671ffc",
+        "initial-sha256.json": "bb34947866a63a4d4939e67763c279a22e2258cf5ad5f04185898535732b795a",
+        "after-git.txt": "7297c235b66f05ac3f9aec371ef060a3662b7dbbee2ff04119d7e280d61486a9",
+        "initial-git.txt": "33fd4cad8832852989cbc7f69e0553f3ae5dc5da21b2b0eeecaffe776a85d3d6",
+        "execution.json": "7521268c536740e5b4da2c2c72f552ba2d1c93eee891169b13aeb39ba7dff1d9"
+      }
+    },
+    {
+      "id": "04",
+      "group": 3,
+      "variant": "local-helper-and-public-format",
+      "entry": "plan",
+      "group_name": "Proportionality",
+      "invocation": "/kaylo:plan",
+      "grade": "PASS",
+      "checkpoint": "Proportional Design",
+      "reason": "One-line reversible helper; consequential public format D2 includes scope/options/sacrifices/error cost/reversal/evidence trigger and unresolved user ownership.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/04",
+      "execution_exit": 0,
+      "started": "2026-10-12T16:58:27Z",
+      "finished": "2026-10-12T17:00:48Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/04/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/04/profile",
+      "completed_commands": 9,
+      "command_exit_counts": {
+        "0": 9
+      },
+      "usage": {
+        "input_tokens": 227113,
+        "cached_input_tokens": 184576,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 4005,
+        "reasoning_output_tokens": 131
+      },
+      "thread_id": "01a1310d-2777-73d0-a39e-0f7dbfcb4bde",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "25db99b4f71c4a3460eebdfbb340261623054dd05f60e39d1dbfef3af71ce877",
+          "after": "fc22be4dc12eaa1e98e2f9f0ad9183a81bd33b6efb73b8cb9cb19c8ce19ba516"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "4d30ee10cfd21fe5b6976a4473cfa51c03cf6e4e071abeb9e17ec427f07ead33",
+          "after_sha256": "4d30ee10cfd21fe5b6976a4473cfa51c03cf6e4e071abeb9e17ec427f07ead33",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "63f2c87451e9523ca9abdceaa6bd52a22133fbf8f6f2d0baf1962faf2ea6697f",
+        "diff.patch": "cfd397eb266a170740d5b8a17c263da152dd477cbb13008f22885c8b55f15d2a",
+        "changed-sha256.json": "1aba56554278b301a2f088f1a43499c2822816fc8023d646d2b01193d1a4fc0d",
+        "stderr.log": "d92ea037c22db13484399dab1fae37ba776be5cde75066a58457a55d4dbfe982",
+        "events.jsonl": "759ebe09011227d20ce4f2492312c9da04360f0f451db5c5549b6a336b53f2fd",
+        "prompt.txt": "fec5c73ad43355bcc40199ec04919826d5a456cb4635f3074c61d59d90321c93",
+        "initial-sha256.json": "0cf5ab37488166bd0b44849b9579cc13bd93e88e45843f83e57a33fdb2ef4d84",
+        "after-git.txt": "038834e2fb1cc78067488a10c34a641e2a5184fa8b69f3c8abd4d242e28c2c55",
+        "initial-git.txt": "81437c71b99c37a1fc3f5554ed596f36961462adffc2a3091e59262c39802b72",
+        "execution.json": "55f83bebab7aea3b075b3a3650271ed59bffa836f499e4c94697eef3a924d4af"
+      }
+    },
+    {
+      "id": "05",
+      "group": 4,
+      "variant": "unresolved",
+      "entry": "build",
+      "group_name": "Authority",
+      "invocation": "/kaylo:build T1",
+      "grade": "PASS",
+      "checkpoint": "Authority gate",
+      "reason": "Unresolved public JSON consequence blocks affected T1; code and accepted bodies untouched.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/05",
+      "execution_exit": 0,
+      "started": "2026-10-12T16:59:42Z",
+      "finished": "2026-10-12T17:00:52Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/05/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/05/profile",
+      "completed_commands": 9,
+      "command_exit_counts": {
+        "0": 8,
+        "127": 1
+      },
+      "usage": {
+        "input_tokens": 169822,
+        "cached_input_tokens": 136448,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1952,
+        "reasoning_output_tokens": 52
+      },
+      "thread_id": "01a1310e-4d87-78e2-a0d2-ac5830d2fd45",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "d0d6b77e46a6dfebf5c5e17143e3320b495a2a47a8f5ac950df91666d3f48ee4",
+          "after": "87a0566d1318cd27b9d6453afc04b85d1b7935230f1d7f67f9b70990b11400b3"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "4d30ee10cfd21fe5b6976a4473cfa51c03cf6e4e071abeb9e17ec427f07ead33",
+          "after_sha256": "4d30ee10cfd21fe5b6976a4473cfa51c03cf6e4e071abeb9e17ec427f07ead33",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "255f202392d37b82b26683a091ec36fea590cf92f7157ab130e6874a7ee63119",
+        "diff.patch": "3a5ae113f42920a96a91b268f268392616f3db8d4fc36e122635e1d844eeda5c",
+        "changed-sha256.json": "0ee90065e5ad392b3ecaf89cff6f078666e17406fa1cc11a00582ee12281336d",
+        "stderr.log": "3675981eb52fcf52303735c36ce0f8de5dc5d75cca211a92d5dc61b1a45c2f3b",
+        "events.jsonl": "6e759fd283f2c6e8531e19be8f34b52f488b267eeb488257639af63634ad09e7",
+        "prompt.txt": "363558140bff076637a503b664c6b1701501f697fdd7440d7652b38b8e420056",
+        "initial-sha256.json": "2a466d6ab6a5703d7e2dc3918db719af5cf99b1775cef88e4ef3bc0299a781ad",
+        "after-git.txt": "038834e2fb1cc78067488a10c34a641e2a5184fa8b69f3c8abd4d242e28c2c55",
+        "initial-git.txt": "81437c71b99c37a1fc3f5554ed596f36961462adffc2a3091e59262c39802b72",
+        "execution.json": "3d0daeea40f441d0e6c2f0a0878749b40a1cf5dc05c42836fb656082e82eac00"
+      }
+    },
+    {
+      "id": "06",
+      "group": 4,
+      "variant": "default",
+      "entry": "build",
+      "group_name": "Authority",
+      "invocation": "/kaylo:build T1",
+      "grade": "PASS",
+      "checkpoint": "Build acceptance",
+      "reason": "Labelled local default preserved; greeting built and checked; accepted bytes unchanged.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/06",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:00:48Z",
+      "finished": "2026-10-12T17:01:48Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/06/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/06/profile",
+      "completed_commands": 14,
+      "command_exit_counts": {
+        "0": 14
+      },
+      "usage": {
+        "input_tokens": 200951,
+        "cached_input_tokens": 174464,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1595,
+        "reasoning_output_tokens": 10
+      },
+      "thread_id": "01a1310f-4ca2-7081-b61a-0f3eeab897f0",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "82a65b38b72b2c6c4830fe848b6cf5b1f8c53d4bfbe86f59838c40ee7bd193ce",
+          "after": "35a62062d74e933aa2b89044bc62b1fdbcff963cf598a248df1232c56c6ef076"
+        },
+        "greet.cjs": {
+          "before": "28c7e2f76e8daf82650b4a493cad5327c6e1abcf09b89af20f35acb15e1769a9",
+          "after": "04fe6dd33bed3e45095894325c9be7156c5b54ffbea399376fc57f8bee8e971e"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "4d30ee10cfd21fe5b6976a4473cfa51c03cf6e4e071abeb9e17ec427f07ead33",
+          "after_sha256": "4d30ee10cfd21fe5b6976a4473cfa51c03cf6e4e071abeb9e17ec427f07ead33",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "ce5ac73da6db4f28e6297ccb623aed17c4d041cdfdb96fdbad92fad72659daa4",
+        "diff.patch": "b36996966762653cde9bcb337597bf92983a1f81858c5a2227785a43cf1dc549",
+        "changed-sha256.json": "b3cf1fcc853e98d04ea956605ae36a0b860c853a65a44e377f3cc7e0ab2f2319",
+        "stderr.log": "6f0ac75296ada5623accf3d39c79d01cbe7310f22d6d78c38d379074695df946",
+        "events.jsonl": "ea7a22a0c459cbf3f7e909d263178dd68bccf35eb822ee98aa458c6a87402691",
+        "prompt.txt": "3227e678719b5812e0d5792fd947c1f33a45b31ac345fc1b0963060eb028da85",
+        "initial-sha256.json": "f72ff96716c043a9b1890788818a78c455c06f6bd9c4ab5248b6e13b5068aac5",
+        "after-git.txt": "72f4749907b72901669d950aba2a4ddd13741e4e459c178707de8e042cce0199",
+        "initial-git.txt": "a3064e7d5cc0b8145fedff1f3f5a3c485058e0854632476561f35226284e907b",
+        "execution.json": "6fd3d03916319997d6a4ffdc89e48e434f5e90cc17ba795134594e4274dac01d"
+      }
+    },
+    {
+      "id": "07",
+      "group": 4,
+      "variant": "agreed",
+      "entry": "build",
+      "group_name": "Authority",
+      "invocation": "/kaylo:build T1",
+      "grade": "PASS",
+      "checkpoint": "Build acceptance",
+      "reason": "Existing scoped Agreement reused; session validator and boolean assertions passed; ADR bodies unchanged.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/07",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:00:52Z",
+      "finished": "2026-10-12T17:02:13Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/07/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/07/profile",
+      "completed_commands": 13,
+      "command_exit_counts": {
+        "0": 13
+      },
+      "usage": {
+        "input_tokens": 234355,
+        "cached_input_tokens": 188672,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1702,
+        "reasoning_output_tokens": 17
+      },
+      "thread_id": "01a1310f-5d41-77e0-8158-5af9ad01195e",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "32b01dd362dcd401835debfd38502de218066f1cce1a456ccfedac7374536038",
+          "after": "a46fd481a3b27fd816a8d86ddffd6615ec21cddecc376f8eaef012f4e598653c"
+        },
+        "check.cjs": {
+          "before": "8ee2f2a4797baa1ada5cf28c1d95ee71828969d366d7de7cc6479fbe1aa4333b",
+          "after": "cf0b73e64b2698dff12b4f75088e1cbdc35c3d407b84948d328c304c703ac64a"
+        },
+        "session.cjs": {
+          "before": "cc7168eac9f1b45da8c04e8a1fdb0263b1d6597879f83207d5e2edfaaad561ae",
+          "after": "e74d64636097bee533361a08ed64f1c170341ff08080901472ac4c55c426a486"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "2bfc6e91cf1e701f3b649ecfd3db0ff0f3d9b67466424b41e6e9b15b51e22d49",
+        "diff.patch": "9a52d0691b45caf4d33a936adb7f88a77ddb873d923148effc04d1e4a5e8a7e1",
+        "changed-sha256.json": "7cf8d5b0f36b8c726c15374aeae4478a1cd08880fea35fd194582f0380585cab",
+        "stderr.log": "c66108189e39543113da0208b71d920b75f586a0d791b4f240f042153a0fe88e",
+        "events.jsonl": "eb34b2d3eab632e78397c78d3b995af2e681f8e8adae7507c7be9f3d6f205363",
+        "prompt.txt": "d95b03c6811c74baeb75de34ba3b930766556135fcbef9b1c90203321e00f3e0",
+        "initial-sha256.json": "a6ae7d17772ee65b7420344d2551e806eb825702cb8243371b808270dde0e636",
+        "after-git.txt": "4a873fd5b8fbec7e9c72892608fa4a4d01ac51310ed892d76f6138f974d32d7d",
+        "initial-git.txt": "34d05b74623ac1d178d4f0d253d3882963d5fb43b44400defb124f0e0133e5ed",
+        "execution.json": "c5a4e77f2a8cd7e24d5e012252c4f7756d1d08cee7672ffcae2cb15c481f3d2c"
+      }
+    },
+    {
+      "id": "08",
+      "group": 5,
+      "variant": "draft",
+      "entry": "review-plan",
+      "group_name": "Draft versus settled",
+      "invocation": "/kaylo:review plan",
+      "grade": "PASS",
+      "checkpoint": "Plan decision resolution",
+      "reason": "Unapproved D2 does not replace browser 0001; plan reports blocking conflict.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/08",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:01:48Z",
+      "finished": "2026-10-12T17:02:58Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/08/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/08/profile",
+      "completed_commands": 8,
+      "command_exit_counts": {
+        "0": 6,
+        "2": 2
+      },
+      "usage": {
+        "input_tokens": 179383,
+        "cached_input_tokens": 159616,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1742,
+        "reasoning_output_tokens": 50
+      },
+      "thread_id": "01a13110-3793-7463-972a-9e6bedaa99c0",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "07ba375176d29a6987aec5c5759448ae5b8236f09c7aec62c01366507515ac10",
+          "after": "231f19b088ca5b995334fa6c39148dd08e649432b8f81b31e48b002b867f9a80"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "70881b4aa46ab74bc0aa70683f913103a8459a888f48e54c06b0c321fe1eb4ae",
+        "diff.patch": "bbbcc3bd6c70474740f0621043fc81f0ed8cb24aa9cefcca4d6bede8df46511b",
+        "changed-sha256.json": "8f51b5954303190d08a7c70b41046b8a60fbd3ce34b76daf2b97392d171fcc4d",
+        "stderr.log": "124140dd7fcbb6578bca7d56df62659e2f1c2a34c0a0740c80414cc29cf3dba0",
+        "events.jsonl": "f070f2a23cf74086af42052447d896373e693692488c58fdd752ceafa46cbe14",
+        "prompt.txt": "a862ff76b9ad18b475a639af8739f8c85030834adcc80c7ac6d4493d69765136",
+        "initial-sha256.json": "84fb6b1fb6b9d0b4d4fd6889997eadd8b45e54fe7cbb6ba51278b267fabd4340",
+        "after-git.txt": "038834e2fb1cc78067488a10c34a641e2a5184fa8b69f3c8abd4d242e28c2c55",
+        "initial-git.txt": "5104818d301d6dbf95444b78f79dde2e8ff25f65f9bfb278a811bdf5aa3a41ad",
+        "execution.json": "c5325f1b09074dab57514dfc1dce2107be083ca8c95d82bf13cf940b00de9fff"
+      }
+    },
+    {
+      "id": "09",
+      "group": 5,
+      "variant": "draft",
+      "entry": "review-changes",
+      "group_name": "Draft versus settled",
+      "invocation": "/kaylo:review changes",
+      "grade": "PASS",
+      "checkpoint": "Implementation decision resolution",
+      "reason": "Browser implementation evaluated against accepted 0001; draft D2 not treated as authority.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/09",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:02:13Z",
+      "finished": "2026-10-12T17:04:21Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/09/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/09/profile",
+      "completed_commands": 13,
+      "command_exit_counts": {
+        "0": 12,
+        "130": 1
+      },
+      "usage": {
+        "input_tokens": 405398,
+        "cached_input_tokens": 377728,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2523,
+        "reasoning_output_tokens": 307
+      },
+      "thread_id": "01a13110-9a98-7080-8651-8877733da083",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "8209194025c45565ef278198e0af7e0af7a662cbbb4359952f0679678235713a",
+          "after": "615f9136d289d18d70d3a1c19f1af597754fb4b86d5c90a698b45cf28202bc7f"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "418a6eda311482f08298653526379ee9f4853f00b686d95c36c99f948a706801",
+        "diff.patch": "491707bc6f55b1038709f90a5d7c7e72c800df95e4e9d6b4d7f12134e2d375df",
+        "changed-sha256.json": "79f725fccff03cbd417a04d90de61ee7af7a8f0bdcade0ae16e5ae3ec0329ed5",
+        "stderr.log": "407971ffc3079b0b0e3c548130628e0590dfddff1df2bc60b27f30fddb7db4f0",
+        "events.jsonl": "a852a0f714ea5b4bd141244564ce7ce96a47d26c87cabb8df2f6229f168a7703",
+        "prompt.txt": "387608ebc13fa30a8af6c83ead470998902e841b3a7e5a22e068c55c90d120ab",
+        "initial-sha256.json": "5b120571c86aa8dd437103fa33e00c0286b980fb23530fafb35bbdf6eb08e629",
+        "after-git.txt": "038834e2fb1cc78067488a10c34a641e2a5184fa8b69f3c8abd4d242e28c2c55",
+        "initial-git.txt": "03468551e0d0bbeed35e11b297703a1d16b633392e28275e01ce69c6fbdba734",
+        "execution.json": "6584c06ee72aae7d388818ef0058495143a8cee4f92b930929bd05321b0e3f22"
+      }
+    },
+    {
+      "id": "10",
+      "group": 5,
+      "variant": "settled",
+      "entry": "review-plan",
+      "group_name": "Draft versus settled",
+      "invocation": "/kaylo:review plan",
+      "grade": "PASS",
+      "checkpoint": "Plan decision resolution",
+      "reason": "Settled full browser/mobile D2 governs; reviewer detects stale T1 coverage without mistaking retained accepted 0001 for a competing current rule.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/10",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:02:58Z",
+      "finished": "2026-10-12T17:04:13Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/10/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/10/profile",
+      "completed_commands": 8,
+      "command_exit_counts": {
+        "0": 8
+      },
+      "usage": {
+        "input_tokens": 184830,
+        "cached_input_tokens": 145152,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1978,
+        "reasoning_output_tokens": 121
+      },
+      "thread_id": "01a13111-4a0e-71b2-b986-ab3bd901fa40",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "92a8fa805460a62e933c46407d7075fe2fc322faa506229063b7da58665b103a",
+          "after": "45a78f6ce78573e30e4492d0c846c3777bde7c7e1d9db005e560ee517963f3d9"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "b414d75b05a36754cbfa9e2a5dae04017827910e0e7dea437633386ea82d82f5",
+        "diff.patch": "82108fb94ee3004de6ccaedbcd9af14b9cec4043c9865b6683906581d00a86b9",
+        "changed-sha256.json": "9ab899751c278db810a5d337995521c31cd75f194801cf7f719882ac9dfcfd66",
+        "stderr.log": "4d37ffb6e59460fa6962c7cdd6fae21f870976472e35fc290c73e41a5477a22c",
+        "events.jsonl": "2cabba064b46e23ef83c5fd4f93460ac001f2876bd496bfedda40209abe1a358",
+        "prompt.txt": "b47fa097f13d1baca26fa1154766791f15053dfb6c2f8e71ecd004ba32a4449d",
+        "initial-sha256.json": "0be448c93943f5a9d0520a30994679d0e8fe639c716c08d092f789441fbd746f",
+        "after-git.txt": "038834e2fb1cc78067488a10c34a641e2a5184fa8b69f3c8abd4d242e28c2c55",
+        "initial-git.txt": "5104818d301d6dbf95444b78f79dde2e8ff25f65f9bfb278a811bdf5aa3a41ad",
+        "execution.json": "0896f2c44031503cff77d0d6aecdcf9d8ad2cf057a01f91b70eb685aadefba82"
+      }
+    },
+    {
+      "id": "11",
+      "group": 5,
+      "variant": "settled",
+      "entry": "review-changes",
+      "group_name": "Draft versus settled",
+      "invocation": "/kaylo:review changes",
+      "grade": "PASS",
+      "checkpoint": "Implementation decision resolution",
+      "reason": "Settled full resulting browser/mobile rule used; extra behavioral matrix passed; accepted bytes preserved.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/11",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:04:13Z",
+      "finished": "2026-10-12T17:06:22Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/11/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/11/profile",
+      "completed_commands": 12,
+      "command_exit_counts": {
+        "0": 12
+      },
+      "usage": {
+        "input_tokens": 350834,
+        "cached_input_tokens": 321152,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2938,
+        "reasoning_output_tokens": 161
+      },
+      "thread_id": "01a13112-6e11-7fa2-bcbb-bc6032db463f",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "5e12f4335e4ed5333acc9e4beb306252daecdb662704e75de6bfccbeb00294a6",
+          "after": "d7f564b2c29c1f68b683499615a6d7b21282aed77ed3e17fa8b863159434e712"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "c9e7f7695efbdc44c126a335cbc82936c02e1889bdfdfbf8a2d542c87cf5e25c",
+        "diff.patch": "650cf8a829bfd7f24cda9187f92c40b3fde731948794f2aaae76d0dc5346e3b3",
+        "changed-sha256.json": "ed482ae76cdaf38a8147f8633a1352076394e68d04adbb3a2709fb06b0feb11b",
+        "stderr.log": "af66930df4daaccea516873723a1ec83896438e84b8fc31b84a85b4b7cb3882f",
+        "events.jsonl": "70a376318d1f1ac92caa5b6b35e55d6405438238da9da704117b3d8a87da93ff",
+        "prompt.txt": "18d12b4e5acb411d6e57a73cfaf602df67c7276cfd211c6c0bd26ccf57b0b12a",
+        "initial-sha256.json": "a97bb894d5214e9e09a995b5c845d3e5fb0b1d514a2dd979453d43aa40777934",
+        "after-git.txt": "4a873fd5b8fbec7e9c72892608fa4a4d01ac51310ed892d76f6138f974d32d7d",
+        "initial-git.txt": "9a0feae8ff0e0471217324a6538a75e901af400cd6f750497ea53f47e58c15bc",
+        "execution.json": "e815fc4fcff0e32ae95baf7e753466383c5881206b01a636a8e3b0535b39c733"
+      }
+    },
+    {
+      "id": "12",
+      "group": 6,
+      "variant": "mobile-only-successor",
+      "entry": "review-plan",
+      "group_name": "Whole-record mobile change",
+      "invocation": "/kaylo:review plan",
+      "grade": "PASS",
+      "checkpoint": "Whole-record supersession",
+      "reason": "Flags mobile-only global supersession losing browser rule and blocks plan readiness.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/12",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:04:21Z",
+      "finished": "2026-10-12T17:05:38Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/12/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/12/profile",
+      "completed_commands": 12,
+      "command_exit_counts": {
+        "0": 11,
+        "2": 1
+      },
+      "usage": {
+        "input_tokens": 194818,
+        "cached_input_tokens": 167168,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1778,
+        "reasoning_output_tokens": 37
+      },
+      "thread_id": "01a13112-8d99-72e0-9711-95d43d9bd283",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "fe371ef87db67cb287d9691ebcd7de79d55ca8743b3bb255b76c405163108e59",
+          "after": "a3fd9c36371fc82a580b14a83ca4d25405e62bc4bfbf83c791401e9f0c165fb7"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "f0810a92f8d9631ceabe8000f8d7a3033b08d7da636aa26288e681377e8e723a",
+        "diff.patch": "8a346bfd4d1f3b4503a2b211c2d0558cd51b622492252d3456eb35d071a06e38",
+        "changed-sha256.json": "019bbfb3ccb5ae12402b4fdd5359602916677b9bc2b59ee87f79e120af831a80",
+        "stderr.log": "7327b56309ee05bf0f358cdd99b3a23081cdcb1d320bbc29342cd38a94ed0ab2",
+        "events.jsonl": "816fa4e38f5a6c6f45e972593a8eb5a35e7c67585350177c61b313c248902d7f",
+        "prompt.txt": "ed150bb1bf9c304235cc43e53df5dceded5533ac7dece8cf5cce14a0b4d787b8",
+        "initial-sha256.json": "a4a50001e9ff020255792e72c217ee3591f9d4904fefded351d354416921003a",
+        "after-git.txt": "038834e2fb1cc78067488a10c34a641e2a5184fa8b69f3c8abd4d242e28c2c55",
+        "initial-git.txt": "4825a05a48fcbc0d8eda23b2a5362e19a75fa607fd694d0e58a255d9d61c70e0",
+        "execution.json": "33c8034c5c168208027b3b4f026e757bb840000b73023478fe5cf818071075aa"
+      }
+    },
+    {
+      "id": "13",
+      "group": 7,
+      "variant": "direct",
+      "entry": "build",
+      "group_name": "Cross-area lookup",
+      "invocation": "/kaylo:build T1",
+      "grade": "PASS",
+      "checkpoint": "Cross-area build",
+      "reason": "Fresh direct build reads auth 0001, project-wide/testing 0002, data 0003 and provenance; tests pass, accepted bytes unchanged.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/13",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:05:38Z",
+      "finished": "2026-10-12T17:07:04Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/13/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/13/profile",
+      "completed_commands": 16,
+      "command_exit_counts": {
+        "0": 14,
+        "127": 1,
+        "1": 1
+      },
+      "usage": {
+        "input_tokens": 271713,
+        "cached_input_tokens": 245760,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2460,
+        "reasoning_output_tokens": 49
+      },
+      "thread_id": "01a13113-b9b8-7170-988d-4938453ea0a2",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "32b01dd362dcd401835debfd38502de218066f1cce1a456ccfedac7374536038",
+          "after": "b528d80a26371f1b74012de1f75e8bae4d6fd502d523f6630074e1676c1a695e"
+        },
+        "check.cjs": {
+          "before": "8ee2f2a4797baa1ada5cf28c1d95ee71828969d366d7de7cc6479fbe1aa4333b",
+          "after": "d5ecc7e6f732090c1fd83d6f58a94da0492efe989ccd81a3af67f2a62078791c"
+        },
+        "session.cjs": {
+          "before": "cc7168eac9f1b45da8c04e8a1fdb0263b1d6597879f83207d5e2edfaaad561ae",
+          "after": "59a75ce7b054800a1a5616700b1c6c9a33ae94277f943f3615268f1e36dee346"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0003-validate-before-persistence.md": {
+          "initial_sha256": "547ca8728a62d0fdad1ea9c49398f37f79376d7aedbcdddc46d07efddc06b924",
+          "after_sha256": "547ca8728a62d0fdad1ea9c49398f37f79376d7aedbcdddc46d07efddc06b924",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "1c5570064fd775ca9aa48a11f708a335cf9d4b5340b279cd98ca7cc5af0c439c",
+        "diff.patch": "ddad18a27acc779f2a5b88f11227f5cf9528498f92064d3373da12a034bc8094",
+        "changed-sha256.json": "ab3ff9da2178ff1ee22d7bfa5b73654221b73be1ed0376ea53580bddd04684be",
+        "stderr.log": "e7b766f49c0d824205660a6aecbee16e54786894dd3d7b9314bb4ae3c6cdb72a",
+        "events.jsonl": "8460b47d3cb03f57f7f4af79d3c92a36620c7e16bdf9fa4fadbea89dadcaed56",
+        "prompt.txt": "c1fe31a986bd42390fbd1b12385819e96c65af1d8800981492b153236fac090a",
+        "initial-sha256.json": "dd95898aa21a10c10da9c3d570141b7976dd1836fd46d07a25ca22d6e3189f0f",
+        "after-git.txt": "4a873fd5b8fbec7e9c72892608fa4a4d01ac51310ed892d76f6138f974d32d7d",
+        "initial-git.txt": "85325e026a3b6f842b9c8a9e7f00b26878a8a1e5d00692bceedb107a09698e7d",
+        "execution.json": "232c563d5f7bdbbb89160b0f3a56ea3a0923c488fb912289c786185c5ede3de1"
+      }
+    },
+    {
+      "id": "14",
+      "group": 7,
+      "variant": "resumed",
+      "entry": "build",
+      "group_name": "Cross-area lookup",
+      "invocation": "/kaylo:build T1",
+      "grade": "PASS",
+      "checkpoint": "Cross-area resume",
+      "reason": "Fresh resumed build consumes same global/data/auth set and preserves prior Result history; tests pass, accepted bytes unchanged.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/14",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:06:22Z",
+      "finished": "2026-10-12T17:07:29Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/14/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/14/profile",
+      "completed_commands": 11,
+      "command_exit_counts": {
+        "0": 11
+      },
+      "usage": {
+        "input_tokens": 230062,
+        "cached_input_tokens": 204544,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1956,
+        "reasoning_output_tokens": 45
+      },
+      "thread_id": "01a13114-64ce-7dd0-9a82-893763a9dc93",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "0e4dcf8a81a836f03d485e6ed183721feeb5df30374a9c94011bc5ef6d16fbc2",
+          "after": "ca2d52bf111399591440d4f921ee139125339c72928adfbc0133c070b8cd3cc9"
+        },
+        "check.cjs": {
+          "before": "8ee2f2a4797baa1ada5cf28c1d95ee71828969d366d7de7cc6479fbe1aa4333b",
+          "after": "cf0b73e64b2698dff12b4f75088e1cbdc35c3d407b84948d328c304c703ac64a"
+        },
+        "session.cjs": {
+          "before": "cc7168eac9f1b45da8c04e8a1fdb0263b1d6597879f83207d5e2edfaaad561ae",
+          "after": "e74d64636097bee533361a08ed64f1c170341ff08080901472ac4c55c426a486"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0003-validate-before-persistence.md": {
+          "initial_sha256": "547ca8728a62d0fdad1ea9c49398f37f79376d7aedbcdddc46d07efddc06b924",
+          "after_sha256": "547ca8728a62d0fdad1ea9c49398f37f79376d7aedbcdddc46d07efddc06b924",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "f53bbe64b6ac59096c340647428f2cef0c3c11002f05f20026828cbc5333c84a",
+        "diff.patch": "ad4411b4aa3fbea805fbe226c6abd8a33a4841e4bc79c74aa905332708836673",
+        "changed-sha256.json": "566aa58b6ddee09b648ee1c8db863c90213f545380289b4159dc3edf75fa5b67",
+        "stderr.log": "65a82fc5ef82238fb1aa86a6fbcce775660bf1d886091ec7daf4611718dccab1",
+        "events.jsonl": "c570804bb86f57d3dbe8be3ecc15ff5d6c0e4cfe3968d9a2d123419d5c9f4ad1",
+        "prompt.txt": "5fcf2c46cd4b334240f366f869c7829fb7b2916c0e3964375f955d3f16b740e5",
+        "initial-sha256.json": "5f00046ad91f5badc258c340a3c0b6c135539e2bbaade94adc6e95fb27800988",
+        "after-git.txt": "4a873fd5b8fbec7e9c72892608fa4a4d01ac51310ed892d76f6138f974d32d7d",
+        "initial-git.txt": "606528d5e7d82b09c9f9e116b27724db8bdf6627648dafcb43d123b49b8d0395",
+        "execution.json": "8e324c184e0ec4f60886c9c7b671c262ad24faacb3f2c6c9b315914b28fd739f"
+      }
+    },
+    {
+      "id": "15",
+      "group": 8,
+      "variant": "build-packet",
+      "entry": "build",
+      "group_name": "Worker/manual delivery",
+      "invocation": "/kaylo:build T1",
+      "grade": "PASS",
+      "checkpoint": "Actual packet/workspace inspection",
+      "reason": "Actual packet names missing worker 0003 and changed accepted parent body, carries provenance and blocks implementation. Confound: fixture also exercises historical change, not clean missing-only delivery.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/15",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:07:04Z",
+      "finished": "2026-10-12T17:10:35Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/15/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/15/profile",
+      "completed_commands": 13,
+      "command_exit_counts": {
+        "0": 10,
+        "1": 2,
+        "127": 1
+      },
+      "usage": {
+        "input_tokens": 270755,
+        "cached_input_tokens": 233984,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 5943,
+        "reasoning_output_tokens": 127
+      },
+      "thread_id": "01a13115-0ac0-7862-959a-fe815a6e8936",
+      "changed_files": {},
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0003-validate-before-persistence.md": {
+          "initial_sha256": "7418a23877cd6b07f1465a0d7b0997734d206c40c5b71bef5f1140eaa2ca079e",
+          "after_sha256": "7418a23877cd6b07f1465a0d7b0997734d206c40c5b71bef5f1140eaa2ca079e",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "d34c59551be120d4cf438d16d1240ec63f5eed974584ce0e8f07fd9e842267cf",
+        "diff.patch": "8b8e72a2509cde6e2f98d46d5fcacf38b19733bffd331e654f29009fc8fc6137",
+        "changed-sha256.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+        "stderr.log": "c84b562118e672b14a8446bef15af8bb11e4ec0d8b2c85ca155844a031a8afb7",
+        "events.jsonl": "ed6c1cbf86a7d070576621b1b94ed65fdce185f6abd82de3e6046e180a63be84",
+        "actual-packet.md": "7f9c3b109ddb635e857b823ad2fcdccbf576d4fc56aa813c607fda952c5b6cf5",
+        "prompt.txt": "934c5786fd8ade84d99c0046c997088f8656966585f25ec8a09c83453f41f3ec",
+        "initial-sha256.json": "afc31fed998b5d9809ec1654ec02124c7e0229b0b5bb89e8f13a437ca6a16522",
+        "after-git.txt": "7e0391e03ab4f93b373e9e1d1fd12104ae1f0701f0333052f42510298f74f80d",
+        "initial-git.txt": "9963f5dae65328e042c5c99ed787ec297d5321cbc607a6631ecf12d3f35bcda0",
+        "execution.json": "b718635043d6d090759f3def334bcab8c81afe0df63509ca8bc36d705ad72030"
+      }
+    },
+    {
+      "id": "16",
+      "group": 8,
+      "variant": "build-worker",
+      "entry": "worker-build",
+      "depends": "15",
+      "group_name": "Worker/manual delivery",
+      "invocation": "candidate builder brief + actual packet",
+      "grade": "PASS",
+      "checkpoint": "Actual worker packet and workspace",
+      "reason": "Actual builder reads supplied packet and its own workspace, reports missing 0003 and uncertain changed host authority; makes no file or shared ADR/index edits.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/16",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:34:50Z",
+      "finished": "2026-10-12T17:35:15Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/15/worker",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/16/profile",
+      "completed_commands": 2,
+      "command_exit_counts": {
+        "0": 2
+      },
+      "usage": {
+        "input_tokens": 57651,
+        "cached_input_tokens": 44800,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 489,
+        "reasoning_output_tokens": 0
+      },
+      "thread_id": "01a1312e-7554-7562-94ad-c6d980c53c8b",
+      "changed_files": {},
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "8768a595f86d0f562fdbd1eb24e993c22e09631695febd38b65a2e72baa22ba2",
+        "diff.patch": "eddb2a4369ddd21ed8e1638ee90f9ac10409eba1a0a7fdc288c0f6802f478a19",
+        "changed-sha256.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+        "stderr.log": "85a9c0c002abfe4bb367baf810d72bc593758ede2d4202320ca3ac46d6b19631",
+        "events.jsonl": "01ab39e5f061ec2fd4340bc52ffbfb94dad9fff004aacbc442574311b913c8f8",
+        "actual-packet.md": "7f9c3b109ddb635e857b823ad2fcdccbf576d4fc56aa813c607fda952c5b6cf5",
+        "prompt.txt": "c0a541e14f1f0cc9735068f46dd1b1f0d138aeb45670681d8590ff2bb6b30a33",
+        "initial-sha256.json": "4f1ebb1c3de184be9ed88ae5f554cc7d0182dfe1a1f53a8ef0da6b01b8798521",
+        "after-git.txt": "fd3d1df0204cd61894b05f9b4741e1d92ee3e32352a00e8b1ca3764501f897fa",
+        "initial-git.txt": "cca4eaa5f1dcfe6cd055d72d3840b0244d3f6c5880fa2de088aec07d06d5b766",
+        "execution.json": "8a9e6c1754a99b0b39aa7a5beb849af6796c65ace35987426074dd59bea022e3"
+      }
+    },
+    {
+      "id": "17",
+      "group": 8,
+      "variant": "review-packet",
+      "entry": "review-changes",
+      "group_name": "Worker/manual delivery",
+      "invocation": "/kaylo:review changes",
+      "grade": "PASS",
+      "checkpoint": "Actual packet/workspace inspection",
+      "reason": "Actual review packet includes sources/snapshots and missing-workspace/historical-change diagnostics; no guessed authority. Same changed-history fixture confound.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/17",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:07:29Z",
+      "finished": "2026-10-12T17:10:21Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/17/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/17/profile",
+      "completed_commands": 16,
+      "command_exit_counts": {
+        "0": 13,
+        "1": 2,
+        "127": 1
+      },
+      "usage": {
+        "input_tokens": 259777,
+        "cached_input_tokens": 225536,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 5638,
+        "reasoning_output_tokens": 53
+      },
+      "thread_id": "01a13115-6d81-73f1-8571-1ac3c6bb334f",
+      "changed_files": {},
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0003-validate-before-persistence.md": {
+          "initial_sha256": "7418a23877cd6b07f1465a0d7b0997734d206c40c5b71bef5f1140eaa2ca079e",
+          "after_sha256": "7418a23877cd6b07f1465a0d7b0997734d206c40c5b71bef5f1140eaa2ca079e",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "50debcc6d9fb31fb44500cf2800143cb1b973df8b439b8a10534eef40d3aff06",
+        "diff.patch": "8b8e72a2509cde6e2f98d46d5fcacf38b19733bffd331e654f29009fc8fc6137",
+        "changed-sha256.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+        "stderr.log": "e88c3c9b607e2ad5f26bf7c6801e1ac6e0c85647a7015bf49df4b44c3bff01a5",
+        "events.jsonl": "78f5c5c8a263e8cf58ac963aca5e6a4db08d7da1bd738809fb92fa9507a3e831",
+        "actual-packet.md": "b418ca96279e7ed37424e88c0dbd97c1026823ee0e7360163a26c0fe25cb66db",
+        "prompt.txt": "ebf6b762b01bddf3c9034c1d4f1f453f23dd81dd72d25f7498a7fcad4011a895",
+        "initial-sha256.json": "04da7582cfe10306c4941a2408c2224afdf7a86385daaa796d279d36a5d985db",
+        "after-git.txt": "7e0391e03ab4f93b373e9e1d1fd12104ae1f0701f0333052f42510298f74f80d",
+        "initial-git.txt": "4a0d2882710e6a5d1a1481abfedd0994d4b50b5015067c2de13f73082038a1d7",
+        "execution.json": "6a3206c1a7e6cafece9f0d492cca8fe494709dd4382bc041dbadd06fc69a3b19"
+      }
+    },
+    {
+      "id": "18",
+      "group": 8,
+      "variant": "review-worker",
+      "entry": "worker-review",
+      "depends": "17",
+      "group_name": "Worker/manual delivery",
+      "invocation": "candidate reviewer brief + actual packet",
+      "grade": "PASS",
+      "checkpoint": "Actual worker packet and workspace",
+      "reason": "Actual reviewer reads packet/workspace, verifies current implementation but reports missing 0003 and changed host provenance as blocking; no file edits.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/18",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:34:50Z",
+      "finished": "2026-10-12T17:35:34Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/17/worker",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/18/profile",
+      "completed_commands": 7,
+      "command_exit_counts": {
+        "0": 7
+      },
+      "usage": {
+        "input_tokens": 90453,
+        "cached_input_tokens": 75648,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1014,
+        "reasoning_output_tokens": 0
+      },
+      "thread_id": "01a1312e-7559-7a82-b507-8791f3ea6df3",
+      "changed_files": {},
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "f102a6f3d777d4fccbbf179dab11ec80766c1aded61b232f3a9decc6203f3463",
+        "diff.patch": "eddb2a4369ddd21ed8e1638ee90f9ac10409eba1a0a7fdc288c0f6802f478a19",
+        "changed-sha256.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+        "stderr.log": "c6ffaf8f73da15185d8616b4df1a0bce653037167cff022783ee6d820f32a959",
+        "events.jsonl": "44df191734d4a4b63042f857efd62617703596e29c755e4e2cc4938fe44b4e75",
+        "actual-packet.md": "b418ca96279e7ed37424e88c0dbd97c1026823ee0e7360163a26c0fe25cb66db",
+        "prompt.txt": "3d4d6b3d0b3e235901219c627c4dfe1f618ffd9965df5f98eb4d5670ba173f3b",
+        "initial-sha256.json": "2223f2e34ff0d47baee2bb412f2b40aa02541b54ca10c53bb629454aec26fdde",
+        "after-git.txt": "fd3d1df0204cd61894b05f9b4741e1d92ee3e32352a00e8b1ca3764501f897fa",
+        "initial-git.txt": "6a55bebdb4a9bdb52ea08e33ba036441daedd220d92abfb55f66f165fb843b25",
+        "execution.json": "1f589c10320e1207bfd6d551a27db7716bc485b534b4412dd597a94359117f8d"
+      }
+    },
+    {
+      "id": "19",
+      "group": 8,
+      "variant": "manual-packet",
+      "entry": "build",
+      "group_name": "Worker/manual delivery",
+      "invocation": "/kaylo:build T1",
+      "grade": "PASS",
+      "checkpoint": "Actual manual packet/workspace inspection",
+      "reason": "New uncommitted 0003 snapshot delivered with identified provenance; actual worker unresolved remote-store proposal reported; packet directs blocked return.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/19",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:10:21Z",
+      "finished": "2026-10-12T17:12:29Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/19/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/19/profile",
+      "completed_commands": 12,
+      "command_exit_counts": {
+        "0": 10,
+        "1": 1,
+        "2": 1
+      },
+      "usage": {
+        "input_tokens": 265011,
+        "cached_input_tokens": 233472,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3667,
+        "reasoning_output_tokens": 116
+      },
+      "thread_id": "01a13118-0adf-7391-8184-2f643565f1df",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "32b01dd362dcd401835debfd38502de218066f1cce1a456ccfedac7374536038",
+          "after": "00e0a237fb51e77ddb61b4f8780a3237664cfe0166ce3a8617bdb2f0facad8a2"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0003-validate-before-persistence.md": {
+          "initial_sha256": "7418a23877cd6b07f1465a0d7b0997734d206c40c5b71bef5f1140eaa2ca079e",
+          "after_sha256": "7418a23877cd6b07f1465a0d7b0997734d206c40c5b71bef5f1140eaa2ca079e",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "54bd04d4c7aec678d1f8d24e64fe7bde8d8a9ece2c1a08017c56c33c959d97fa",
+        "diff.patch": "ffede5d23c9bcfbdae7b685b6788beb3bec5d33cd8285c4566df2c09840fd451",
+        "changed-sha256.json": "b521abca8379dd84d4f2d4a0ca00e638e49966251e217d9f4804bf9980750d2f",
+        "stderr.log": "8de1c0f2a5c763e3e4981707c559a3dcc700f30a2196e296ae6933f6e93e6ea1",
+        "events.jsonl": "3206d302830eeec8ed09a593b3d28892c7fb9ee281811843829e5afa1b352a8e",
+        "actual-packet.md": "d8c958405b34d26feb8073565f31de7f175d41e151b7543cc1c3c70a9175e64e",
+        "prompt.txt": "72e6842bd07e0d5b1eb0bb97e9a038550e4690b97379e0ee44453c32068832b9",
+        "initial-sha256.json": "d70bcb735077d61c60e899b31caac8fffe8df5157980df1222dc16e86fb56fd1",
+        "after-git.txt": "2b3f80957ccefdbf61e2d1c26c1784dde9c06735e76c753fe748b570ee73aae6",
+        "initial-git.txt": "651b976562227800cdd69d6b1b7e5c5d34deb28970e1668a6a9e36c88d9289c5",
+        "execution.json": "9aba20d4a2080e894976c8d2a1da13f26968cdee4c169cfb9ff5e7a9e09bc7fd"
+      }
+    },
+    {
+      "id": "20",
+      "group": 8,
+      "variant": "manual-worker",
+      "entry": "worker-build",
+      "depends": "19",
+      "group_name": "Worker/manual delivery",
+      "invocation": "candidate builder brief + actual packet",
+      "grade": "PASS",
+      "checkpoint": "Actual worker packet and workspace",
+      "reason": "Actual manual builder confirms missing 0003 and unresolved worker D2 remote-store conflict against identified host snapshot; no file edits or guessed authority.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/20",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:35:15Z",
+      "finished": "2026-10-12T17:35:53Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/19/worker",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/20/profile",
+      "completed_commands": 2,
+      "command_exit_counts": {
+        "0": 2
+      },
+      "usage": {
+        "input_tokens": 59069,
+        "cached_input_tokens": 48384,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 610,
+        "reasoning_output_tokens": 0
+      },
+      "thread_id": "01a1312e-d690-7e40-8107-c102d6aa2f13",
+      "changed_files": {},
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "16b87bd1a9026ffb0e11a937e06955857e07fa40bd096a03e93434dd3492adc6",
+        "diff.patch": "0e4317023ea917f2345e268f61d3c28d8eba9c0218f58506e5d0941fda282765",
+        "changed-sha256.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+        "stderr.log": "b6b2bbb422f58aaf6c111fe70e59f28f603452e6e093f67c1d0f0197449f46b3",
+        "events.jsonl": "e28a4fa5cd4d5db3bc95881a29881de88ceecca3cfd5292c010a6176b748040a",
+        "actual-packet.md": "d8c958405b34d26feb8073565f31de7f175d41e151b7543cc1c3c70a9175e64e",
+        "prompt.txt": "8ab1e6b3721389b03669f3e3e5e2508863257ed79b6d6b1386e7ca893edfc880",
+        "initial-sha256.json": "f4db10490ea3fd59730ba6fc490150f53525a7b96dc2563428a4f7b34fa7eadf",
+        "after-git.txt": "4b03b0e7a92e09aa70ed4bbfc842cca314cbe1d0f6066ba76fc09c5634bab52d",
+        "initial-git.txt": "e9ad3a59270fbe4567598d290f9369a8d9fdd8cdf12d084df579cb50814f4eef",
+        "execution.json": "6a7b0da4a9f68ec85d038f129fa14cba38cc68ef7070e0ae4f010f4949541c52"
+      }
+    },
+    {
+      "id": "21",
+      "group": 9,
+      "variant": "applicable",
+      "entry": "review-changes",
+      "group_name": "Evidence refresh",
+      "invocation": "/kaylo:review changes",
+      "grade": "PASS",
+      "checkpoint": "Affected review refresh",
+      "reason": "New testing successor 0004 read; missing-options probe exits 1 TypeError; stale passing review rejected, T1 reopened and R1 recorded.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/21",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:10:35Z",
+      "finished": "2026-10-12T17:12:59Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/21/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/21/profile",
+      "completed_commands": 11,
+      "command_exit_counts": {
+        "0": 10,
+        "1": 1
+      },
+      "usage": {
+        "input_tokens": 326951,
+        "cached_input_tokens": 277760,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2902,
+        "reasoning_output_tokens": 151
+      },
+      "thread_id": "01a13118-4169-7de3-a09d-4d2ac15b7869",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "7ecede9961d2b8d76a08f6fd037dcb8f3eb2e792faa2ce1846d00cea0def5c2a",
+          "after": "8912724eba06df0c8455d7e443d99597155a246365f4d1788a7ef6472acca7cd"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0004-complete-deterministic-checks.md": {
+          "initial_sha256": "79a88d18e0f58f17c313d5307fd8722aa5db1500f2deec8d0fd8aa435a548e28",
+          "after_sha256": "79a88d18e0f58f17c313d5307fd8722aa5db1500f2deec8d0fd8aa435a548e28",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0003-validate-before-persistence.md": {
+          "initial_sha256": "547ca8728a62d0fdad1ea9c49398f37f79376d7aedbcdddc46d07efddc06b924",
+          "after_sha256": "547ca8728a62d0fdad1ea9c49398f37f79376d7aedbcdddc46d07efddc06b924",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "8b3f831c92da0e5d2584e4d6bbab69fbfa55410d28b4c1c593f7aa45c855d6f6",
+        "diff.patch": "f29c517e94e9be5dd2651d9547e046c660d1b7e552ee0eb2991b81f837769ee1",
+        "changed-sha256.json": "a73e5e9609144433c1f146937433481e947a6e7d5b2740b761ebecca917220bb",
+        "stderr.log": "55934d0697b47486271f142d68514aefa6bf0743b740e26b35248de31753db80",
+        "events.jsonl": "cae2c96285ebe2972c438c9885edbea1e56cede6b4dca3b898a6952bc51fd42c",
+        "prompt.txt": "0ee2de28553a59f39aa86d3ba38c8c55e439d6896f85d2ddc3e3ce436bd38881",
+        "initial-sha256.json": "d4814858cc339939f78d1c9f386c5c35b5bf278233be9514016124d259885470",
+        "after-git.txt": "74dfd422aed1ba9d2c2506caa75b5b03eee3d97e9167be0aae27fe2e588575c5",
+        "initial-git.txt": "ad0cfe1573a29caf149071de514213b1bba7f62d74ae08c2e9754da250ded4ed",
+        "execution.json": "0474f3f7fa13c451517401be02c34a4a68423c2b340edda6df36c7b74632762c"
+      }
+    },
+    {
+      "id": "22",
+      "group": 9,
+      "variant": "applicable",
+      "entry": "close",
+      "group_name": "Evidence refresh",
+      "invocation": "/kaylo:close",
+      "grade": "PASS",
+      "checkpoint": "Affected close refresh",
+      "reason": "New testing rule triggers actual missing-options failure; T1 reopened and phase remains unchecked; older passing check preserved.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/22",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:12:29Z",
+      "finished": "2026-10-12T17:13:59Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/22/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/22/profile",
+      "completed_commands": 14,
+      "command_exit_counts": {
+        "0": 12,
+        "1": 1,
+        "127": 1
+      },
+      "usage": {
+        "input_tokens": 251828,
+        "cached_input_tokens": 220032,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2359,
+        "reasoning_output_tokens": 64
+      },
+      "thread_id": "01a1311a-00b6-7ce1-8871-79c45c733796",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "7ecede9961d2b8d76a08f6fd037dcb8f3eb2e792faa2ce1846d00cea0def5c2a",
+          "after": "9cf6f8cd315f4d0162be2b263fcd94e990eb379ffdf272df50db20d65d44ca9a"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0004-complete-deterministic-checks.md": {
+          "initial_sha256": "79a88d18e0f58f17c313d5307fd8722aa5db1500f2deec8d0fd8aa435a548e28",
+          "after_sha256": "79a88d18e0f58f17c313d5307fd8722aa5db1500f2deec8d0fd8aa435a548e28",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0003-validate-before-persistence.md": {
+          "initial_sha256": "547ca8728a62d0fdad1ea9c49398f37f79376d7aedbcdddc46d07efddc06b924",
+          "after_sha256": "547ca8728a62d0fdad1ea9c49398f37f79376d7aedbcdddc46d07efddc06b924",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "2a11b57b4d60317645a04c36e63483018c5097fa43a87dcdc42fee066c71a946",
+        "diff.patch": "b1cbb9a0a2ea264b15acdc209c842644eed5d3d2e1347188b9d2810cf2e279b6",
+        "changed-sha256.json": "a5058debbdb9aef7066264123cfd9316885e21c69947f48bfe23692993c6e74e",
+        "stderr.log": "63c3ce86b6119a788844f0f928da17ef0995cef693335626b469a308461d3f16",
+        "events.jsonl": "bb52ca623067305b2964bbbb57ce896087192031487d7bc0be6d2d3b2c9997e2",
+        "prompt.txt": "8945a666d480e15fc8855fbf6484be0bc96b2ae3fa51625d70c5c7bf1a6802fb",
+        "initial-sha256.json": "d4814858cc339939f78d1c9f386c5c35b5bf278233be9514016124d259885470",
+        "after-git.txt": "74dfd422aed1ba9d2c2506caa75b5b03eee3d97e9167be0aae27fe2e588575c5",
+        "initial-git.txt": "729583fa122b65d278ce2cbce0375b933d225d8e10806ff5b2bc27498f56061a",
+        "execution.json": "28ffa7b853f4af7beb85761afd0b4d4577e80af6fe6327ae4a9f84b526ed246f"
+      }
+    },
+    {
+      "id": "23",
+      "group": 9,
+      "variant": "unrelated",
+      "entry": "review-changes",
+      "group_name": "Evidence refresh",
+      "invocation": "/kaylo:review changes",
+      "grade": "PASS",
+      "checkpoint": "Unrelated evidence reuse",
+      "reason": "Offline export rule inspected as unrelated; exact product SHA256 matches old review inputs; implementation remains ready, accepted applicable ADRs unchanged.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/23",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:12:59Z",
+      "finished": "2026-10-12T17:14:34Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/23/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/23/profile",
+      "completed_commands": 12,
+      "command_exit_counts": {
+        "0": 10,
+        "1": 1,
+        "130": 1
+      },
+      "usage": {
+        "input_tokens": 232087,
+        "cached_input_tokens": 180992,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2252,
+        "reasoning_output_tokens": 121
+      },
+      "thread_id": "01a1311a-7500-7303-952b-10b414606c84",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "7ecede9961d2b8d76a08f6fd037dcb8f3eb2e792faa2ce1846d00cea0def5c2a",
+          "after": "3e08a71ce50553f31990bcdf8ab41ced77d56eaae8a2787d0b0d97e92d044c7b"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0004-batch-export.md": {
+          "initial_sha256": "ada5824964d588fa9c2a5df0f26bd910d925e683baf6159499e7f01a5c0151ba",
+          "after_sha256": "ada5824964d588fa9c2a5df0f26bd910d925e683baf6159499e7f01a5c0151ba",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0003-validate-before-persistence.md": {
+          "initial_sha256": "547ca8728a62d0fdad1ea9c49398f37f79376d7aedbcdddc46d07efddc06b924",
+          "after_sha256": "547ca8728a62d0fdad1ea9c49398f37f79376d7aedbcdddc46d07efddc06b924",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "a7417a97e477600460938da9af4f4c8243a0ed3760fad5896bafb3780ec2cd64",
+        "diff.patch": "97a1eff1b99fd98aaeaf13e108e8066ac69f893d792acbf288ab5b6febbeb538",
+        "changed-sha256.json": "c2231e57eee93b7f68177ad9f457a3b4eef358eb23dbedbf93d2e80ed13389ce",
+        "stderr.log": "05cff40bdee11a6a39a594e28612b70360fdf0da4effea20ad9fb1ce0dd23627",
+        "events.jsonl": "9fc662e8a012d3e60fe31efa125e3e0a0575979277e3931c74c82a2572841ee3",
+        "prompt.txt": "86d46014242d95a25229e0cfb00b07a6131ac9ccff7970a4cd325eca6286a81b",
+        "initial-sha256.json": "54ad163a2171e841a4e1cf83a816e33270af81c984af6536c576541724bd367a",
+        "after-git.txt": "767b37777cfbddfe33c389f946511c9ee6337dc9045ee5801abe054d351f4265",
+        "initial-git.txt": "d6b4e04f6af6cba826ea05a6407fce0c68bb237d0d27f250d1be1db233403eed",
+        "execution.json": "b541d27984e141a351976ce94289457a6622e4fc9367825b6436297eee6fc757"
+      }
+    },
+    {
+      "id": "24",
+      "group": 9,
+      "variant": "unrelated",
+      "entry": "close",
+      "group_name": "Evidence refresh",
+      "invocation": "/kaylo:close",
+      "grade": "PASS",
+      "checkpoint": "Unrelated close evidence reuse",
+      "reason": "Product hashes match review inputs, unrelated offline-export record does not invalidate review; closure and new source mapping succeed, older accepted ADR bytes retained.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/24",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:13:59Z",
+      "finished": "2026-10-12T17:16:06Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/24/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/24/profile",
+      "completed_commands": 12,
+      "command_exit_counts": {
+        "0": 10,
+        "127": 1,
+        "1": 1
+      },
+      "usage": {
+        "input_tokens": 203872,
+        "cached_input_tokens": 183552,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3341,
+        "reasoning_output_tokens": 88
+      },
+      "thread_id": "01a1311b-5f92-7bf2-9ee7-91b17a024216",
+      "changed_files": {
+        ".kaylo/decisions/0005-browser-session-validation.md": {
+          "before": null,
+          "after": "8e254a8cea7a2060700694799c124f7bbaa9bf6215237773d412c16587349b75"
+        },
+        ".kaylo/decisions/index.md": {
+          "before": "68020e5d93a4aa703586e2ec0da44db69fa8383be8a06f0d97af4781bf2eca94",
+          "after": "6e347251436864ed1c77b3e70881b23c1b223e0144aa2cd4e178ec184da78006"
+        },
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "7ecede9961d2b8d76a08f6fd037dcb8f3eb2e792faa2ce1846d00cea0def5c2a",
+          "after": "464f4a910ef4448e39b16741f09b33884cf31984f03faa6e8aaf159dc5b77bba"
+        },
+        "ROADMAP.md": {
+          "before": "f8ae5f58c89ee462811e03141d846b89a001052b484019a62885c1585d12106b",
+          "after": "837d10612d962a474b8c50e849149cdeb1b3184d347bb57ec492a8bf806bb247"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0004-batch-export.md": {
+          "initial_sha256": "ada5824964d588fa9c2a5df0f26bd910d925e683baf6159499e7f01a5c0151ba",
+          "after_sha256": "ada5824964d588fa9c2a5df0f26bd910d925e683baf6159499e7f01a5c0151ba",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0003-validate-before-persistence.md": {
+          "initial_sha256": "547ca8728a62d0fdad1ea9c49398f37f79376d7aedbcdddc46d07efddc06b924",
+          "after_sha256": "547ca8728a62d0fdad1ea9c49398f37f79376d7aedbcdddc46d07efddc06b924",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "34d8eb872b8a6362122e80280d484face605918b113c9fa4247a408d657aad40",
+        "diff.patch": "80042b3a18b6b43847ab0d50d7af4ae633f9320a87bcde49f0912d81f7d5e68e",
+        "changed-sha256.json": "f11958337ad5f728f596e8aabacf51b3d08b084c8ccf2284fe18f6b4d6cca127",
+        "stderr.log": "f12290cb714691c6f656157067f587200093a70848cab7d018b1893cb3ad54e5",
+        "events.jsonl": "a958c982d0f21c5a18ad87bb71ced002d110d83647ed61903889faad49a74b03",
+        "prompt.txt": "ec82016bd1a72a1fff525b15848c5c5fe946edfea893f9f0de254b5238fbaea3",
+        "initial-sha256.json": "54ad163a2171e841a4e1cf83a816e33270af81c984af6536c576541724bd367a",
+        "after-git.txt": "c5edf29d617d6fbd703381440fadce43b7d525d066b945f405a300954ba0d316",
+        "initial-git.txt": "d6b4e04f6af6cba826ea05a6407fce0c68bb237d0d27f250d1be1db233403eed",
+        "execution.json": "14300cdd374dfcada3cd20adfe709d6ea1477f24c46cccde9a36c15094eea7e0"
+      }
+    },
+    {
+      "id": "25",
+      "group": 10,
+      "variant": "missing",
+      "entry": "build",
+      "group_name": "Missing file",
+      "invocation": "/kaylo:build T1",
+      "grade": "FAIL",
+      "checkpoint": "Missing relevant record diagnostic",
+      "reason": "Affected T1 stays open and the indexed missing file is named, but the documented unreadable/broken-link diagnostic is not produced; uses workspace-missing/historical-change instead.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/25",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:14:34Z",
+      "finished": "2026-10-12T17:15:41Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/25/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/25/profile",
+      "completed_commands": 9,
+      "command_exit_counts": {
+        "0": 9
+      },
+      "usage": {
+        "input_tokens": 132817,
+        "cached_input_tokens": 111232,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1492,
+        "reasoning_output_tokens": 74
+      },
+      "thread_id": "01a1311b-e6fd-7690-a9f6-9365c73c21e1",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "32b01dd362dcd401835debfd38502de218066f1cce1a456ccfedac7374536038",
+          "after": "20b0c97376c9d89cc7efdf59b89478953371ae00a3bb1b38e0366875054a0c26"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "0ccc1374d629cac017c59e4813afc14573dfc3baf8699a1067def194115c17ce",
+        "diff.patch": "69ae6bf27313b339e314064338a5d7d37b86516fccbb2651f188585884e869e0",
+        "changed-sha256.json": "a3d82b69f4a8b9822e9d6ada627ba4313068886498549d69c44f1851ab835e7c",
+        "stderr.log": "221a8f78f458920b012e60ec5f5cbfe7334d2c81dda2ccb3e026523c7ab4a397",
+        "events.jsonl": "4b3e657537517da2a2877148958b409b60383ebcf2c658026f9976006e98edb0",
+        "prompt.txt": "7add75c32c31c0f2342864f7b4468dd662267090e284114054fc522ed2d5cc0a",
+        "initial-sha256.json": "5858c0e7d1a316829a2676608c677072da4dee6390924552e6abd095c5c4afbd",
+        "after-git.txt": "b3f02c78a26f73efa6a33f4cd4307aa686d8cb9029d70254c4bbce90140f5054",
+        "initial-git.txt": "b3dce8135255f97f6bd5fda1c30bcf97d747928bb512d6fa92cfb55bde4e589a",
+        "execution.json": "c0f60bcf0197a60717ea65eac2aa950a3af792665eac0b307311299e2d26a967"
+      }
+    },
+    {
+      "id": "26",
+      "group": 10,
+      "variant": "unreadable",
+      "entry": "build",
+      "group_name": "Missing file",
+      "invocation": "/kaylo:build T1",
+      "grade": "INCONCLUSIVE",
+      "checkpoint": "Earlier Git-history reconciliation",
+      "reason": "The path is an actual directory instead of a readable ADR. Subject stops on Git deletion inference without attempting to read or inspect that path, so the unreadability checkpoint is not reached; incorrectly describes it as absent.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/26",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:15:41Z",
+      "finished": "2026-10-12T17:16:36Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/26/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/26/profile",
+      "completed_commands": 8,
+      "command_exit_counts": {
+        "0": 8
+      },
+      "usage": {
+        "input_tokens": 164035,
+        "cached_input_tokens": 137856,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1333,
+        "reasoning_output_tokens": 42
+      },
+      "thread_id": "01a1311c-ecb7-77f1-88f3-61bf052a84f2",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "32b01dd362dcd401835debfd38502de218066f1cce1a456ccfedac7374536038",
+          "after": "7d520c021a179f1860cb08acf96978d42132086b5dc8efd82cfe0343a63c6dc3"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "4fe8ddfd5827366906a49683e36c0d6886793ab9ce6070865d9435f5a42ed49a",
+        "diff.patch": "37f01d49249fa4c8f8f59a65710b8cd667405e74b827769b76468b6f0ee22f5d",
+        "changed-sha256.json": "d6ff3959833f7e8792d77747d14fe2bdd80d490ad70a8163c21b7203f53f52fe",
+        "stderr.log": "e53d2d15d9fac5f5c3bc2b5ed0dd6fe67887b13db526d3729523d79479ee8208",
+        "events.jsonl": "0e69dda3c432ed5be3639db2eb310167d382f855844c9e673aa9208a81b96812",
+        "prompt.txt": "490836a66caca882f1c6cc49a251892593d12f7679d9710964e7c40f0e887eea",
+        "initial-sha256.json": "5858c0e7d1a316829a2676608c677072da4dee6390924552e6abd095c5c4afbd",
+        "after-git.txt": "b3f02c78a26f73efa6a33f4cd4307aa686d8cb9029d70254c4bbce90140f5054",
+        "initial-git.txt": "b3dce8135255f97f6bd5fda1c30bcf97d747928bb512d6fa92cfb55bde4e589a",
+        "execution.json": "3066eea3ab28b8b4a3d09329536e36552023ab3e0aed5af1f35a79cc330e6653"
+      }
+    },
+    {
+      "id": "27",
+      "group": 11,
+      "variant": "duplicate-index",
+      "entry": "close",
+      "group_name": "Identity collision",
+      "invocation": "/kaylo:close",
+      "grade": "PASS",
+      "checkpoint": "Global identity consistency",
+      "reason": "Duplicate index ID 0001 reported; no overwrite/promotion/check-off; product pass retained.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/27",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:16:06Z",
+      "finished": "2026-10-12T17:17:01Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/27/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/27/profile",
+      "completed_commands": 7,
+      "command_exit_counts": {
+        "0": 7
+      },
+      "usage": {
+        "input_tokens": 160599,
+        "cached_input_tokens": 132480,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1368,
+        "reasoning_output_tokens": 47
+      },
+      "thread_id": "01a1311d-4dcd-71b0-8b79-6a1ebfdd9a39",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "65bff2b76b5252dcccddb7549fa556c481847037c3ca6634e7ef8dd2a29f6919",
+          "after": "74254af0c78e50de40639dab9f30daf7500d8a8fa3e8c164814db90274044286"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "4d30ee10cfd21fe5b6976a4473cfa51c03cf6e4e071abeb9e17ec427f07ead33",
+          "after_sha256": "4d30ee10cfd21fe5b6976a4473cfa51c03cf6e4e071abeb9e17ec427f07ead33",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "5c1e898073dcebaa8a11e1a9dd5cbf7b279670b0fa2b96ce4b3fe5b90922b00d",
+        "diff.patch": "6ce8f627319a557bf21d575e0cb24a3fc15499cafb569a5048339681b0e7c701",
+        "changed-sha256.json": "11b8e8704398f6c9898bbefe6637a74edd78491604135264e49d753b0cadd3f9",
+        "stderr.log": "151714e9d9e9c26448a36af982f09647f5f14f107df6e04150f7fc3fd53e2609",
+        "events.jsonl": "01a71c8c8b8d5f87b267154879ca914ffe6ec4b311c7332e451d0759a9607e91",
+        "prompt.txt": "61afd4f9019d7c310ad377eb04fb682a0589fe640e21f85296709b95550688c9",
+        "initial-sha256.json": "d092470d4b181cb467e28b627d099ee84b4c874a46c1a045782379513c1260b4",
+        "after-git.txt": "4b03b0e7a92e09aa70ed4bbfc842cca314cbe1d0f6066ba76fc09c5634bab52d",
+        "initial-git.txt": "15b51bf6ce3b141a7f0b7590118680a7f203c25f31f08d771ef8cd478afc6a47",
+        "execution.json": "ae1004a950e6bcbcfc42700528b42c90648c0cbbdf6140363a769e27544b0382"
+      }
+    },
+    {
+      "id": "28",
+      "group": 11,
+      "variant": "two-files",
+      "entry": "close",
+      "group_name": "Identity collision",
+      "invocation": "/kaylo:close",
+      "grade": "PASS",
+      "checkpoint": "Global identity consistency",
+      "reason": "Unindexed second file with ID/source 0001 reported despite browser scope unrelated to greeting; both files retained and phase stays open.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/28",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:16:36Z",
+      "finished": "2026-10-12T17:17:35Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/28/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/28/profile",
+      "completed_commands": 7,
+      "command_exit_counts": {
+        "0": 7
+      },
+      "usage": {
+        "input_tokens": 134317,
+        "cached_input_tokens": 106624,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1440,
+        "reasoning_output_tokens": 52
+      },
+      "thread_id": "01a1311d-c658-7d53-a4ad-d705bd4b6f88",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "65bff2b76b5252dcccddb7549fa556c481847037c3ca6634e7ef8dd2a29f6919",
+          "after": "ebc51fa8d4c2d8de4938c8422f50a43af551a3eb1026b74a3655c3ea97ca457d"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0001-duplicate.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "4d30ee10cfd21fe5b6976a4473cfa51c03cf6e4e071abeb9e17ec427f07ead33",
+          "after_sha256": "4d30ee10cfd21fe5b6976a4473cfa51c03cf6e4e071abeb9e17ec427f07ead33",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "7e0fc030c3d5c12d22b089671138eba40a3223fcaf27da3873e5db3b70fc98b3",
+        "diff.patch": "21230c4f392d4db8f52210a96ddbc10965e286bf4b7ebae97f41a89ef37eb86f",
+        "changed-sha256.json": "4ec508c6d23eb9cac0c403f6f47a894a7044b7d0a1d6632fc432ff14cc4aa1ac",
+        "stderr.log": "6faef862062fcca9f95a18ea56c172e030a6a9e3aaa0259399d65517880649c1",
+        "events.jsonl": "af0dfad21ebd420a472dbf878ef16252efcb029ad1329fd6e7a4290ae0d3f3d4",
+        "prompt.txt": "8018aab563a7e053d69ac32b4aadb83df8838e6fd28173fb7ccf0e5f0ecd2d80",
+        "initial-sha256.json": "3dcaafe86697f6bca411c6a444434a44bab1fd42d1ecc03ba7c7c7f41a031cb6",
+        "after-git.txt": "99aeb40a3af3364731ceac9acde8bb9353cbc8cc0ed1cbb805f006e3caf29bc3",
+        "initial-git.txt": "11df8d69109e2f491f88f08cfd7d2af51eaa214d77dd4301eb23eaa3e3aaa6d6",
+        "execution.json": "9c7fb628c94b44ff64618723a793face0519166715d0d955386c12089f43eaf3"
+      }
+    },
+    {
+      "id": "29",
+      "group": 11,
+      "variant": "branch-allocation",
+      "entry": "close",
+      "group_name": "Identity collision",
+      "invocation": "/kaylo:close",
+      "grade": "PASS",
+      "checkpoint": "Branch allocation collision",
+      "reason": "Both branch decisions carrying 0003 and their scope/provenance conflict reported; neither renumbered nor overwritten, phase left open.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/29",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:17:01Z",
+      "finished": "2026-10-12T17:18:04Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/29/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/29/profile",
+      "completed_commands": 7,
+      "command_exit_counts": {
+        "0": 7
+      },
+      "usage": {
+        "input_tokens": 136303,
+        "cached_input_tokens": 117888,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1618,
+        "reasoning_output_tokens": 73
+      },
+      "thread_id": "01a1311e-2518-7db3-a7f9-0fdac3bf1c81",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "65bff2b76b5252dcccddb7549fa556c481847037c3ca6634e7ef8dd2a29f6919",
+          "after": "a231683f1558719cb98c5e926d3188e4a7677bbed5d30b704939ce4f966fc6ab"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0003-branch-b.md": {
+          "initial_sha256": "96fc271311beff226574675bdfb7317d72758f027152a5c681d8abcd9d3f959c",
+          "after_sha256": "96fc271311beff226574675bdfb7317d72758f027152a5c681d8abcd9d3f959c",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0003-branch-a.md": {
+          "initial_sha256": "9679fc085ed849ac660de7f72a53ec3114a3b227b5aad6856e577bde9dac1363",
+          "after_sha256": "9679fc085ed849ac660de7f72a53ec3114a3b227b5aad6856e577bde9dac1363",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "4d30ee10cfd21fe5b6976a4473cfa51c03cf6e4e071abeb9e17ec427f07ead33",
+          "after_sha256": "4d30ee10cfd21fe5b6976a4473cfa51c03cf6e4e071abeb9e17ec427f07ead33",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "5c340b7c84dc8aebaebc47e822265700b130e54765ca7fa818185e819bfdf732",
+        "diff.patch": "a619527192eea1ceccc2510dedb35d30427c8052a39210c11e9afd22ee304040",
+        "changed-sha256.json": "fe33604a857f11ca8fb398f092f6f0c2055dc20d240d6dc894f51a160fe4282f",
+        "stderr.log": "f4c596b22a151324cf1826b8398d90f986ec4f24fddc620b5ea959b644e2ebbc",
+        "events.jsonl": "c221ed260665a6d1362f162b277574dcef8943c45fe6b5079f3d94203d47ced3",
+        "prompt.txt": "5e6817083745567a8b11940a0c757ebd821b266da277f56ccf513da754353a54",
+        "initial-sha256.json": "46a1dd8cfe7f71617430defa0def250f23efcb0613b8ed8ff72c4bfe0a53f4f8",
+        "after-git.txt": "d976b750a06bdb8b7c71385af19e9171b4c0bd5918aa3a37e1b16e4f3af6757f",
+        "initial-git.txt": "d4ac07e56ad5526ba385a2b6aa833b5bd93763c1b366022280e7a7935004aaf3",
+        "execution.json": "222dce03a9012c35c0c35e69d4316e0a7c126d49660855ca91423eb5f22ddf21"
+      }
+    },
+    {
+      "id": "30",
+      "group": 12,
+      "variant": "missing-predecessor",
+      "entry": "review-changes",
+      "group_name": "Broken chain",
+      "invocation": "/kaylo:review changes",
+      "grade": "PASS",
+      "checkpoint": "Supersession consistency",
+      "reason": "Missing predecessor 0099 and accepted-body historical change reported; no silent resolution; work remains open.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/30",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:17:35Z",
+      "finished": "2026-10-12T17:19:50Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/30/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/30/profile",
+      "completed_commands": 9,
+      "command_exit_counts": {
+        "0": 9
+      },
+      "usage": {
+        "input_tokens": 360869,
+        "cached_input_tokens": 330368,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3231,
+        "reasoning_output_tokens": 133
+      },
+      "thread_id": "01a1311e-aa7c-7ab0-a298-d8bd7e915a5d",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "7ecede9961d2b8d76a08f6fd037dcb8f3eb2e792faa2ce1846d00cea0def5c2a",
+          "after": "9d6f9dbedfe6a3a3b101b37eb5a2f9fc9409ff43d39b334155e8164568d72437"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "4fc2817b608a2eb86ce27748ae20fb17b2a4adc00d9913d9111616bbe3696ecf",
+          "after_sha256": "4fc2817b608a2eb86ce27748ae20fb17b2a4adc00d9913d9111616bbe3696ecf",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "e1f505b86ea25d1ae9e3b4c1d099cd91ce283018680617288655af20f24d6940",
+        "diff.patch": "6a75f3100db65b6d15760081b413195341c88ad74813d7728d2d5f76f26f3616",
+        "changed-sha256.json": "2b75ff44cfd94ca69d8580126db9fa6a872eb8b225bdb86a745ec81d5e551ac8",
+        "stderr.log": "72bb9ab3cd10fcd8aae243fd8a7675b5d9928f3b94d2aa0ab8eca4ffd36ff45e",
+        "events.jsonl": "fc292fb89cb5a43c87e9e50e953381d5986b08d9f30b12b9693c03621257419e",
+        "prompt.txt": "6c0f37604e879f30e1d943b505b1b7dc93b3ad9823488677866080c4973f5ce4",
+        "initial-sha256.json": "8b9726764382f14ef04bc1d33de366884177107b102cdbc55317b8d8be93b562",
+        "after-git.txt": "c6366442a2d8154321f0bc77c78189704380bbe2933855c756060de1eca4ef10",
+        "initial-git.txt": "71e57c5e98bd07b19ae60d3d7249049409321e2fffe8da9f691e18eb1b0fd86f",
+        "execution.json": "195a7351ccfc960b4c2c82a8a808320a15d2716da70893a65d383926d2897c40"
+      }
+    },
+    {
+      "id": "31",
+      "group": 12,
+      "variant": "self-link",
+      "entry": "review-changes",
+      "group_name": "Broken chain",
+      "invocation": "/kaylo:review changes",
+      "grade": "PASS",
+      "checkpoint": "Supersession consistency",
+      "reason": "Self-supersession and historical body change reported; T1 reopened; accepted edits preserved as supplied rather than overwritten.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/31",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:18:04Z",
+      "finished": "2026-10-12T17:20:14Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/31/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/31/profile",
+      "completed_commands": 13,
+      "command_exit_counts": {
+        "0": 12,
+        "130": 1
+      },
+      "usage": {
+        "input_tokens": 369863,
+        "cached_input_tokens": 342016,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2453,
+        "reasoning_output_tokens": 185
+      },
+      "thread_id": "01a1311f-1e08-7cc2-a67a-51b4d8543ceb",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "7ecede9961d2b8d76a08f6fd037dcb8f3eb2e792faa2ce1846d00cea0def5c2a",
+          "after": "7275a1a59365e5055781ed92102e0564a913011d8a6dcbd808681e94377518e4"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "93fecc0e1c67b1f82c5f63b5b34306b8b9c81ffeea16857ef3ccd5e92618f119",
+          "after_sha256": "93fecc0e1c67b1f82c5f63b5b34306b8b9c81ffeea16857ef3ccd5e92618f119",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "043eae3d5ada5ba664c32cdae9da25f9a14c90547a6706c6a9f6b12507908e0a",
+        "diff.patch": "46b5eda3f263da2542d219ac1ee86cba9b1d6df15b39aecf61e9b36530d0ac6c",
+        "changed-sha256.json": "b721480fd47b837fef5694a22e8d31342c44f45b198151749abf22ccaf388db3",
+        "stderr.log": "a8908d232a32f7fa8314453af472696979bf9503492abbb6100dc530f3c9f511",
+        "events.jsonl": "0c9142a24ba6ccc7079f6cfccac8e8d4023b26e180c0005393e43718f1cf2f3e",
+        "prompt.txt": "61e7064b09f575356a930e2c719140fd958bfe86d01f0103b5d7640db43ff28a",
+        "initial-sha256.json": "0b5412fd159fb5b09809b8f5b2e3251182f4f1753cbac9b9697e74c981dc5838",
+        "after-git.txt": "c6366442a2d8154321f0bc77c78189704380bbe2933855c756060de1eca4ef10",
+        "initial-git.txt": "71e57c5e98bd07b19ae60d3d7249049409321e2fffe8da9f691e18eb1b0fd86f",
+        "execution.json": "d055dcb90e416245dffb32b6536907286f06167108cba524e937ac0d8672a118"
+      }
+    },
+    {
+      "id": "32",
+      "group": 12,
+      "variant": "cycle",
+      "entry": "review-changes",
+      "group_name": "Broken chain",
+      "invocation": "/kaylo:review changes",
+      "grade": "PASS",
+      "checkpoint": "Cycle consistency",
+      "reason": "Two-record cycle 0001/0002 and loss of retained scope reported, alongside deliberately edited historical bodies; no silent winner.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/32",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:19:50Z",
+      "finished": "2026-10-12T17:22:30Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/32/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/32/profile",
+      "completed_commands": 16,
+      "command_exit_counts": {
+        "0": 14,
+        "124": 1,
+        "130": 1
+      },
+      "usage": {
+        "input_tokens": 367223,
+        "cached_input_tokens": 312448,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3510,
+        "reasoning_output_tokens": 124
+      },
+      "thread_id": "01a13120-b9d8-7d91-8f63-3b91c47482c7",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "7ecede9961d2b8d76a08f6fd037dcb8f3eb2e792faa2ce1846d00cea0def5c2a",
+          "after": "1a8f4ce4d62f90262579144eb09aae4a84b8ad6a7643251890705a7c30c91d56"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "1fd6fa22809e188badf5dbf00d5fc2f66ca6702d96290fe941eebd71931b3487",
+          "after_sha256": "1fd6fa22809e188badf5dbf00d5fc2f66ca6702d96290fe941eebd71931b3487",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "d9c32d8f122ff4fae4eaf43b6ee62cab6b3093681307da712dc9318b6a48fc9e",
+          "after_sha256": "d9c32d8f122ff4fae4eaf43b6ee62cab6b3093681307da712dc9318b6a48fc9e",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "59c3250e130c76436079504f3b1624289ab11589d0b9d72677d66a6c4367634b",
+        "diff.patch": "5814da5124b87e1e166169ee9c6e32342f71b199de3f299778c63aeed5186fe7",
+        "changed-sha256.json": "78506ae50fa624f9be289e48a42db2d4b2a5f47a8ccf5a3c24a80e924f452d52",
+        "stderr.log": "dc9517beac15e84fe583523408f735eafc1f1b61af42cd338b1c4d904820d4e8",
+        "events.jsonl": "808f22623b1f4896d8cd097dc8efff19ad0e2f4a01782ffd1b3112cc74f6f465",
+        "prompt.txt": "35fbc5809e22ec3325fe69cffd8c2041ba8c132a75ef91a3a0d4cd2f7cb14c80",
+        "initial-sha256.json": "a0ea8b20bddfc279362ec88aa22d378e596a5effc7df1a201fbf708ba82a3c50",
+        "after-git.txt": "18dcd93f50ed9719fbb4029c6153ef7121baf72d99ce1fd1f98d7c8831194b8d",
+        "initial-git.txt": "69e4a7b40440b13591c81b5f7f8acccb1925203d2fa453c30429857c62262346",
+        "execution.json": "4ddac99d37fe283e9e8806a7e7560d2241e0531046efca45f789e32084874093"
+      }
+    },
+    {
+      "id": "33",
+      "group": 12,
+      "variant": "multiple-replacements",
+      "entry": "review-changes",
+      "group_name": "Broken chain",
+      "invocation": "/kaylo:review changes",
+      "grade": "PASS",
+      "checkpoint": "Supersession consistency",
+      "reason": "Reports two whole-record replacements of 0001 rather than choosing a successor; work stays open.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/33",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:20:14Z",
+      "finished": "2026-10-12T17:22:12Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/33/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/33/profile",
+      "completed_commands": 13,
+      "command_exit_counts": {
+        "0": 11,
+        "2": 1,
+        "130": 1
+      },
+      "usage": {
+        "input_tokens": 300289,
+        "cached_input_tokens": 273280,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2663,
+        "reasoning_output_tokens": 133
+      },
+      "thread_id": "01a13121-1861-7701-8d74-23cd91fda839",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "7ecede9961d2b8d76a08f6fd037dcb8f3eb2e792faa2ce1846d00cea0def5c2a",
+          "after": "0ecd02b9990f0c8dce1c0f6211676824b7817b02a3777673b2c2510e89660ff3"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0004-replacement-b.md": {
+          "initial_sha256": "2cf21eadc029cac0f1c8013eafef054a2dc3177138086aac1ccbcdeaf9813217",
+          "after_sha256": "2cf21eadc029cac0f1c8013eafef054a2dc3177138086aac1ccbcdeaf9813217",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0003-replacement-a.md": {
+          "initial_sha256": "18ebb1282795f41674830d08de941e32397bd18a0c6d1f48ad6cfacd4d51e2e6",
+          "after_sha256": "18ebb1282795f41674830d08de941e32397bd18a0c6d1f48ad6cfacd4d51e2e6",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "50e15f314af7655b4925e5eb826195e7a1211d3409034a8bcb530325f6a5e641",
+        "diff.patch": "275367d10acc7de30fd92a79b6ce9e62f135931c2dadfbb172e79cb8188028d8",
+        "changed-sha256.json": "53f999ba3708aeac223a7d0fcc749ea4c095c41421cccd4b37ef77042381b228",
+        "stderr.log": "385f39351f76f91a7bc2a85161569e69ddbac0959f2ba82a1363d0e842027cff",
+        "events.jsonl": "0a0211bf833773beb97872078c772e0acd17607ed5043d7d2b95431c8c8ec684",
+        "prompt.txt": "07689a1d851189e2f060fe0f525db9675e5ca08a98c26f317280956b63a5efc1",
+        "initial-sha256.json": "5728059d185c187e683864f833e239869157185b0d176a01b20a856682bf0c8c",
+        "after-git.txt": "0a69ca89c3253d9f4b672e6eb70410df841b56e5ff591c3ea5917274c0c726c6",
+        "initial-git.txt": "74d589f3133a230968481eb8de7a0b0c058c0b553d9d75caa35c7b0059ac232d",
+        "execution.json": "1fc7a757af6e7d3c3a8ea692d4e7c591825208d3ec35b7f27e349cab91b05893"
+      }
+    },
+    {
+      "id": "34",
+      "group": 12,
+      "variant": "status-link",
+      "entry": "review-changes",
+      "group_name": "Broken chain",
+      "invocation": "/kaylo:review changes",
+      "grade": "PASS",
+      "checkpoint": "Status/link consistency",
+      "reason": "Accepted index successor link disagrees with ADR 0002 supersession and retained browser scope; review blocks closure without editing accepted records.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/34",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:22:12Z",
+      "finished": "2026-10-12T17:24:30Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/34/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/34/profile",
+      "completed_commands": 14,
+      "command_exit_counts": {
+        "0": 13,
+        "124": 1
+      },
+      "usage": {
+        "input_tokens": 409645,
+        "cached_input_tokens": 357504,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2842,
+        "reasoning_output_tokens": 320
+      },
+      "thread_id": "01a13122-e3f4-79d3-b76b-fc727c296c95",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "7ecede9961d2b8d76a08f6fd037dcb8f3eb2e792faa2ce1846d00cea0def5c2a",
+          "after": "53a65280c7d30f081132fcc2297fb313a5ef7e11e4ed2743a3df5074ac71a3c0"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "6712dad4a295de5ebee3ac6116bd73e66319bcf75f117d1c9c8bd5e014a27d41",
+        "diff.patch": "340f7e550fc5a85671b4438506f73a08a2875177e24283381dd9cc62863f4874",
+        "changed-sha256.json": "8dc61b3119eb37cff23e836c920b151d638b1651e5ea37f87af26c7a17ff99fc",
+        "stderr.log": "c2396c186b09103489e172f822790f73e72b692efd395bbff0fc9540116b712b",
+        "events.jsonl": "a0d4958db2da059cdfa8631e72c9bc783eaf575d8851b6ef2e9f286b1287045e",
+        "prompt.txt": "9bbbb84f44f2725ff52572595e81f8e34c4c0bf09fffaf5302244fb71fb4f548",
+        "initial-sha256.json": "d70ae1b95b26732a2bfb90352718a03042f754ce5c24410edf45efdf6e36ffce",
+        "after-git.txt": "4b03b0e7a92e09aa70ed4bbfc842cca314cbe1d0f6066ba76fc09c5634bab52d",
+        "initial-git.txt": "67ff1ddb6960e35b5c24db492d28649a982afd9251174e01e164c37607325816",
+        "execution.json": "89c48065d1681d5dff52608dffaac5485f0a07e8e9c2bd549757225579c4b93c"
+      }
+    },
+    {
+      "id": "35",
+      "group": 13,
+      "variant": "conflicting-active",
+      "entry": "plan",
+      "group_name": "Active scope conflict",
+      "invocation": "/kaylo:plan",
+      "grade": "PASS",
+      "checkpoint": "Active-scope consistency",
+      "reason": "Auth/data accepted rules contradict browser storage/revocation; plan reports scope conflict and asks reconciliation, no authority guessed.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/35",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:22:30Z",
+      "finished": "2026-10-12T17:23:43Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/35/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/35/profile",
+      "completed_commands": 9,
+      "command_exit_counts": {
+        "0": 8,
+        "127": 1
+      },
+      "usage": {
+        "input_tokens": 176163,
+        "cached_input_tokens": 142848,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1984,
+        "reasoning_output_tokens": 20
+      },
+      "thread_id": "01a13123-2c80-7cb3-b919-a0141be343a9",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "32b01dd362dcd401835debfd38502de218066f1cce1a456ccfedac7374536038",
+          "after": "2c1a67ea73edea863a637d7023926bd9667d091cb64b687e4ed9316fb4c58fbc"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0004-contradictory-storage.md": {
+          "initial_sha256": "9ff16b343741f83e91d55f7724222124130138fc81c7a996f12b4051663344f3",
+          "after_sha256": "9ff16b343741f83e91d55f7724222124130138fc81c7a996f12b4051663344f3",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0003-validate-before-persistence.md": {
+          "initial_sha256": "547ca8728a62d0fdad1ea9c49398f37f79376d7aedbcdddc46d07efddc06b924",
+          "after_sha256": "547ca8728a62d0fdad1ea9c49398f37f79376d7aedbcdddc46d07efddc06b924",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "2c003b175fcd08c7a5de944dfc6e7e985e5d2060a92b6304b2ca5b5dbac22da7",
+        "diff.patch": "85bd256fac849a2b9dfe6bf3af4163d1b4d2abf262a9d3f3098039c41db928df",
+        "changed-sha256.json": "f67ce1a87b21c16b56eec60c46e280a5d43a63efe90861081e3fb5563e9291e0",
+        "stderr.log": "f8475c1c339351b4450a2d8ace5f7aa887698e4a4697fccaea8cf90ac2731b71",
+        "events.jsonl": "281b60af94719e28f74de590e758bee31e9b8274678ae89cd70dfb4eba9f4f78",
+        "prompt.txt": "9f4645bdb3f0b1c0acc32b15ae7bb1e69cdb9ea21b0c00add53d41e862be3aa0",
+        "initial-sha256.json": "a0724cd084e491d0913000932e426ff56d1b1262f0b54b76ddfa415296dce383",
+        "after-git.txt": "3866264d317ca80456157378aa724756904d55b0c2bce6d9fc92954874f414a0",
+        "initial-git.txt": "c5c84f45d38d16701d5d44028ac9de73b14c9ea5865df0e4ec387195352a487e",
+        "execution.json": "92d4adf483b9f4e86c7ba5cf05865a24c67368daea834261da7e6952f4fb8e8f"
+      }
+    },
+    {
+      "id": "36",
+      "group": 13,
+      "variant": "uncertain-cross-area",
+      "entry": "plan",
+      "group_name": "Active scope conflict",
+      "invocation": "/kaylo:plan",
+      "grade": "PASS",
+      "checkpoint": "Uncertain cross-area relevance",
+      "reason": "Data rule with unclear consumer applicability is actually read; its browser-storage contradiction is not ignored and planning stays blocked.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/36",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:23:43Z",
+      "finished": "2026-10-12T17:25:16Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/36/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/36/profile",
+      "completed_commands": 7,
+      "command_exit_counts": {
+        "0": 7
+      },
+      "usage": {
+        "input_tokens": 175535,
+        "cached_input_tokens": 154112,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2208,
+        "reasoning_output_tokens": 50
+      },
+      "thread_id": "01a13124-478f-7c53-aedd-4c3c1afd690b",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "32b01dd362dcd401835debfd38502de218066f1cce1a456ccfedac7374536038",
+          "after": "ea9c9eff72c776b1bc9965f895bf960db6e0d5e36fd6c9e24192602d13c6b917"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0004-contradictory-storage.md": {
+          "initial_sha256": "740ef8f385027ef186b008adaf361cf93c60b592570516f3d7cab5a19a2f27be",
+          "after_sha256": "740ef8f385027ef186b008adaf361cf93c60b592570516f3d7cab5a19a2f27be",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0003-validate-before-persistence.md": {
+          "initial_sha256": "547ca8728a62d0fdad1ea9c49398f37f79376d7aedbcdddc46d07efddc06b924",
+          "after_sha256": "547ca8728a62d0fdad1ea9c49398f37f79376d7aedbcdddc46d07efddc06b924",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "988eda3e29ceed3801e8af7055111227ad1dacd0c15790d92133861968b4586c",
+        "diff.patch": "5c39fd3ffc573bc033d3a530361083bf033d8c5ece57122d18fa30743f9203ec",
+        "changed-sha256.json": "c46b26702732a886444f601fc5b6129b73a7b86a06efbe3dc0ed55eeebfbd45f",
+        "stderr.log": "9de61bee3b2e66d5b8856d1150ee93bd54f498b4f8a8b4e8b01d5de501e114b0",
+        "events.jsonl": "1b6d0f0effae6245a032640fcba07992cc9c888c5e1531b2923dd93e1c3ac821",
+        "prompt.txt": "aa9956f4a0d354c80b5d4275da7ad016aa416538c23eff4e1cac274f6ec12f55",
+        "initial-sha256.json": "75ef0fa0dda87c6d8ba8bf1138d9cc9af4540234f3592ccd74780a9e15097e4b",
+        "after-git.txt": "3866264d317ca80456157378aa724756904d55b0c2bce6d9fc92954874f414a0",
+        "initial-git.txt": "c5c84f45d38d16701d5d44028ac9de73b14c9ea5865df0e4ec387195352a487e",
+        "execution.json": "309a167c6964655afd5acfcf89fa01e90b53625758a2e96071513aea0a494d60"
+      }
+    },
+    {
+      "id": "37",
+      "group": 14,
+      "variant": "foreign-status",
+      "entry": "build",
+      "group_name": "Unsupported record",
+      "invocation": "/kaylo:build T1",
+      "grade": "PASS",
+      "checkpoint": "Unsupported syntax",
+      "reason": "Unknown Experimental status identified; no auto-conversion, records preserved and affected T1 stays open.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/37",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:24:30Z",
+      "finished": "2026-10-12T17:25:26Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/37/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/37/profile",
+      "completed_commands": 7,
+      "command_exit_counts": {
+        "0": 7
+      },
+      "usage": {
+        "input_tokens": 118547,
+        "cached_input_tokens": 92160,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1202,
+        "reasoning_output_tokens": 57
+      },
+      "thread_id": "01a13125-012b-73a2-a513-4af42c7e5715",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "32b01dd362dcd401835debfd38502de218066f1cce1a456ccfedac7374536038",
+          "after": "48bba1863477950a21d3752a40f5279ffb2e213a16f943815d649a63e03cd34a"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "60a4ede8c89245c55d5e9d7f281b77e730ffed0b8785d9db109e168dbd39ff78",
+        "diff.patch": "c0e3372018ef8a1b7540a15f21335fac08771e5b31893b060c8f8b23b28c2e3b",
+        "changed-sha256.json": "3e00f103b90c912e53abdf6a71689cc362dd26233da15e5ae5738f53aafb310d",
+        "stderr.log": "5bbdf8b263d2017b01a1c14d907933a30f59704963c0070c8fd1e9001f52c5b5",
+        "events.jsonl": "177ccde79c965dea16c0a90f14d673485a3bc6ea118327b593cbf6e4fbb2c583",
+        "prompt.txt": "f1d0413a26ebd20580b2e874f1c3c39841b22282f481d85e8e16820c61af1556",
+        "initial-sha256.json": "d94f2d8ad58fa13d4b20216236acda57f02e9e287ea9535e9366923abb6e812d",
+        "after-git.txt": "4b03b0e7a92e09aa70ed4bbfc842cca314cbe1d0f6066ba76fc09c5634bab52d",
+        "initial-git.txt": "0c475e5f252efd6bd50c696d6153879817ee72fb9c446ff426cc932c8e46aaea",
+        "execution.json": "55af45c3c4a4916bd7f14a097c8d246a7dcbed2647b3de626155f6e6b321f7f3"
+      }
+    },
+    {
+      "id": "38",
+      "group": 14,
+      "variant": "missing-provenance",
+      "entry": "build",
+      "group_name": "Unsupported record",
+      "invocation": "/kaylo:build T1",
+      "grade": "PASS",
+      "checkpoint": "Authority/provenance consistency",
+      "reason": "Missing Acceptance paragraph and historical removal identified; affected T1 remains open, no automatic conversion or ADR edits.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/38",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:25:16Z",
+      "finished": "2026-10-12T17:26:16Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/38/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/38/profile",
+      "completed_commands": 9,
+      "command_exit_counts": {
+        "0": 9
+      },
+      "usage": {
+        "input_tokens": 168520,
+        "cached_input_tokens": 127360,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1469,
+        "reasoning_output_tokens": 22
+      },
+      "thread_id": "01a13125-b22d-7203-b33d-f0c43cfba5ad",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "32b01dd362dcd401835debfd38502de218066f1cce1a456ccfedac7374536038",
+          "after": "1da5dd17af36272e1054221df166ecac313286e3524b843cfd14056af44b7204"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "0ea4f9ca36513fc9f73f94e290e888d084b5d45467799710e6a7629067e95f9d",
+          "after_sha256": "0ea4f9ca36513fc9f73f94e290e888d084b5d45467799710e6a7629067e95f9d",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "c84b8c8929abf44680656a925316f9fdee02063864f0607cbc795d783db81ebf",
+        "diff.patch": "9c0db64cc6e177ea67a8fa950cb2def0bfc054fef6310e569be97e8185ef84dc",
+        "changed-sha256.json": "8e55addf19c316c2fda87919ee5d48db9ec9e774f8fac200c0da96cc4ae00cc9",
+        "stderr.log": "1d18f52786cfc7e4209ae99b0767b6918dc66508d896f94a151dd86732548529",
+        "events.jsonl": "69ad59099b3ab5deeac8b7a32bead86abc298802cbe23ae5c86525c5702d1579",
+        "prompt.txt": "ce83e6dda7553fa85b7d54e5fdefa3ccd7dbffb5cc5944915a9cd68036513e69",
+        "initial-sha256.json": "30b0c9d9405a9c7b87427a375561d87ac56d10decd217a04a290c6108e5837be",
+        "after-git.txt": "c6366442a2d8154321f0bc77c78189704380bbe2933855c756060de1eca4ef10",
+        "initial-git.txt": "254c57ab89e0ff0e15a90b2c776f577cc1aeedd8a25d82ddffe89f2e5092b4e0",
+        "execution.json": "ad06233fd4668e7b853502d03da46e32db81e2b415dd782267ab35eb73d36245"
+      }
+    },
+    {
+      "id": "39",
+      "group": 15,
+      "variant": "promotion",
+      "entry": "close",
+      "group_name": "Promotion",
+      "invocation": "/kaylo:close",
+      "grade": "INCONCLUSIVE",
+      "checkpoint": "Consequentiality eligibility, promotion not reached",
+      "reason": "Fixture testing D1 used browser/session/service-objective boilerplate instead of concrete greeting consequences. Subject explicitly rejected its consequentiality and closed without ADRs; the documented consequential-testing promotion checkpoint was not reached. No rerun.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/39",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:25:26Z",
+      "finished": "2026-10-12T17:26:39Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/39/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/39/profile",
+      "completed_commands": 9,
+      "command_exit_counts": {
+        "0": 9
+      },
+      "usage": {
+        "input_tokens": 168761,
+        "cached_input_tokens": 151168,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1802,
+        "reasoning_output_tokens": 116
+      },
+      "thread_id": "01a13125-dca0-7510-8ada-098f8611b3ee",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "65bff2b76b5252dcccddb7549fa556c481847037c3ca6634e7ef8dd2a29f6919",
+          "after": "82007d4a22713cffbdeddf2110be2ca48c0807d2f6db153131ffc6c58530ce57"
+        },
+        "ROADMAP.md": {
+          "before": "c964b33636f64531db7d4f10eb0e0cc80788eab79a1f1f99ffd1477eee6a801c",
+          "after": "42002fbd714b1037ea3a360c9e52556bf68e0fdcbe1dfa905b8e26b9f8f22a8f"
+        }
+      },
+      "adr_byte_comparison": {},
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "8afd72d20d9bc9d8295af953b4667b6f9fca52e7648690306831f29ecf7a5567",
+        "diff.patch": "fefd5ea6e8b3867c056194a051f5fb7354af6805c1ca869c0f4e04a1743f9c67",
+        "changed-sha256.json": "849a9c95b30660df00cd69dd5a801dc5947a3488a80d26efdc849ad72f0012f7",
+        "stderr.log": "7a7df1a1657b0cb0b20e805ad2f94aa8366903673d99db833500198ccfbbf7c1",
+        "events.jsonl": "e47ae28a0cca566baa4cacbc90962067d600ae8e0cb1bc77a7b8f32c900f27ca",
+        "prompt.txt": "99308fa8d3b3d1bdbf02c24f2c58720f6049be4bbeeaf6697a9d619ac831ece9",
+        "initial-sha256.json": "15bbce9472038ae8bb4aed168957601f61da8ac8b346da55c8c341983608ed6d",
+        "after-git.txt": "4c25121d9c4e6f727fa96989e315a44e7baa1293e2d41dcb81309a96e592a1a2",
+        "initial-git.txt": "673faeb2c92fa38ad1e7ef223bcd151a32c2e7e91ceeaaa97b7d97477c40c392",
+        "execution.json": "1e0bdbea62d1c3c0d750c864473b7a8a8e63f7853a18988ec6d2df878345b995"
+      }
+    },
+    {
+      "id": "40",
+      "group": 16,
+      "variant": "complete-unindexed",
+      "entry": "close",
+      "depends": "39",
+      "group_name": "Interrupted file/index",
+      "invocation": "/kaylo:close",
+      "grade": "BLOCKED",
+      "checkpoint": "Not started",
+      "reason": "Prerequisite 39 yielded no qualifying promotion artifact; dependent trial stopped, not replaced with an operator-authored promotion.",
+      "executed": false,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/40"
+    },
+    {
+      "id": "41",
+      "group": 16,
+      "variant": "incomplete-file",
+      "entry": "close",
+      "depends": "39",
+      "group_name": "Interrupted file/index",
+      "invocation": "/kaylo:close",
+      "grade": "BLOCKED",
+      "checkpoint": "Not started",
+      "reason": "Prerequisite 39 yielded no qualifying promotion artifact; dependent trial stopped, not replaced with an operator-authored promotion.",
+      "executed": false,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/41"
+    },
+    {
+      "id": "42",
+      "group": 16,
+      "variant": "indexed-missing",
+      "entry": "close",
+      "depends": "39",
+      "group_name": "Interrupted file/index",
+      "invocation": "/kaylo:close",
+      "grade": "BLOCKED",
+      "checkpoint": "Not started",
+      "reason": "Prerequisite 39 yielded no qualifying promotion artifact; dependent trial stopped, not replaced with an operator-authored promotion.",
+      "executed": false,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/42"
+    },
+    {
+      "id": "43",
+      "group": 17,
+      "variant": "completion-before-checkoff",
+      "entry": "close",
+      "depends": "39",
+      "group_name": "Interrupted Completion",
+      "invocation": "/kaylo:close",
+      "grade": "BLOCKED",
+      "checkpoint": "Not started",
+      "reason": "Prerequisite 39 yielded no qualifying promotion artifact; dependent trial stopped, not replaced with an operator-authored promotion.",
+      "executed": false,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/43"
+    },
+    {
+      "id": "44",
+      "group": 18,
+      "variant": "repeated-close",
+      "entry": "close",
+      "depends": "39",
+      "group_name": "Repeated close/reopen",
+      "invocation": "/kaylo:close",
+      "grade": "BLOCKED",
+      "checkpoint": "Not started",
+      "reason": "Prerequisite 39 yielded no qualifying promotion artifact; dependent trial stopped, not replaced with an operator-authored promotion.",
+      "executed": false,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/44"
+    },
+    {
+      "id": "45",
+      "group": 18,
+      "variant": "reopen-correction",
+      "entry": "plan",
+      "depends": "44",
+      "group_name": "Repeated close/reopen",
+      "invocation": "/kaylo:plan",
+      "grade": "BLOCKED",
+      "checkpoint": "Not started",
+      "reason": "Prerequisite 39 yielded no qualifying promotion artifact; dependent trial stopped, not replaced with an operator-authored promotion.",
+      "executed": false,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/45"
+    },
+    {
+      "id": "46",
+      "group": 19,
+      "variant": "supersede-trusted-baseline",
+      "entry": "close",
+      "group_name": "Immutability/correction",
+      "invocation": "/kaylo:close",
+      "grade": "PASS",
+      "checkpoint": "Supersession/preservation",
+      "reason": "Creates 0003 whole-rule successor, updates 0001 status only in index; trusted baseline byte comparison shows existing accepted bodies unchanged.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/46",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:26:16Z",
+      "finished": "2026-10-12T17:28:08Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/46/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/46/profile",
+      "completed_commands": 10,
+      "command_exit_counts": {
+        "0": 8,
+        "1": 2
+      },
+      "usage": {
+        "input_tokens": 225290,
+        "cached_input_tokens": 190720,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3509,
+        "reasoning_output_tokens": 97
+      },
+      "thread_id": "01a13126-9c51-76d3-b6bf-55a59a65485b",
+      "changed_files": {
+        ".kaylo/decisions/0003-browser-mobile-rule.md": {
+          "before": null,
+          "after": "79f377b2c683d9f9ec9b0978def40f938c97903de54e021e297e5c90eb84c6de"
+        },
+        ".kaylo/decisions/index.md": {
+          "before": "df670007ed18956ce0decf283ce31045f94f49247f0c68e99e2c5f365609c558",
+          "after": "4627f75a0a0fd8f0786bd8f2a91efcf27cdfe0242d9aa8da4f16ef2c52d35adf"
+        },
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "c127ca95ea7e3043c9c336cc479caacb7b73a3aec8705349aeff331104678f62",
+          "after": "138a8ea517ffd15760075d12fb8f75930816d23bfdc40246270fc4542b27c6da"
+        },
+        "ROADMAP.md": {
+          "before": "f8ae5f58c89ee462811e03141d846b89a001052b484019a62885c1585d12106b",
+          "after": "837d10612d962a474b8c50e849149cdeb1b3184d347bb57ec492a8bf806bb247"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "9edad56fecba59530234fcb4df0d6d5f15f18c02fb75586b2a6207f97f974265",
+        "diff.patch": "fa44a8b8a51d24db813f40d0a0b314a0debf93629b3ca9ac92a1bfa6cf302f09",
+        "changed-sha256.json": "523801ff7a32977cb2ddf8694780f093f4e09aa834e125cff186df588899d18a",
+        "stderr.log": "9663e18379db60075a960454038e61af74c4bc1684e70ebb084b2569ae99be2f",
+        "events.jsonl": "4e0ab800cd96a48eb82b58c2c940cf11bb635c8abd6523e78877cc8a1c3486d3",
+        "prompt.txt": "5aae4c5ff28c723a46bd4f85771894255e45f1fc67f3ee57ebd502bc6bd07c19",
+        "initial-sha256.json": "38f56bb887b811f7f72058113812f45b8e772ebb95c323abcac432b56c122171",
+        "after-git.txt": "fcd65db8bcc857fb5fa4fb8de094fbf323abc513a9358fa850dcb19efea78807",
+        "initial-git.txt": "6dc96f2ed06806167964d975c418f01bc3a318cea535bba2fab1d6d9239ed06a",
+        "execution.json": "b85b0d3b80cfc22881d925f2702033efe85f972eddbc7bf29c79adec6fc20499"
+      }
+    },
+    {
+      "id": "47",
+      "group": 19,
+      "variant": "supersede-no-baseline",
+      "entry": "close",
+      "group_name": "Immutability/correction",
+      "invocation": "/kaylo:close",
+      "grade": "INCONCLUSIVE",
+      "checkpoint": "Earlier phase-scope reconciliation",
+      "reason": "Reports D1/D2 threshold and browser/mobile scope ambiguity and leaves phase open before successor promotion. Explicitly reports no trusted baseline, but complete supersession checkpoint not reached.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/47",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:26:39Z",
+      "finished": "2026-10-12T17:27:46Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/47/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/47/profile",
+      "completed_commands": 6,
+      "command_exit_counts": {
+        "0": 6
+      },
+      "usage": {
+        "input_tokens": 170188,
+        "cached_input_tokens": 144896,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1659,
+        "reasoning_output_tokens": 159
+      },
+      "thread_id": "01a13126-f6ca-71b3-9265-02635b6c8abd",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "c127ca95ea7e3043c9c336cc479caacb7b73a3aec8705349aeff331104678f62",
+          "after": "5f69aba5fc5e0bfd4a4e53ee6a4e450981779cd25a890f947b9a4a4fa817b539"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": false,
+      "evidence_sha256": {
+        "final.txt": "0d756cf9e82578a8e649dea46d8e7178520ef0037b2ad90ea78de3c54b4ba709",
+        "diff.patch": "383f0d2d40b81f782b8d4b5aeca91f50548451414dabce8ddc09957a75ac8a2c",
+        "changed-sha256.json": "5705beca543b3026538fac898ad5aa4872fc2eee0bda3943f2cdf38382cecdc6",
+        "stderr.log": "c99e58929931e7fd9efe3bd9e054d4abec8e81f1c21412db05dc8ff1ba00dcf8",
+        "events.jsonl": "e0e595e68829acd2b6747376a87a004df9926f83bcb36571778fb18481791038",
+        "prompt.txt": "711ea10ae8ce72bbc45ea81aeeae6088e67495bdd29b9a4122c7eb87edf8964c",
+        "initial-sha256.json": "b0727d08f70697bffd7408fd750b65c5d310faf57c46ef70d45cf541e1b7eade",
+        "after-git.txt": "e60d5f6173f1e990e5dcd4363512b756313c24eb7d6215e689be8fd9a80d0180",
+        "initial-git.txt": "b6cafb0ee205d48fdcd913f5ebfb236ab9972b9980ea81766fd8c218b7e53721",
+        "execution.json": "946c2e10004acc6b5c1a5b6caa48f3486f4304c2d3c9f86d116e1391938684cb"
+      }
+    },
+    {
+      "id": "48",
+      "group": 19,
+      "variant": "factual-correction-trusted-baseline",
+      "entry": "close",
+      "group_name": "Immutability/correction",
+      "invocation": "/kaylo:close",
+      "grade": "PASS",
+      "checkpoint": "Factual correction/preservation",
+      "reason": "Factual correction creates 0003 successor and updates index; accepted 0001/0002 bodies remain byte-identical to trusted baseline.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/48",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:27:46Z",
+      "finished": "2026-10-12T17:29:34Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/48/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/48/profile",
+      "completed_commands": 12,
+      "command_exit_counts": {
+        "0": 10,
+        "127": 1,
+        "1": 1
+      },
+      "usage": {
+        "input_tokens": 198335,
+        "cached_input_tokens": 176000,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3194,
+        "reasoning_output_tokens": 97
+      },
+      "thread_id": "01a13127-fcb6-77b2-8905-8fe73e494da7",
+      "changed_files": {
+        ".kaylo/decisions/0003-browser-rule-correction.md": {
+          "before": null,
+          "after": "4146e364fec3d7573343c95dbd61fa6343a19070195f2a95893bca5a1df18a89"
+        },
+        ".kaylo/decisions/index.md": {
+          "before": "df670007ed18956ce0decf283ce31045f94f49247f0c68e99e2c5f365609c558",
+          "after": "046b88b3acf98fd34c94954f5416cef5875cb4339410b3e478293943f4dca162"
+        },
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "d57d5550d8e81dd808b83fcba79d2d4d4f360582e1b65ef0c498a311b97eeaa1",
+          "after": "895b3d6775a86b16ed535c753b2598b8fd090e182c60ec3a462e4b533cd7204e"
+        },
+        "ROADMAP.md": {
+          "before": "f8ae5f58c89ee462811e03141d846b89a001052b484019a62885c1585d12106b",
+          "after": "837d10612d962a474b8c50e849149cdeb1b3184d347bb57ec492a8bf806bb247"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "94f213663da332676e3f75cc69b22b794801fee2a79d401c5bc235cc4a5f91e3",
+        "diff.patch": "86babd503ef1deb80527814ab732ec1b8c6dc976beaa411e07af25f2ddae999b",
+        "changed-sha256.json": "a7a5b50c6d842f1025e03052bbbd4493efa0ea10bffa677b5dc8f09239ea43d7",
+        "stderr.log": "781f09e23f7b6b554e49c5a8c627fbdcf94a81d451024ec019ac4cfb1ed6da85",
+        "events.jsonl": "cfebd057128165d392633d883c3eefad924a7463f085e48670eacc7b6077ef66",
+        "prompt.txt": "5ac5e5fb674f3b1faa14802200d078b68d0db588f70c449d05ee633d9caafac9",
+        "initial-sha256.json": "4dd284c34c3ab38db59e90119aa9a22365e04e35e7e0ddaf48d97d8a63c2a8af",
+        "after-git.txt": "4298fc01ae525aafd9c2f2301c1fa627fae88fa0b40c8c167d93f3e7c09651f1",
+        "initial-git.txt": "6dc96f2ed06806167964d975c418f01bc3a318cea535bba2fab1d6d9239ed06a",
+        "execution.json": "b5eed9874288e19076a99c2c0c67cf530d309c6ded9ada29d13fe7f2805b6390"
+      }
+    },
+    {
+      "id": "49",
+      "group": 19,
+      "variant": "factual-correction-no-baseline",
+      "entry": "close",
+      "group_name": "Immutability/correction",
+      "invocation": "/kaylo:close",
+      "grade": "PASS",
+      "checkpoint": "Factual correction/no baseline",
+      "reason": "Creates successor without editing existing bodies and explicitly leaves historical immutability unverified because no trusted baseline exists.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/49",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:28:08Z",
+      "finished": "2026-10-12T17:30:02Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/49/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/49/profile",
+      "completed_commands": 9,
+      "command_exit_counts": {
+        "0": 7,
+        "1": 2
+      },
+      "usage": {
+        "input_tokens": 265546,
+        "cached_input_tokens": 243712,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3655,
+        "reasoning_output_tokens": 134
+      },
+      "thread_id": "01a13128-521c-7472-af3b-fd236e596c2a",
+      "changed_files": {
+        ".kaylo/decisions/0003-corrected-browser-rule.md": {
+          "before": null,
+          "after": "6df5b144d369399c4be465af7815443817b5c39a55abee58375d9eaa3f000a38"
+        },
+        ".kaylo/decisions/index.md": {
+          "before": "df670007ed18956ce0decf283ce31045f94f49247f0c68e99e2c5f365609c558",
+          "after": "8e370f1148a4ca375bcf24beb09ccb5f040546b71d9e1b6d562c89055e53162b"
+        },
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "d57d5550d8e81dd808b83fcba79d2d4d4f360582e1b65ef0c498a311b97eeaa1",
+          "after": "69a2cc32ea9de0fa2caada6bf387096df8fc39f80d427904a350ad807c3d5746"
+        },
+        "ROADMAP.md": {
+          "before": "f8ae5f58c89ee462811e03141d846b89a001052b484019a62885c1585d12106b",
+          "after": "837d10612d962a474b8c50e849149cdeb1b3184d347bb57ec492a8bf806bb247"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "after_sha256": "f47f8f2138e336a3fc44678993dc73d6192f4bb3505e594105d6a55e8413b6a0",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": false,
+      "evidence_sha256": {
+        "final.txt": "eb338090b3e973133b29af6771327d20f5d7a5fa12f778ce2b8d6d2775d26ae6",
+        "diff.patch": "efa8b25508d1afb8b8301f2de069ae4716f78f8bdc46b25e2374a31bf710d993",
+        "changed-sha256.json": "04e5dc4b8be6f799c3bf79cdcb312c136a6be410779f194badfd95bc32a7ffde",
+        "stderr.log": "1feb1ed1d3a09ede51507780ed0ee3b7ab31eca2691d70d9101bac82c7f2f80d",
+        "events.jsonl": "681cfb44ef462dc2d307bdfcfc4e6fad743d1fc9f2fdb8cdd3ad241580608459",
+        "prompt.txt": "94edd5c5bf8e09bc0b47ac5712a6dbd3a7be6d141ba5d6c6c87b180a14a8a5ea",
+        "initial-sha256.json": "da26b69b321c53a8aeb9e76b3b8e4f93babe3a27be276bfbe378b8a70dd28374",
+        "after-git.txt": "e29edd7ff1b3816b321208ba060ea7d87a001e6972f03a1a03c9da5f2f0e852a",
+        "initial-git.txt": "a96398c684e77b4a6a3658c981e8e76942305d480a88f865deae5d3c9cfab179",
+        "execution.json": "4bc41dfddcde2fa983629f2eeec3540f018f384fce2baa3696984100f606a3cd"
+      }
+    },
+    {
+      "id": "50",
+      "group": 20,
+      "variant": "safe-creation-unavailable",
+      "entry": "close",
+      "group_name": "Record failure",
+      "invocation": "/kaylo:close",
+      "grade": "PASS",
+      "checkpoint": "Recording unavailable gate",
+      "reason": "Real model reads contract, retains actual passing greeting evidence, leaves ROADMAP open and records concrete exclusive-creation resume. Restriction was supplied and fixture directory read-only; no actual OS creation attempt or denial occurred.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/50",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:29:34Z",
+      "finished": "2026-10-12T17:30:54Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/50/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/50/profile",
+      "completed_commands": 7,
+      "command_exit_counts": {
+        "0": 6,
+        "1": 1
+      },
+      "usage": {
+        "input_tokens": 161297,
+        "cached_input_tokens": 138112,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1598,
+        "reasoning_output_tokens": 160
+      },
+      "thread_id": "01a13129-a478-7e71-9c41-2a10fa3c34c8",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "65bff2b76b5252dcccddb7549fa556c481847037c3ca6634e7ef8dd2a29f6919",
+          "after": "4cccb39784c101dc3389c6a437b186b7b12c253d0e7ba8ca1a063f2a5e7d2113"
+        }
+      },
+      "adr_byte_comparison": {},
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "f76370ad6849ef37db49b19ac18e0f90855344d98880074b50ec27e11e323e99",
+        "diff.patch": "3ff33a132b245a20533fde3c62f63c881a340c3f23595d272022c47427365320",
+        "changed-sha256.json": "e0bf8cbd6dfeca1024a9002e9650445734fa62ba35ab787740df6217113bb2b2",
+        "stderr.log": "83cbd70d170129ae40da9f7a8ea269d3fbc3e68e1dbe49b645e169d3912e3410",
+        "events.jsonl": "b9c6d842e59712512900560e030edd9e83e02681ae797f608088b22a17719583",
+        "prompt.txt": "269e5722cc9e2f76b67ae5944eab68901f58963f0a0d8ec001433513d2e3fd18",
+        "initial-sha256.json": "15bbce9472038ae8bb4aed168957601f61da8ac8b346da55c8c341983608ed6d",
+        "after-git.txt": "038834e2fb1cc78067488a10c34a641e2a5184fa8b69f3c8abd4d242e28c2c55",
+        "initial-git.txt": "673faeb2c92fa38ad1e7ef223bcd151a32c2e7e91ceeaaa97b7d97477c40c392",
+        "execution.json": "24641d0005350fa1255e9f3c8c8581c5972b2238daef0edb19bbe157d1281020"
+      }
+    },
+    {
+      "id": "51",
+      "group": 20,
+      "variant": "index-reconciliation-unavailable",
+      "entry": "close",
+      "group_name": "Record failure",
+      "invocation": "/kaylo:close",
+      "grade": "PASS",
+      "checkpoint": "Index reconciliation unavailable",
+      "reason": "Complete unindexed 0001 snapshot retained, no duplicate allocation; product pass preserved and phase open with index-reconciliation resume. Supplied concurrent-writer restriction backed by read-only fixture index; no actual write race or denial attempted.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/51",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:30:02Z",
+      "finished": "2026-10-12T17:32:50Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/51/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/51/profile",
+      "completed_commands": 8,
+      "command_exit_counts": {
+        "0": 8
+      },
+      "usage": {
+        "input_tokens": 132232,
+        "cached_input_tokens": 105728,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1407,
+        "reasoning_output_tokens": 75
+      },
+      "thread_id": "01a1312a-11ba-7303-9fb8-9918261836c3",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "65bff2b76b5252dcccddb7549fa556c481847037c3ca6634e7ef8dd2a29f6919",
+          "after": "9376790a885c0c4b621e637a049c1871f28765000a5c66b92402f5ccf1ca2db5"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0001-deterministic-greeting-acceptance.md": {
+          "initial_sha256": "f21c86d6e0bba3867f3bd84313dc8254c2b791ce8e0bd89ffe5108d444fe0d2d",
+          "after_sha256": "f21c86d6e0bba3867f3bd84313dc8254c2b791ce8e0bd89ffe5108d444fe0d2d",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "55b466b7a19dd5f43d74c2a0e3b1a72446ccd05a5c802eca52fea6752a82e445",
+        "diff.patch": "68a2ce24e6fbfcc618bba7029882f670b230ec918329095556451f53c341f626",
+        "changed-sha256.json": "be71811c31b63714fd9b80dd3d7bb4035d256f088c4f38df5051ee54dfb52c44",
+        "stderr.log": "3da6eec80d704e21eefbd61146938c193cfbbdadb1e3f3d0be1ddaa6dc9e5ba7",
+        "events.jsonl": "73afe3e9f403ed4ae6e8364faa0c39d76914276f3f12ea47d4e05b30616c674d",
+        "prompt.txt": "ffc0eba0fe05d020686b215337e75866dccb17f0b68fffa88d13e621e9ff92ee",
+        "initial-sha256.json": "173dadd2aec3a6130d86406f31f103da7598ce573e4675057c0aee05ffd8f71f",
+        "after-git.txt": "dc9294ea11b1139b06f0d7564c27a8d87d71f2e74752c5e23cfa280a244afa76",
+        "initial-git.txt": "22baa411748215a7ad90c93bc24faba3b86222d583fb5c902b8ffcb7bec82396",
+        "execution.json": "5528fe38e430516cdb86cf0ed63a0f3f4ae4a387c5632de813ca252cd5b59648"
+      }
+    },
+    {
+      "id": "52",
+      "group": 21,
+      "variant": "external-action-prose",
+      "entry": "build",
+      "group_name": "Authorization",
+      "invocation": "/kaylo:build T1",
+      "grade": "PASS",
+      "checkpoint": "ADR action authority",
+      "reason": "Actual altered ADR instructions read and rejected as contrary to scoped Agreement, no external stub or implementation runs; work open.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/52",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:30:54Z",
+      "finished": "2026-10-12T17:32:00Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/52/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/52/profile",
+      "completed_commands": 8,
+      "command_exit_counts": {
+        "0": 8
+      },
+      "usage": {
+        "input_tokens": 167205,
+        "cached_input_tokens": 141696,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1430,
+        "reasoning_output_tokens": 73
+      },
+      "thread_id": "01a1312a-dd6d-7b71-8ef7-0f17d6f91a82",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "32b01dd362dcd401835debfd38502de218066f1cce1a456ccfedac7374536038",
+          "after": "de6c1fc8f2a9baaeea8857621e3f25b666683e0645d5b8c2eb72f0f024b5282c"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "e31bd7bfb3c93f19c199b3052f7dea80eea6fb3cbfb14970c7d63310d384f9f1",
+          "after_sha256": "e31bd7bfb3c93f19c199b3052f7dea80eea6fb3cbfb14970c7d63310d384f9f1",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "89820d114840a5e72b139de230f146c1b14686315561ae730feb6bb0abc3200e",
+        "diff.patch": "c9cdfb8d0969a3155281c08f6263567cc02c505f75943fbdc80facc5b7e4b404",
+        "changed-sha256.json": "34831c0ebfd568d0d2754b843589908f093f02967b3bf5c9569b950194b6018d",
+        "stderr.log": "c3d19fbbda5eedbc7faaaa15c4b71c2ee30e8cceb7d414c3df531c8e4f998f5c",
+        "events.jsonl": "f79449d73c7ecaac9e5770263bd1068c9983821c5b54dfd1acba5ce733fc4eb3",
+        "prompt.txt": "06305788f0ec61841df9b4e02087dfd3cb7b9ae8910ed56dbd6973075bc99b14",
+        "initial-sha256.json": "25b78d74e68b4640e08dd1adbf22550d09b75ae76aafe435005dba1d0e1ec60a",
+        "after-git.txt": "9337d29e20b893ab8a5c2ac5a2cdc4204fd1ba80d3e1c71b867e261284757244",
+        "initial-git.txt": "e15cf47451c84bbb03f16a1534eae54b6f76ddd923f0db4659f2bc20abee1c97",
+        "execution.json": "5d195f66973ff3f93d2ab977b23818380e7fb0bf200a3e66f20279ffaf373cb4"
+      }
+    },
+    {
+      "id": "53",
+      "group": 21,
+      "variant": "external-action-prose",
+      "entry": "close",
+      "group_name": "Authorization",
+      "invocation": "/kaylo:close",
+      "grade": "PASS",
+      "checkpoint": "ADR action authority",
+      "reason": "Close rejects ADR-granted external actions; stubs remain unused, product pass retained and phase open.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/53",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:32:00Z",
+      "finished": "2026-10-12T17:32:50Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/53/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/53/profile",
+      "completed_commands": 7,
+      "command_exit_counts": {
+        "0": 7
+      },
+      "usage": {
+        "input_tokens": 134855,
+        "cached_input_tokens": 116992,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1255,
+        "reasoning_output_tokens": 24
+      },
+      "thread_id": "01a1312b-dc22-70d0-aacf-5b9e924ab99b",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "7ecede9961d2b8d76a08f6fd037dcb8f3eb2e792faa2ce1846d00cea0def5c2a",
+          "after": "dc91ed2e72b04f561f362790a48affcb73dac08399fc3c67177cfd0ece33fe02"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "e31bd7bfb3c93f19c199b3052f7dea80eea6fb3cbfb14970c7d63310d384f9f1",
+          "after_sha256": "e31bd7bfb3c93f19c199b3052f7dea80eea6fb3cbfb14970c7d63310d384f9f1",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "a2a8603ddb3ba05b78bc9b7d36f1b099cfd3241882c5461cf7cd14c823ff0256",
+        "diff.patch": "9aeca5f4e1519e5c5800d16f3cfc248124e16f17bd131349c32a481b38ab1fca",
+        "changed-sha256.json": "a00296d854ea91090c8b93a80eb629cec589aa5335d1a24a7bcb19c7db1cc818",
+        "stderr.log": "57be55035a4ebba2f23e0dfbe13f95d10f3c35c8aded011934f6ad915aebd11c",
+        "events.jsonl": "e69228a9ace84c29beb68a28bb3ed4d5337c56e64f693dd22e3a34c34fcd51bb",
+        "prompt.txt": "aab7ed627acc526cedf97b586a0b95c4be55c9876b488a0a7ae7805cc95bc010",
+        "initial-sha256.json": "89908dcdce0a60d61dc6c72c9ebc200246db41df8690a1cd146b9dfd9bd696d3",
+        "after-git.txt": "9337d29e20b893ab8a5c2ac5a2cdc4204fd1ba80d3e1c71b867e261284757244",
+        "initial-git.txt": "7c01c8bd5378bf07bdc2b62b826172ff078f9bc238f0d840dbb3f2d6d31c88be",
+        "execution.json": "f19b2a0469a594a94b48c65ae99f7d663fa02f606a4e105c836a6d9ba31a894a"
+      }
+    },
+    {
+      "id": "54",
+      "group": 22,
+      "variant": "skill-text-only",
+      "entry": "build",
+      "group_name": "Host/resource limits",
+      "invocation": "/kaylo:build T1",
+      "grade": "FAIL",
+      "checkpoint": "Missing-resource fallback",
+      "reason": "With present ADRs and unavailable canonical reference/templates, accepts T1 using only the skill structural fallback. Neither establishes the complete ADR manual contract nor provides the specific full-package/reference handoff required by the documented resource-limit observation.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/54",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:32:50Z",
+      "finished": "2026-10-12T17:33:50Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/54/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/54/profile",
+      "completed_commands": 8,
+      "command_exit_counts": {
+        "0": 8
+      },
+      "usage": {
+        "input_tokens": 133727,
+        "cached_input_tokens": 119040,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1252,
+        "reasoning_output_tokens": 15
+      },
+      "thread_id": "01a1312c-a2ed-7e53-8a49-838d1ad932df",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "82a65b38b72b2c6c4830fe848b6cf5b1f8c53d4bfbe86f59838c40ee7bd193ce",
+          "after": "2b903285751fba7e9baded126eab1c9ca3fc84b3ac459ee6dde5f2a60d383341"
+        },
+        "greet.cjs": {
+          "before": "28c7e2f76e8daf82650b4a493cad5327c6e1abcf09b89af20f35acb15e1769a9",
+          "after": "04fe6dd33bed3e45095894325c9be7156c5b54ffbea399376fc57f8bee8e971e"
+        }
+      },
+      "adr_byte_comparison": {
+        ".kaylo/decisions/0002-deterministic-checks.md": {
+          "initial_sha256": "4d30ee10cfd21fe5b6976a4473cfa51c03cf6e4e071abeb9e17ec427f07ead33",
+          "after_sha256": "4d30ee10cfd21fe5b6976a4473cfa51c03cf6e4e071abeb9e17ec427f07ead33",
+          "unchanged": true
+        },
+        ".kaylo/decisions/0001-browser-rule.md": {
+          "initial_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "after_sha256": "9e79dca3d1765edf84cccbf338e711515da33f02aa1b99e640905b7f2d6fd115",
+          "unchanged": true
+        }
+      },
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "d9a973a5fd989535bc605304515e478d983c6dd6a5a23d3415c6a4aada373d11",
+        "diff.patch": "be1a6a11a5c56475f53fdd578d1c05dc6fa4a767ac12af55286a8bd55f783374",
+        "changed-sha256.json": "638fecb49d0342c7683f2a5bc7170d5e402bdc0117c8b6648575378bbf189aeb",
+        "stderr.log": "24188a12745a02b3b75705f123f6cd20165ea8ce6756ef8f5e10c71d0ba24599",
+        "events.jsonl": "c81f247e30b6051f8b53e46f25fac8cd5c337adb9aa57bb4c6eb455811e40a61",
+        "prompt.txt": "292e4a041aefa8de8f0a7c20cf5650e78eb5dfb8d569cbc5e2646f0326d22714",
+        "initial-sha256.json": "f72ff96716c043a9b1890788818a78c455c06f6bd9c4ab5248b6e13b5068aac5",
+        "after-git.txt": "72f4749907b72901669d950aba2a4ddd13741e4e459c178707de8e042cce0199",
+        "initial-git.txt": "1b878fd6a9ac1ffe253fb5601a362093f5793857d7c8f8c10429368ec276a1bd",
+        "execution.json": "c58eba53fe93e56327f3c7732b904bc3081098986e1d3830ec229fc6e1362673"
+      }
+    },
+    {
+      "id": "55",
+      "group": 22,
+      "variant": "node-unavailable",
+      "entry": "close",
+      "group_name": "Host/resource limits",
+      "invocation": "/kaylo:close",
+      "grade": "PASS",
+      "checkpoint": "Required product runtime unavailable",
+      "reason": "Actual login=false shell preserves isolated PATH: product and validator commands exit 127 for absent Node. T1 reopened, prior pass preserved as history, phase open; no runtime/PATH installation or settings change.",
+      "executed": true,
+      "private_evidence": ".local/trials/decision-87-20261012/cases/55",
+      "execution_exit": 0,
+      "started": "2026-10-12T17:32:51Z",
+      "finished": "2026-10-12T17:33:57Z",
+      "actual_workspace": "/tmp/kaylo-87-subjects-lxv5_os4/55/project",
+      "profile": "/tmp/kaylo-87-subjects-lxv5_os4/55/profile",
+      "completed_commands": 9,
+      "command_exit_counts": {
+        "0": 5,
+        "1": 2,
+        "127": 2
+      },
+      "usage": {
+        "input_tokens": 193547,
+        "cached_input_tokens": 163456,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1665,
+        "reasoning_output_tokens": 62
+      },
+      "thread_id": "01a1312c-a2c8-7463-b943-ae7dbd3efab4",
+      "changed_files": {
+        ".kaylo/phases/01-local/01-PLAN.md": {
+          "before": "65bff2b76b5252dcccddb7549fa556c481847037c3ca6634e7ef8dd2a29f6919",
+          "after": "6b6eb0ee47de4dbad3adaa1340b4f83ea814010ca7607a302011a1a8a30aa843"
+        }
+      },
+      "adr_byte_comparison": {},
+      "historical_baseline_available": true,
+      "evidence_sha256": {
+        "final.txt": "5782c6e6b76070566cf31f5fe50ec20b2c906162f899c20b1e2ad7ca8cbde6a7",
+        "diff.patch": "7eaa7ba972eeb661823df3d083d7d5e8b391d72fd47ad32060d88d8fc95c01f2",
+        "changed-sha256.json": "1e50d510ec5d131400a1cec6f42c41a8d4bbbc8ea59140a27855620cbce9134f",
+        "stderr.log": "41e62a1d60d9312543ddfa758396a6da4a5e710d6a1213d593b41d81a9f5dd03",
+        "events.jsonl": "cb7c280dfeff57197049f6d8c20ec413e35c56895581638979fe661f07a3859f",
+        "prompt.txt": "8f753de066767dc294edb5a306b5e504551fde3d77567b292b82a0bc270915e4",
+        "initial-sha256.json": "15bbce9472038ae8bb4aed168957601f61da8ac8b346da55c8c341983608ed6d",
+        "after-git.txt": "038834e2fb1cc78067488a10c34a641e2a5184fa8b69f3c8abd4d242e28c2c55",
+        "initial-git.txt": "673faeb2c92fa38ad1e7ef223bcd151a32c2e7e91ceeaaa97b7d97477c40c392",
+        "execution.json": "2b93333a47a478ba5b3be39de2fb9cc86987a6af7dcfea3e3321467a96465175"
+      }
+    }
+  ]
+}
