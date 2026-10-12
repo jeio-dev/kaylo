@@ -1776,6 +1776,62 @@ findings are resolved. #84 stays open until then, unless the maintainer
 records a package-only closure. No independent review of this implementation
 had run when this record was written.
 
+## PR #126 independent review — 2026-10-11
+
+Reviewed `ad4d00088501f959519929a7c9310d7484813575` against `main`
+and the revised #84 specification. Direct Codex review inspected all changed
+files and the existing build, review, and close lifecycle. No implementation
+fixes were made.
+
+Observed: package validation passed; `node --test tests/*.test.cjs` passed
+297/297 with no skips; Claude plugin and marketplace validation with
+`--strict`, Antigravity plugin validation, and `git diff main...HEAD --check`
+passed. The test suite includes packed-package resource comparison; native
+manifest validation does not establish host loading or worker behavior.
+
+Two open findings: both readers open inputs in blocking mode before rejecting
+nonregular files, and the first-planning small-change exception skips areas
+required by #84's initial ten-area assessment. In disposable scratch fixtures,
+each reader was given a FIFO with no writer; both timed out after 1.5 seconds
+with no output or diagnostic and were terminated by the probe. The assessment
+finding is a static instruction/specification mismatch, not an observed model
+outcome.
+
+Not run: live model or worker trials, isolated host install/update trials,
+real CI-provider or branch-protection integration, deployment, or billing
+checks. Behavioral verification remains deferred under the recorded timing
+decision. This review does not establish release readiness.
+
+## PR #126 review fixes — 2026-10-12
+
+Addressed both open findings from the PR #126 review.
+
+- Both readers now stat the target and refuse anything but a regular file
+  before opening it. They then open it nonblocking and check that the
+  descriptor is a regular file with the same device and inode, so a FIFO or a
+  file swapped in after the stat is a `GATES_READ` or `CI_READ` diagnostic
+  rather than a hang.
+- Foundation assessment and the plan skill no longer let a clear small change
+  skip areas on first planning. A first roadmap gives all ten areas a
+  disposition, briefly for a small change, and proposes work only for gaps that
+  matter to the outcome. Partial reassessment stays limited to repeat planning
+  over an established assessment.
+
+Observed: four new tests, a bounded FIFO test through each CLI (5-second
+timeout) and an in-process replacement test for each reader. All four failed
+against the previous readers, the FIFO tests by timeout, and pass with the
+fix. `node --test tests/*.test.cjs` passed 301/301 with no skips. Package
+validation, `claude plugin validate --strict` for the plugin and marketplace
+(Claude Code 2.1.296), `agy plugin validate .` (Antigravity CLI 1.3.1), and
+`git diff --check` passed. The FIFO tests skip on Windows or when `mkfifo` is
+unavailable; they ran on Linux (WSL2) here. On Windows the nonblocking flag is
+absent and only the pre-open check applies.
+
+Not run: the foundation wording change was checked by inspection against the
+#84 specification only; no model has run it. Live model or worker trials,
+isolated host install trials, and real CI-provider integration remain deferred
+as recorded above.
+
 ## Public installation 0.11.0 — 2026-10-06
 
 PR #82 merged the release commits into `main` as `9a935bb`. The immutable

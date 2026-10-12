@@ -17,8 +17,9 @@
   ([#84](https://github.com/jeio-dev/kaylo/issues/84)).
 - **tools**: `scripts/read-gates.cjs` reads `.kaylo/gates` without running
   anything. It prints JSON, reports stable `GATES_*` diagnostics with file and
-  line but never the command text, refuses paths that leave the project, and
-  takes `--expect <digest>` to detect a change between reading the file and
+  line but never the command text, refuses paths that leave the project and
+  special files such as FIFOs without blocking on them, and takes
+  `--expect <digest>` to detect a change between reading the file and
   running the check ([#84](https://github.com/jeio-dev/kaylo/issues/84)).
 - **skills**: Plan assesses ten development foundations from
   `skills/plan/references/foundation.md` when it writes a project's first
@@ -47,7 +48,8 @@
   changes outside that revision leave the phase open with one resume action.
   `scripts/check-ci-evidence.cjs` checks a JSON snapshot of that evidence for
   exact identity, required-set completeness, and conclusions without contacting
-  any provider. Close does not commit, push, or start workflows to obtain
+  any provider, and refuses a snapshot that is not a regular file without
+  blocking on it. Close does not commit, push, or start workflows to obtain
   evidence ([#84](https://github.com/jeio-dev/kaylo/issues/84)).
 - **docs**: The #84 instructions have not been run with a model. Their
   behavioral trials are deferred until the #84–#90 series is built; the
