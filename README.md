@@ -323,8 +323,11 @@ recommendation; it is deliberate exposure, not zero disclosure.
 
 Every Kaylo commit scans the actual candidate, including plans/docs, and authorized
 publication scans all outgoing history including removed values. The bounded
-adapter supports installed Gitleaks 8.30.1 and complete UTF-8 Git content; missing
-tools, findings, failures and unsupported coverage block that Git step. Evidenced
+adapter accepts stable Gitleaks >=8.30.1 and <9. It reports opaque finding
+locations and explicit skipped coverage; narrow fingerprint dispositions require
+review of the selected policy bytes. Binary/long-line assets need a bounded
+coverage decision, rather than automatically blocking every text commit. Missing
+tools, undisposed findings, failures and unresolved required coverage block Git. Evidenced
 equivalents are supported. No tool, host policy, hook or CI is installed automatically.
 Instructions, file-tool restrictions, process isolation and actual required CI are
 separate controls. Optional catalogue/decision resources need no legacy migration,
@@ -433,7 +436,7 @@ Claude and Codex can guide a project. Seven guardrail and routing cases each pas
 
 The same file accepts two optional keys, `Review vendor: different` and `Metered: allowed (<route>)`; see [review vendor and metered routes](WORKERS.md#review-vendor-and-metered-routes). A task marked `Risk: high` gets a focused review, requested in the same build run, after its checks pass and before it is checked off. When a check fails, the assistant diagnoses it first and recommends a stronger tier only when capability matters; a model change never adds repairs. Builds and reviews append compact `{kaylo:v1 ...}` records to the phase plan, through `scripts/plan-record.cjs` when Node is available, and `node /absolute/path/to/kaylo/scripts/dispatch-report.cjs /absolute/path/to/project` prints first-try pass rates from closed phases. The report is read-only and advisory. Earlier versions of these instructions ran in single-run and three-run trials on Claude Code with Sonnet 5.5; the current instructions and the record helper have not been run with a model. See [verification](VERIFICATION.md).
 
-The file can also record Git preferences: `Git autonomy` (`ask`, `commit`, `push`, or `pr`), `Branch`, `Commit`, `Commit style`, `Commit scopes`, and `Merge`. Plan raises them only when you want Kaylo to commit, push, or open pull requests, and records only your choices. Authorized preferences can drive those steps after attributable verification and exact candidate/outgoing-history secret scans. Explicitly requested Git actions require the same scans; missing/failing/incomplete scanning blocks the affected Git step. When it does, it commits only the work's own changes, leaves your staged, unstaged, and untracked work alone, and uses one pull request per phase. See [Git workflow](skills/build/references/git.md) and [pull requests and issues](skills/build/references/pull-requests.md).
+The file can also record Git preferences: `Git autonomy` (`ask`, `commit`, `push`, or `pr`), `Branch`, `Commit`, `Commit style`, `Commit scopes`, and `Merge`. Plan raises them only when you want Kaylo to commit, push, or open pull requests, and records only your choices. Authorized preferences can drive those steps after attributable verification and exact candidate/outgoing-history secret scans. Explicitly requested Git actions require the same scans; missing/failing scanning and unresolved required coverage block the affected Git step; reported asset skips need an evidenced coverage decision. When it does, it commits only the work's own changes, leaves your staged, unstaged, and untracked work alone, and uses one pull request per phase. See [Git workflow](skills/build/references/git.md) and [pull requests and issues](skills/build/references/pull-requests.md).
 
 Work directly when that is sufficient; use one worker at a time when helpful. Plain `/kaylo:build phase` stays sequential. On Claude Code, an explicit request to build the phase in parallel may run up to two ready tasks together when their files and mutable check resources are disjoint; uncertain or overlapping work stays sequential. Other hosts keep the sequential loop. The guiding assistant maintains `ROADMAP.md` and the phase plans, inspects each worker's actual changes, and runs shared checks after a parallel wave. Native delegation is optional and never implies cross-vendor subscription access. Narrow uncertain work before giving it to a smaller model; no prompt guarantees every model can complete every task.
 

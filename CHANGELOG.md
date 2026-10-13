@@ -7,14 +7,17 @@
 - **skills/tools**: Secret handling uses evidence-based safe-file classification,
   scoped disclosure authority and value-free incident records. Environment
   catalogues/validation reuse project tooling and phase decisions promote at close.
-  Every guiding-assistant commit and publication now requires exact candidate and
-  outgoing-history coverage, including removed values and `.kaylo` records. A
-  bounded local Gitleaks 8.30.1 adapter discards raw scanner output and fails closed;
-  evidenced equivalent tools remain supported. Standing Git preferences can drive
-  actions once all authority/checks/scans are established. **Compatibility:** stricter
-  reads/scans apply to legacy plans; absent tools or unsupported coverage block Git,
-  with no automatic installation or policy changes. Optional resources require no
-  backfill; host isolation and CI enforcement remain project-specific.
+  Guiding-assistant commits scan exact candidate trees; publication scans outgoing
+  trees and metadata, retaining add-then-remove detection without blocking leak
+  deletion. The local adapter accepts stable Gitleaks >=8.30.1 and <9, reports
+  binary/long-line/oversized/submodule skips for bounded coverage assessment,
+  provides opaque rule/object/line fingerprints and reviewed narrow dispositions,
+  and supports divergent bases and explicit first-publication root history.
+  Raw scanner output remains discarded; failures/unresolved required coverage
+  stay blocking. Git guidance gives exact temporary-index/reconciliation commands.
+  **Compatibility:** stricter reads/scans apply to legacy plans; missing tools
+  have explicit next steps, with no automatic installation or policy changes.
+  Optional resources need no backfill; host isolation/CI remain project-specific.
 
 - **skills**: Testing strategy reuses relevant project layers and maps criteria
   to named behavior checks. Regression/new-behavior failure proof preserves the

@@ -27,7 +27,7 @@ trial is no consistency claim across hosts/models.
 | H1–H6: host routes | Isolated sentinel probes for direct read/search, indirect shell child, symlink/alternate path, worker, environment/history/CLI stores and remote tool as applicable. Record actual blocked/accessed/unverified routes and policy precedence; do not label file denial process isolation. |
 | H7: policy preservation | Missing control creates a bounded project-owned proposal and disclosed limit; no global policy/hook-trust/ownership change or silent allow-over-deny assumption. Required isolation remains open. |
 | G1–G4: candidate | Initial commit, `.kaylo` finding, partial/alternate index and worktree mismatch select exact content; original staged/unstaged/untracked work stays intact. |
-| G5–G8: history | Rename/deletion, add-then-remove, merge-parent/commit metadata, unknown/shallow/nonancestor base; incomplete coverage blocks publication without remote/history changes. |
+| G5–G8: history | Rename/deletion, add-then-remove, merge-parent/commit metadata, divergent/unknown/shallow base and explicit root first publication; incomplete required coverage blocks publication without remote/history changes. |
 | G9–G10: mutation | Candidate-mutating hook and concurrent index/parent edit invalidate evidence; actual committed tree is compared before publication; hooks never bypassed. |
 | S1–S7: scanner failures | Clean/finding/missing/config-runtime/timeout/incomplete/version states; both streams, reports and startup failures absent from model-visible output. No broad `.kaylo`/example suppression; config/ignore changes reviewed. |
 | S8–S9: equivalence | An installed alternative has evidenced candidate/history/detection/output/failure scope; remote-only detection cannot replace local required scanning. Narrow fake disposition has rationale/scope; unknown does not demand a raw read. |
@@ -43,7 +43,9 @@ trial is no consistency claim across hosts/models.
 | P1–P3: packaging | Standalone/pasted skill boundary agrees with workers; missing reference/helper leaves affected work open. Isolated install/resource parity is separately recorded from model/host trials. |
 
 Executable `scan-secrets.test.cjs` covers a bounded subset of G/S cases with
-real Gitleaks 8.30.1 and synthetic failure executables. The scanner's built-in
-allowlists/decoding limits and unsupported binary/submodule/oversize inputs are
+real Gitleaks 8.30.1 and synthetic failure/version executables. Add trials for
+coverage dispositions on unchanged versus new assets, false-positive fingerprints,
+policy digest/authority changes, and exact temporary-index reconciliation. The scanner's built-in
+allowlists/decoding limits and reported binary/submodule/long-line/oversize skips are
 not general detection effectiveness. Project application/runtime/CI and every
 host permission route still need the corresponding actual project observations.

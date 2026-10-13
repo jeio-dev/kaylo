@@ -5,7 +5,7 @@ Read this before Kaylo commits, pushes, or opens or updates a pull request, when
 ## What this version does
 
 - Standing Git preferences can drive the authorized steps below once their actual authority, attribution, verification and required secret scans are established. No preference waives scans or host permissions.
-- Every guiding-assistant commit and outgoing push/publication, including explicitly requested actions, follows [secrets and environments](../../plan/references/environments.md#commit-candidate-and-outgoing-history). Missing tools, findings and failed/incomplete coverage block the affected Git step. Use an evidenced installed equivalent when suitable; never install or weaken policy automatically.
+- Every guiding-assistant commit and outgoing push/publication, including explicitly requested actions, follows [secrets and environments](../../plan/references/environments.md#commit-candidate-and-outgoing-history). Missing tools, undisposed findings and failed/unresolved required coverage block the affected Git step. Reported skips require a bounded coverage decision under the same contract. Use an evidenced installed equivalent when suitable; never install or weaken policy automatically.
 - Local Git and the five skills remain provider-neutral; no account, CLI, remote or default branch name is assumed.
 
 ## Preferences
@@ -82,7 +82,50 @@ Commit only changes the task or phase made. Ownership is about changes, not file
 
 Required checks must cover the content being committed, including relevant `.kaylo` records. A passing check on a working tree that differs from the commit, for example around partially staged files, does not certify the commit; reuse earlier evidence only when the relevant inputs are unchanged. Honor repository hooks; never bypass them with `--no-verify`. If a hook or a concurrent edit changes the candidate, inspect it and recheck what changed.
 
-Before a push, establish sufficient history and scan every outgoing commit/content (including added-then-removed values) against the intended remote/ref under the secret contract; then list every outgoing commit relative to the intended remote branch (`git log <remote>/<branch>..HEAD`, or from the base for a new branch) and confirm each is attributable. A clean final tree does not show that earlier commits were.
+For unrelated staged entries, this POSIX-shell example keeps the temporary index
+inside a new private directory. Use actual attributable paths, including old/new
+rename sides and deletions. On other hosts use equivalent temporary-directory
+and environment facilities; no shell is a universal requirement.
+
+```sh
+task_index_dir="$(mktemp -d)"
+task_index="$task_index_dir/index"  # This file must not exist yet.
+GIT_INDEX_FILE="$task_index" git read-tree HEAD
+# For an unborn initial branch use git read-tree --empty instead of HEAD.
+GIT_INDEX_FILE="$task_index" git add -- src/feature.js docs/feature.md
+GIT_INDEX_FILE="$task_index" node "<kaylo-root>/scripts/scan-secrets.cjs" "<project-root>" candidate
+```
+
+Stop after the scan. Resolve any finding or required missing coverage and run the
+candidate's required checks before committing; a `partial` result needs the
+recorded bounded coverage decision, never a generic ignored exit code.
+
+```sh
+GIT_INDEX_FILE="$task_index" git commit -m "<reviewed message>"
+git rev-parse 'HEAD^{tree}'
+```
+
+Compare the committed tree/parent with the accepted scan evidence. A hook change
+requires rechecking and blocks publication. Only after successful commit/verification,
+reconcile these paths in the original index and remove the private directory:
+
+```sh
+git reset -q -- src/feature.js docs/feature.md
+rm -rf -- "$task_index_dir"
+```
+
+Do not use `mktemp` to create a zero-byte index file: Git rejects it. `mktemp -d`
+creates the directory, and `read-tree` creates the index. The path-specific
+`git reset -q -- <committed paths>` above updates **only those index entries** to
+HEAD after the commit; it does not edit the worktree or other staged entries.
+Use the original index environment for reconciliation (remove the temporary
+`GIT_INDEX_FILE` override); if an alternate original index was already active,
+restore its exact environment first. Never reset the whole index. Before this
+procedure, rule out user overlap in every named path; otherwise reset could
+discard their staging. If commit/verification fails, preserve the private index
+and recorded evidence for diagnosis; do not run the success-path reset/cleanup.
+
+Before a push, establish sufficient history and scan every outgoing commit/content (including added-then-removed values) against the intended remote/ref under the secret contract. Divergent remote bases use the actual base..head range; first publication with no remote commit uses explicit history --root head, never an unknown-base fallback; then list every outgoing commit relative to the intended remote branch (`git log <remote>/<branch>..HEAD`, or from the base for a new branch) and confirm each is attributable. A clean final tree does not show that earlier commits were.
 
 Run index, commit, and push steps one at a time. After a parallel wave, account for every worker and run the shared checks first. A task commit must not depend on another task's uncommitted work or include its unaccepted records; if a separately verifiable boundary cannot be established, stop and ask about the cadence.
 

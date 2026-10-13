@@ -1,15 +1,23 @@
 #!/usr/bin/env node
 'use strict';
 
-// A deliberately bounded local adapter: no shell, project config, raw diagnostics,
-// report publication, installation, index-entry changes, commits, or network operations.
+// Local Git-object adapter. No shell, project detector config, raw diagnostics,
+// installation, index-entry changes, publication or network operations.
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 const { createHash } = require('node:crypto');
 const limit = 64 * 1024 * 1024;
-const supportedVersion = '8.30.1';
+const supportedVersion = '>=8.30.1 <9';
+const policyPath = '.kaylo/secret-findings.json';
+const oidPattern = /^[a-f0-9]{40}(?:[a-f0-9]{24})?$/;
+const digestPattern = /^sha256:[a-f0-9]{64}$/;
+const digest = bytes => 'sha256:' + createHash('sha256').update(bytes).digest('hex');
+const acceptsVersion = value => {
+  const match = /^8\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.exec(value);
+  return !!match && (+match[1] > 30 || (+match[1] === 30 && +match[2] >= 1));
+};
 class ScanError extends Error {
   constructor(state) { super(state); this.state = state; }
 }
@@ -21,100 +29,173 @@ function run(binary, args, options = {}) {
   if (result.signal) fail('error');
   return result;
 }
+function parseDispositions(bytes) {
+  let policy;
+  try { policy = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes)); }
+  catch { fail('invalid-dispositions'); }
+  const keys = (value, expected) => value && typeof value === 'object' && !Array.isArray(value) &&
+    Object.keys(value).sort().join(',') === expected.sort().join(',');
+  if (!keys(policy, ['format', 'findings']) || policy.format !== 1 || !Array.isArray(policy.findings)) fail('invalid-dispositions');
+  const seen = new Set();
+  for (const entry of policy.findings) {
+    if (!keys(entry, ['fingerprint', 'reason']) || !digestPattern.test(entry.fingerprint) ||
+        typeof entry.reason !== 'string' || !entry.reason.trim() || entry.reason.length > 512 ||
+        /[\x00-\x1f\x7f]/.test(entry.reason) || seen.has(entry.fingerprint)) fail('invalid-dispositions');
+    seen.add(entry.fingerprint);
+  }
+  return seen;
+}
 function scan(root, mode, refs = [], options = {}) {
   let scratch;
   try {
     if (!['candidate', 'history'].includes(mode) ||
-        (mode === 'candidate' ? refs.length !== 0 : refs.length !== 2)) fail('usage');
+        (mode === 'candidate' ? refs.length !== 0 : refs.length !== 2) ||
+        (options.dispositions !== undefined && !digestPattern.test(options.dispositions))) fail('usage');
     const cwd = fs.realpathSync(root);
     const gitEnv = { ...process.env, GIT_NO_REPLACE_OBJECTS: '1', GIT_NO_LAZY_FETCH: '1' };
-    // GIT_INDEX_FILE is intentionally retained: hooks/temporary indexes select
-    // their actual candidate. Git replacement objects must not hide history.
+    // Retain GIT_INDEX_FILE: hooks and alternate indexes select their candidate.
     const git = (...args) => {
       const result = run('git', ['--no-pager', ...args], { cwd, env: gitEnv });
       if (result.status !== 0) fail('incomplete');
       return result.stdout;
     };
-    if (git('rev-parse', '--show-toplevel').toString().trim() !== cwd) fail('incomplete');
+    if (path.relative(cwd, fs.realpathSync(git('rev-parse', '--show-toplevel').toString().trim())) !== '') fail('incomplete');
     if (git('rev-parse', '--is-shallow-repository').toString().trim() !== 'false') fail('incomplete');
-    // Git grafts also rewrite ancestry. Refuse them instead of certifying a range.
     const grafts = git('rev-parse', '--git-path', 'info/grafts').toString().trim();
     if (fs.existsSync(path.resolve(cwd, grafts))) fail('incomplete');
     const resolve = ref => {
       if (!ref || ref.startsWith('-') || /[\x00-\x20\x7f]/.test(ref)) fail('incomplete');
-      return git('rev-parse', '--verify', ref + '^{commit}').toString().trim();
+      const value = git('rev-parse', '--verify', ref + '^{commit}').toString().trim();
+      if (!oidPattern.test(value)) fail('incomplete');
+      return value;
     };
-    let identity;
-    let trees;
-    let delta;
+    const headParent = () => {
+      const result = run('git', ['rev-parse', '--verify', 'HEAD'], { cwd, env: gitEnv });
+      if (result.status === 0) return resolve('HEAD');
+      const branch = git('symbolic-ref', '-q', 'HEAD').toString().trim();
+      if (run('git', ['show-ref', '--verify', '--quiet', branch], { cwd, env: gitEnv }).status !== 1) fail('incomplete');
+      return null;
+    };
+    let identity, trees, policyTree, baseline;
     if (mode === 'candidate') {
       const tree = git('write-tree').toString().trim();
-      const headResult = run('git', ['rev-parse', '--verify', 'HEAD'], { cwd, env: gitEnv });
-      let head = null;
-      if (headResult.status === 0) head = resolve('HEAD');
-      else {
-        // An unborn branch is supported; an unreadable/corrupt existing ref isn't.
-        const branch = git('symbolic-ref', '-q', 'HEAD').toString().trim();
-        const exists = run('git', ['show-ref', '--verify', '--quiet', branch], { cwd, env: gitEnv });
-        if (exists.status !== 1) fail('incomplete');
-      }
-      identity = { tree, parent: head };
-      trees = [tree];
-      delta = head ? git('diff', '--no-ext-diff', '--no-textconv', '--binary', head, tree, '--') : Buffer.alloc(0);
+      if (!oidPattern.test(tree)) fail('incomplete');
+      baseline = headParent(); identity = { tree, parent: baseline }; trees = [tree]; policyTree = tree;
     } else {
-      const base = resolve(refs[0]);
+      baseline = refs[0] === '--root' ? null : resolve(refs[0]);
       const head = resolve(refs[1]);
-      if (run('git', ['merge-base', '--is-ancestor', base, head], { cwd, env: gitEnv }).status !== 0) fail('incomplete');
-      const commits = git('rev-list', base + '..' + head).toString().trim().split('\n').filter(Boolean);
-      identity = { base, head, commits: commits.length };
-      trees = commits;
-      // Include deletions and merge-parent changes, even if a value is absent
-      // from every outgoing final tree. No textconv, external diff, or lazy fetch.
-      delta = git('log', '--format=', '--no-ext-diff', '--no-textconv', '--binary',
-        '--full-history', '-m', '-p', base + '..' + head, '--');
+      const commits = git('rev-list', baseline ? baseline + '..' + head : head).toString().trim().split('\n').filter(Boolean);
+      if (!commits.every(value => oidPattern.test(value))) fail('incomplete');
+      identity = { base: baseline, head, commits: commits.length }; trees = commits; policyTree = head;
     }
-    const pieces = [];
-    let bytes = 0;
-    const decode = buffer => {
-      try { return new TextDecoder('utf-8', { fatal: true }).decode(buffer); }
-      catch { fail('incomplete'); }
+    const treeCache = new Map();
+    const entries = tree => {
+      if (!treeCache.has(tree)) {
+        let text;
+        try { text = new TextDecoder('utf-8', { fatal: true }).decode(git('ls-tree', '-rz', '--full-tree', tree)); }
+        catch (error) { if (error instanceof ScanError) throw error; fail('incomplete'); }
+        treeCache.set(tree, text.split('\0').filter(Boolean).map(entry => {
+          const match = entry.match(/^(100644|100755|120000|160000) (blob|commit) ([a-f0-9]+)\t([\s\S]+)$/);
+          if (!match || !oidPattern.test(match[3]) || (match[1] === '160000') !== (match[2] === 'commit')) fail('incomplete');
+          return { kind: match[2] === 'commit' ? 'submodule' : 'blob', object: match[3], name: match[4] };
+        }));
+      }
+      return treeCache.get(tree);
     };
-    const append = buffer => {
-      bytes += buffer.length + 1;
-      if (bytes > limit || buffer.includes(0)) fail('incomplete');
-      const text = decode(buffer);
-      if (text.split('\n').some(line => Buffer.byteLength(line) > 60000)) fail('incomplete');
-      // Binary patches are encoded data, not demonstrated binary coverage.
-      if (/^GIT binary patch$/m.test(text)) fail('incomplete');
-      pieces.push(buffer, Buffer.from('\n'));
+    const prior = new Set(baseline ? entries(baseline).map(entry => entry.object) : []);
+    const policyEntry = entries(policyTree).find(entry => entry.name === policyPath);
+    if (policyEntry && policyEntry.kind !== 'blob') fail('invalid-dispositions');
+    let dispositions = { digest: null, approved: false, entries: 0 };
+    let approved = new Set();
+    if (policyEntry) {
+      const bytes = git('cat-file', 'blob', policyEntry.object);
+      if (bytes.length > 65536) fail('invalid-dispositions');
+      approved = parseDispositions(bytes);
+      dispositions = { digest: digest(bytes), approved: options.dispositions === digest(bytes), entries: approved.size };
+    }
+    if (options.dispositions && !dispositions.approved) fail('changed-dispositions');
+    if (!dispositions.approved) approved.clear();
+
+    const skipped = { binary: 0, longLine: 0, oversized: 0, submodule: 0 };
+    const skippedObjects = [];
+    const skip = (source, reason) => {
+      skipped[reason]++;
+      skippedObjects.push({ kind: source.kind, object: source.object, reason,
+        newContent: source.kind === 'commit' || !prior.has(source.object) });
     };
-    append(delta);
-    const blobs = new Set();
+    const sources = new Map();
+    const names = new Map();
     for (const tree of trees) {
-      if (mode === 'history') append(git('cat-file', 'commit', tree));
-      for (const entry of decode(git('ls-tree', '-rz', '--full-tree', tree)).split('\0').filter(Boolean)) {
-        const match = entry.match(/^(\d+) (\w+) ([a-f0-9]+)\t([\s\S]+)$/);
-        if (!match || match[2] !== 'blob' || !['100644', '100755', '120000'].includes(match[1])) fail('incomplete');
-        // Names can themselves carry credentials; never print names or snippets.
-        append(Buffer.from(match[4]));
-        if (!blobs.has(match[3])) {
-          append(git('cat-file', 'blob', match[3]));
-          blobs.add(match[3]);
+      if (mode === 'history') sources.set(tree, { kind: 'commit', object: tree });
+      for (const entry of entries(tree)) {
+        names.set(digest(Buffer.from(entry.name)), { kind: 'path', object: digest(Buffer.from(entry.name)), bytes: Buffer.from(entry.name) });
+        if (!sources.has(entry.object)) sources.set(entry.object, { kind: entry.kind, object: entry.object });
+      }
+    }
+    const pieces = [], spans = [];
+    let bytes = 0, nextLine = 1;
+    const append = (buffer, source) => {
+      let text;
+      try { text = new TextDecoder('utf-8', { fatal: true }).decode(buffer); }
+      catch { skip(source, 'binary'); return; }
+      if (buffer.includes(0)) { skip(source, 'binary'); return; }
+      if (text.split('\n').some(line => Buffer.byteLength(line) > 60000)) { skip(source, 'longLine'); return; }
+      const separator = Buffer.from('\n# kaylo object boundary\n');
+      if (bytes + buffer.length + separator.length > limit) { skip(source, 'oversized'); return; }
+      pieces.push(Buffer.from(buffer), separator); bytes += buffer.length + separator.length;
+      const lines = text.split('\n').length;
+      spans.push({ ...source, bytes: undefined, first: nextLine, last: nextLine + lines - 1 });
+      nextLine += lines + 1;
+    };
+    for (const name of names.values()) append(name.bytes, name);
+    const objectSources = [...sources.values()].filter(source => {
+      if (source.kind === 'submodule') { skip(source, 'submodule'); return false; }
+      return true;
+    });
+    // Size-check before bulk reads; batch plumbing avoids one process per blob.
+    if (objectSources.length) {
+      const checks = run('git', ['cat-file', '--batch-check'], { cwd, env: gitEnv,
+        input: objectSources.map(source => source.object).join('\n') + '\n' });
+      if (checks.status !== 0) fail('incomplete');
+      const lines = checks.stdout.toString().trim().split('\n');
+      if (lines.length !== objectSources.length) fail('incomplete');
+      const pending = [];
+      lines.forEach((line, index) => {
+        const match = line.match(/^([a-f0-9]+) (blob|commit) (\d+)$/);
+        const source = objectSources[index];
+        if (!match || match[1] !== source.object || match[2] !== source.kind || !Number.isSafeInteger(+match[3])) fail('incomplete');
+        source.size = +match[3];
+        if (source.size > limit - 1024) skip(source, 'oversized'); else pending.push(source);
+      });
+      let pendingIndex = 0;
+      while (pendingIndex < pending.length) {
+        const batch = []; let size = 0;
+        while (pendingIndex < pending.length && size + pending[pendingIndex].size + 256 <= limit) {
+          const source = pending[pendingIndex++]; batch.push(source); size += source.size + 256;
         }
+        const result = run('git', ['cat-file', '--batch'], { cwd, env: gitEnv,
+          input: batch.map(source => source.object).join('\n') + '\n' });
+        if (result.status !== 0) fail('incomplete');
+        let offset = 0;
+        for (const source of batch) {
+          const newline = result.stdout.indexOf(10, offset);
+          if (newline < 0 || result.stdout.subarray(offset, newline).toString() !== `${source.object} ${source.kind} ${source.size}`) fail('incomplete');
+          const start = newline + 1, end = start + source.size;
+          if (end >= result.stdout.length || result.stdout[end] !== 10) fail('incomplete');
+          append(result.stdout.subarray(start, end), source); offset = end + 1;
+        }
+        if (offset !== result.stdout.length) fail('incomplete');
       }
     }
     const input = Buffer.concat(pieces);
-    const inputDigest = 'sha256:' + createHash('sha256').update(input).digest('hex');
-    scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'kaylo-secret-scan-'));
-    fs.chmodSync(scratch, 0o700);
-    // Never inherit detector/ignore/report settings. Empty cwd prevents automatic
-    // project .gitleaks.toml/.gitleaksignore discovery. All content is stdin.
+    scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'kaylo-secret-scan-')); fs.chmodSync(scratch, 0o700);
     const scannerEnv = Object.fromEntries(Object.entries(process.env)
       .filter(([key]) => ['PATH', 'SYSTEMROOT', 'WINDIR', 'TMPDIR', 'TEMP', 'TMP'].includes(key.toUpperCase())));
     const binary = options.binary || 'gitleaks';
-    const version = run(binary, ['version'], { cwd: scratch, env: scannerEnv });
-    if (version.status !== 0) fail('error');
-    if (version.stdout.toString().trim() !== supportedVersion) fail('unsupported-version');
+    const versionResult = run(binary, ['version'], { cwd: scratch, env: scannerEnv });
+    if (versionResult.status !== 0) fail('error');
+    const version = versionResult.stdout.toString().trim();
+    if (!acceptsVersion(version)) fail('unsupported-version');
     const result = run(binary, ['stdin', '--no-banner', '--no-color', '--redact=100',
       '--log-level=error', '--exit-code=10', '--ignore-gitleaks-allow', '--max-decode-depth=5',
       '--timeout=55', '--report-format=json', '--report-path=report.json'],
@@ -124,28 +205,50 @@ function scan(root, mode, refs = [], options = {}) {
     try { report = JSON.parse(fs.readFileSync(path.join(scratch, 'report.json'), 'utf8')); }
     catch { fail('incomplete'); }
     if (!Array.isArray(report) || (result.status === 0) !== (report.length === 0)) fail('incomplete');
-    if (mode === 'candidate') {
-      const now = run('git', ['rev-parse', '--verify', 'HEAD'], { cwd, env: gitEnv });
-      const parent = now.status === 0 ? resolve('HEAD') : null;
-      if (git('write-tree').toString().trim() !== identity.tree || parent !== identity.parent) fail('changed');
+    const locations = new Map(), dismissed = new Map();
+    for (const finding of report) {
+      if (!/^[a-z0-9-]{1,100}$/.test(finding.RuleID) ||
+          !['StartLine', 'EndLine', 'StartColumn', 'EndColumn'].every(key => Number.isSafeInteger(finding[key]) && finding[key] >= 0) || finding.StartLine < 1 || finding.EndLine < finding.StartLine) fail('incomplete');
+      const source = spans.find(span => finding.StartLine >= span.first && finding.EndLine <= span.last);
+      if (!source) fail('incomplete');
+      const location = { rule: finding.RuleID, kind: source.kind, object: source.object,
+        line: finding.StartLine - source.first + 1, endLine: finding.EndLine - source.first + 1,
+        column: finding.StartColumn, endColumn: finding.EndColumn };
+      location.fingerprint = digest(Buffer.from(JSON.stringify(location)));
+      // Policy-file findings cannot dismiss themselves. Reasons are never echoed.
+      const target = approved.has(location.fingerprint) && source.object !== policyEntry?.object ? dismissed : locations;
+      target.set(location.fingerprint, location);
     }
-    // Both output streams and the report are deliberately discarded, even on
-    // errors. Only fixed states, counts and Git/content identities cross out.
-    return { state: result.status === 10 ? 'finding' : 'clean', mode,
-      tool: 'gitleaks', version: supportedVersion, configuration: 'built-in defaults; project suppressions disabled',
-      identity, inputDigest, blobs: blobs.size, findings: report.length,
-      coverage: 'UTF-8 Git trees and delta; binary/submodules/oversize unsupported' };
+    if (mode === 'candidate' && (git('write-tree').toString().trim() !== identity.tree || headParent() !== identity.parent)) fail('changed');
+    const complete = skippedObjects.length === 0;
+    return { state: locations.size ? 'finding' : complete ? 'clean' : 'partial', mode,
+      tool: 'gitleaks', version, configuration: 'built-in defaults; project detector suppressions disabled',
+      identity, inputDigest: digest(input), blobs: objectSources.filter(source => source.kind === 'blob').length,
+      findings: locations.size, locations: [...locations.values()], dismissed: [...dismissed.values()],
+      dispositions, skipped, skippedObjects, coverage: { complete,
+        scope: mode === 'candidate' ? 'selected candidate tree and names' : 'outgoing trees, names and commit metadata' } };
   } catch (error) {
-    return { state: error instanceof ScanError ? error.state : 'error', ...(['candidate', 'history'].includes(mode) ? { mode } : {}) };
+    const state = error instanceof ScanError ? error.state : 'error';
+    const result = { state, ...(['candidate', 'history'].includes(mode) ? { mode } : {}) };
+    if (['missing-tool', 'unsupported-version'].includes(state)) result.nextAction =
+      'Install Gitleaks >=8.30.1 <9 using approved project tooling, or establish an equivalent scanner; no automatic installation.';
+    return result;
   } finally {
     if (scratch) fs.rmSync(scratch, { recursive: true, force: true });
   }
 }
 function main(args, out = process.stdout) {
-  const [root, mode, ...refs] = args;
-  const result = root ? scan(root, mode, refs) : { state: 'usage' };
+  const parsed = [...args]; const flag = parsed.indexOf('--dispositions'); const options = {};
+  if (flag !== -1) {
+    if (flag !== parsed.length - 2 || !digestPattern.test(parsed[flag + 1])) {
+      out.write(JSON.stringify({ state: 'usage' }) + '\n'); return 2;
+    }
+    options.dispositions = parsed[flag + 1]; parsed.splice(flag);
+  }
+  const [root, mode, ...refs] = parsed;
+  const result = root ? scan(root, mode, refs, options) : { state: 'usage' };
   out.write(JSON.stringify(result) + '\n');
   return result.state === 'clean' ? 0 : result.state === 'finding' ? 1 : 2;
 }
-module.exports = { scan, main, supportedVersion };
+module.exports = { scan, main, supportedVersion, acceptsVersion };
 if (require.main === module) process.exitCode = main(process.argv.slice(2));

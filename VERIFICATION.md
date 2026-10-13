@@ -14,14 +14,17 @@ records from the first draft through 0.5.2 are in
 
 ## Current status — 0.11.0
 
-The #89 implementation adds shared secret/environment guidance and a bounded
-local Gitleaks adapter. On 2026-10-12, all **407** Node tests, package/native
-manifest checks and staged resource parity pass. Exact candidate/outgoing scan
-identities are recorded with the implementing PR. This demonstrates deterministic
-Git selection and limited detector/error behavior, not model instruction following,
-universal host isolation or actual required CI. The behavioral matrix is in
-`tests/SECRETS-TRIALS.md`; live host/model, application and public install trials
-remain unrun. Issue acceptance and release readiness remain open.
+The #89 implementation and PR #133 review fixes add shared secret/environment
+guidance and a bounded local scanner with explicit skipped-coverage assessment,
+opaque finding locations, reviewed fingerprints, divergent/root history and
+exact index reconciliation. On 2026-10-12, all **417** Node tests and package/native
+manifest checks pass; staged parity covers 45 resources. Real detector evidence
+uses Gitleaks 8.30.1; compatible-version parsing/report behavior is fixture-tested,
+not a native trial of every accepted stable 8.x version. Live host/model trials,
+native Windows, application/public-install checks and actual required CI remain
+unrun. The matrix is in `tests/SECRETS-TRIALS.md`; issue acceptance and release
+readiness remain open. Historical records below describe their original scanner
+contracts and are superseded by the PR review-fix record for current behavior.
 
 
 The #88 implementation adds the shared testing/evidence contract and bounded
@@ -66,6 +69,73 @@ Codex grades are operator-reported. The PR #79 review spot-checked their saved
 command records and secret-token classifications but did not audit every
 transcript.
 
+
+## 2026-10-12 — PR #133 review fixes
+
+**Starting state and authority.** Clean `feat/89-secrets-environments` at
+`20bd3f06522dddb84203b25577b3e28fed4e9bad`, matching its remote branch; no
+staged/unstaged/untracked work. The user's review of PR #133 directs these fixes;
+the existing conversation authorizes branch commits and pushes to that PR.
+No scanner installation, global policy/account changes, credential access,
+rotation, external incident notification, deployment, paid call or release.
+Earlier records remain historical; their exact-version pin, whole-tree binary
+blocking, candidate parent-delta scan and ancestor-only history are superseded.
+
+| Review finding | Implemented behavior and observed evidence |
+| --- | --- |
+| 1: binary/minified assets | Distinct binary/NUL/non-UTF-8, long-line, oversized and submodule objects are reported as skips with opaque identities and new-content attribution. A successful scan with skips is `partial`, not clean; ordinary text findings still block. Guidance permits bounded irrelevant/unchanged reviewed asset coverage decisions, keeping required/unknown coverage open. Binary/minified, unchanged-asset and CLI-exit fixtures pass. |
+| 2: locations/dispositions | Findings return validated rule, blob/commit (or hashed path), local line/column and fingerprint, never names/snippets/values. Optional selected-tree `.kaylo/secret-findings.json` has strict finite fingerprints/value-free rationales; approval needs its exact digest plus recorded real review authority. Unapproved/malformed/changed/worktree-only policy, changed content and narrow dismissal fixtures pass; reasons are not emitted. |
+| 3: leak deletion | Candidate scans selected tree/names, not removed parent lines. A staged deletion passes; unpublished add-then-remove still fails outgoing tree-history scanning. No duplicate patch/tree findings. Both fixtures pass. Prior real exposure still follows incident/remediation rules. |
+| 4: push bases | Actual base..head revision sets accept divergent bases; explicit `history --root head` covers all reachable commits for first publication. Unknown/shallow/grafted/missing history remains blocked. Divergent, null-base root, first-push synthetic leak and merge/history fixtures pass. |
+| 5: availability/version | Stable Gitleaks >=8.30.1 and <9 is accepted; actual command/report incompatibilities still block. Missing/unsupported tools have a specific compatible-install or equivalent-check next action, with no automatic installation. Boundary parsing and an 8.31.0 synthetic executable are tested; real detection remains 8.30.1. |
+| 6: temporary index | POSIX example uses mktemp -d plus a nonexistent index path/read-tree, separate scan/commit gates, and path-specific git reset -q -- committed-paths only after verified commit. The actual alternate-index fixture reconciles the task file while preserving the user's unrelated staged file. Unborn setup, original-index environment, overlap and failure retention are documented. |
+| Windows/speed/guardrails | Root comparison resolves filesystem path spelling; native Windows remains unrun. cat-file --batch-check and bounded --batch reads replace per-blob subprocesses; a 201-blob Git trace observes one bulk read. Dense guardrails split into shorter consistent bullets across five skills/three briefs; generated Claude adapters and copied-block validation agree. Model adherence remains unverified. |
+
+**Failure proof and checks.** In `/home/jeio/src/kaylo`, the four new
+`review:` regression tests were run before implementation with
+`node --test --test-name-pattern='review:' tests/scan-secrets.test.cjs`:
+all four failed at the expected old behavior (binary incomplete rather than
+partial, blocked deletion, duplicated finding count, divergent-base incomplete).
+The same four then passed. Subcases after each first failing assertion are not
+claimed as separately observed baseline failures. The later full scanner run
+passed 22 tests; an additional 100,001-line finding test passed and its local
+fingerprint remained stable between candidate and history. Final
+`node --test tests/*.test.cjs`: **417 passed**, zero failed/skipped, including
+23 scanner tests with synthetic credentials and real installed Gitleaks 8.30.1.
+An intermediate full run passed 416 before the additional large-input case.
+No assertions/skips/runner selection were weakened to obtain green; old
+expectations for deletion/binary/version/base behavior changed to match this
+explicitly requested scope. Synthetic version/error executables prove adapter
+contracts, not real detection on every accepted version.
+
+`node scripts/validate-package.cjs`, both
+`claude plugin validate .claude-plugin/plugin.json --strict` and
+`claude plugin validate .claude-plugin/marketplace.json --strict`,
+`agy plugin validate .`, and `git diff --check` pass. Hosts/toolchain remain
+Node v24.21.0, Git 2.53.0, Claude Code 2.1.296 and Antigravity 1.3.1 on the
+recorded Linux/WSL2 host. Antigravity again reports hooks skipped; this is not
+host-policy enforcement. Shared briefs regenerate with
+`node scripts/sync-claude-agents.cjs`. Development staging plus installed
+validation matches **45** shared resources; npm pack dry-run has **91** files
+and excludes contributor guidance. No normal host profile changed.
+
+**Publication evidence and limits.** Candidate and intended existing-branch
+outgoing scans run after staging/commit with identities recorded in the PR;
+committed tree/parent are checked against accepted evidence before publication.
+Git operations remain serialized and hooks honored. `partial` is never a generic
+ignored exit: any required skipped coverage needs explicit established evidence,
+while unknown coverage stays open. Disposition digests identify inputs, not
+approval provenance; the guiding assistant records actual authority separately.
+Optional policy absence grants no suppression. No real secret values were used
+or disclosed; raw streams/reports were discarded and disposable fixtures removed.
+
+No live host/model instruction/incident/coverage-approval trials, native Windows,
+actual Gitleaks versions newer than 8.30.1, application/runtime/client-artifact,
+required CI, public install/update or general detector evaluation was performed.
+The accepted version interval is a bounded compatibility policy with runtime
+checks, not evidence that every minor version was exercised. Model/host behavior
+and external remediation remain unestablished; the PR stays draft. The trial
+matrix now includes skip classification, fingerprint authority and reconciliation.
 
 ## 2026-10-12 — #89 secrets and environment implementation
 

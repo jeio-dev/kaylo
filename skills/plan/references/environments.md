@@ -109,7 +109,7 @@ publish tokens are optional according to the project, not universal defaults.
 ## Commit candidate and outgoing history
 
 Before every guiding-assistant commit, including explicit build/review-fix,
-close/release/phase-record commits, establish exact candidate index/delta and
+close/release/phase-record commits, establish exact candidate index and
 relevant candidate-tree scan coverage. Include `.kaylo`, reports, decisions,
 documentation and scanner/config/ignore changes. Before any authorized push or
 publication scan all outgoing commits/content relative to the intended remote/ref,
@@ -123,61 +123,132 @@ scanning cannot replace a required local pre-commit scan. Missing tools never
 authorize installation, account connection or paid fallback.
 
 The bounded [local adapter](../../../scripts/scan-secrets.cjs) supports installed
-Git and **Gitleaks 8.30.1**, Node >=24, on tested Linux. Its need: native staged
-scans do not certify the alternate/temporary index that `commit --only` uses,
-and project detector/ignore discovery can weaken a scan of its own changes.
-It uses immutable Git objects and Gitleaks `stdin` in a private empty directory,
-built-in detectors, no project config/baseline/ignore discovery, ignores
-`gitleaks:allow` comments, decoding depth 5, full redaction and a private JSON
-report. Both process streams and report contents are discarded even on errors;
-only fixed states, counts, hashes and coverage labels are printed. Built-in
-content allowlists remain detector limits; project suppressions are disabled.
+Git, Node >=24 and stable **Gitleaks >=8.30.1 and <9**. Actual detector trials
+use 8.30.1 on Linux; range/version parsing and report checks have deterministic
+fixtures, not native testing of every later version. An incompatible CLI/report
+still fails. It uses immutable Git objects and Gitleaks `stdin` in a private
+empty directory with built-in detectors, no project detector/config/ignore
+settings, ignored `gitleaks:allow` comments, decoding depth 5 and full redaction.
 The scanner receives only executable/OS temporary-path environment settings,
-not inherited application credentials. No filenames,
-source lines, rule text, credentials or scanner diagnostics are forwarded. The
-report is removed on return; process memory/private temporary disk remain
-residual exposure surfaces and forced termination may require owner cleanup.
-The installed executable and default detector are trusted local components.
-No hook/CI/account integration is automatically installed; no remote artifacts,
-comments or uploads are generated.
+not inherited application credentials. Both streams and private report contents
+are discarded even on errors; temporary files are removed on return. Memory and
+private temporary disk remain exposure surfaces, not process isolation; forced
+termination may require owner cleanup. Built-in content allowlists and decoding
+limits remain detector limits. No hooks/CI/accounts are installed or remote
+comments/uploads generated. Trust in the installed executable is required.
 
 ```sh
 node "<kaylo-root>/scripts/scan-secrets.cjs" "<project-root>" candidate
-node "<kaylo-root>/scripts/scan-secrets.cjs" "<project-root>" history <base-commit> <head-commit>
+node "<kaylo-root>/scripts/scan-secrets.cjs" "<project-root>" history <remote-base> <head>
+node "<kaylo-root>/scripts/scan-secrets.cjs" "<project-root>" history --root <head>
 ```
 
-`candidate` uses `git write-tree` on the actual `GIT_INDEX_FILE` or normal index,
-plus the HEAD-to-tree delta (no delta for an unborn initial branch). Partial
-staging therefore selects the index, not the working tree. It covers renames,
-deletions and symlink *blob text* without following targets. It does not stage
-files or change index entries; write-tree can refresh Git's index cache/create
-objects. `history` requires an ancestor base, enumerates every outgoing tree
-and commit metadata/merge-parent patch, covering add-then-remove and deletions from the base.
-Resolve the intended remote/ref separately using an available permitted read-only
-route; a new branch uses its established remote base, an existing branch its
-established remote head. Ref names resolve to immutable commit hashes in evidence.
-Never push, change remotes or rewrite history to obtain a base. Reject shallow,
-unknown/nonancestor bases, missing objects, Git grafts, unsupported binaries or
-submodules, invalid UTF-8/NUL content, lines over 60,000 bytes, or aggregate input
-over 64 MiB. No partial scan is certified. Each subprocess has a 60-second
-limit and the scanner 55 seconds. Annotated tags, release assets and content outside Git trees need separate
-evidenced coverage. Opaque archives/binary/generated formats need
-an equivalent whose coverage is established; symlink targets outside Git trees
-are not certified. Detection is limited to the selected built-in rules and
-bounded decoding; a pass is never an absence-of-secrets guarantee.
+`candidate` uses `git write-tree` from the actual normal or `GIT_INDEX_FILE`
+index and scans the selected tree, including names and symlink blob text without
+following targets. Partial staging selects the index, not the worktree. It does
+not scan removed parent lines: deleting a leak must be committable. New content
+is already in the candidate tree; incident/remediation rules still apply to the
+old exposure. It does not stage files or change index entries; write-tree can
+refresh Git's cache/create objects. Compare the parent/tree again after scanning.
 
-Exit 0 is `clean`, 1 is `finding`; exit 2 blocks the action with `missing-tool`,
-`unsupported-version`, `error` (configuration/runtime failure), `timeout`,
-`incomplete`, `changed` (candidate mutated during scan) or `usage`. Missing or inconsistent scanner reports are incomplete.
-Record JSON evidence plus command/directory, intended remote/ref, configuration,
-authority and limits in existing Result/Review/Completion or response. Use a
-non-echoing separately controlled diagnostic to investigate suppressed errors;
-never print a raw report to debug the adapter. Narrow false-positive disposition
-requires value-free rationale and reviewed scope with an equivalent vetted
-scanner/configuration; this adapter has no broad suppression switch. Unknown
-classification stays unresolved without demanding a raw model read. Detector,
-ignore/baseline/config changes require review; never broadly exempt `.kaylo`,
-examples/tests or existing real leaks to get green.
+`history` scans `git rev-list <base>..<head>`: every outgoing full tree, names
+and commit metadata, deduplicating objects. Values added then removed remain
+covered through intermediate commits, including merge-side commits. It does not
+rescan deleted values already present only in the remote base. Bases can diverge
+from head when a default branch advances; no ancestor relationship is required.
+Resolve the actual authorized remote/ref through a permitted read-only route:
+use the existing remote branch head, or the agreed remote base for a new branch.
+For a first publication with no remote commit, explicitly select `--root`, which
+scans all commits reachable from head and records a null base. Do not silently
+substitute root or treat an unknown/missing base as empty. Unknown refs, shallow
+history, missing objects and grafts still block; replacements and lazy fetching
+are disabled. Never push, change remotes or rewrite history to obtain coverage.
+A merge-base may be used only when it is the established intended range, not to
+hide commits the actual publication would send.
+
+Git blob/commit reads use `cat-file --batch-check` plus bounded `--batch` reads,
+instead of one subprocess per file. Native path comparison resolves Git's root
+through the filesystem to accommodate slash/case spelling differences; native
+Windows remains untested. Each subprocess has a 60-second limit, the scanner
+55 seconds. Aggregate scanned input is limited to 64 MiB. Oversized objects,
+NUL/non-UTF-8 binary content, lines over 60,000 bytes and submodule content are
+**reported skips**, not automatic clean coverage. Names remain scanned even when
+their blobs are skipped. Counters describe distinct objects (not path occurrences)
+and `skippedObjects` lists opaque kind/object/reason and `newContent` relative to
+the candidate parent or selected remote base; root publication marks all new.
+Symlink targets outside the tree, annotated tags and release assets need separate
+coverage. A pass never guarantees absence of secrets.
+
+## Results, coverage decisions and finding dispositions
+
+Output contains only fixed states, validated built-in rule IDs, opaque Git object
+IDs (or hashed path identifiers), local line/column ranges, SHA-256 fingerprints,
+counts and coverage/configuration identities. No filenames, source snippets,
+values, report rationale or raw scanner diagnostics are emitted. A blob/commit
+finding's line is relative to that immutable object; use an already approved
+source path's `git ls-files --stage -- <path>` to identify its object safely.
+Do not dump unknown matching blobs or paths into model context to investigate.
+Use trusted creation/code/schema evidence or a user-controlled diagnostic to
+establish fake versus suspected/confirmed real content.
+
+Exit 0 is `clean` with complete selected coverage; exit 1 is `finding` with
+undisposed findings. Exit 2 includes `partial` (scan ran, some objects skipped),
+`missing-tool`, `unsupported-version`, `error`, `timeout`, `incomplete`,
+`changed`, `invalid-dispositions`, `changed-dispositions` or `usage`. Findings
+remain blocking even alongside skips. Missing/inconsistent reports remain
+incomplete. Missing/unsupported tools provide a specific next action: install a
+compatible Gitleaks through approved project tooling or establish an evidenced
+equivalent. No automatic installation or paid/remote fallback.
+
+For `partial`, the guiding assistant evaluates the reported skipped objects
+against this action's agreed required coverage. Record the object identities,
+classification evidence, rationale and remaining coverage in existing Result/
+Review/Completion or the response. An unchanged, already reviewed public image
+irrelevant to a text change need not block that commit; reuse only established
+unchanged-object evidence. A filename or binary label alone is insufficient.
+New/unknown/private generated assets, long-line client configuration, commit
+metadata or required submodule content need a suitable safe equivalent check
+or user-performed evidence. Relevant or unresolved required coverage stays open.
+Do not treat exit 2 generally as permission to proceed or broadly exempt all
+assets/tests/docs. This is a bounded coverage disposition, not a scanner pass.
+No automatic consumer/hook may convert `partial` into success; project-owned
+checks need an explicitly reviewed equivalent coverage policy before handling it.
+
+For a narrow established false positive, use optional Kaylo-owned
+`.kaylo/secret-findings.json` in the exact candidate tree (or head tree for
+history). Its JSON contract is:
+
+```json
+{
+  "format": 1,
+  "findings": [
+    { "fingerprint": "sha256:<64 lowercase hex digits>", "reason": "Value-free reviewed rationale and scope" }
+  ]
+}
+```
+
+Use the actual emitted fingerprint, not the placeholder. Each entry requires a
+nonblank single-line value-free reason of at most 512 characters. Unknown fields,
+duplicate fingerprints, wildcards, malformed records and files over 64 KiB fail.
+The scanner reports the exact file digest and entry count, but does not apply
+entries unless the guiding assistant has reviewed that selected file and records
+actual authority/rationale in existing evidence, then supplies
+`--dispositions sha256:<file-digest>` as the final CLI arguments. A digest is
+input identity, not proof of user approval; do not pass it merely because it was
+printed. No blanket allowlists or known-real-leak suppressions are allowed.
+
+Fingerprints bind rule, immutable blob/commit (or hashed name), and local line/
+column range, never a secret value. Dismissed findings are returned separately
+for review. Changed content/location creates a new fingerprint; changed policy
+bytes require renewed review and digest. Worktree-only policy changes cannot
+alter an index/head scan. The policy file is scanned like other documentation
+and cannot dismiss its own findings. Detector/config/ignore and disposition-file
+changes are reviewed with the candidate; workers cannot approve dispositions.
+Without a policy the old behavior remains, and an evidenced equivalent remains
+available. Malformed present policy is a diagnostic, never silent success.
+Record all command/directory, version/configuration, candidate/range/digest,
+coverage decisions, disposition review and limits without values. Investigate
+suppressed errors only through an established non-echoing route.
 
 Follow [Git ownership and candidate assembly](../../build/references/git.md#committing-attributable-changes).
 All index/commit/push operations are serialized by the guiding assistant after
@@ -185,7 +256,7 @@ workers/shared checks. Changed candidate/hook/concurrent content invalidates
 evidence. Compare the committed tree with the scanned identity; if it differs,
 stop publication and scan the actual commit/history. Unrelated staged, unstaged
 and untracked work stays preserved; ambiguous overlap blocks the Git action.
-Authorization never waives required scanning. Unchanged-input evidence can
+Authorization never waives required scanning or coverage assessment. Unchanged-input evidence can
 reduce repeated broader work but cannot certify a changed candidate.
 
 Applicable project-owned hooks/CI are agreed work, not automatic installation.
