@@ -17,7 +17,9 @@
   stay blocking. Git guidance gives exact temporary-index/reconciliation commands.
   **Compatibility:** stricter reads/scans apply to legacy plans; missing tools
   have explicit next steps, with no automatic installation or policy changes.
-  Optional resources need no backfill; host isolation/CI remain project-specific.
+  Optional resources need no backfill; host isolation/CI remain project-specific
+  ([#89](https://github.com/jeio-dev/kaylo/issues/89),
+  [#133](https://github.com/jeio-dev/kaylo/pull/133)).
 
 - **skills**: Testing strategy reuses relevant project layers and maps criteria
   to named behavior checks. Regression/new-behavior failure proof preserves the
@@ -74,19 +76,22 @@
   Kaylo to commit, push, or open pull requests, records only your own
   choices, and notes the decision under `## Agreement`. A copied example or a
   worker's edit is not your decision, and no level covers merging, tagging,
-  force-pushing, default-branch pushes, issues, or labels. In this version
-  Kaylo records these keys but never commits, pushes, or opens a pull request
-  because of them: automatic steps need a secret scan of each commit and of
-  pushed history, which Kaylo does not include yet. Existing files and plans
-  need no change ([#85](https://github.com/jeio-dev/kaylo/issues/85)).
+  force-pushing, default-branch pushes, issues, or labels. Standing preferences
+  can authorize attributable, verified commits, pushes, and draft pull requests
+  within their recorded scope, after required candidate and outgoing-history
+  scans. Missing tools, findings, or unresolved required coverage block the
+  affected Git step. Existing files and plans need no migration
+  ([#85](https://github.com/jeio-dev/kaylo/issues/85),
+  [#89](https://github.com/jeio-dev/kaylo/issues/89)).
 - **skills**: When you ask Kaylo to commit, it follows the new
   `skills/build/references/git.md`: it commits only the work's own changes
-  with `git commit --only -- <paths>`, leaves your staged, unstaged, and
-  untracked work as it was, stops when a file also holds your edits, honors
-  hooks, inspects every outgoing commit before a push, and records the
-  outcome and any retry step without counting a Git failure as a code
-  repair. It says that it ran no secret scan
-  ([#85](https://github.com/jeio-dev/kaylo/issues/85)).
+  using the exact scanned index, with a private temporary index when unrelated
+  staged changes exist. It preserves unrelated staged, unstaged, and untracked
+  work, stops on ambiguous overlapping edits, honors hooks, compares the
+  committed tree with scan evidence, and scans outgoing history before a push.
+  It records the outcome and any retry step without counting a Git failure as
+  a code repair ([#85](https://github.com/jeio-dev/kaylo/issues/85),
+  [#89](https://github.com/jeio-dev/kaylo/issues/89)).
 - **skills**: `skills/build/references/pull-requests.md` covers one pull
   request per phase: finding an existing one before creating a draft,
   explicit repository, base, and head, ready for review only after every task

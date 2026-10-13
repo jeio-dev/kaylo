@@ -14,6 +14,12 @@ records from the first draft through 0.5.2 are in
 
 ## Current status — 0.11.0
 
+The maintainer has deferred #89's live model/host trials until the remaining
+implementation and review issues are resolved. Resume those trials afterward
+using `tests/SECRETS-TRIALS.md`. Deferral does not establish behavioral acceptance
+or host isolation; existing deterministic/package evidence remains valid only
+for unchanged relevant inputs.
+
 The PR #133 re-review clarification makes false-positive dismissal authority
 explicitly user-owned, including assistant-generated fakes and exact selected
 policy digest/scope. Opt-in hooks treat `partial` as failure unless an agreed
@@ -77,6 +83,53 @@ Codex grades are operator-reported. The PR #79 review spot-checked their saved
 command records and secret-token classifications but did not audit every
 transcript.
 
+
+## 2026-10-12 — #89 merged implementation verification and documentation correction
+
+Started with clean `main` at
+`b2b1fdba6686e6b16d26cc3483456be85f525749`, the merge of PR #133. There is
+no project PRD, roadmap or current phase plan in this checkout; the files under
+`templates/` are shipped templates. The user's request authorizes local #89
+implementation and verification. Inspection established that the scanner and
+shared secret/environment instructions were already implemented and merged;
+GitHub still reports #89 open, and the merged PR explicitly leaves behavioral
+acceptance pending. No implementation was duplicated or issue closed.
+
+Corrected two contradictory entries under `CHANGELOG.md`'s Unreleased section:
+standing Git authority now describes the required candidate/history gates, and
+commit guidance describes the actual selected/private index rather than an
+unscanned `commit --only` route. Added the verified #89/PR #133 links. Historical
+release entries and earlier verification records are preserved. Scanner, skills,
+worker briefs, manifests and versions are unchanged; regenerating Claude
+adapters produced no diff.
+
+Observed in this checkout on Linux with Node v24.21.0, Git 2.53.0, installed
+Gitleaks 8.30.1, Claude Code 2.1.296 and Antigravity CLI 1.3.1:
+
+- `node --test tests/*.test.cjs`: **417 passed**, zero failed, cancelled or
+  skipped, using the default `/tmp`. Includes the 23 disposable Git/scanner
+  tests, real installed detector fixtures, synthetic scanner failure/version
+  fixtures, packed-resource parity and isolated installer fixtures.
+- `node scripts/validate-package.cjs`: passed; five shared skills and matching
+  v0.11.0 versions/catalogs.
+- Both `claude plugin validate ... --strict` checks passed for the plugin and
+  marketplace manifests. `agy plugin validate .` passed for five skills and
+  three agents; it reports hooks skipped, which does not establish enforcement.
+- `git diff --check`: passed, including the final documentation changes.
+
+These checks establish the existing deterministic implementation and package
+structure, not model adherence or host isolation. No live model/worker trial,
+native Windows/newer real Gitleaks trial, native host install/update/discovery,
+application runtime/client-artifact validation, required CI enforcement, public
+installation, credential access or remediation, paid call, commit, push,
+deployment or release was performed. The remaining behavioral matrix is
+`tests/SECRETS-TRIALS.md`; issue acceptance remains open. Only changelog and this
+evidence record changed locally; contributor guidance stays outside installs.
+
+The maintainer subsequently requested deferring live trials until the remaining
+implementation and review issues are resolved. The #89 matrix is deferred on
+that authority, with behavioral acceptance pending; no missing trial is treated
+as a pass. Resume the applicable cases against the final combined changes.
 
 ## 2026-10-12 — PR #133 re-review authority and temporary-space follow-up
 
