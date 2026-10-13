@@ -152,10 +152,22 @@ not technical enforcement. No global/project policy was installed or weakened.
 **Git evidence.** A baseline-only `candidate` probe was clean for tree
 `8c1b85d062018775d5385aab3c2972b51b4668df` and parent
 `6dd2bb0c4ef49299150beaf536239e3a8294f56b`; it does not certify later edits.
-The final candidate and outgoing range are scanned after staging/commit,
-respectively, with their actual identities recorded in the implementing PR and
-conversation. The committed tree is compared with candidate evidence; repository
-hooks are honored. Scan authorization does not waive failure/coverage gates.
+For implementation commit `6465a7d4e37fc2939e470c19eb349936768468f5`,
+`node scripts/scan-secrets.cjs . candidate` passed with zero findings for tree
+`9265ab067a7051267f988f2df0add6503747cc36` and the baseline parent above;
+its input digest was
+`sha256:ac80e3b01572070e78a8d28168bb446ca12ce0bbdd0c9619d825b19fa0d44935`.
+The committed tree matched that evidence. Then
+`node scripts/scan-secrets.cjs . history origin/main HEAD` passed with zero
+findings for the baseline-to-implementation-commit range (one outgoing commit);
+input digest
+`sha256:ae4fc5716bf12398629b48cc3a389d263c52beac05dcdde591e92f0936bd6d9a`.
+Both used Gitleaks 8.30.1 built-in defaults, project suppressions disabled, from
+the project directory above, with 90 distinct blobs and the documented UTF-8
+coverage limits. These scans preceded publication. This later evidence-only
+commit requires its own candidate/outgoing checks; those identities are recorded
+in the PR/conversation rather than recursively changing the commit being scanned.
+Repository hooks are honored. Scan authority never waives coverage/failure gates.
 
 **Limits and next observations.** No live isolated host/model instruction trials,
 raw-disclosure/incident behavioral trials, real credential use/remediation,
