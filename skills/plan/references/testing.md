@@ -220,8 +220,9 @@ and other reserved actions need authorization for the actual action/target.
 Reuse already-agreed ordinary local setup authority without repeated questions.
 Missing containers, browsers, services, permissions, credentials or network leave
 required checks open with a specific next action, never an automatic paid fallback
-or claimed E2E pass. Consume the project's actual environment/secret contract
-when available; no environment feature or deployment prohibition is implied here.
+or claimed E2E pass. Consume [secrets and environments](environments.md) and the actual project contract;
+real provider-test credentials stay real, unknown fixtures stay unknown, and
+missing required non-echoing resources leave affected evidence open.
 Respect existing safe-file exceptions; records contain locations and fake values.
 
 ## Scoped/full checks and adoption

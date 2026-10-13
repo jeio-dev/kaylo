@@ -21,6 +21,13 @@ A pause records no dispatch, because no reviewer ran; record the pause, the miss
 
 Use [the reviewer brief](../../../agents/reviewer.md), resolved relative to this reference file, not the user's project. Observed registration: Claude Code lists Kaylo's native brief as `kaylo:reviewer`, Antigravity lists it as `reviewer`, and Gemini CLI's agent loader returns it as `reviewer`. Check that a bare name resolves to Kaylo's brief before using it, as described in [WORKERS.md](../../../WORKERS.md). For a manual handoff, read and paste the brief's body. If the necessary brief is missing, ask for its location or content; do not invent it.
 
+Supply applicable [secret/environment boundaries](../../plan/references/environments.md),
+approved nonsecret catalogue/fake classification, host route limits, configuration
+validation and settled environment decisions in the existing packet. Never forward
+real values or infer raw-disclosure authority from another worker's authorization.
+Workers report incidents privately to the guiding assistant; they do not remediate
+or publish notifications. Confirm these resources/evidence in the actual workspace.
+
 Resolve [project decisions](../../plan/references/decisions.md) before preparing
 this packet. In the packet's applicable-decisions item below, include
 applicable ADR links and needed content, project-wide/cross-area rules,

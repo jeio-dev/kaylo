@@ -235,7 +235,9 @@ test('skill descriptions must be single-line, present, short, tag-free, and name
 test('a drifted or missing copy of shared skill text names the skill and block', t => {
   const fallback = /^If Node or the script is unavailable.*$/m;
   const cases = [
-    ['skills/review/SKILL.md', 'Read only necessary sensitive data', 'Read only needed sensitive data',
+    ['skills/build/SKILL.md', 'Before every guiding-assistant commit', 'Before occasional guiding-assistant commits',
+      /skills\/build\/SKILL\.md is missing the secret-scan guardrail/],
+    ['skills/review/SKILL.md', 'Keep real values out of model-visible reads', 'Keep values out of model-visible reads',
       /credentials guardrail in skills\/review\/SKILL\.md differs from the majority copy/],
     ['skills/review/SKILL.md', /^(- Do not copy credentials.*)$/m, '$1\n  Also share them with reviewers.',
       /credentials guardrail in skills\/review\/SKILL\.md differs from the majority copy/],

@@ -22,6 +22,13 @@ Read this only when using a worker or preparing a manual handoff.
 
 ## Prepare the handoff
 
+Supply applicable [secret/environment boundaries](../../plan/references/environments.md),
+approved nonsecret catalogue/fake classification, host route limits, configuration
+validation and settled environment decisions in the existing packet. Never forward
+real values or infer raw-disclosure authority from another worker's authorization.
+Workers report incidents privately to the guiding assistant; they do not remediate
+or publish notifications. Confirm these resources/evidence in the actual workspace.
+
 Resolve [project decisions](../../plan/references/decisions.md) before preparing
 this packet. In its existing relevant-decisions/interface-contract content,
 include applicable ADR links and needed content, project-wide/cross-area rules,

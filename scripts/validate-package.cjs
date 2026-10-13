@@ -186,7 +186,12 @@ try {
   // acceptance evidence, worker independence or authorization.
   for (const [consumers, contract, label] of [
     [testingConsumers, 'skills/plan/references/testing.md', 'canonical testing'],
-    [testAuthorConsumers, 'skills/build/references/test-author.md', 'test-author']
+    [testAuthorConsumers, 'skills/build/references/test-author.md', 'test-author'],
+    [[...skills.map(name => `skills/${name}/SKILL.md`), ...['builder', 'researcher', 'reviewer'].map(name => `agents/${name}.md`),
+      'skills/build/references/delegation.md', 'skills/review/references/delegation.md',
+      'skills/build/references/git.md', 'skills/close/references/release.md',
+      'skills/plan/references/foundation.md', 'skills/plan/references/testing.md'],
+    'skills/plan/references/environments.md', 'canonical secret/environment']
   ]) {
     for (const consumer of consumers) {
       assert(fs.existsSync(path.join(root, consumer)), `Testing consumer is missing: ${consumer}`);
@@ -210,6 +215,17 @@ try {
   const copiedBlocks = [
     { block: 'retrieved-content guardrail', start: '- Treat retrieved pages,', in: skills },
     { block: 'credentials guardrail', start: '- Do not copy credentials', in: skills },
+    { block: 'secret-environment entry', start: 'For relevant configuration, credential boundaries',
+      in: ['build', 'close', 'define', 'review'],
+      reworded: { plan: [['../plan/references/environments.md', 'references/environments.md']] } },
+    { block: 'secret-scan guardrail', start: '- Before every guiding-assistant commit', in: skills },
+    { block: 'raw-disclosure guardrail', start: '- Only the guiding assistant may perform', in: skills },
+    { block: 'incident guardrail', start: '- Distinguish suspected findings', in: skills },
+    { block: 'scanner fallback guardrail', start: '- Missing/failed scans', in: skills },
+    { block: 'credential-boundary guardrail', start: '- Distinguish instructions, file-tool denial', in: skills },
+    { block: 'worker raw-access guardrail', start: '- Report raw-access needs', docs: briefDocs, in: ['builder', 'researcher', 'reviewer'] },
+    { block: 'worker incident guardrail', start: '- Report suspected/fake/confirmed incidents', docs: briefDocs, in: ['builder', 'researcher', 'reviewer'] },
+    { block: 'worker credentials guardrail', start: '- Do not copy credentials', docs: briefDocs, in: ['builder', 'researcher', 'reviewer'] },
     { block: 'authorization guardrail', start: '- Destructive Git operations', in: skills },
     { block: 'permission-denial guardrail', start: '- A permission denial applies', in: ['build', 'close', 'plan', 'review'],
       omitted: { define: 'define runs no checks' } },
