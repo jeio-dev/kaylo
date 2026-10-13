@@ -10,7 +10,7 @@ Status: Current
 
 ## Design
 
-[The simplest sufficient approach, what existing capability it reuses, and why it meets the criteria. When relevant, the foundation assessment and draft testing or environment decisions. Changed trust boundaries with their abuse or failure cases, mitigations, and the tasks and checks that establish them, or one line saying no boundary changes.]
+[The simplest sufficient approach, what existing capability it reuses, and why it meets the criteria. When relevant, the foundation assessment and draft testing or environment decisions: actual environments, value-free storage references, access boundaries and configuration catalogue and validation applicability, with rationale and alternatives. Unknown/none are explicit; production runtime separation and host control limits need actual evidence. Changed trust boundaries with their abuse or failure cases, mitigations, and the tasks and checks that establish them, or one line saying no boundary changes.]
 
 [Consequential decisions use phase-local DEC1, DEC2, etc. with
 area/applicability, rationale, alternatives/sacrifices, cost if wrong, reversal

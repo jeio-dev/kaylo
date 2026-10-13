@@ -4,6 +4,18 @@
 
 ### Notable Changes
 
+- **skills/tools**: Secret handling uses evidence-based safe-file classification,
+  scoped disclosure authority and value-free incident records. Environment
+  catalogues/validation reuse project tooling and phase decisions promote at close.
+  Every guiding-assistant commit and publication now requires exact candidate and
+  outgoing-history coverage, including removed values and `.kaylo` records. A
+  bounded local Gitleaks 8.30.1 adapter discards raw scanner output and fails closed;
+  evidenced equivalent tools remain supported. Standing Git preferences can drive
+  actions once all authority/checks/scans are established. **Compatibility:** stricter
+  reads/scans apply to legacy plans; absent tools or unsupported coverage block Git,
+  with no automatic installation or policy changes. Optional resources require no
+  backfill; host isolation and CI enforcement remain project-specific.
+
 - **skills**: Testing strategy reuses relevant project layers and maps criteria
   to named behavior checks. Regression/new-behavior failure proof preserves the
   workspace and existing verification/repair records; native focus controls and

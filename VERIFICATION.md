@@ -14,6 +14,16 @@ records from the first draft through 0.5.2 are in
 
 ## Current status — 0.11.0
 
+The #89 implementation adds shared secret/environment guidance and a bounded
+local Gitleaks adapter. On 2026-10-12, all **407** Node tests, package/native
+manifest checks and staged resource parity pass. Exact candidate/outgoing scan
+identities are recorded with the implementing PR. This demonstrates deterministic
+Git selection and limited detector/error behavior, not model instruction following,
+universal host isolation or actual required CI. The behavioral matrix is in
+`tests/SECRETS-TRIALS.md`; live host/model, application and public install trials
+remain unrun. Issue acceptance and release readiness remain open.
+
+
 The #88 implementation adds the shared testing/evidence contract and bounded
 high-risk test-author stage to existing entry points and packets. The latest
 2026-10-12 second-review checks below pass package/manifest validation, **394**
@@ -55,6 +65,106 @@ Code 2.1.289 with Sonnet 5.5 and on Codex CLI 0.160.1 with GPT-6.1-Sol. The
 Codex grades are operator-reported. The PR #79 review spot-checked their saved
 command records and secret-token classifications but did not audit every
 transcript.
+
+
+## 2026-10-12 — #89 secrets and environment implementation
+
+**Scope and authority.** Implemented the revised issue #89 specification against
+clean `main` at `6dd2bb0c4ef49299150beaf536239e3a8294f56b`, on
+`feat/89-secrets-environments`; no starting staged/unstaged/untracked changes.
+The user's conversation explicitly authorizes implementation, branch commit and
+push to a PR in `jeio-dev/kaylo`. No release, deployment, credential access,
+rotation, policy/account changes or tool installation was performed. The five
+standalone skills, shared worker briefs/packets, foundation/testing/Git/release
+references and phase template share the boundary. `agents/` is authoritative;
+Claude adapters were regenerated with `node scripts/sync-claude-agents.cjs`.
+Environment choices consume #87's existing manual decision lifecycle; no new
+project record grammar, mandatory catalogue or forced legacy migration.
+
+**Adapter contract.** `scripts/scan-secrets.cjs` uses immutable Git trees plus
+deltas and outgoing commit metadata/merge history, selected from the actual
+normal or `GIT_INDEX_FILE` index. Its concrete tested route is Git 2.53.0,
+Node v24.21.0 and installed Gitleaks 8.30.1 on Linux/WSL2
+6.18.33.2-microsoft-standard-WSL2. Gitleaks `stdin` runs in a private empty
+directory with built-in defaults (including built-in content allowlists), project
+suppressions disabled, `--redact=100`, decoding depth 5 and a private report.
+Both streams/report contents are discarded and temporary files removed on
+return, including failure paths; only fixed states/counts/hash identities are
+returned. No remote artifacts or notifications. Git subprocesses and private
+scanner memory/temp disk remain exposure surfaces, not demonstrated isolation;
+forced termination may require owner cleanup. Other versions/OS combinations
+remain unverified. Binary/submodule/invalid-UTF8/oversize/unknown/incomplete-history
+inputs fail closed; annotated tags/assets/outside-tree content need separate
+coverage. Built-in rules/allowlists and bounded decoding are detection limits.
+
+**Observed checks.** From `/home/jeio/src/kaylo`:
+
+- `node --test tests/*.test.cjs`: **407 passed**, zero failed/skipped. Includes
+  13 new scanner tests: initial `.kaylo` findings, partial and alternate indexes,
+  worktree mismatch, preserved unrelated index/worktree state, renames/deletions,
+  symlink blob text without following targets, add-then-remove, merge-side trees
+  and commit metadata, unknown/nonancestor/shallow bases, binary/gitlink limits,
+  missing objects/grafts/unmerged index, project config/ignore/allow-comment
+  resistance, candidate mutation and post-scan hook tree mismatch. Synthetic
+  scanner executables exercise missing/version/runtime/timeout/report errors and
+  value-free outputs; these are error-contract fixtures, not claims about every
+  native scanner failure. Actual Gitleaks detects the generated fake sentinel;
+  no real credentials used.
+- Initial detector fixtures returned clean for an alphabetic sentinel because
+  Gitleaks's built-in `abcdefghijklmnopqrstuvwxyz` stopword matched it. After
+  inspecting the version-pinned default configuration, the fixture was corrected
+  to a SHA-256-derived synthetic token. A subsequent rename/deletion fixture
+  hit Git's staged-rename removal protection; removal was corrected only in
+  its disposable repository. The final full run passes. These were test-fixture
+  corrections, not weakened acceptance or broad allowlists. Controlled findings,
+  incomplete inputs and mutation cases establish the named negative outcomes;
+  no independent test-author/model trial is claimed for contributor work.
+  The final candidate gate also flagged new `templates/PHASE.md:13` prose under
+  `generic-api-key` (two aggregate matches from delta/tree). A private per-file
+  diagnostic emitted only file/rule/line. The authored template instruction was
+  established nonsecret from its creation evidence and rephrased without detector
+  suppression; the updated candidate is rescanned before any commit. No actual
+  credential exposure was established and no rotation/incident was invented.
+- `node scripts/validate-package.cjs`: pass. New reachability and copied-boundary
+  checks verify structure/parity, not project configuration, authority, scanner
+  effectiveness or worker behavior.
+- Claude Code 2.1.296: `claude plugin validate .claude-plugin/plugin.json --strict`
+  and `claude plugin validate .claude-plugin/marketplace.json --strict`: pass.
+  Antigravity CLI 1.3.1: `agy plugin validate .`: pass, five skills/three agents;
+  it reports commands/MCP servers/hooks skipped, so this is not hook enforcement.
+- `node scripts/stage-development.cjs` and
+  `node scripts/validate-package.cjs --installed development/package`: pass,
+  **45** shared resources match; contributor `AGENTS.md` absent. This temporary
+  development package is ignored, with no normal host profile changed.
+- `npm pack --dry-run --json`: **91** files; scanner/reference included,
+  contributor guidance excluded. This is pack inventory, not a public install
+  or release-tag inventory check. `git diff --check`: pass.
+
+**Actual boundary observation.** In a disposable directory, under this session's
+unrestricted shell permissions (Codex CLI 0.162.1 is installed), an owner mode-600
+synthetic file, its symlink and a Node shell child were readable; a child could
+read a deliberately supplied synthetic environment variable. Only boolean status
+was emitted; the directory was removed. This demonstrates these shell routes
+are accessible, not denied or isolated. No file-tool, worker, remote-tool,
+policy-precedence or separate host-profile denial was tested. Instructions are
+not technical enforcement. No global/project policy was installed or weakened.
+
+**Git evidence.** A baseline-only `candidate` probe was clean for tree
+`8c1b85d062018775d5385aab3c2972b51b4668df` and parent
+`6dd2bb0c4ef49299150beaf536239e3a8294f56b`; it does not certify later edits.
+The final candidate and outgoing range are scanned after staging/commit,
+respectively, with their actual identities recorded in the implementing PR and
+conversation. The committed tree is compared with candidate evidence; repository
+hooks are honored. Scan authorization does not waive failure/coverage gates.
+
+**Limits and next observations.** No live isolated host/model instruction trials,
+raw-disclosure/incident behavioral trials, real credential use/remediation,
+application startup/readiness/client-artifact validation, required CI setup,
+public install/update, metered call or release was run. Host permission/scanner
+availability is not uniform. `tests/SECRETS-TRIALS.md` names the remaining
+bounded cases and evidence distinctions; execute only with actual route/action
+scope and synthetic fixtures. Deterministic/package passes do not settle that
+behavioral acceptance. The implementing PR remains draft for those observations.
 
 ## PR #132 second-review corrections — 2026-10-12
 
