@@ -7,6 +7,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { randomUUID } = require('node:crypto');
 const { parseRecords } = require('./dispatch-report.cjs');
+const { inspect, diagnostic: formatDiagnostic } = require('./inspect-plan.cjs');
 const { validate, visibleMarkdown } = require('./validate-plan.cjs');
 
 const usage = [
@@ -191,6 +192,14 @@ function candidate(plan, operation, taskId, rawRecord) {
 
 // Dependencies are injectable only through this module API for failure tests.
 function applyOperation(project, operation, taskId, rawRecord, { io = fs, validator = validate } = {}) {
+  try {
+    const format = inspect(project, { io });
+    if (format.kind !== 'current') refuse('Legacy or absent plan; route to plan migration before record writes');
+    if (operation !== 'review' && format.active?.doc.lines.some(line => /^Status:[ \t]*Needs revision:[ \t]*awaiting user confirmation of the converted plan[ \t]*$/.test(line))) refuse('Converted plan awaits confirmation; record writes unavailable');
+  } catch (error) {
+    if (error instanceof Refusal) throw error;
+    refuse(formatDiagnostic(error));
+  }
   const plan = currentPlan(project, io);
   const next = candidate(plan, operation, taskId, rawRecord);
   const base = path.join(path.dirname(plan.file), `.kaylo-record-${randomUUID()}`);

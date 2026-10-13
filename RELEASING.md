@@ -160,3 +160,24 @@ remain in the user's project. After the industry-terms rename, `/kaylo:plan`
 converts older project files; the changelog lists the manual steps. Preserve
 local modifications and host scope preferences; do not force checkout or
 silently reset user settings.
+
+## Plan reader compatibility
+
+The #90 implementation introduces the first marker-aware pre-write reader;
+assign its minimum concrete released package version when preparing that release.
+Format 2 identifies the current contract only; existing recognized unmarked
+format 1 remains usable, and optional resources require no backfill. Earlier
+releases ignore markers and are not protected retroactively. Before publishing
+any future incompatible writer, document its minimum compatible reader and
+migration path, including explicit phase identity before changing phase semantics,
+and verify participating sessions/checkouts meet it. Host updates may need a new
+session; release guidance does not authorize automatically updating user hosts.
+
+Use the compatibility/version policy in
+[plan migration](skills/plan/references/migration.md#git-and-compatibility).
+Pre-1.0 features or breaking contracts require MINOR and explicit migration/
+breaking disclosure; compatible fixes PATCH. Post-1.0 breaking contracts require
+MAJOR, features/deprecations MINOR, compatible fixes PATCH. Published artifacts
+and historical migration expectations are immutable; an audited unsafe-transform
+correction gets new tool provenance and regression/recovery cases, never a moved
+tag or a requirement to execute known-destructive old code.

@@ -169,15 +169,15 @@ test('visible Markdown ignores fenced and commented decoys; ambiguous raw target
 test('missing/duplicate task, Result, Review and Current targets fail without changing files', t => {
   for (const [text, args, pattern] of [
     [phase(), ['append', 'T9', verify], /exactly one current-phase entry/],
-    [phase(task() + task()), ['check-off', 'T1'], /exactly one current-phase entry/],
+    [phase(task() + task()), ['check-off', 'T1'], /PLAN_DUPLICATE_TASK/],
     [phase(task().replace('  - Result:', '  - Other:')), ['append', 'T1', verify], /one Result/],
-    [phase(task() + '  - Result: duplicate\n'), ['append', 'T1', verify], /one Result/],
+    [phase(task() + '  - Result: duplicate\n'), ['append', 'T1', verify], /PLAN_DUPLICATE_FIELD/],
     [phase().replace('## Review', '## Other'), ['review', reviewer], /one real/],
-    [phase() + '\n## Review\nNone.\n', ['review', reviewer], /one real/]
+    [phase() + '\n## Review\nNone.\n', ['review', reviewer], /PLAN_DUPLICATE_SECTION/]
   ]) failedUnchanged(fixture(t, text), args, pattern);
   const f = fixture(t);
   fs.appendFileSync(f.roadmap, 'Current: [01](phase.md)\n');
-  failedUnchanged(f, ['review', reviewer], /one Current/);
+  failedUnchanged(f, ['review', reviewer], /PLAN_CURRENT/);
 });
 
 test('closed current phase is untouched, historical evidence stays byte-identical', t => {
@@ -192,22 +192,24 @@ test('closed current phase is untouched, historical evidence stays byte-identica
   failedUnchanged(f, ['check-off', 'T1'], /Current phase is closed/);
 });
 
-test('relative links and symlinks cannot escape; in-project symlink remains; hard links require manual editing', t => {
+test('pre-write format inspection refuses unsafe links and all symlink/hardlink targets without edits', t => {
   const f = fixture(t);
   const outside = fixture(t);
   for (const link of ['https://example.invalid/phase.md', '/phase.md', 'phase.md#review', 'phase.md?x', 'phase%ZZ.md', '../phase.md', outside.file]) {
     fs.writeFileSync(f.roadmap, `Current: [01](${link})\n- [ ] [01](${link})\n`);
-    failedUnchanged(f, ['append', 'T1', verify], /relative|encoded|failed|leaves project/);
+    failedUnchanged(f, ['append', 'T1', verify], /PLAN_PATH|PLAN_LINK/);
   }
   fs.writeFileSync(f.roadmap, 'Current: [01](link.md)\n- [ ] [01](link.md)\n');
   fs.symlinkSync(outside.file, path.join(f.root, 'link.md'));
-  failedUnchanged(f, ['append', 'T1', verify], /leaves project/);
+  failedUnchanged(f, ['append', 'T1', verify], /PLAN_ALIAS/);
   fs.unlinkSync(path.join(f.root, 'link.md'));
   fs.symlinkSync('phase.md', path.join(f.root, 'link.md'));
-  assert.equal(cli(f, 'append', 'T1', verify).status, 0);
+  failedUnchanged(f, ['append', 'T1', verify], /PLAN_ALIAS/);
   assert(fs.lstatSync(path.join(f.root, 'link.md')).isSymbolicLink());
+  fs.unlinkSync(path.join(f.root, 'link.md'));
+  fs.writeFileSync(f.roadmap, 'Current: [01](phase.md)\n- [ ] [01](phase.md)\n');
   fs.linkSync(f.file, path.join(f.root, 'alias.md'));
-  failedUnchanged(f, ['append', 'T1', verify], /Hard-linked plan/);
+  failedUnchanged(f, ['append', 'T1', verify], /PLAN_ALIAS/);
 });
 
 test('CRLF, final newline state and file mode survive minimal edits, including Review at EOF', t => {
@@ -289,7 +291,7 @@ test('intervening changes before replacement or during validation are retained, 
   }
 });
 
-test('ROADMAP edits and retargeted symlinks during a transaction cannot validate a different plan', t => {
+test('ROADMAP edits and retargeted Current links during a transaction cannot validate a different plan', t => {
   const f = fixture(t);
   const original = bytes(f);
   assert.throws(() => applyOperation(f.root, 'append', 'T1', verify, { validator() {
@@ -300,12 +302,10 @@ test('ROADMAP edits and retargeted symlinks during a transaction cannot validate
   assert.match(fs.readFileSync(f.roadmap, 'utf8'), /External roadmap edit/);
   const other = path.join(f.root, 'other.md');
   fs.writeFileSync(other, phase());
-  const link = path.join(f.root, 'link.md');
-  fs.symlinkSync('phase.md', link);
-  fs.writeFileSync(f.roadmap, 'Current: [01](link.md)\n- [ ] [01](link.md)\n');
+  fs.writeFileSync(f.roadmap, 'Current: [01](phase.md)\n- [ ] [01](phase.md)\n');
   const io = { ...fs, writeFileSync(file, ...args) {
     const result = fs.writeFileSync(file, ...args);
-    if (file.endsWith('.tmp')) { fs.unlinkSync(link); fs.symlinkSync('other.md', link); }
+    if (file.endsWith('.tmp')) fs.writeFileSync(f.roadmap, 'Current: [01](other.md)\n- [ ] [01](other.md)\n');
     return result;
   } };
   assert.throws(() => applyOperation(f.root, 'append', 'T1', verify, { io }), /changed during the operation/);

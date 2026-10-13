@@ -3,6 +3,41 @@ name: plan
 description: Inspect a project and turn an agreed Kaylo outcome into ordered phases and small, verifiable tasks, or revise the current phase plan after feedback or a blocker. Use after a Kaylo PRD is agreed, when the current phase closes, or when another Kaylo skill routes back to plan.
 ---
 
+
+## Plan format before writes
+
+Before the first protected write on every direct or resumed entry, run the
+read-only `node "<kaylo-root>/scripts/inspect-plan.cjs" "<project-root>"`,
+resolved as `../../scripts/inspect-plan.cjs` from this skill. Repeat after inputs
+change and before applying a returned worker result. Protected files are
+`PRD.md`, `ROADMAP.md`, relevant linked phase records and recognized legacy
+sources selected for conversion, including progress, findings, revision status,
+completion and check-off edits. Keep one guiding-assistant plan writer during
+delegation; workers never modify shared plans. Independent preferences and ADRs
+retain their own contracts and cannot bypass a blocked plan write.
+
+A future, malformed, duplicate, misplaced, conflicting or otherwise unsupported
+governing format blocks protected writes. Diagnose in the response with the
+detected condition, supported range (0 recognized legacy, 1, 2), and concrete
+input-resolution or update/new-session action. Never write that diagnostic into
+a blocked plan. Creation without a plan remains eligible. Recognition is separate
+from structural validation, evidence truth and action/target authorization.
+When inspection returns legacy, keep protected files unchanged and route to plan
+for reviewed conversion; only plan applies that conversion within scoped authority.
+Format 1 stays usable unmarked; new roadmaps use first-line `Kaylo format: 2`,
+which adds identification only. Optional resources and other version namespaces
+never require migration or backfill. Marker-only annotation preserves agreement.
+Ordinary migration leaves closed phase files byte-for-byte, including when
+Current points at closed history; reading/reporting history never rewrites it.
+Unknown relevant history is a stated limit or blocker for work depending on it,
+not proof of acceptance. Active legacy conversion awaits actual intended-work
+confirmation and cannot build/close meanwhile; migration permission, plan
+confirmation and phase-build readiness remain distinct.
+
+If the format inspector or Node is unavailable, disclose the limit and inspect manually: `Kaylo format: N` must be the first physical line (initial BOM and LF/CRLF allowed), with canonical nonnegative decimal syntax; duplicate/misplaced marker-like records outside fences/comments are invalid. Recognized unmarked current plans are format 1; documented legacy variants are format 0; format 2 identifies current semantics. Missing status/dependencies may be structural errors, not legacy proof. Mixed sources/fields need resolution; an unrelated PLAN.md beside ROADMAP.md is not a conversion source. Keep future/unknown/ambiguous protected inputs unchanged. Use bounded manual conversion only with the complete documented rules and evidence, or resume using a full Kaylo checkout. Never guess an unavailable contract or automatically install/update, change settings/permissions, select a paid route, commit or publish. Older readers ignore markers: protection starts with readers implementing this contract; incompatible writers require a documented minimum compatible reader in every participating session. This is an instructional boundary plus deterministic script refusal, not universal filesystem enforcement.
+
+For inspection diagnostics, conversion, history and recovery, load
+[plan migration](references/migration.md) when needed.
 # Plan phases and tasks
 
 Guide the user toward the simplest approach that meets the outcome. Work in the user's project.
@@ -59,7 +94,7 @@ do not guess it, invent evidence or waive a required stage.
 
 ## Workflow
 
-1. Read project instructions, `PRD.md` if present, `ROADMAP.md`, and the current phase plan its `Current:` line links. Convert older formats first (see below). A concrete small-change request can stand in for a PRD. Ask for missing intent only when it changes the work.
+1. Read project instructions, `PRD.md` if present, `ROADMAP.md`, and the current phase plan its `Current:` line links. Inspect formats before protected writes; preview recognized legacy conversion under the migration contract below. A concrete small-change request can stand in for a PRD. Ask for missing intent only when it changes the work.
 2. Inspect relevant code, dependencies, and checks. A research worker may answer a bounded factual question; give it the project location and request file references or source links and remaining uncertainties. Before research delegation, follow the preference rule below and [worker model guidance](../../WORKERS.md); record the resolved choice and any fallback in the phase plan's research notes or, before a plan exists, in the response.
 3. Identify the planning case below. Trace the user flow and choose a design using the rules below. Explain why it meets the outcome.
 4. Resolve consequential unknowns using the decision rules below: at most three independent numbered questions per round. For technical investigation, define a bounded research task with a question and expected deliverable.
@@ -69,7 +104,7 @@ do not guess it, invent evidence or waive a required stage.
 
 ## Index and phases
 
-- `ROADMAP.md` is the index: a `Current:` link to the current phase plan, then one ordered checklist line per phase with checkbox, number, name, link once its file exists, and a one-line goal. Nothing else.
+- `ROADMAP.md` is the index: a `Current:` link to the current phase plan, then one ordered checklist line per phase with checkbox, number, name, link once its file exists, and a one-line goal. The first-line format marker is the sole metadata exception; preserve existing unmarked format 1.
 - The phase plan holds everything else: scope, design, agreement, tasks, review comments, results, repair history, next step, and completion. Never duplicate these in the index.
 - Phase state is derived: `[x]` is closed; the phase `Current:` links is current; other unchecked phases are planned. `Current:` may rest on a closed phase until the next plan; then no phase is open.
 - Phase numbers are two-digit permanent IDs. Never renumber. An inserted phase takes the next free number; checklist position sets order. The folder slug is fixed at creation.
@@ -170,20 +205,16 @@ Estimate: **S** = clear local edit following an existing pattern; **M** = bounde
 
 ## Older formats
 
-Kaylo no longer reads these. Define, build, review, and close route them here.
-
-- `OBJECTIVE.md` (now `PRD.md`) and a `PLAN.md` index (now `ROADMAP.md`).
-- A `PLAN.md` or `ROADMAP.md` with tasks inline.
-- A phase plan status other than `Current` or `Needs revision: <reason>`, including `Draft` or no status.
-- `## Approach` (now `## Design`); task fields `Complexity:`, `Depends on:`, `Acceptance:`, and `Verify:` (now `Estimate:`, `Blocked by:`, `Acceptance criteria:`, and `Test plan:`); review labels `blocker` and `optional` (now `blocking` and `non-blocking`).
-
-Before other planning, convert `OBJECTIVE.md`, a `PLAN.md` index, `ROADMAP.md`, and the current phase plan, and tell the user each change. Convert a closed phase plan only when a task needs its history.
-
-- Rename files, headings, fields, and labels without changing their content. Preserve IDs, results, review comments, repair history, agreement, and completion.
-- When a `PLAN.md` or `ROADMAP.md` has tasks inline, move its whole phase record, unchanged, into `.kaylo/phases/01-<slug>/01-PLAN.md`: goal and scope, agreement, tasks with their results and repair history, review comments, and completion. Then replace `ROADMAP.md` with the index: `Current:` linking that plan and a matching phase entry, checked if its completion is recorded.
-- A task without `Depends on:` depended on every task listed above it. Write those IDs in `Blocked by:`, or `None` for the first task. This keeps the old order, as an exception to naming tasks only for their position; narrow the list only when revising those tasks.
-- Replace `Draft`, a missing status, or any other unsupported status with `Status: Current` only after the user confirms that the converted plan matches intended work. Record that actual confirmation; until then use `Status: Needs revision: awaiting user confirmation of the converted plan` and ask for confirmation in the response. The old label grants no approval.
-- A conversion is unfinished while its old source files still need removal. Report them and the remaining action even if the validator passes: it rejects `OBJECTIVE.md`, but allows an unrelated `PLAN.md` beside `ROADMAP.md` and cannot identify a leftover converted source index. Do not claim conversion is complete or route to build while conversion errors or required confirmation remain.
+Recognized legacy formats route here before other protected writes. Load
+[the bounded migration contract](references/migration.md), inspect the exact
+variant and preview with `scripts/migrate-plan.cjs`. Use an explicit destination
+for inline extraction; never choose a colliding path or renumber an existing ID.
+Apply only the reviewed unchanged input set within actual scoped authority.
+Preserve evidence and closed bytes. Converted active work remains Needs revision
+until actual confirmation; annotation alone changes no agreement/readiness.
+If the script/reference is unavailable, use only complete identified documented
+rules for a bounded manual conversion, or provide the full-checkout resume path.
+Do not rewrite closed history simply to read it or make today's validator pass.
 
 ## Structural plan check
 

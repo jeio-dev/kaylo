@@ -76,6 +76,24 @@ test('the packed npm package holds exactly the exported Git files and validates'
   assert.equal(fs.existsSync(path.join(root, 'AGENTS.md')), false, 'Contributor guidance must stay out of packages');
   assert(fs.readFileSync(path.join(root, 'skills/close/references/release.md')).equals(
     fs.readFileSync(path.join(exported, 'skills/close/references/release.md'))));
+  for (const resource of ['scripts/inspect-plan.cjs', 'scripts/migrate-plan.cjs',
+    'scripts/convert-plan.cjs', 'scripts/plan-markdown.cjs', 'skills/plan/references/migration.md',
+    'tests/fixtures/plan-formats/PROVENANCE.md']) {
+    assert(fs.readFileSync(path.join(root, resource)).equals(fs.readFileSync(path.join(exported, resource))));
+  }
+  const migrationProject = temp(t, 'packed-migration-project');
+  fs.cpSync(path.join(root, 'tests/fixtures/plan-formats/phased/input'), migrationProject, { recursive: true });
+  const migrator = path.join(root, 'scripts/migrate-plan.cjs');
+  const migrationPreview = JSON.parse(run(process.execPath, [migrator, migrationProject]).stdout);
+  assert(migrationPreview.operations.length > 0);
+  run(process.execPath, [migrator, migrationProject, '--apply', migrationPreview.token]);
+  const migrationExpected = path.join(root, 'tests/fixtures/plan-formats/phased/expected');
+  assert.deepEqual(list(migrationProject), list(migrationExpected));
+  for (const file of list(migrationExpected)) {
+    assert(fs.readFileSync(path.join(migrationProject, file)).equals(fs.readFileSync(path.join(migrationExpected, file))),
+      `Packed converter differs from expected bytes: ${file}`);
+  }
+  assert.equal(JSON.parse(run(process.execPath, [migrator, migrationProject]).stdout).operations.length, 0);
   const helper = path.join(root, 'scripts/plan-record.cjs');
   assert(fs.readFileSync(helper).equals(fs.readFileSync(path.join(exported, 'scripts/plan-record.cjs'))));
   const project = temp(t, 'packed-record-project');

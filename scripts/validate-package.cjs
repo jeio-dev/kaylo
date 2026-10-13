@@ -154,6 +154,9 @@ try {
   const decisionContract = 'skills/plan/references/decisions.md';
   const decisionTemplates = ['templates/DECISION.md', 'templates/DECISION-INDEX.md'];
   const requiredResources = [
+    ...['scripts/inspect-plan.cjs', 'scripts/migrate-plan.cjs', 'scripts/convert-plan.cjs',
+      'scripts/plan-markdown.cjs', 'skills/plan/references/migration.md', 'tests/FORMAT-TRIALS.md']
+      .map(resource => ['migration', resource]),
     ...['skills/close/references/release.md', 'skills/close/references/release-notes.md',
       'scripts/release-notes.cjs'].map(resource => ['release', resource]),
     ...[decisionContract, ...decisionTemplates].map(resource => ['decision', resource]),
@@ -185,6 +188,7 @@ try {
   // Resource reachability only; this validates no project strategy, test syntax,
   // acceptance evidence, worker independence or authorization.
   for (const [consumers, contract, label] of [
+    [skills.map(name => `skills/${name}/SKILL.md`), 'skills/plan/references/migration.md', 'canonical migration'],
     [testingConsumers, 'skills/plan/references/testing.md', 'canonical testing'],
     [testAuthorConsumers, 'skills/build/references/test-author.md', 'test-author'],
     [[...skills.map(name => `skills/${name}/SKILL.md`), ...['builder', 'researcher', 'reviewer'].map(name => `agents/${name}.md`),
@@ -247,6 +251,8 @@ try {
       'stop affected planning before agreement or readiness and record `Decision consistency: unreadable — <missing ' +
         'resource paths, affected scope, and resume action>` under `## Agreement` as an unresolved decision and in ' +
         '`## Next step`, or in the response when no phase plan exists.']] } },
+    { block: 'pre-write format boundary', start: 'Before the first protected write on every direct', in: skills },
+    { block: 'format-inspection fallback', start: 'If the format inspector or Node is unavailable', in: skills },
     { block: 'Node-unavailable fallback', start: 'If Node or the script is unavailable', in: ['build', 'close'],
       reworded: { plan: [
         // Plan lists older formats in its own section.

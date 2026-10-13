@@ -14,6 +14,13 @@ records from the first draft through 0.5.2 are in
 
 ## Current status — 0.11.0
 
+The #90 implementation adds pre-write format inspection, identification-only
+format 2, bounded legacy migration and token-authenticated interrupted recovery.
+Deterministic/package checks are recorded below; live host/model refusal,
+confirmation and routing remain pending in `tests/FORMAT-TRIALS.md` under the
+existing deferred #84–#90 trial policy. This does not establish release readiness
+or retroactive protection for older readers.
+
 The maintainer has deferred #89's live model/host trials until the remaining
 implementation and review issues are resolved. Resume those trials afterward
 using `tests/SECRETS-TRIALS.md`. Deferral does not establish behavioral acceptance
@@ -82,6 +89,87 @@ Code 2.1.289 with Sonnet 5.5 and on Codex CLI 0.160.1 with GPT-6.1-Sol. The
 Codex grades are operator-reported. The PR #79 review spot-checked their saved
 command records and secret-token classifications but did not audit every
 transcript.
+
+
+## 2026-10-12 — #90 plan format and migration implementation
+
+Implemented the agreed #90 contracts on `feat/90-plan-format-migrations` from
+`89a121fbca322b3ab1cab42fe50f8014e711621a`. The maintainer's current request
+explicitly authorizes implementation, branch commit/push and PR creation, and
+separately includes their existing README citation edit. No phase/task or plan
+agreement was invented for development of Kaylo itself. Versions/catalogs remain
+at 0.11.0 until separately authorized release preparation; the new reader is an
+unreleased implementation, not a capability of the published v0.11.0 reader.
+
+The inspector shares marker visibility/recognition across the five entry-point
+contracts, the record helper and migration CLI. New roadmaps identify format 2;
+current unmarked format 1 remains usable. Conversion handles documented source
+variants, preserves full records and closed bytes, marks active conversion pending
+actual confirmation, and does not execute project commands or Git. Apply binds
+reviewed bytes/identities/modes/parents to a token, validates a private candidate,
+then uses fsynced local recovery data and exclusive new-file creation. Recovery
+requires the original externally retained token and authenticates the journal
+specification/operation hashes; altered endpoints are retained for manual
+resolution. Empty parent directories are retained on rollback because ownership
+after a crash cannot be proven against concurrent creation. Historical Current
+and reporting use bounded read-only adapters with explicit unsupported-history
+limits. Shared builder changes were regenerated into the Claude adapter.
+
+Observed on Linux x64, Node v24.21.0, Git 2.53.0, Claude Code 2.1.296,
+Antigravity CLI 1.3.1 and installed Gitleaks 8.30.1:
+
+- `TMPDIR=/home/jeio/.cache/kaylo-verification node --test tests/*.test.cjs`:
+  **467 passed**, zero failed, cancelled or skipped, after the final recovery and
+  packed-converter checks. The temporary root was outside the checkout.
+- `node --test tests/migrate-plan.test.cjs`: **49 passed**, zero failed/skipped,
+  using disposable projects under the default `/tmp`. The same **49** passed
+  from the development package copy. Exact before/after fixtures identify source
+  commits and synthetic adaptations in `tests/fixtures/plan-formats/PROVENANCE.md`.
+- Tests exercise supported/unsupported/malformed/misplaced/duplicate markers,
+  BOM/CRLF/fenced/commented examples, source/field conflicts, dependencies,
+  whole inline extraction, preserved history/evidence, candidate refusal,
+  preview staleness, destination collision, symlink/hardlink containment,
+  retained dirty/partial-index/untracked work and inert plan commands. Recovery
+  covers multi-file boundaries, injected ENOSPC/EACCES, restore retry, tampered
+  journals, intervening edits and actual SIGKILL after exclusive file creation.
+  Injected I/O failures are deterministic fixtures, not a real disk-full/native
+  permission-matrix trial. These establish bounded script behavior, not model
+  agreement/authority/evidence truth.
+- Disposable public-baseline comparison: the previous HEAD's validator returned
+  exit 0 for an otherwise-valid format-999 roadmap; the new validator returned
+  exit 1 with FORMAT_UNSUPPORTED. No original project bytes were changed. This
+  verifies the old-reader limitation and new structural diagnostic, not a model
+  corruption/refusal observation.
+- `node scripts/validate-package.cjs` and development staging/installed parity
+  passed; **50 shared resources** matched. The inventory tests exercise packed
+  script/reference/fixture parity, isolated installer fixtures, and a complete
+  packed legacy preview/apply/exact-output/no-op smoke flow. Native host
+  install/update/discovery is not thereby established.
+- Both Claude `plugin validate ... --strict` checks passed. `agy plugin validate .`
+  passed for five skills and three agents; its hooks check was skipped, which is
+  not enforcement evidence. `git diff --check` passed.
+
+An early focused run caught existing record-helper diagnostic expectations after
+pre-write refusal moved earlier. Tests now assert specific format/alias codes and
+preserve unchanged-file assertions; the former in-project symlink acceptance is
+explicitly refused/disclosed, and Current-retarget concurrency remains tested.
+Self-review added explicit-marker phase-identity and evidence-continuation cases.
+The recovery CLI's missing/flag-valued token usage case was corrected and the
+49-test suite passed afterward. No tests were skipped or genuine failure checks
+removed to obtain passes.
+
+Remaining limits: live five-entry-point direct/resumed/delegated refusal and
+manual/pasted-host behavior, actual confirmation/readiness and authority routing,
+new native host install/update/discovery, paid/native worker trials, native
+Windows/macOS and other Node versions/filesystems, actual hardware power-loss,
+real permission/disk exhaustion and universal editor concurrency isolation remain
+unverified. The scripts recheck at explicit boundaries and use exclusive new-file
+creation; existing-file rename is not a universal filesystem compare-and-swap
+against every external writer. Root private scratch/journals can contain sensitive
+plan bytes and remain local; default CLI output redacts values/custom paths.
+No production project migration, runtime/host/provider setup, release/tag,
+deployment or paid operation was performed. `tests/FORMAT-TRIALS.md` records the
+pending behavioral matrix. Acceptance and release readiness remain open.
 
 
 ## 2026-10-12 — #89 merged implementation verification and documentation correction
