@@ -45,6 +45,8 @@ trial is no consistency claim across hosts/models.
 Executable `scan-secrets.test.cjs` covers a bounded subset of G/S cases with
 real Gitleaks 8.30.1 and synthetic failure/version executables. Add trials for
 coverage dispositions on unchanged versus new assets, false-positive fingerprints,
+missing/wrong-scope/user-confirmed dismissal authority (including assistant-generated
+fakes), unchanged versus changed approved list digests, opt-in hook partial exits,
 policy digest/authority changes, and exact temporary-index reconciliation. The scanner's built-in
 allowlists/decoding limits and reported binary/submodule/long-line/oversize skips are
 not general detection effectiveness. Project application/runtime/CI and every

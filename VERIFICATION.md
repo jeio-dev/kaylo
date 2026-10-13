@@ -14,6 +14,14 @@ records from the first draft through 0.5.2 are in
 
 ## Current status — 0.11.0
 
+The PR #133 re-review clarification makes false-positive dismissal authority
+explicitly user-owned, including assistant-generated fakes and exact selected
+policy digest/scope. Opt-in hooks treat `partial` as failure unless an agreed
+bounded coverage integration supplies the required evidence. Scanner code is
+unchanged; 417 tests and package/native checks pass again. The full suite used
+an on-disk temporary root outside the checkout; the default `/tmp` scanner is
+checked separately with the commit candidate. Live model behavior remains unrun.
+
 The #89 implementation and PR #133 review fixes add shared secret/environment
 guidance and a bounded local scanner with explicit skipped-coverage assessment,
 opaque finding locations, reviewed fingerprints, divergent/root history and
@@ -69,6 +77,59 @@ Codex grades are operator-reported. The PR #79 review spot-checked their saved
 command records and secret-token classifications but did not audit every
 transcript.
 
+
+## 2026-10-12 — PR #133 re-review authority and temporary-space follow-up
+
+Started clean at `aebfebfb9dba38b79e22730fa4d343722e93fa72` on
+`feat/89-secrets-environments`. Clarified the review's approval question before
+live trials: only explicit user confirmation of the findings and exact selected
+policy digest/scope authorizes a dismissal. The assistant can propose evidence
+but cannot confirm its own/worker-generated fakes. Ordinary task/Git authority
+is insufficient; unchanged scoped confirmation can be reused. CLI digest checks
+identify inputs and do not authenticate a user. All five standalone skill scan
+guardrails carry the rule. The existing hook paragraph now states that hooks
+are opt-in and unmodified exit-2 `partial` results fail a hook; conversation
+coverage decisions cannot override hook execution. Updated the pending trial
+matrix. No scanner API/fingerprint/location behavior changed; stable value-based
+fingerprints, unused-entry counts and additional path output remain deferred.
+
+Package validation and `git diff --check` pass. Both strict Claude manifest
+validators and Antigravity validation pass (hooks again skipped, not enforcement).
+Development staging/installed parity compares 45 resources. Full Node suite:
+**417 passed**, zero failed/skipped, with
+`TMPDIR=/home/jeio/.cache/kaylo-verification node --test tests/*.test.cjs`.
+An earlier attempt placed TMPDIR inside the checkout: 383 passed/34 failed
+because package fixtures cannot copy the repository into its own subdirectory
+(`ERR_FS_CP_EINVAL`); moving only the command's temporary root outside the
+checkout corrected the environment. No tests/assertions/skips were changed.
+A compound check command with shell `rm -rf` cleanup was rejected by automatic
+approval review; the check was run separately without that cleanup step.
+These checks do not demonstrate live approval-provenance/model behavior.
+
+The separate temporary-storage blocker was investigated without reading trial
+contents into model context. `/tmp` was 100% used (26 MiB available); no process
+had a working directory/open descriptor in the user-named #87 subject directory,
+and the project registered no worktree there. Its contents were copied to an
+ignored on-disk `.local/tmp-archives/` directory with `rsync -aHAX`; full content,
+permissions/owners/timestamps, symlink targets, internal hardlink relationships
+and extended attributes were compared, followed by a checksum dry-run before
+replacing the old absolute path with an alias to the archive. The archive is
+retained; original trial bytes/protections were not weakened or published.
+
+Removal of the old verified copy stopped on a read-only case-51 fixture.
+Its protected remainder was retained without changing permissions: 3,394
+remaining regular files, 331,906,932 logical bytes, all compared equal to their
+archived counterparts. Other `/tmp` working files were left untouched. `/tmp`
+now reports 589 MiB used, 2.8 GiB available (18%). This resolves the full-filesystem
+blocker; old-copy cleanup remains incomplete. Local receipt and relocation
+helper are ignored and not distributed. Normal host settings/profiles and global
+TMPDIR were not changed; no real credentials entered outputs or public records.
+
+Existing conversation authority covers commit/push updates to PR #133. Candidate
+and outgoing scans/identities are recorded in the PR after staging/commit,
+respectively; no finding-dismissal authority is inferred from that Git authority.
+The PR remains draft with live trials and native Windows/newer Gitleaks versions
+unrun. No merge, paid call, policy/account change, deployment or release occurred.
 
 ## 2026-10-12 — PR #133 review fixes
 

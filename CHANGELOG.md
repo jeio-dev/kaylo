@@ -11,7 +11,7 @@
   trees and metadata, retaining add-then-remove detection without blocking leak
   deletion. The local adapter accepts stable Gitleaks >=8.30.1 and <9, reports
   binary/long-line/oversized/submodule skips for bounded coverage assessment,
-  provides opaque rule/object/line fingerprints and reviewed narrow dispositions,
+  provides opaque rule/object/line fingerprints and explicitly user-confirmed narrow dispositions,
   and supports divergent bases and explicit first-publication root history.
   Raw scanner output remains discarded; failures/unresolved required coverage
   stay blocking. Git guidance gives exact temporary-index/reconciliation commands.

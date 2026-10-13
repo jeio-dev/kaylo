@@ -231,11 +231,22 @@ Use the actual emitted fingerprint, not the placeholder. Each entry requires a
 nonblank single-line value-free reason of at most 512 characters. Unknown fields,
 duplicate fingerprints, wildcards, malformed records and files over 64 KiB fail.
 The scanner reports the exact file digest and entry count, but does not apply
-entries unless the guiding assistant has reviewed that selected file and records
-actual authority/rationale in existing evidence, then supplies
-`--dispositions sha256:<file-digest>` as the final CLI arguments. A digest is
-input identity, not proof of user approval; do not pass it merely because it was
-printed. No blanket allowlists or known-real-leak suppressions are allowed.
+entries until the **user explicitly confirms the listed matches are false
+positives and approves the selected list's exact digest and scope**. The guiding
+assistant may propose a value-free rationale, but cannot approve its own or a
+worker's dismissals, including fake fixtures it generated. Task/Git authorization
+alone does not grant dismissal authority. Existing explicit user confirmation
+counts only within its unchanged digest/scope; changed list bytes or finding
+fingerprints require renewed confirmation. Unknown classification remains open.
+
+Record the actual user confirmation and rationale in existing Result/Review/
+Completion prose or the response, then supply
+`--dispositions sha256:<file-digest>` as the final CLI arguments. Confirm through
+fingerprints, rationale and digest without asking the user to disclose values.
+A digest is input identity, not proof or a source of approval. The adapter checks
+input identity; it does not authenticate the user or enforce conversational
+approval. Do not pass a digest merely because it was printed. No blanket
+allowlists or known-real-leak suppressions are allowed.
 
 Fingerprints bind rule, immutable blob/commit (or hashed name), and local line/
 column range, never a secret value. Dismissed findings are returned separately
@@ -262,7 +273,11 @@ reduce repeated broader work but cannot certify a changed candidate.
 Applicable project-owned hooks/CI are agreed work, not automatic installation.
 A pre-commit hook can invoke `candidate` against its actual `GIT_INDEX_FILE`
 after candidate-mutating hooks; these local hooks are bypassable and not shared
-by clones. Use the same selected revision/range contract in applicable CI as
+by clones. Hooks remain opt-in. An unmodified scanner hook treats exit 2
+`partial` as failure on every commit with skipped assets; a conversation coverage
+decision does not override that hook. Adopting a separately reviewed bounded
+coverage policy/equivalent is agreed project work, never a blanket partial-to-zero
+conversion or permission to bypass hooks. Use the same selected revision/range contract in applicable CI as
 second-line detection; CI cannot prevent first publication. Establish full
 history and actual selected revision, sanitize failures/artifacts, and inspect
 integration upload/comment/account defaults before adopting it. Apply

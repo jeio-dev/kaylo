@@ -325,7 +325,8 @@ Every Kaylo commit scans the actual candidate, including plans/docs, and authori
 publication scans all outgoing history including removed values. The bounded
 adapter accepts stable Gitleaks >=8.30.1 and <9. It reports opaque finding
 locations and explicit skipped coverage; narrow fingerprint dispositions require
-review of the selected policy bytes. Binary/long-line assets need a bounded
+explicit user confirmation of the matches and selected policy digest, including
+assistant-generated fakes. Binary/long-line assets need a bounded
 coverage decision, rather than automatically blocking every text commit. Missing
 tools, undisposed findings, failures and unresolved required coverage block Git. Evidenced
 equivalents are supported. No tool, host policy, hook or CI is installed automatically.
