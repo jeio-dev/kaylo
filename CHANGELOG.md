@@ -4,6 +4,22 @@
 
 ### Notable Changes
 
+- **skills/tools**: All five skills inspect governing plan formats before protected
+  writes. New roadmaps use identification-only format 2; recognized unmarked
+  format 1 remains usable without backfill or renewed agreement. A bounded local
+  converter previews redacted changes, binds apply to reviewed inputs, validates
+  candidates, and retains private recoverable originals on interruption. It
+  preserves closed phase files and complete evidence, and active legacy conversion
+  waits for actual intended-work confirmation. Historical reporting uses bounded
+  read-only interpretation and states unknown-history limits. Detailed migration
+  guidance loads when needed; pasted skills retain recognition/refusal fallback.
+  **Compatibility:** earlier readers ignore markers; protection begins with this
+  implementation. Mechanical writes refuse symlink/hardlink aliases and ambiguous
+  input, including in-project symlink targets previously accepted by the record
+  helper. Optional resources remain migration-free; Git, installation and paid
+  routes need their own authority. Live host/model trials remain pending
+  ([#90](https://github.com/jeio-dev/kaylo/issues/90)).
+
 - **skills/tools**: Secret handling uses evidence-based safe-file classification,
   scoped disclosure authority and value-free incident records. Environment
   catalogues/validation reuse project tooling and phase decisions promote at close.

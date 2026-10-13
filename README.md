@@ -42,7 +42,7 @@ ROADMAP.md                                Current link and ordered phase checkli
 .kaylo/phases/02-sales/02-PLAN.md         created when phase 02 starts
 ```
 
-Plan details one phase at a time; later phases stay one line in `ROADMAP.md` until they start. Close checks off the phase, and the next plan moves `Current:`. Build and review work only in the current phase plan. Completed phases stay in place as history. Commit `.kaylo/` with your project. Older Kaylo files (`OBJECTIVE.md`, `PLAN.md`, and the old task fields) are no longer read; plan converts them, and the [changelog](CHANGELOG.md) lists the steps to convert by hand.
+Plan details one phase at a time; later phases stay one line in `ROADMAP.md` until they start. Close checks off the phase, and the next plan moves `Current:`. Build and review work only in the current phase plan. Completed phases stay in place as history. Commit `.kaylo/` with your project. Older active Kaylo layouts (`OBJECTIVE.md`, a `PLAN.md` index, and legacy task fields) route to plan for a reviewed conversion. Closed phase files remain unchanged; the [migration reference](skills/plan/references/migration.md) documents supported variants and manual limits.
 
 ## Install and use Kaylo
 
@@ -346,6 +346,31 @@ assistant instructions, not security boundaries. Existing user authorization
 counts; ordinary agreed edits and checks need no additional approval. The startup
 hook remains a reminder and does not enforce these rules.
 
+All five skills inspect plan formats before protected writes. New roadmaps start
+with `Kaylo format: 2`; this adds identification only, and existing recognized
+unmarked format 1 remains usable. Unsupported or invalid governing formats leave
+PRD, roadmap and linked phase records unchanged. This starts with #90 readers;
+earlier releases ignore markers, and the instruction is not host filesystem
+enforcement. Start a new session after updating to a compatible reader.
+
+For a local read-only inspection and migration preview:
+
+```sh
+node /absolute/path/to/kaylo/scripts/inspect-plan.cjs /absolute/path/to/project
+node /absolute/path/to/kaylo/scripts/migrate-plan.cjs /absolute/path/to/project
+```
+
+The preview inventories all operations with redacted diff lines and an input-bound
+`sha256:` token. Within actual scoped migration authority, repeat the command
+with `--apply <token>`; inline extraction also needs an explicit safe destination.
+Stale inputs are refused. Candidate validation precedes replacement; interrupted
+multi-file work retains private local originals for explicit `--recover <preview-token>` rollback.
+Converted active work awaits actual intended-work confirmation; annotation alone
+does not invalidate agreement, and closed history is preserved byte-for-byte.
+See [migration and recovery](skills/plan/references/migration.md) for supported
+historical inputs, disclosure options, filesystem limits and manual fallback.
+Migration performs no Git operations or project commands.
+
 With Node.js available, run the read-only structural validator from any directory:
 
 ```sh
@@ -356,7 +381,7 @@ node /absolute/path/to/kaylo/scripts/validate-plan.cjs /absolute/path/to/project
 Exit codes: `0` means supported structural checks passed; `1` means plan errors;
 `2` means invalid command usage. The validator does not edit files or execute
 Markdown, verification commands, hooks, or model calls. Plan runs it after writing
-or converting plans, and you confirm a converted plan before it gets
+or converting plans, and you confirm an actively converted legacy plan before it gets
 `Status: Current`. Build runs it after checking a task off and unchecks the task
 on failure. Close runs `--closing` before checking the phase off in
 `ROADMAP.md`. If the script/runtime is unavailable, the skills require manual
@@ -371,8 +396,11 @@ resolution must cite your decision. `{kaylo:v1 ...}` records belong on a task's
 `Result:` line, and a checked `Risk: high` task needs a completed reviewer
 record covering it. Closure checks run with `--closing` or when the current
 phase is checked; they require every task checked, no `Needs revision` status,
-and `## Review` and `## Completion` records. Older Kaylo formats are rejected with a diagnostic
-naming the replacement. The glossary's
+and `## Review` and `## Completion` records. Older active Kaylo formats are rejected with a diagnostic
+naming the replacement. When Current points at recognized closed legacy history,
+a bounded read-only adapter checks recorded completion availability without
+imposing today's active schema or certifying historical acceptance; unknown
+Current history remains a diagnostic. The glossary's
 [validation rules](GLOSSARY.md#validation-rules) give the exact contract.
 
 A pass does **not** establish authorization, truthful evidence, passing tests,
@@ -461,3 +489,14 @@ Validator fixtures check structure; behavioral trials do not guarantee model
 compliance. `0.11.0` is an early package version, not a release-readiness claim.
 
 Native integration references: [Claude plugin layout](https://code.claude.com/docs/en/plugins-reference), [Claude agents](https://code.claude.com/docs/en/sub-agents), [Codex plugin packaging](https://developers.openai.com/plugins/build/plugins), [Codex skill invocation](https://developers.openai.com/codex/skills), [Codex hooks](https://developers.openai.com/codex/hooks), [OpenCode 2 skills](https://opencode.ai/v2/docs/skills), [Antigravity plugins](https://antigravity.google/docs/plugins), and [Gemini extensions](https://geminicli.com/docs/extensions/reference/). Host behavior and availability can vary by version; the verification record identifies the versions inspected here.
+
+## Citation
+
+```bibtex
+@software{jeio-dev2026kaylo,
+  author = {Dela Cruz, R-John},
+  title  = {Kaylo: Build software with patient, practical guidance, using the AI tools you already have},
+  year   = {2026},
+  url    = {https://github.com/jeio-dev/kaylo}
+}
+```

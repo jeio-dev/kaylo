@@ -66,3 +66,12 @@ Request the compact report in [WORKERS.md](../../../WORKERS.md), naming the task
 Batch related corrections within the agreed scope and continue with the same worker when practical. Carry forward failed attempts; one correction request may contain several repair attempts and does not reset Kaylo's limit. Preserve the separate review and the recheck required for fixes to blocking comments.
 
 For interrupted or blocked work, record completed work, unfinished steps, the last failure, repair history, and the exact resume action in the task's `Result` and phase plan's `Next step`. Include a worker thread ID when the host exposes one and continuation needs it; where a finished worker cannot be continued, give a new worker a packet carrying that record. A new checkpoint file is unnecessary. The guiding assistant owns these plan updates.
+
+## Protected plan ownership
+
+Before dispatch and before applying a returned report, the guiding assistant
+checks [plan formats](../../plan/references/migration.md) before any protected
+plan write. Include the recognized format, relevant history limits and protected
+paths in the packet. A worker returns findings/results; it never edits shared
+plans or grants migration, agreement or Git authority. An unsupported format
+leaves protected bytes unchanged, including progress and findings.

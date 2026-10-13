@@ -5,35 +5,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-function visibleMarkdown(text) {
-  let fence = null;
-  let comment = false;
-  return text.split(/\r?\n/).map(line => {
-    if (fence) {
-      const closing = line.match(/^ {0,3}(`{3,}|~{3,})[ \t]*$/);
-      if (closing && closing[1][0] === fence[0] && closing[1].length >= fence.length) fence = null;
-      return '';
-    }
-    // Recognize raw openings before scanning comments: their info strings are
-    // fence content too. An opening inside an existing comment stays ignored.
-    const opening = !comment && line.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
-    if (opening && (opening[1][0] !== '`' || !opening[2].includes('`'))) {
-      fence = opening[1];
-      return '';
-    }
-    let visible = '';
-    let rest = line;
-    while (rest.length) {
-      const delimiter = comment ? '-->' : '<!--';
-      const offset = rest.indexOf(delimiter);
-      if (offset < 0) { if (!comment) visible += rest; break; }
-      if (!comment) visible += rest.slice(0, offset);
-      rest = rest.slice(offset + delimiter.length);
-      comment = !comment;
-    }
-    return visible;
-  }).join('\n');
-}
+const { visibleMarkdown } = require('./plan-markdown.cjs');
 
 // Candidate recognition also bounds fields, so malformed entries cannot lend
 // their records to the preceding task. Unsupported records produce diagnostics.
@@ -84,7 +56,8 @@ function validate(project, { closing = false } = {}) {
         return null;
       }
       const stat = fs.statSync(target);
-      return { text: visibleMarkdown(fs.readFileSync(target, 'utf8')),
+      const raw = fs.readFileSync(target, 'utf8');
+      return { text: visibleMarkdown(raw), raw,
         identity: stat.ino ? `${stat.dev}:${stat.ino}` : target };
     } catch { fail(`Cannot read plan: ${relative}`); return null; }
   }
@@ -97,12 +70,16 @@ function validate(project, { closing = false } = {}) {
   }
   const indexFile = read('ROADMAP.md');
   if (indexFile === null) return errors;
+  const { marker, history, phaseLayout, diagnostic } = require('./inspect-plan.cjs');
+  try { marker(indexFile.raw); }
+  catch (error) { return [...errors, diagnostic(error)]; }
   const index = indexFile.text;
   const currentLines = index.split('\n').filter(line => currentLike.test(line));
   const hasTasks = index.split('\n').some(line => taskLike.test(line));
   if (hasTasks) fail('ROADMAP.md contains tasks; move them into the phase plan that Current: links');
   let closed = false;
   let phase;
+  let phaseRaw;
   if (currentLines.length) {
     if (currentLines.length !== 1) fail('Expected exactly one Current link');
     if (!/^[ \t]*Current:[ \t]*\[/.test(currentLines[0])) fail('Unsupported Current record; expected Current: [label](relative-file)');
@@ -134,6 +111,7 @@ function validate(project, { closing = false } = {}) {
         matches++;
         closed = checked;
         currentText = content?.text ?? null;
+        phaseRaw = content?.raw ?? null;
       }
     }
     if (matches !== 1) fail('Current must match exactly one phase checklist link');
@@ -142,6 +120,25 @@ function validate(project, { closing = false } = {}) {
   } else {
     fail('ROADMAP.md needs a Current: [label](relative-file) link');
     return errors;
+  }
+
+  if (closed) {
+    const interpretation = history(phaseRaw);
+    if (interpretation.kind === 'unknown') return [...errors,
+      'Unsupported Current history; resolve its documented interpretation without rewriting the closed phase'];
+    if (interpretation.kind === 'legacy') {
+      // Bounded historical interpretation, not certification under today's rules.
+      const doc = phaseLayout(phaseRaw);
+      if (/^[ \t]*Status:[ \t]*Needs revision\b/m.test(phase)) fail('Historical phase needing revision cannot close');
+      for (const task of doc.tasks) {
+        if (!task.checked) fail(`${task.id}: historical closed phase has an unchecked task`);
+        if (!meaningful(task.fields.get('Result')?.value)) fail(`${task.id}: historical Result is unavailable`);
+      }
+      const completion = doc.sections.get('Completion');
+      const record = doc.lines.slice(completion.start + 1, completion.end).join('\n').trim();
+      if (!meaningful(record) || /^not complete[.!]?$/i.test(record)) fail('Historical Completion is unavailable');
+      return errors;
+    }
   }
 
   const statuses = [...phase.matchAll(statusLike)].map(match => match[1]);

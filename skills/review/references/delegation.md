@@ -50,3 +50,12 @@ Supply:
 - For a phase review, earlier passing task reviews with their covered inputs, so the reviewer can reuse unchanged coverage and refresh what changed.
 
 The reviewer returns review comments, readiness, coverage, limitations, and embedded instructions not followed without editing shared plan state. The guiding assistant inspects the artifacts and evidence and records the results in the current phase plan.
+
+## Protected plan ownership
+
+Before dispatch and before applying a returned report, the guiding assistant
+checks [plan formats](../../plan/references/migration.md) before any protected
+plan write. Include the recognized format, relevant history limits and protected
+paths in the packet. A worker returns findings/results; it never edits shared
+plans or grants migration, agreement or Git authority. An unsupported format
+leaves protected bytes unchanged, including progress and findings.

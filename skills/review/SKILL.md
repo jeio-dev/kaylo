@@ -3,6 +3,41 @@ name: review
 description: Review a Kaylo plan or implemented changes against the agreed outcome. Use before building uncertain work or before closing completed work.
 ---
 
+
+## Plan format before writes
+
+Before the first protected write on every direct or resumed entry, run the
+read-only `node "<kaylo-root>/scripts/inspect-plan.cjs" "<project-root>"`,
+resolved as `../../scripts/inspect-plan.cjs` from this skill. Repeat after inputs
+change and before applying a returned worker result. Protected files are
+`PRD.md`, `ROADMAP.md`, relevant linked phase records and recognized legacy
+sources selected for conversion, including progress, findings, revision status,
+completion and check-off edits. Keep one guiding-assistant plan writer during
+delegation; workers never modify shared plans. Independent preferences and ADRs
+retain their own contracts and cannot bypass a blocked plan write.
+
+A future, malformed, duplicate, misplaced, conflicting or otherwise unsupported
+governing format blocks protected writes. Diagnose in the response with the
+detected condition, supported range (0 recognized legacy, 1, 2), and concrete
+input-resolution or update/new-session action. Never write that diagnostic into
+a blocked plan. Creation without a plan remains eligible. Recognition is separate
+from structural validation, evidence truth and action/target authorization.
+When inspection returns legacy, keep protected files unchanged and route to plan
+for reviewed conversion; only plan applies that conversion within scoped authority.
+Format 1 stays usable unmarked; new roadmaps use first-line `Kaylo format: 2`,
+which adds identification only. Optional resources and other version namespaces
+never require migration or backfill. Marker-only annotation preserves agreement.
+Ordinary migration leaves closed phase files byte-for-byte, including when
+Current points at closed history; reading/reporting history never rewrites it.
+Unknown relevant history is a stated limit or blocker for work depending on it,
+not proof of acceptance. Active legacy conversion awaits actual intended-work
+confirmation and cannot build/close meanwhile; migration permission, plan
+confirmation and phase-build readiness remain distinct.
+
+If the format inspector or Node is unavailable, disclose the limit and inspect manually: `Kaylo format: N` must be the first physical line (initial BOM and LF/CRLF allowed), with canonical nonnegative decimal syntax; duplicate/misplaced marker-like records outside fences/comments are invalid. Recognized unmarked current plans are format 1; documented legacy variants are format 0; format 2 identifies current semantics. Missing status/dependencies may be structural errors, not legacy proof. Mixed sources/fields need resolution; an unrelated PLAN.md beside ROADMAP.md is not a conversion source. Keep future/unknown/ambiguous protected inputs unchanged. Use bounded manual conversion only with the complete documented rules and evidence, or resume using a full Kaylo checkout. Never guess an unavailable contract or automatically install/update, change settings/permissions, select a paid route, commit or publish. Older readers ignore markers: protection starts with readers implementing this contract; incompatible writers require a documented minimum compatible reader in every participating session. This is an instructional boundary plus deterministic script refusal, not universal filesystem enforcement.
+
+For inspection diagnostics, conversion, history and recovery, load
+[plan migration](../plan/references/migration.md) when needed.
 # Review the work
 
 Review either `plan` or `changes`. If unspecified, inspect the current phase plan and the working changes to choose the relevant target; ask only if the target remains ambiguous.

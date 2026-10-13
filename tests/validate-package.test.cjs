@@ -522,3 +522,22 @@ test('decision links in indented or tilde fences and comments do not count; refe
     assert(result.stderr.includes('Missing canonical decision reference: skills/plan/references/foundation.md'), hidden);
   }
 });
+
+
+test('migration resources, five-entry-point reference links and pasted fallback parity are required', t => {
+  for (const resource of ['scripts/inspect-plan.cjs', 'scripts/migrate-plan.cjs',
+    'scripts/convert-plan.cjs', 'scripts/plan-markdown.cjs', 'skills/plan/references/migration.md', 'tests/FORMAT-TRIALS.md']) {
+    const dir = fixture(t);
+    fs.unlinkSync(path.join(dir, resource));
+    const result = check(dir);
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /Required migration resource is missing/);
+  }
+  const dir = fixture(t);
+  const file = path.join(dir, 'skills/define/SKILL.md');
+  fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace('If the format inspector or Node is unavailable, disclose the limit',
+    'If the format inspector or Node is unavailable, guess the format'));
+  const result = check(dir);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /format-inspection fallback/);
+});

@@ -6,7 +6,8 @@
 // malformed record is counted and disclosed, never treated as a pass.
 const fs = require('node:fs');
 const path = require('node:path');
-const { visibleMarkdown } = require('./validate-plan.cjs');
+const { visibleMarkdown } = require('./plan-markdown.cjs');
+const { history, marker } = require('./inspect-plan.cjs');
 
 const taskLike = /^[ \t]*(?:[-*+]|\d+[.)])[ \t]*(?:\[[^\]]*\][ \t]*|\[[ \txX?]*)?T\d+\b/;
 const taskEntry = /^[ \t]*[-*][ \t]+\[([ xX])\][ \t]+(T\d+):/;
@@ -153,10 +154,13 @@ function report(project) {
     return visibleMarkdown(fs.readFileSync(target, 'utf8'));
   };
   const phases = [];
+  const histories = [];
+  const index = read('ROADMAP.md');
+  marker(index);
   const unlinked = [];
   const tasks = [];
   const reviewProblems = [];
-  for (const line of read('ROADMAP.md').split('\n')) {
+  for (const line of index.split('\n')) {
     const entry = line.match(closedPhase);
     if (!entry) continue;
     const href = line.match(link);
@@ -169,7 +173,11 @@ function report(project) {
     }
     const id = entry[1];
     phases.push(id);
-    const lines = read(path.normalize(target)).split('\n');
+    const content = read(path.normalize(target));
+    const interpretation = history(content);
+    histories.push({ phase: id, ...interpretation });
+    if (interpretation.kind === 'unknown') continue;
+    const lines = content.split('\n');
     const phaseTasks = [];
     const errorsById = new Map();
     const owners = new Map();
@@ -212,10 +220,10 @@ function report(project) {
       errorsById.set(name, [...parsed.errors]);
       // Records outside the Result: line are not read; say so rather than count them missing.
       // Acceptance criteria and test plans may still mention record syntax.
-      if (body.some(l => l.includes('{kaylo:') && !/^[ \t]*[-*]?[ \t]*(?:Result|Acceptance criteria|Test plan):/.test(l))) {
+      if (body.some(l => l.includes('{kaylo:') && !/^[ \t]*[-*]?[ \t]*(?:Result|Acceptance criteria|Test plan|Acceptance|Verify):/.test(l))) {
         errorsById.get(name).push('record on a line below Result:, not in it');
       }
-      const task = { id: name, checked: match[1].toLowerCase() === 'x', estimate: field('Estimate'), records: parsed.records };
+      const task = { id: name, checked: match[1].toLowerCase() === 'x', estimate: field('Estimate') || (interpretation.kind === 'legacy' ? field('Complexity') : undefined), records: parsed.records };
       for (const item of task.records) if (item.type === 'dispatch') {
         claim(item.id, name);
         taskDispatchIds.add(item.id);
@@ -244,7 +252,7 @@ function report(project) {
   }
   const count = status => tasks.filter(t => t.status === status).length;
   return {
-    phases, unlinked, tasks, review: reviewProblems,
+    phases, unlinked, tasks, history: histories, review: reviewProblems,
     groups: [...groups.values()].sort((a, b) => [a.tier, a.estimate, a.vendor].join() < [b.tier, b.estimate, b.vendor].join() ? -1 : 1),
     counts: { tasks: tasks.length, recorded: count('recorded'), missing: count('missing'), malformed: count('malformed'),
       unchecked: count('unchecked'), unknownVendor: tasks.filter(t => t.status === 'recorded' && t.group.vendor === 'unknown').length }
@@ -255,6 +263,10 @@ function format(data) {
   const { phases, unlinked, groups, counts, tasks, review = [] } = data;
   const out = ['First-try pass rates among recorded tasks in closed phases (read-only; preferences and the tier table are unchanged).'];
   out.push(phases.length ? `Closed phases: ${phases.join(', ')}. Open phases are not counted.` : 'No closed phases; nothing to report.');
+  for (const entry of data.history || []) {
+    if (entry.kind === 'unknown') out.push(`Phase ${entry.phase}: unsupported historical interpretation (${entry.reason}); excluded without rewriting history.`);
+    else if (entry.kind === 'legacy') out.push(`Phase ${entry.phase}: bounded legacy interpretation (${entry.variant}); no original-schema acceptance certified.`);
+  }
   if (unlinked.length) out.push(`Closed phases without a plan link, not counted: ${unlinked.join(', ')}.`);
   out.push(`Tasks: ${counts.tasks}; recorded ${counts.recorded}, missing records ${counts.missing}, malformed ${counts.malformed}, unchecked ${counts.unchecked}; unknown builder vendor ${counts.unknownVendor} of ${counts.recorded} recorded.`);
   if (groups.length) {
